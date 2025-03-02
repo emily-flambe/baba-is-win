@@ -2,11 +2,20 @@
 import Layout from '../layouts/BlogPost.astro';
 ---
 
+<style>
+	.hero-image {
+		max-width: 60px;
+    max-height: 60px;
+		margin: 0 auto;
+	}
+</style>
+
 <Layout
 	title="About Me"
 	description="Lorem ipsum dolor sit amet"
 	pubDate={new Date('August 08 2021')}
-	heroImage="/blog-placeholder-about.jpg"
+	heroImage="/best-friends.jpeg"
+	class="hero-image"
 >
 	<p>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
