@@ -9,20 +9,21 @@ const permalink = Astro.site.href;
 <BaseLayout title={title} description={description} permalink={permalink}>
   <div class="home-container">
     <div class="home-copy">
-      <h1>Welcome to your new Astro Blog</h1>
-      <p>Check out the docs on <a href="https://www.github.com/Charca/astro-blog-template" target="_blank" rel="noopener">GitHub</a> to get started.</p>
+      <h1>Baba is Blog</h1>
+      <p>LOVE is WEAK.
+      <br />LOVE has KEY.
+      <br />KEY is OPEN.
+      <br />DOOR is SHUT.
+      <br />FLAG is WIN.</p>
     </div>
 
     <div class="hero-image-container">
       <picture>
-        <source srcset="/assets/home-illustration.webp" media="(min-width: 600px)">
-        <img class="hero-image" alt="Illustration of person reading a book" src="/assets/home-illustration-small.webp" width="550" height="466">
+        <source srcset="/assets/best-friends.jpeg" media="(min-width: 600px)">
+        <img class="hero-image" alt="Best friends" src="/assets/best-friends.jpeg" width="550" height="466">
       </picture>
       <p class="caption">
-        Illustration by
-        <a href="https://icons8.com/illustrations/author/5c07e68d82bcbc0092519bb6" target="_blank" rel="noopener">Icons 8</a>
-        from
-        <a href="https://icons8.com/illustrations" target="_blank" rel="noopener">Ouch!</a>
+        *~*~*~Best friends~*~*~*
       </p>
     </div>
   </div>
@@ -66,13 +67,13 @@ const permalink = Astro.site.href;
   .caption {
     font-size: .8em;
     font-style: italic;
-    text-align: left;
+    text-align: center;
   }
 
   .hero-image {
     width: 100%;
     max-width: 550px;
-    margin-bottom: 1em;
+    margin-bottom: 0em;
   }
 
   @media (max-width: 1200px) {
@@ -81,7 +82,7 @@ const permalink = Astro.site.href;
     }
 
     .hero-image {
-      max-width: 400px;
+      max-width: 500px;
     }
   }
 
