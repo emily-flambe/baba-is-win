@@ -1,11 +1,9 @@
 ---
 title: Hello World 👋
-publishDate: 30 Nov 2021
-description: Every blog starts with a single post. This is yours. Make it great.
+publishDate: 01 Mar 2025
+description: The smallest journey starts with an even smaller step.
 ---
 
-![Illustration of woman using a meditation app](/assets/blog/casual-life-3d-meditation-crystal.webp)
+![Oh my goodness](/assets/blog/20250301_loki.png)
 
-This post intentionally left blank.
-
-Write what you want.
+The thought that this blog might one day have content fills you with DETERMINATION.
