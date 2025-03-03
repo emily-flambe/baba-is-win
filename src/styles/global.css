@@ -5,6 +5,7 @@
   --primary-color: #548e9b;
   --font-family-serif: Merriweather, serif;
   --font-family-sans: 'Fira Sans', sans-serif;
+  --icon-color: #000; /* Default to black for light mode */
 }
 
 :root.theme-dark {
@@ -12,6 +13,7 @@
   --text-main: #fff;
   --text-secondary: #ccc;
   --primary-color: #548e9b;
+  --icon-color: #fff; /* White for dark mode */
 }
 
 html {
