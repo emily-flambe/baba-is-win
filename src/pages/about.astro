@@ -18,6 +18,7 @@ const permalink = `${Astro.site.href}about`;
     <h2>What <em>is</em> this blog about, then?</h2>
     <p>Places I have gone? Things I have done? Thoughts I have had?</p>
     <p>Whatever I <strong>want</strong> it to be about, GOSH.</p>
+    <img src="/assets/baba_bike.jpeg" alt="baba" class="about-image">
     <h2>Who are you?</h2>
     <p>I am <strong>Emily</strong>. Unlike Baba, I am not <strong>you</strong>.
     <p>You can learn about the broad strokes of my career on <a href="https://www.linkedin.com/in/emilycogsdill/" target="_blank" class="link-text">LinkedIn</a>.
@@ -39,6 +40,7 @@ const permalink = `${Astro.site.href}about`;
       <li>Engineering Manager</li>
     </ul>
     <p>As I write this, I live in Boulder, Colorado, with two cats. I moved here in 2024. Prior to that, we lived, uh, lots of places.
+    <p><img src="/assets/cats.jpeg" alt="cats" class="about-image"><img src="/assets/boulder.jpeg" alt="boulder" class="about-image">
     <p>Why do I live in Boulder? It is cute! There are mountains, and there is a guy on Pearl Street who knows every zip code. I take pottery classes, I sing in a local choir,
     and I do stereotypical Colorado things like running (on <em>purpose</em>), hiking, cycling, and skiing.
     <p>Who 👏 knows 👏 what 👏 I'll 👏 do 👏 next?
@@ -48,9 +50,10 @@ const permalink = `${Astro.site.href}about`;
 
 <style>
   .about-image {
-    float: right;
-    margin: -3em -7em 2em 2em;
+    display: inline-block;
+    margin: 0 1em 1em 0;
     max-width: 300px;
+    vertical-align: middle;
   }
 
   .about-image img {
