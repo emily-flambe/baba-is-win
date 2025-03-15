@@ -8,7 +8,10 @@ const permalink = `${Astro.site.href}about`;
 
 <BaseLayout title={title} description={description} permalink={permalink} current="about">
   <div class="container">
-    <h1>About... stuff</h1>
+    <h2>Socials</h2>
+    <p><a href="https://www.linkedin.com/in/emilycogsdill/">LinkedIn</a>
+    <p><a href="https://github.com/emily-flambe">GitHub</a>
+    <p><a href="https://www.instagram.com/emily_flambe">Instagram</a> <sub style="font-size: 0.6em;"> ...if you must</sub></p>
     <h2>What is Baba?</h2>
     <p>Baba is the titular character in the hit indie game <a href="https://hempuli.com/baba/" target="_blank" class="link-text"><em>Baba Is You</em></a>.
     I did not create Baba. Baba is not a bunny rabbit. Baba is neither male nor female. Don't you understand? Baba is <strong>you</strong>.</p>
@@ -40,9 +43,19 @@ const permalink = `${Astro.site.href}about`;
       <li>Software Engineer (<a href="https://communitytechalliance.org/" target="_blank" class="link-text">Community Tech Alliance</a>)</li>
       <li>Engineering Manager (<a href="https://communitytechalliance.org/" target="_blank" class="link-text">Community Tech Alliance</a>)</li>
     </ul>
-    <p>As I write this, I live in Boulder, Colorado, with two cats. I moved here in 2024. Prior to that, we lived, uh, lots of places.
-    <p><img src="/assets/cats.jpeg" alt="cats" class="about-image"><img src="/assets/boulder.jpeg" alt="boulder" class="about-image">
-    <p>Why do I live in Boulder? It is cute! There are mountains, and there is a guy on Pearl Street who knows every zip code. I take pottery classes, I sing in a local choir,
+    <p>Other fun ways I have generated income over the years, intentionally devoid of context:
+    <ul>
+      <li>Ethnomusicology Research Assistant</li>
+      <li>Chapel Chimes Player?</li>
+      <li>Choir Singer</li>
+      <li>Twitch Streamer</li>
+      <li>Database Coordinator for a private K-12 school</li>
+      <li>McDonald's Crew Member</li>
+      <li>Gap, Inc. Sales Associate</li>
+    </ul>
+    <p>As I write this, I live in Boulder, Colorado, with two cats. I moved here in 2024. Prior to that, we lived lots of places?
+    <p><img src="/assets/cats.jpeg" alt="cats" class="about-image"><img src="/assets/boulder.jpeg" class="about-image"><img src="public/assets/baba_sanitas.jpg" class="about-image">
+    <p>Boulder is cute! It has mountains, and there is a guy on Pearl Street who knows every zip code. I take pottery classes, I sing in a local choir,
     and I do stereotypical Colorado things like running (on <em>purpose</em>), hiking, cycling, and skiing.
     <p>Who 👏 knows 👏 what 👏 I'll 👏 do 👏 next?
     </ul>
@@ -53,7 +66,7 @@ const permalink = `${Astro.site.href}about`;
   .about-image {
     display: inline-block;
     margin: 0 1em 1em 0;
-    max-width: 300px;
+    max-width: 235px;
     vertical-align: middle;
   }
 
