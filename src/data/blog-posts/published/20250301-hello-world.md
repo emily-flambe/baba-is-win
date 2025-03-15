@@ -2,6 +2,8 @@
 title: Hello World 👋
 publishDate: 01 Mar 2025
 description: The smallest journey starts with an even smaller step.
+thumbnail: /assets/blog/20250301_loki.png
+tags: ["test","boring"]
 ---
 
 ![Oh my goodness](/assets/blog/20250301_loki.png)

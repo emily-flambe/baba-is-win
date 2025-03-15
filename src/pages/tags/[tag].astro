@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogPost from '../../components/BlogPost.astro';
+
+export async function getStaticPaths() {
+  const allPosts = Object.values(
+    import.meta.glob('../../data/blog-posts/published/*.md', { eager: true })
+  );
+
+  // Safely extract tags from posts (ensure tags exist and are arrays)
+  const uniqueTags = [...new Set(
+    allPosts.flatMap(post => post.frontmatter.tags || [])
+  )];
+
+  // Generate paths, filtering posts safely
+  return uniqueTags.map(tag => {
+    const filteredPosts = allPosts.filter(
+      post => Array.isArray(post.frontmatter.tags) && post.frontmatter.tags.includes(tag)
+    );
+
+    return {
+      params: { tag },
+      props: { posts: filteredPosts },
+    };
+  });
+}
+
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+---
+
+<BaseLayout pageTitle={`Posts tagged "${tag}"`}>
+  <h2>Posts tagged "{tag}"</h2>
+  {posts.length > 0 ? (
+    <ul>
+      {posts.map(post => (
+        <li>
+          <a href={`/blog/${post.file.split('/').pop().split('.').shift()}`}>
+            {post.frontmatter.title}
+          </a>
+        </li>
+      ))}
+  </ul>
+  ) : (
+    <p>No posts found for this tag.</p>
+  )}
+</BaseLayout>

@@ -2,6 +2,8 @@
 title: Fountain is Defeat
 publishDate: 02 Mar 2025
 description: KEEP OUT.
+thumbnail: /assets/blog/20250302/1.jpg
+tags: ["adventures", "dumb"]
 ---
 
 <img src="/assets/blog/20250302/1.jpg" width="300" />
