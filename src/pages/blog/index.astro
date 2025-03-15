@@ -17,7 +17,9 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
 
 <BaseLayout title={title} description={description} permalink={permalink} current="blog">
   <div class="container">
-    <h1>Blog</h1>
+    <h1>Blog Posts</h1>
+    <h3>Oh, right, there's supposed to be a blog here</h3>
+    <br>
     <div class="tags-list">
       <p class="tags">
         Filter posts by tag:
@@ -34,16 +36,33 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
     <hr />
     {allPosts.map((post, index) => {
       const href = `/blog/${post.file.split('/').pop().split('.').shift()}`;
+      const imageUrl = post.frontmatter.thumbnail; // Use the thumbnail field from frontmatter
+      const isEven = index % 2 === 0;
+      const postTags = post.frontmatter.tags || []; // Get tags from frontmatter
       return (
         <div>
           { index !== 0 && <hr /> }
-          <div class="post-item">
-            <h2>
-              <a href={href}>{post.frontmatter.title}</a>
-            </h2>
-            <p>{post.frontmatter.description}</p>
-            <div class="post-item-footer">
-              <span class="post-item-date">— {post.frontmatter.publishDate}</span>
+          <div class={`post-item ${isEven ? 'image-left' : 'image-right'}`}>
+            {imageUrl && <img src={imageUrl} alt={post.frontmatter.title} class="post-image" />}
+            <div class="post-content">
+
+              <div class="post-item-footer">
+                <span class="post-item-date">{post.frontmatter.publishDate}</span>
+              </div>
+              <h2>
+                <a href={href}>{post.frontmatter.title}</a>
+              </h2>
+              <p>{post.frontmatter.description}</p>
+
+              <p style="font-size: 0.85em;">Tags:
+              <br><i>
+                {postTags.map((tag, index) => (
+                  <>
+                    {index > 0 && ', '}
+                    <a href={`/tags/${tag}`}>{tag}</a>
+                  </>
+                ))}
+              </i></p>
             </div>
           </div>
         </div>
@@ -76,5 +95,36 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
 
   .tags {
     font-size: 0.875em; /* Smaller font size for tags */
+  }
+
+  .post-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .post-content {
+    flex: 1;
+    margin: 0 20px;
+  }
+
+  .post-image {
+    max-width: 300px; /* Adjust the size as needed */
+    height: auto;
+    padding: 0 10px; /* Add horizontal padding */
+  }
+
+  .image-left .post-image {
+    order: -1; /* Image appears on the left */
+  }
+
+  .image-right .post-image {
+    order: 1; /* Image appears on the right */
+  }
+
+  .post-content p i {
+    font-size: 0.875em; /* Smaller font size for tags */
+    font-style: italic; /* Italicize the tags */
   }
 </style>
