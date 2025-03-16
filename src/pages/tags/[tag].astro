@@ -18,6 +18,9 @@ export async function getStaticPaths() {
       post => Array.isArray(post.frontmatter.tags) && post.frontmatter.tags.includes(tag)
     );
 
+    // Sort posts by date in descending order
+    filteredPosts.sort((a, b) => new Date(b.frontmatter.publishDate) - new Date(a.frontmatter.publishDate));
+
     return {
       params: { tag },
       props: { posts: filteredPosts },
@@ -34,13 +37,22 @@ const { posts } = Astro.props;
   {posts.length > 0 ? (
     <ul>
       {posts.map(post => (
-        <li>
-          <a href={`/blog/${post.file.split('/').pop().split('.').shift()}`}>
-            {post.frontmatter.title}
+        <li style="display: flex; align-items: center;">
+          <a href={`/blog/${post.file.split('/').pop().split('.').shift()}`} style="display: flex; align-items: center;">
+            <img 
+              src={post.frontmatter.thumbnail} 
+              alt={`${post.frontmatter.title} thumbnail`} 
+              style="width: 200px; margin-right: 10px;" 
+            />
+            <div>
+              <h3 style="margin: 0;">{post.frontmatter.title}</h3>
+              <p style="margin: 0;">{new Date(post.frontmatter.publishDate).toLocaleDateString()}</p>
+              <p style="margin: 0;">{post.frontmatter.description}</p>
+            </div>
           </a>
         </li>
       ))}
-  </ul>
+    </ul>
   ) : (
     <p>No posts found for this tag.</p>
   )}
