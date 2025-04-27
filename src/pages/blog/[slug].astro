@@ -28,6 +28,9 @@ const permalink = `${Astro.site.href}blog/${slug}`;
       <Content />
     </article>
     <hr />
+    <div class="back-to-blog">
+      <a href="/blog">← Back to Blog</a>
+    </div>
     <Bio />
   </div>
 </BaseLayout>
@@ -51,5 +54,21 @@ const permalink = `${Astro.site.href}blog/${slug}`;
   header hr {
     min-width: 100px;
     width: 30%;
+  }
+
+  .back-to-blog {
+    text-align: center;
+    margin: 2em 0;
+  }
+
+  .back-to-blog a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-family: var(--font-family-sans);
+    font-weight: 600;
+  }
+
+  .back-to-blog a:hover {
+    text-decoration: underline;
   }
 </style>
