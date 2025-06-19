@@ -1,0 +1,108 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const thoughts = await Astro.glob('../../data/thoughts/published/*.md');
+  return thoughts.map(t => ({
+    params: { slug: t.file.split('/').pop().split('.').shift() },
+    props: { thought: t },
+  }));
+}
+
+const { frontmatter } = Astro.props.thought;
+const { content, publishDate, publishTime, tags } = frontmatter;
+const slug = Astro.props.thought.file.split('/').pop().split('.').shift();
+const permalink = `${Astro.site.href}thoughts/${slug}`;
+---
+
+<BaseLayout title="Thought" description={content.substring(0, 100) + '...'} permalink={permalink} current="thoughts">
+  <div class="container">
+    <article class="thought-single">
+      <div class="thought-header">
+        <time>{publishDate} at {publishTime}</time>
+      </div>
+      <div class="thought-body">
+        <p>{content}</p>
+      </div>
+      {tags && tags.length > 0 && (
+        <div class="thought-tags">
+          {tags.map((tag) => (
+            <span class="tag">#{tag}</span>
+          ))}
+        </div>
+      )}
+    </article>
+    <div class="back-link">
+      <a href="/thoughts">← Back to all thoughts</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .thought-single {
+    max-width: 600px;
+    margin: 4rem auto;
+    background: var(--background-body);
+    border: 1px solid var(--text-secondary);
+    border-radius: 12px;
+    padding: 2rem;
+  }
+
+  .thought-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .thought-header time {
+    font-family: var(--font-family-sans);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+  }
+
+  .thought-body p {
+    font-size: 1.3rem;
+    line-height: 1.8;
+    margin: 0;
+  }
+
+  .thought-tags {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    color: var(--primary-color);
+    font-family: var(--font-family-sans);
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+
+  .back-link {
+    text-align: center;
+    margin: 3rem 0;
+  }
+
+  .back-link a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-family: var(--font-family-sans);
+    font-weight: 600;
+  }
+
+  .back-link a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 600px) {
+    .thought-single {
+      margin: 2rem auto;
+      padding: 1.5rem;
+    }
+
+    .thought-body p {
+      font-size: 1.1rem;
+    }
+  }
+</style>
