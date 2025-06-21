@@ -5,7 +5,7 @@ import { createJWT } from '../../../lib/auth/jwt';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
-    const { email, username, password } = await request.json();
+    const { email, username, password, emailBlogUpdates, emailThoughtUpdates, emailAnnouncements } = await request.json();
 
     // Validate input
     if (!email || !username || !password) {
@@ -43,7 +43,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Create user
     const passwordHash = await hashPassword(password);
-    const user = await db.createUser(email, username, passwordHash);
+    const user = await db.createUser(
+      email, 
+      username, 
+      passwordHash,
+      Boolean(emailBlogUpdates),
+      Boolean(emailThoughtUpdates),
+      Boolean(emailAnnouncements)
+    );
 
     // Create JWT
     const token = await createJWT(

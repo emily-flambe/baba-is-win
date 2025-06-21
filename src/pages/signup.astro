@@ -8,7 +8,25 @@ const permalink = `${Astro.site.href}signup`;
 
 <BaseLayout title={title} description={description} permalink={permalink}>
   <div class="auth-container">
-    <h1>Sign Up</h1>
+    <p class="auth-link">
+      Already have an account? <a href="/login">Login</a>
+    </p>
+    
+    <div class="header-with-help">
+      <h1>Sign Up</h1>
+      <div class="help-icon" id="help-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="help-tooltip" id="help-tooltip">
+          Signing up allows you to engage with content on the site, and really isn't useful at all. You probably should not do it.
+          <br><br>
+          <a href="https://github.com/emily-flambe/baba-is-win/blob/main/docs/authentication.md" target="_blank">Learn more about authentication →</a>
+        </div>
+      </div>
+    </div>
     <p class="subtitle">you really don't have to do this.</p>
     <form id="signup-form" class="auth-form">
       <div class="form-group">
@@ -48,14 +66,41 @@ const permalink = `${Astro.site.href}signup`;
         <small class="help-text">At least 8 characters</small>
       </div>
       
+      <div class="form-group">
+        <label class="section-label">Opt in to email updates (why????):</label>
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              id="emailBlogUpdates" 
+              name="emailBlogUpdates"
+            />
+            <span class="checkbox-text">New blog posts</span>
+          </label>
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              id="emailThoughtUpdates" 
+              name="emailThoughtUpdates"
+            />
+            <span class="checkbox-text">New "thoughts" (???)</span>
+          </label>
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              id="emailAnnouncements" 
+              name="emailAnnouncements"
+            />
+            <span class="checkbox-text">Announcements</span>
+          </label>
+        </div>
+        <small class="help-text">You can change these preferences later. Don't panic.</small>
+      </div>
+      
       <div id="error-message" class="error-message"></div>
       
       <button type="submit" class="submit-btn">Create Account</button>
     </form>
-    
-    <p class="auth-link">
-      Already have an account? <a href="/login">Login</a>
-    </p>
   </div>
 </BaseLayout>
 
@@ -63,17 +108,76 @@ const permalink = `${Astro.site.href}signup`;
   .auth-container {
     max-width: 400px;
     margin: 2rem auto;
-    padding: 2rem;
-    background: var(--background);
+    padding: 1rem 2rem 2rem 2rem;
+    background: var(--background-body);
+    border: 1px solid var(--text-secondary);
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    opacity: 0.95;
+  }
+
+  .header-with-help {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
   }
 
   h1 {
-    text-align: center;
-    margin-bottom: 0.5rem;
     font-family: var(--font-family-sans);
-    font-size: 1.5rem;
+    font-size: 2rem;
+    margin: 0;
+  }
+
+  .help-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: var(--text-secondary);
+    cursor: help;
+    transition: color 0.2s ease;
+  }
+
+  .help-icon:hover {
+    color: var(--text-main);
+  }
+
+  .help-tooltip {
+    position: absolute;
+    top: 0;
+    left: calc(100% + 1rem);
+    background: #f8f9fa;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    width: 280px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-8px);
+    transition: all 0.2s ease;
+    font-family: var(--font-family-sans);
+  }
+
+  .help-icon:hover .help-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+  }
+
+  .help-tooltip a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .help-tooltip a:hover {
+    text-decoration: underline;
   }
 
   .subtitle {
@@ -101,6 +205,38 @@ const permalink = `${Astro.site.href}signup`;
     font-weight: 600;
     font-family: var(--font-family-sans);
     font-size: 0.875rem;
+  }
+
+  .section-label {
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-weight: 400;
+    cursor: pointer;
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    margin: 0;
+    width: auto;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  .checkbox-text {
+    font-size: 0.875rem;
+    line-height: 1.4;
   }
 
   input {
@@ -156,8 +292,9 @@ const permalink = `${Astro.site.href}signup`;
 
   .auth-link {
     text-align: center;
-    margin-top: 1.5rem;
-    font-size: 0.875rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 0.75rem;
   }
 
   .auth-link a {
@@ -188,7 +325,10 @@ const permalink = `${Astro.site.href}signup`;
     const data = {
       email: formData.get('email'),
       username: formData.get('username'),
-      password: formData.get('password')
+      password: formData.get('password'),
+      emailBlogUpdates: formData.get('emailBlogUpdates') === 'on',
+      emailThoughtUpdates: formData.get('emailThoughtUpdates') === 'on',
+      emailAnnouncements: formData.get('emailAnnouncements') === 'on'
     };
 
     try {

@@ -8,29 +8,35 @@ export class AuthDB {
   async createUser(
     email: string,
     username: string,
-    passwordHash: string
+    passwordHash: string,
+    emailBlogUpdates: boolean = false,
+    emailThoughtUpdates: boolean = false,
+    emailAnnouncements: boolean = false
   ): Promise<User> {
     const id = nanoid();
     const now = Date.now();
     
     await this.db
       .prepare(
-        'INSERT INTO users (id, email, username, password_hash, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)'
+        'INSERT INTO users (id, email, username, password_hash, email_blog_updates, email_thought_updates, email_announcements, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
       )
-      .bind(id, email.toLowerCase(), username.toLowerCase(), passwordHash, now, now)
+      .bind(id, email.toLowerCase(), username.toLowerCase(), passwordHash, emailBlogUpdates, emailThoughtUpdates, emailAnnouncements, now, now)
       .run();
 
     return {
       id,
       email: email.toLowerCase(),
       username: username.toLowerCase(),
-      createdAt: new Date(now)
+      createdAt: new Date(now),
+      emailBlogUpdates,
+      emailThoughtUpdates,
+      emailAnnouncements
     };
   }
 
   async getUserByEmail(email: string): Promise<User | null> {
     const result = await this.db
-      .prepare('SELECT id, email, username, created_at FROM users WHERE email = ?')
+      .prepare('SELECT id, email, username, email_blog_updates, email_thought_updates, email_announcements, created_at FROM users WHERE email = ?')
       .bind(email.toLowerCase())
       .first();
 
@@ -40,13 +46,16 @@ export class AuthDB {
       id: result.id as string,
       email: result.email as string,
       username: result.username as string,
-      createdAt: new Date(result.created_at as number)
+      createdAt: new Date(result.created_at as number),
+      emailBlogUpdates: Boolean(result.email_blog_updates),
+      emailThoughtUpdates: Boolean(result.email_thought_updates),
+      emailAnnouncements: Boolean(result.email_announcements)
     };
   }
 
   async getUserByUsername(username: string): Promise<User | null> {
     const result = await this.db
-      .prepare('SELECT id, email, username, created_at FROM users WHERE username = ?')
+      .prepare('SELECT id, email, username, email_blog_updates, email_thought_updates, email_announcements, created_at FROM users WHERE username = ?')
       .bind(username.toLowerCase())
       .first();
 
@@ -56,13 +65,16 @@ export class AuthDB {
       id: result.id as string,
       email: result.email as string,
       username: result.username as string,
-      createdAt: new Date(result.created_at as number)
+      createdAt: new Date(result.created_at as number),
+      emailBlogUpdates: Boolean(result.email_blog_updates),
+      emailThoughtUpdates: Boolean(result.email_thought_updates),
+      emailAnnouncements: Boolean(result.email_announcements)
     };
   }
 
   async getUserById(id: string): Promise<User | null> {
     const result = await this.db
-      .prepare('SELECT id, email, username, created_at FROM users WHERE id = ?')
+      .prepare('SELECT id, email, username, email_blog_updates, email_thought_updates, email_announcements, created_at FROM users WHERE id = ?')
       .bind(id)
       .first();
 
@@ -72,7 +84,10 @@ export class AuthDB {
       id: result.id as string,
       email: result.email as string,
       username: result.username as string,
-      createdAt: new Date(result.created_at as number)
+      createdAt: new Date(result.created_at as number),
+      emailBlogUpdates: Boolean(result.email_blog_updates),
+      emailThoughtUpdates: Boolean(result.email_thought_updates),
+      emailAnnouncements: Boolean(result.email_announcements)
     };
   }
 

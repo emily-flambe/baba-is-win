@@ -3,6 +3,9 @@ export interface User {
   email: string;
   username: string;
   createdAt: Date;
+  emailBlogUpdates?: boolean;
+  emailThoughtUpdates?: boolean;
+  emailAnnouncements?: boolean;
 }
 
 export interface Session {
@@ -22,6 +25,9 @@ export interface AuthRequest {
   email?: string;
   username?: string;
   password: string;
+  emailBlogUpdates?: boolean;
+  emailThoughtUpdates?: boolean;
+  emailAnnouncements?: boolean;
 }
 
 export interface JWTPayload {
