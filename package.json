@@ -34,6 +34,8 @@
     "build": "astro build",
     "check": "astro build && tsc && wrangler deploy --dry-run",
     "deploy": "astro build && wrangler deploy",
+    "deploy:baba": "astro build && wrangler deploy --config wrangler.json",
+    "deploy:personal": "astro build && wrangler deploy --config wrangler.personal.json",
     "dev": "astro dev",
     "preview": "astro build && wrangler dev",
     "types": "wrangler types"
