@@ -3,6 +3,7 @@ import Logo from './Logo.astro'
 import Nav from './Nav.astro'
 
 const { current = '' } = Astro.props;
+const user = Astro.locals.user;
 ---
 
 <style>
@@ -22,6 +23,51 @@ const { current = '' } = Astro.props;
     padding-left: 1.7em;
   }
 
+  .auth-section {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    margin-left: auto;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-family: var(--font-family-sans);
+    font-size: 0.875rem;
+  }
+
+  .auth-links {
+    display: flex;
+    gap: 0.5em;
+  }
+
+  .auth-links a, .logout-btn {
+    padding: 0.5em 1em;
+    border-radius: 4px;
+    text-decoration: none;
+    font-family: var(--font-family-sans);
+    font-size: 0.875rem;
+    transition: opacity 0.2s;
+  }
+
+  .auth-links a {
+    background: var(--primary-color);
+    color: white;
+  }
+
+  .logout-btn {
+    background: none;
+    border: 1px solid var(--text-secondary);
+    color: var(--text-main);
+    cursor: pointer;
+  }
+
+  .auth-links a:hover, .logout-btn:hover {
+    opacity: 0.8;
+  }
+
   @media screen and (max-width: 520px) {
     header {
       padding: 2em 0;
@@ -32,6 +78,19 @@ const { current = '' } = Astro.props;
 <header>
   <Logo />
   <Nav current={current} />
+  <div class="auth-section">
+    {user ? (
+      <div class="user-info">
+        <span>@{user.username}</span>
+        <button class="logout-btn" id="logout-btn">Logout</button>
+      </div>
+    ) : (
+      <div class="auth-links">
+        <a href="/login">Login</a>
+        <a href="/signup">Sign Up</a>
+      </div>
+    )}
+  </div>
   <div class="social-icons">
     <a href="https://www.linkedin.com/in/emilycogsdill/" target="_blank" aria-label="LinkedIn">
     <svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -47,3 +106,17 @@ const { current = '' } = Astro.props;
 </svg>
   </div>
 </header>
+
+<script>
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.href = '/';
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
+    });
+  }
+</script>

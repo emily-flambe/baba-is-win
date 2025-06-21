@@ -10,5 +10,15 @@
   "observability": {
     "enabled": true
   },
-  "upload_source_maps": true
+  "upload_source_maps": true,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "baba-is-win-db",
+      "database_id": "YOUR_DATABASE_ID"
+    }
+  ],
+  "vars": {
+    "JWT_SECRET": "YOUR_JWT_SECRET"
+  }
 }
