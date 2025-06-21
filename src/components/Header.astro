@@ -17,6 +17,19 @@ const user = Astro.locals.user;
     width: 100%;
   }
 
+  .logo-title {
+    display: flex;
+    align-items: center;
+    gap: 5em;
+  }
+
+  .site-title {
+    font-size: 3em;
+    font-weight: bold;
+    color: var(--text-heading);
+    text-decoration: none;
+  }
+
   .social-icons {
     display: flex;
     gap: 0.5em;
@@ -76,7 +89,10 @@ const user = Astro.locals.user;
 </style>
 
 <header>
-  <Logo />
+  <div class="logo-title">
+    <Logo />
+    <a href="/" class="site-title">Emily Cogsdill?</a>
+  </div>
   <Nav current={current} />
   <div class="auth-section">
     {user ? (

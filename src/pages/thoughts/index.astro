@@ -25,8 +25,7 @@ const thoughtsByDate = allThoughts.reduce((acc, thought) => {
 
 <BaseLayout title={title} description={description} permalink={permalink} current="thoughts">
   <div class="container">
-    <h1>Thoughts</h1>
-    <p class="intro">Quick thoughts, observations, and shower thoughts. No comments, no likes, just vibes.</p>
+    <p class="intro">GET OFF MY LAWN</p>
     
     <div class="thoughts-container">
       {Object.entries(thoughtsByDate).map(([date, thoughts]) => (
@@ -34,8 +33,9 @@ const thoughtsByDate = allThoughts.reduce((acc, thought) => {
           <h2 class="date-header">{date}</h2>
           {thoughts.map((thought) => {
             const href = `/thoughts/${thought.file.split('/').pop().split('.').shift()}`;
+            const bgColor = thought.frontmatter.color || 'var(--background-body)';
             return (
-              <article class="thought-card">
+              <article class="thought-card" style={`background-color: ${bgColor};`}>
                 <div class="thought-content">
                   <p>{thought.frontmatter.content}</p>
                 </div>
@@ -88,7 +88,6 @@ const thoughtsByDate = allThoughts.reduce((acc, thought) => {
   }
 
   .thought-card {
-    background: var(--background-body);
     border: 1px solid var(--text-secondary);
     border-radius: 8px;
     padding: 1.5rem;
