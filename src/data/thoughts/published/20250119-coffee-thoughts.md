@@ -1,6 +1,7 @@
 ---
-content: Coffee number 3 today. At this point I'm basically a sophisticated water filter that turns coffee into code.
+content: I put on deodorant before getting on video calls. It's called having STANDARDS
 publishDate: 19 Jan 2025
 publishTime: 11:30 AM
-tags: ["coffee", "coding", "life"]
+tags: ["beauty", "career", "advice", "life"]
+color: "#1b2d1b"
 ---
