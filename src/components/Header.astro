@@ -29,6 +29,17 @@ const { current = '' } = Astro.props;
     text-decoration: none;
   }
 
+  .site-subheader {
+    font-size: 1.2em;
+    color: var(--text-muted);
+    margin-top: 0.5em;
+  }
+
+  .site-subheader a {
+    color: var(--text-accent);
+    text-decoration: underline;
+  }
+
   .social-icons {
     display: flex;
     gap: 0.5em;
@@ -45,7 +56,10 @@ const { current = '' } = Astro.props;
 <header>
   <div class="logo-title">
     <Logo />
-    <a href="/" class="site-title">Emily Cogsdill?</a>
+    <div>
+      <a href="/" class="site-title">Emily Cogsdill?</a>
+      <div class="site-subheader">is this site a <a href="https://en.wikipedia.org/wiki/Betteridge%27s_law_of_headlines" target="_blank">call for help</a>?</div>
+    </div>
   </div>
   <Nav current={current} />
   <div class="social-icons">
