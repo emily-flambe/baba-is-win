@@ -1,0 +1,101 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// This page is protected by middleware, so user will always exist
+const user = Astro.locals.user!;
+const title = `${user.username}'s Profile`;
+const description = 'User profile page';
+const permalink = `${Astro.site.href}profile`;
+---
+
+<BaseLayout title={title} description={description} permalink={permalink}>
+  <div class="profile-container">
+    <h1>Profile</h1>
+    
+    <div class="profile-info">
+      <div class="info-group">
+        <label>Username</label>
+        <p>@{user.username}</p>
+      </div>
+      
+      <div class="info-group">
+        <label>Email</label>
+        <p>{user.email}</p>
+      </div>
+      
+      <div class="info-group">
+        <label>Member Since</label>
+        <p>{new Date(user.createdAt).toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        })}</p>
+      </div>
+    </div>
+    
+    <div class="profile-actions">
+      <a href="/admin/new-thought" class="action-btn">Create New Thought</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .profile-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+  }
+
+  h1 {
+    margin-bottom: 2rem;
+    font-family: var(--font-family-sans);
+  }
+
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .info-group {
+    border-bottom: 1px solid var(--text-secondary);
+    padding-bottom: 1rem;
+  }
+
+  .info-group label {
+    display: block;
+    font-family: var(--font-family-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+  }
+
+  .info-group p {
+    margin: 0;
+    font-size: 1.125rem;
+  }
+
+  .profile-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-family: var(--font-family-sans);
+    font-weight: 600;
+    transition: opacity 0.2s;
+  }
+
+  .action-btn:hover {
+    opacity: 0.9;
+  }
+</style>
