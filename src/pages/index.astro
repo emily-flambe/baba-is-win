@@ -1,13 +1,43 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const title = 'My Astro Blog';
-const description = 'The perfect starter for your perfect blog.';
+const title = 'Emily Cogsdill';
+const description = 'One of the people of all time.';
 const permalink = Astro.site.href;
+
+// Get recent thoughts
+let allThoughts = await Astro.glob('../data/thoughts/published/*.md');
+allThoughts = allThoughts.sort((a, b) => {
+  const dateA = new Date(`${a.frontmatter.publishDate} ${a.frontmatter.publishTime}`);
+  const dateB = new Date(`${b.frontmatter.publishDate} ${b.frontmatter.publishTime}`);
+  return dateB.valueOf() - dateA.valueOf();
+});
+
+// Get only the 5 most recent thoughts
+const recentThoughts = allThoughts.slice(0, 5);
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink}>
   <div class="home-container">
+    <div class="thoughts-sidebar">
+      <h2><a href="/thoughts">Some sort of feed</a></h2>
+      <p class="thoughts-description">I do not have "SOCIAL MEDIA" this is what you get deal with it</p>
+      <div class="thoughts-list">
+        {recentThoughts.map((thought) => {
+          const bgColor = thought.frontmatter.color || 'var(--background-body)';
+          return (
+            <article class="thought-item" style={`background-color: ${bgColor};`}>
+              <p class="thought-content">{thought.frontmatter.content}</p>
+              <div class="thought-meta">
+                <time>{thought.frontmatter.publishDate}</time>
+                <time class="thought-time">{thought.frontmatter.publishTime}</time>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+      <a href="/thoughts" class="view-all">View all thoughts →</a>
+    </div>
     <div class="home-copy">
       <br><img class="baba-img" src="../assets/baba/BABA_char.webp" style="margin-right: 400px;"> <img class="baba-img" src="../assets/baba/flag_object.webp">
       <p>
@@ -23,34 +53,120 @@ const permalink = Astro.site.href;
       <p>
       <img class="baba-img" src="../assets/baba/BABA_char.webp" style="margin-left: 400px;"> <img class="baba-img" src="../assets/baba/flag_object.webp">
       </p>
-      <p style="margin-left: 175px;">This is a <a href="/blog">blog</a>.</p>
     </div>
 
-    <div class="hero-image-container">
-      <picture>
-        <source srcset="/assets/best-friends.jpeg" media="(min-width: 700px)">
-        <img class="hero-image" alt="Best friends" src="/assets/best-friends.jpeg" width="550" height="466">
-      </picture>
-      <p class="caption">
-        *~*~*~Best friends~*~*~*
-      </p>
-    </div>
+  </div>
+  
+  <div class="hero-image-container">
+    <picture>
+      <source srcset="/assets/best-friends.jpeg" media="(min-width: 700px)">
+      <img class="hero-image" alt="Best friends" src="/assets/best-friends.jpeg" width="550" height="466">
+    </picture>
+    <p class="caption">
+      *~*~*~Best friends~*~*~*
+    </p>
   </div>
 </BaseLayout>
 
 <style>
   .home-container {
-    align-items: center;
+    align-items: flex-start;
     display: flex;
-    flex: 1;
+    gap: 3rem;
     justify-content: center;
-    margin: 2em 0;
+    margin: 2em auto;
+    max-width: 1200px;
     min-height: 400px;
+  }
+
+  .thoughts-sidebar {
+    flex: 0 0 450px;
+    background: #2a2a2a;
+    border: 1px solid var(--text-secondary);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-left: -2rem;
+  }
+
+  .thoughts-sidebar h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+  }
+
+  .thoughts-sidebar h2 a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .thoughts-sidebar h2 a:hover {
+    text-decoration: underline;
+  }
+
+  .thoughts-description {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    margin-top: 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--text-secondary);
+    opacity: 0.5;
+  }
+
+  .thoughts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .thought-item {
+    border: 1px solid var(--text-secondary);
+    border-radius: 6px;
+    padding: 1rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .thought-item:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+
+  .thought-content {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .thought-meta {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+
+  .thought-time {
+    opacity: 0.7;
+  }
+
+  .view-all {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .view-all:hover {
+    text-decoration: underline;
   }
 
   .home-copy {
     flex: 1;
-    padding: 0 1em;
+    padding: 0 1em 0 5em;
+    margin-left: -50px;
   }
 
   .home-copy h1 {
@@ -64,8 +180,9 @@ const permalink = Astro.site.href;
   }
 
   .hero-image-container {
-    margin: 0 1em;
+    margin: 3em auto 2em;
     text-align: center;
+    max-width: 1200px;
   }
 
   .hero-image-container picture {
@@ -98,12 +215,19 @@ const permalink = Astro.site.href;
   @media (max-width: 800px) {
     .home-container {
       flex-direction: column;
+      gap: 2rem;
+    }
+
+    .thoughts-sidebar {
+      flex: 1;
+      width: 100%;
     }
 
     .home-copy {
       flex: 0;
       padding-bottom: 2em;
       text-align: center;
+      margin-left: 0;
     }
   }
 

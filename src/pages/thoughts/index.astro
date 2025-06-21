@@ -1,0 +1,158 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const title = 'Thoughts';
+const description = 'Quick thoughts and musings - my personal micro-blog.';
+const permalink = `${Astro.site.href}thoughts`;
+
+let allThoughts = await Astro.glob('../../data/thoughts/published/*.md');
+allThoughts = allThoughts.sort((a, b) => {
+  const dateA = new Date(`${a.frontmatter.publishDate} ${a.frontmatter.publishTime}`);
+  const dateB = new Date(`${b.frontmatter.publishDate} ${b.frontmatter.publishTime}`);
+  return dateB.valueOf() - dateA.valueOf();
+});
+
+// Group thoughts by date
+const thoughtsByDate = allThoughts.reduce((acc, thought) => {
+  const date = thought.frontmatter.publishDate;
+  if (!acc[date]) {
+    acc[date] = [];
+  }
+  acc[date].push(thought);
+  return acc;
+}, {});
+---
+
+<BaseLayout title={title} description={description} permalink={permalink} current="thoughts">
+  <div class="container">
+    <p class="intro">GET OFF MY LAWN</p>
+    
+    <div class="thoughts-container">
+      {Object.entries(thoughtsByDate).map(([date, thoughts]) => (
+        <div class="date-group">
+          <h2 class="date-header">{date}</h2>
+          {thoughts.map((thought) => {
+            const href = `/thoughts/${thought.file.split('/').pop().split('.').shift()}`;
+            const bgColor = thought.frontmatter.color || 'var(--background-body)';
+            return (
+              <article class="thought-card" style={`background-color: ${bgColor};`}>
+                <div class="thought-content">
+                  <p>{thought.frontmatter.content}</p>
+                </div>
+                <div class="thought-meta">
+                  <time>{thought.frontmatter.publishTime}</time>
+                  {thought.frontmatter.tags && thought.frontmatter.tags.length > 0 && (
+                    <span class="tags">
+                      {thought.frontmatter.tags.map((tag, index) => (
+                        <>
+                          {index > 0 && ' '}
+                          <span class="tag">#{tag}</span>
+                        </>
+                      ))}
+                    </span>
+                  )}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .intro {
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: 3rem;
+  }
+
+  .thoughts-container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .date-group {
+    margin-bottom: 3rem;
+  }
+
+  .date-header {
+    font-family: var(--font-family-sans);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-color);
+  }
+
+  .thought-card {
+    border: 1px solid var(--text-secondary);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.2s ease;
+  }
+
+  .thought-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .thought-content {
+    margin-bottom: 1rem;
+  }
+
+  .thought-content p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .thought-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .thought-meta time {
+    font-family: var(--font-family-sans);
+  }
+
+  .tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    color: var(--primary-color);
+    font-family: var(--font-family-sans);
+    font-size: 0.8rem;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+
+  .tag:hover {
+    opacity: 1;
+  }
+
+  @media (max-width: 600px) {
+    .thought-card {
+      padding: 1rem;
+    }
+
+    .thought-content p {
+      font-size: 1rem;
+    }
+
+    .thought-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  }
+</style>
