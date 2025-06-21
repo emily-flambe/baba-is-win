@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ImageCarousel from '../../components/ImageCarousel.astro';
 
 export async function getStaticPaths() {
   const thoughts = await Astro.glob('../../data/thoughts/published/*.md');
@@ -10,7 +11,7 @@ export async function getStaticPaths() {
 }
 
 const { frontmatter } = Astro.props.thought;
-const { content, publishDate, publishTime, tags } = frontmatter;
+const { content, publishDate, publishTime, tags, images } = frontmatter;
 const slug = Astro.props.thought.file.split('/').pop().split('.').shift();
 const permalink = `${Astro.site.href}thoughts/${slug}`;
 ---
@@ -23,6 +24,9 @@ const permalink = `${Astro.site.href}thoughts/${slug}`;
       </div>
       <div class="thought-body">
         <p>{content}</p>
+        {images && images.length > 0 && (
+          <ImageCarousel images={images} alt="Thought image" />
+        )}
       </div>
       {tags && tags.length > 0 && (
         <div class="thought-tags">
