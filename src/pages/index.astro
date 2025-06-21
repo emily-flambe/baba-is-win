@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { processSimpleMarkdown } from '../utils/simpleMarkdown.js';
 
 const title = 'Emily Cogsdill';
 const description = 'One of the people of all time.';
@@ -27,7 +28,7 @@ const recentThoughts = allThoughts.slice(0, 5);
           const bgColor = thought.frontmatter.color || 'var(--background-body)';
           return (
             <article class="thought-item" style={`background-color: ${bgColor};`}>
-              <p class="thought-content">{thought.frontmatter.content}</p>
+              <p class="thought-content" set:html={processSimpleMarkdown(thought.frontmatter.content)}></p>
               <div class="thought-meta">
                 <time>{thought.frontmatter.publishDate}</time>
                 <time class="thought-time">{thought.frontmatter.publishTime}</time>
@@ -134,9 +135,25 @@ const recentThoughts = allThoughts.slice(0, 5);
   }
 
   .thought-content {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     line-height: 1.4;
     margin: 0 0 0.5rem 0;
+  }
+  
+  .thought-content strong {
+    font-weight: 600;
+  }
+  
+  .thought-content em {
+    font-style: italic;
+  }
+  
+  .thought-content code {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.125rem 0.25rem;
+    border-radius: 3px;
+    font-size: 0.85em;
+    font-family: monospace;
   }
 
   .thought-meta {
