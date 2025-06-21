@@ -132,10 +132,11 @@ const permalink = `${Astro.site.href}login`;
   .auth-link a {
     color: var(--primary-color);
     text-decoration: none;
+    transition: color 0.2s ease;
   }
 
   .auth-link a:hover {
-    text-decoration: underline;
+    color: var(--text-main);
   }
 </style>
 
