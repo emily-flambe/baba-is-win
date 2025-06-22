@@ -18,7 +18,7 @@ There's a lot to unpack there!
 
 # Worst/Cursed/First Dates
 
-Society and nature equally abhor that a beautiful and enchanting temptress like me should survive - dare I say _thrive_ - living alone in a basement (sometimes even my mother's basement!) with her cats. I am the liberal woman the right wing media warned you about. Fallopian tubes cauterized out of existence. Sexually liberated, but not with YOU. _Hissss_
+Society and nature equally abhor that a beautiful and enchanting temptress like me should survive - dare I say _thrive_ - living alone in a basement (sometimes even my mother's basement!) with her cats. I am the modern, liberally indoctrinated woman the right wing media warned you about. Fallopian tubes cauterized out of existence. Sexually liberated, but not with YOU. _Hissss_
 
 But if I needed to cite a reason - and I do not need to cite any reason, because being a hashtag boss bitch means I do not need to explain my life choices to gooners on the internet - my first reason would be that the expected value of going out with anyone, let alone romantically, is less than that of vibecoding, or playing _Clair Obscur: Expedition 33_, or sitting on the couch and thinking about the concept of time. Are Claude and video games turning me into a shut-in? Does it matter?
 
