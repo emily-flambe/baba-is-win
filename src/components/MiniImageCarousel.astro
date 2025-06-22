@@ -19,11 +19,11 @@ const normalizedImages = images.map(img => {
 });
 ---
 
-<div class="carousel-container">
-  <div class="carousel" data-carousel>
-    <div class="carousel-track" data-carousel-track>
+<div class="mini-carousel-container">
+  <div class="mini-carousel" data-mini-carousel>
+    <div class="mini-carousel-track" data-mini-carousel-track>
       {normalizedImages.map((image, index) => (
-        <div class="carousel-slide" data-slide={index}>
+        <div class="mini-carousel-slide" data-mini-slide={index}>
           <img src={image.url} alt={`${alt} ${index + 1}`} loading="lazy" style={`object-position: center ${image.offset};`} />
         </div>
       ))}
@@ -31,22 +31,22 @@ const normalizedImages = images.map(img => {
     
     {images.length > 1 && (
       <>
-        <button class="carousel-btn carousel-btn-prev" data-carousel-btn="prev" aria-label="Previous image">
+        <button class="mini-carousel-btn mini-carousel-btn-prev" data-mini-carousel-btn="prev" aria-label="Previous image">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="15,18 9,12 15,6"></polyline>
           </svg>
         </button>
-        <button class="carousel-btn carousel-btn-next" data-carousel-btn="next" aria-label="Next image">
+        <button class="mini-carousel-btn mini-carousel-btn-next" data-mini-carousel-btn="next" aria-label="Next image">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="9,18 15,12 9,6"></polyline>
           </svg>
         </button>
         
-        <div class="carousel-indicators">
+        <div class="mini-carousel-indicators">
           {normalizedImages.map((_, index) => (
             <button 
-              class="carousel-indicator" 
-              data-carousel-indicator={index}
+              class="mini-carousel-indicator" 
+              data-mini-carousel-indicator={index}
               aria-label={`Go to image ${index + 1}`}
             ></button>
           ))}
@@ -57,25 +57,25 @@ const normalizedImages = images.map(img => {
 </div>
 
 <style>
-  .carousel-container {
-    margin: 1rem 0;
+  .mini-carousel-container {
+    margin: 0.5rem 0;
     max-width: 100%;
   }
 
-  .carousel {
+  .mini-carousel {
     position: relative;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: 4px;
     background: var(--background-body);
     border: 1px solid var(--text-secondary);
   }
 
-  .carousel-track {
+  .mini-carousel-track {
     display: flex;
     transition: transform 0.3s ease;
   }
 
-  .carousel-slide {
+  .mini-carousel-slide {
     min-width: 100%;
     display: flex;
     justify-content: center;
@@ -83,23 +83,22 @@ const normalizedImages = images.map(img => {
     background: var(--background-body);
   }
 
-  .carousel-slide img {
+  .mini-carousel-slide img {
     width: 100%;
-    max-width: 500px;
-    height: 300px;
+    height: 150px;
     object-fit: cover;
     display: block;
   }
 
-  .carousel-btn {
+  .mini-carousel-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     color: white;
     border: none;
-    width: 40px;
-    height: 40px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
@@ -109,36 +108,36 @@ const normalizedImages = images.map(img => {
     z-index: 2;
   }
 
-  .carousel-btn:hover {
-    background: rgba(0, 0, 0, 0.7);
+  .mini-carousel-btn:hover {
+    background: rgba(0, 0, 0, 0.8);
   }
 
-  .carousel-btn svg {
-    width: 20px;
-    height: 20px;
+  .mini-carousel-btn svg {
+    width: 14px;
+    height: 14px;
   }
 
-  .carousel-btn-prev {
-    left: 10px;
+  .mini-carousel-btn-prev {
+    left: 6px;
   }
 
-  .carousel-btn-next {
-    right: 10px;
+  .mini-carousel-btn-next {
+    right: 6px;
   }
 
-  .carousel-indicators {
+  .mini-carousel-indicators {
     position: absolute;
-    bottom: 15px;
+    bottom: 8px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 8px;
+    gap: 4px;
     z-index: 2;
   }
 
-  .carousel-indicator {
-    width: 8px;
-    height: 8px;
+  .mini-carousel-indicator {
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     border: none;
     background: rgba(255, 255, 255, 0.5);
@@ -146,42 +145,26 @@ const normalizedImages = images.map(img => {
     transition: all 0.2s ease;
   }
 
-  .carousel-indicator.active {
+  .mini-carousel-indicator.active {
     background: rgba(255, 255, 255, 0.9);
     transform: scale(1.2);
   }
 
-  .carousel-indicator:hover {
+  .mini-carousel-indicator:hover {
     background: rgba(255, 255, 255, 0.7);
-  }
-
-  @media (max-width: 600px) {
-    .carousel-slide img {
-      height: 250px;
-    }
-    
-    .carousel-btn {
-      width: 35px;
-      height: 35px;
-    }
-    
-    .carousel-btn svg {
-      width: 16px;
-      height: 16px;
-    }
   }
 </style>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const carousels = document.querySelectorAll('[data-carousel]');
+    const miniCarousels = document.querySelectorAll('[data-mini-carousel]');
     
-    carousels.forEach(carousel => {
-      const track = carousel.querySelector('[data-carousel-track]');
-      const slides = carousel.querySelectorAll('[data-slide]');
-      const prevBtn = carousel.querySelector('[data-carousel-btn="prev"]');
-      const nextBtn = carousel.querySelector('[data-carousel-btn="next"]');
-      const indicators = carousel.querySelectorAll('[data-carousel-indicator]');
+    miniCarousels.forEach(carousel => {
+      const track = carousel.querySelector('[data-mini-carousel-track]');
+      const slides = carousel.querySelectorAll('[data-mini-slide]');
+      const prevBtn = carousel.querySelector('[data-mini-carousel-btn="prev"]');
+      const nextBtn = carousel.querySelector('[data-mini-carousel-btn="next"]');
+      const indicators = carousel.querySelectorAll('[data-mini-carousel-indicator]');
       
       if (slides.length <= 1) return;
       
@@ -231,7 +214,7 @@ const normalizedImages = images.map(img => {
         endX = e.changedTouches[0].clientX;
         const diff = startX - endX;
         
-        if (Math.abs(diff) > 50) {
+        if (Math.abs(diff) > 30) {
           if (diff > 0) {
             nextSlide();
           } else {

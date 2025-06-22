@@ -23,7 +23,7 @@ const permalink = `${Astro.site.href}thoughts/${slug}`;
         <time>{publishDate} at {publishTime}</time>
       </div>
       <div class="thought-body">
-        <p>{content}</p>
+        <p set:html={content}></p>
         {images && images.length > 0 && (
           <ImageCarousel images={images} alt="Thought image" />
         )}

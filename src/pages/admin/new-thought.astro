@@ -40,11 +40,11 @@ const permalink = `${Astro.site.href}admin/new-thought`;
         <textarea 
           id="images" 
           name="images" 
-          rows="3" 
-          placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
+          rows="4" 
+          placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg&#10;/assets/blog/photo.jpg|30%&#10;/assets/blog/portrait.jpg|80%"
         ></textarea>
         <div class="form-hint">
-          Enter image URLs, one per line. Leave empty if no images.
+          Enter image URLs, one per line. Add |offset% to control vertical position (e.g., |20% for top, |80% for bottom). Default is 50% (center).
         </div>
       </div>
       
@@ -211,7 +211,16 @@ const permalink = `${Astro.site.href}admin/new-thought`;
     const tags = tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag);
     
     const imagesInput = (document.getElementById('images') as HTMLTextAreaElement).value;
-    const images = imagesInput.split('\n').map(url => url.trim()).filter(url => url);
+    const images = imagesInput.split('\n')
+      .map(line => line.trim())
+      .filter(line => line)
+      .map(line => {
+        if (line.includes('|')) {
+          const [url, offset] = line.split('|');
+          return { url: url.trim(), offset: offset.trim() };
+        }
+        return line;
+      });
     
     const now = new Date();
     const publishDate = now.toLocaleDateString('en-US', { 
