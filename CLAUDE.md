@@ -13,6 +13,10 @@ git worktree add worktrees/feature-branch -b feature-branch
 git worktree add worktrees/existing-branch existing-branch
 ```
 
+## Pull Request Guidelines
+
+When creating pull requests, always share the PR URL with the user immediately after creation to make it easy to click and view.
+
 ## Workflow Notes
 
 This demonstrates the worktree workflow in action - updated from the demo-worktree-workflow branch.
