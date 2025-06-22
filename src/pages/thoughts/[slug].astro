@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ImageCarousel from '../../components/ImageCarousel.astro';
+import { processSimpleMarkdown } from '../../utils/simpleMarkdown.js';
 
 export async function getStaticPaths() {
   const thoughts = await Astro.glob('../../data/thoughts/published/*.md');
@@ -23,7 +24,7 @@ const permalink = `${Astro.site.href}thoughts/${slug}`;
         <time>{publishDate} at {publishTime}</time>
       </div>
       <div class="thought-body">
-        <p set:html={content}></p>
+        <p set:html={processSimpleMarkdown(content)}></p>
         {images && images.length > 0 && (
           <ImageCarousel images={images} alt="Thought image" />
         )}
