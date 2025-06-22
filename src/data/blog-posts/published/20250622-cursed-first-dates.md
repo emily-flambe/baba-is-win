@@ -1,9 +1,9 @@
 ---
-title: Cursed First Dates (Screw You REDACTED)
+title: Worst/Cursed/First Dates (Screw You REDACTED)
 publishDate: 22 Jun 2025
-description: A collection of the most memorable (and regrettable) first date experiences, for better or worse
-thumbnail: /assets/blog/20250622-cursed-first-dates/mia.png
-tags: ["dating", "romance", "cringe", "memories", "stories"]
+description: Someday my prince will come
+thumbnail: /assets/blog/20250622-cursed-first-dates/mia.jpg
+tags: ["dating", "romance", "advice", "stories", "bossbitch"]
 ---
 
 # Screw You, REDACTED
