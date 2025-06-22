@@ -1,5 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/auth.css';
+
+export const prerender = false;
 
 const title = 'Login';
 const description = 'Login to your account';
@@ -8,7 +11,12 @@ const permalink = `${Astro.site.href}login`;
 
 <BaseLayout title={title} description={description} permalink={permalink}>
   <div class="auth-container">
-    <h1>Login</h1>
+    <p class="auth-link">
+      Don't have an account? <a href="/signup">Sign up</a>
+    </p>
+    
+    <h1 class="auth-header">Login</h1>
+    <p class="auth-subtitle">act like you've been here before!</p>
     <form id="login-form" class="auth-form">
       <div class="form-group">
         <label for="emailOrUsername">Email or Username</label>
@@ -36,111 +44,9 @@ const permalink = `${Astro.site.href}login`;
       
       <button type="submit" class="submit-btn">Login</button>
     </form>
-    
-    <p class="auth-link">
-      Don't have an account? <a href="/signup">Sign up</a>
-    </p>
   </div>
 </BaseLayout>
 
-<style>
-  .auth-container {
-    max-width: 400px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background: var(--background-body);
-    border: 1px solid var(--text-secondary);
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    opacity: 0.95;
-  }
-
-  h1 {
-    text-align: center;
-    margin-bottom: 2rem;
-    font-family: var(--font-family-sans);
-  }
-
-  .auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  label {
-    font-weight: 600;
-    font-family: var(--font-family-sans);
-    font-size: 0.875rem;
-  }
-
-  input {
-    padding: 0.75rem;
-    border: 1px solid var(--text-secondary);
-    border-radius: 4px;
-    font-size: 1rem;
-    background: var(--background-body);
-    color: var(--text-main);
-    transition: border-color 0.2s;
-  }
-
-  input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-  }
-
-  .error-message {
-    color: #dc3545;
-    font-size: 0.875rem;
-    display: none;
-  }
-
-  .error-message.show {
-    display: block;
-  }
-
-  .submit-btn {
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 4px;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-
-  .submit-btn:hover {
-    opacity: 0.9;
-  }
-
-  .submit-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-  .auth-link {
-    text-align: center;
-    margin-top: 1.5rem;
-    font-size: 0.875rem;
-  }
-
-  .auth-link a {
-    color: var(--primary-color);
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-
-  .auth-link a:hover {
-    color: var(--text-main);
-  }
-</style>
 
 <script>
   const form = document.getElementById('login-form') as HTMLFormElement;
