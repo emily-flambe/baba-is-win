@@ -146,6 +146,23 @@ const user = Astro.locals.user;
     opacity: 0.8;
   }
 
+  .user-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-family-sans);
+    font-size: 0.875rem;
+    color: var(--text-main);
+  }
+
+  .user-indicator {
+    padding: 0.25rem 0.5rem;
+    background: var(--background-body);
+    border: 1px solid var(--text-secondary);
+    border-radius: 4px;
+    font-size: 0.75rem;
+  }
+
   @media screen and (max-width: 520px) {
     header {
       padding: 2em 0;
@@ -184,19 +201,30 @@ const user = Astro.locals.user;
         </div>
       </button>
       <div class="kebab-dropdown" id="kebab-dropdown">
-        {user ? (
-          <>
-            <div class="user-badge">@{user.username}</div>
-            <a href="/profile">Profile</a>
-            <div class="divider"></div>
-            <button id="logout-btn">Logout</button>
-          </>
-        ) : (
-          <>
+        <!-- Server-side rendered menu -->
+        <div id="server-menu">
+          {user ? (
+            <>
+              <button id="logout-btn">Logout</button>
+            </>
+          ) : (
+            <>
+              <a href="/login">Login</a>
+              <a href="/signup">Sign Up</a>
+            </>
+          )}
+        </div>
+        <!-- Client-side menu (hidden by default, replaces server menu via JS) -->
+        <div id="client-menu" style="display: none;">
+          <div id="logged-in-menu" style="display: none;">
+            <div class="user-badge" id="client-user-badge"></div>
+            <button id="client-logout-btn">Logout</button>
+          </div>
+          <div id="logged-out-menu" style="display: none;">
             <a href="/login">Login</a>
             <a href="/signup">Sign Up</a>
-          </>
-        )}
+          </div>
+        </div>
       </div>
     </div>
 </svg>
@@ -204,7 +232,45 @@ const user = Astro.locals.user;
 </header>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Check authentication status via API
+    let currentUser = null;
+    try {
+      const response = await fetch('/api/auth/status');
+      const authStatus = await response.json();
+      currentUser = authStatus.user;
+      
+      // Update UI based on auth status
+      updateAuthUI(currentUser);
+    } catch (error) {
+      console.error('Failed to check auth status:', error);
+    }
+
+    function updateAuthUI(user) {
+      const serverMenu = document.getElementById('server-menu');
+      const clientMenu = document.getElementById('client-menu');
+      const clientUserBadge = document.getElementById('client-user-badge');
+      const loggedInMenu = document.getElementById('logged-in-menu');
+      const loggedOutMenu = document.getElementById('logged-out-menu');
+
+      if (user) {
+        // User is logged in
+        if (clientUserBadge) {
+          clientUserBadge.textContent = `@${user.username}`;
+        }
+        if (loggedInMenu) loggedInMenu.style.display = 'block';
+        if (loggedOutMenu) loggedOutMenu.style.display = 'none';
+      } else {
+        // User is not logged in
+        if (loggedInMenu) loggedInMenu.style.display = 'none';
+        if (loggedOutMenu) loggedOutMenu.style.display = 'block';
+      }
+
+      // Switch to client-side menu
+      if (serverMenu) serverMenu.style.display = 'none';
+      if (clientMenu) clientMenu.style.display = 'block';
+    }
+
     // Kebab menu toggle
     const kebabToggle = document.getElementById('kebab-toggle');
     const kebabDropdown = document.getElementById('kebab-dropdown');
@@ -230,17 +296,29 @@ const user = Astro.locals.user;
       });
     }
 
-    // Logout functionality
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', async () => {
-        try {
-          await fetch('/api/auth/logout', { method: 'POST' });
-          window.location.href = '/';
-        } catch (error) {
-          console.error('Logout error:', error);
-        }
-      });
+    // Logout functionality for both server and client buttons
+    function setupLogoutButton(buttonId) {
+      const logoutBtn = document.getElementById(buttonId);
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+          const confirmed = confirm('Are you sure you want to logout?');
+          if (!confirmed) return;
+          
+          try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            // Update UI immediately
+            updateAuthUI(null);
+            // Redirect to home
+            window.location.href = '/';
+          } catch (error) {
+            console.error('Logout error:', error);
+            alert('Failed to logout. Please try again.');
+          }
+        });
+      }
     }
+
+    setupLogoutButton('logout-btn');
+    setupLogoutButton('client-logout-btn');
   });
 </script>

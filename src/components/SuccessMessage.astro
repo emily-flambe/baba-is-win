@@ -1,0 +1,121 @@
+---
+// This component shows auth success messages
+---
+
+<div id="success-message" class="success-message hidden">
+  <div class="success-content">
+    <span class="success-icon">✓</span>
+    <span class="success-text" id="success-text"></span>
+    <button class="success-close" id="success-close">&times;</button>
+  </div>
+</div>
+
+<style>
+  .success-message {
+    position: fixed;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 0.375rem;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: all 0.3s ease;
+    font-family: var(--font-family-sans);
+    max-width: 90vw;
+    min-width: 300px;
+  }
+
+  .success-message.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(-1rem);
+  }
+
+  .success-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .success-icon {
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  .success-text {
+    flex: 1;
+    font-size: 0.875rem;
+  }
+
+  .success-close {
+    background: none;
+    border: none;
+    color: #155724;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 0.5rem;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+
+  .success-close:hover {
+    opacity: 1;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .success-message {
+      background: #1e4d2b;
+      color: #9ee59c;
+      border-color: #2d5a34;
+    }
+    
+    .success-close {
+      color: #9ee59c;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const successMessage = document.getElementById('success-message');
+    const successText = document.getElementById('success-text');
+    const successClose = document.getElementById('success-close');
+    
+    if (!successMessage || !successText || !successClose) return;
+    
+    let message = '';
+    
+    if (urlParams.get('login') === 'success') {
+      message = 'Successfully logged in! Welcome back.';
+    } else if (urlParams.get('signup') === 'success') {
+      message = 'Account created successfully! Welcome to the site.';
+    }
+    
+    if (message) {
+      successText.textContent = message;
+      successMessage.classList.remove('hidden');
+      
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        successMessage.classList.add('hidden');
+      }, 5000);
+      
+      // Clean up URL
+      const cleanUrl = new URL(window.location.href);
+      cleanUrl.searchParams.delete('login');
+      cleanUrl.searchParams.delete('signup');
+      window.history.replaceState({}, '', cleanUrl.toString());
+    }
+    
+    // Close button handler
+    successClose.addEventListener('click', () => {
+      successMessage.classList.add('hidden');
+    });
+  });
+</script>

@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
+export const prerender = false;
+
 // This page is protected by middleware, so user will always exist
 const user = Astro.locals.user!;
 const title = `${user.username}'s Profile`;

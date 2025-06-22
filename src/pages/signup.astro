@@ -146,8 +146,8 @@ const permalink = `${Astro.site.href}signup`;
         throw new Error(result.error || 'Signup failed');
       }
 
-      // Redirect to home or dashboard
-      window.location.href = '/';
+      // Redirect to home with success message
+      window.location.href = '/?signup=success';
     } catch (error) {
       errorMessage.textContent = error instanceof Error ? error.message : 'Signup failed';
       errorMessage.classList.add('show');

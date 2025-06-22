@@ -2,6 +2,8 @@ import type { APIRoute } from 'astro';
 import { verifyJWT } from '../../../lib/auth/jwt';
 import { AuthDB } from '../../../lib/auth/db';
 
+export const prerender = false;
+
 export const GET: APIRoute = async ({ request, locals }) => {
   try {
     const cookieHeader = request.headers.get('cookie');

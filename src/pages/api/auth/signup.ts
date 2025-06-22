@@ -3,6 +3,8 @@ import { AuthDB } from '../../../lib/auth/db';
 import { hashPassword } from '../../../lib/auth/password';
 import { createJWT } from '../../../lib/auth/jwt';
 
+export const prerender = false;
+
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const { email, username, password, emailBlogUpdates, emailThoughtUpdates, emailAnnouncements } = await request.json();

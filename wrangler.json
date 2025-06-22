@@ -15,10 +15,10 @@
     {
       "binding": "DB",
       "database_name": "baba-is-win-db",
-      "database_id": "YOUR_DATABASE_ID"
+      "database_id": "local-db"
     }
   ],
   "vars": {
-    "JWT_SECRET": "YOUR_JWT_SECRET"
+    "JWT_SECRET": "4wMCazSNE46y8A0hfPiZGuzj8MIr6tLn8A4ThokesBg="
   }
 }

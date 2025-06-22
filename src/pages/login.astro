@@ -82,9 +82,11 @@ const permalink = `${Astro.site.href}login`;
         throw new Error(result.error || 'Login failed');
       }
 
-      // Redirect to home or previous page
+      // Redirect to home or previous page with success message
       const redirectTo = new URLSearchParams(window.location.search).get('redirect') || '/';
-      window.location.href = redirectTo;
+      const redirectUrl = new URL(redirectTo, window.location.origin);
+      redirectUrl.searchParams.set('login', 'success');
+      window.location.href = redirectUrl.toString();
     } catch (error) {
       errorMessage.textContent = error instanceof Error ? error.message : 'Login failed';
       errorMessage.classList.add('show');

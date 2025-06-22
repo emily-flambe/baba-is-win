@@ -240,6 +240,161 @@ Consider implementing rate limiting for:
 - Registration attempts per IP
 - Password reset requests
 
+## User Management
+
+### Simple Commands (Recommended)
+
+The easiest way to manage users is with the simplified make commands that hide all the SQL complexity:
+
+#### Quick Overview
+```bash
+make help                          # Show all user management commands
+make stats                         # Quick statistics overview
+make users                         # List all users (formatted)
+make count                         # Count total users
+make recent                        # Show recent registrations
+make active                        # Show active sessions
+```
+
+#### Find & Inspect Users
+```bash
+make find Q=search_term            # Search by email or username
+make find Q=test                   # Find users with "test" in email/username
+make find Q=@gmail.com             # Find Gmail users
+make info EMAIL=user@example.com   # Get detailed user information
+```
+
+#### Manage Users
+```bash
+make test-user                     # Create test user (test@example.com/testuser/testpass123)
+make logout EMAIL=user@example.com # Force logout user (clear sessions)
+make delete EMAIL=user@example.com # Delete user (requires typing "DELETE" to confirm)
+```
+
+#### Maintenance
+```bash
+make cleanup                       # Remove expired sessions
+```
+
+### Advanced Commands (Direct SQL)
+
+For advanced operations, you can still use the direct wrangler commands:
+
+#### List All Users
+```bash
+# List all users with basic info
+npx wrangler d1 execute baba-is-win-db --local --command="SELECT id, email, username, created_at FROM users ORDER BY created_at DESC;"
+
+# Count total users
+npx wrangler d1 execute baba-is-win-db --local --command="SELECT COUNT(*) as total_users FROM users;"
+```
+
+#### View User Details
+```bash
+# Get user by email
+npx wrangler d1 execute baba-is-win-db --local --command="SELECT * FROM users WHERE email = 'user@example.com';"
+
+# Get user by username
+npx wrangler d1 execute baba-is-win-db --local --command="SELECT * FROM users WHERE username = 'username';"
+
+# Get user by ID
+npx wrangler d1 execute baba-is-win-db --local --command="SELECT * FROM users WHERE id = 'user_id';"
+```
+
+#### Delete Users
+```bash
+# Delete user by email (CASCADE will remove sessions and profile)
+npx wrangler d1 execute baba-is-win-db --local --command="DELETE FROM users WHERE email = 'user@example.com';"
+
+# Delete user by username
+npx wrangler d1 execute baba-is-win-db --local --command="DELETE FROM users WHERE username = 'username';"
+```
+
+#### Session Management
+```bash
+# View active sessions
+npx wrangler d1 execute baba-is-win-db --local --command="SELECT s.id, s.user_id, u.username, s.expires_at, s.created_at FROM sessions s JOIN users u ON s.user_id = u.id WHERE s.expires_at > unixepoch() ORDER BY s.created_at DESC;"
+
+# Clear expired sessions
+npx wrangler d1 execute baba-is-win-db --local --command="DELETE FROM sessions WHERE expires_at <= unixepoch();"
+
+# Force logout user (clear all their sessions)
+npx wrangler d1 execute baba-is-win-db --local --command="DELETE FROM sessions WHERE user_id = (SELECT id FROM users WHERE email = 'user@example.com');"
+```
+
+#### Database Maintenance
+```bash
+# View table sizes
+npx wrangler d1 execute baba-is-win-db --local --command="SELECT 
+  'users' as table_name, COUNT(*) as row_count FROM users
+UNION ALL
+SELECT 'sessions', COUNT(*) FROM sessions
+UNION ALL  
+SELECT 'user_profiles', COUNT(*) FROM user_profiles;"
+
+# Clean up old data
+npx wrangler d1 execute baba-is-win-db --local --command="DELETE FROM sessions WHERE expires_at <= unixepoch() - (7 * 24 * 60 * 60);"
+```
+
+### Production Database Commands
+
+For production database operations, add `--remote` flag:
+
+```bash
+# Production user list
+npx wrangler d1 execute baba-is-win-db --remote --command="SELECT id, email, username, created_at FROM users ORDER BY created_at DESC LIMIT 10;"
+
+# Production session cleanup
+npx wrangler d1 execute baba-is-win-db --remote --command="DELETE FROM sessions WHERE expires_at <= unixepoch();"
+```
+
+### Creating Test Users
+
+For development/testing, you can create users via the API:
+
+```bash
+# Create test user via curl
+curl -X POST http://localhost:4321/api/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@example.com",
+    "username": "testuser",
+    "password": "testpass123",
+    "emailBlogUpdates": false,
+    "emailThoughtUpdates": false,
+    "emailAnnouncements": false
+  }'
+```
+
+### User Analytics Queries
+
+```bash
+# User registration by date
+npx wrangler d1 execute baba-is-win-db --local --command="
+SELECT 
+  DATE(created_at, 'unixepoch') as registration_date,
+  COUNT(*) as new_users
+FROM users 
+GROUP BY DATE(created_at, 'unixepoch') 
+ORDER BY registration_date DESC 
+LIMIT 30;"
+
+# Active sessions count
+npx wrangler d1 execute baba-is-win-db --local --command="
+SELECT COUNT(*) as active_sessions 
+FROM sessions 
+WHERE expires_at > unixepoch();"
+
+# Users with email preferences
+npx wrangler d1 execute baba-is-win-db --local --command="
+SELECT 
+  SUM(CASE WHEN email_blog_updates = 1 THEN 1 ELSE 0 END) as blog_subscribers,
+  SUM(CASE WHEN email_thought_updates = 1 THEN 1 ELSE 0 END) as thought_subscribers,
+  SUM(CASE WHEN email_announcements = 1 THEN 1 ELSE 0 END) as announcement_subscribers,
+  COUNT(*) as total_users
+FROM users;"
+```
+
 ## Future Enhancements
 
 ### Planned Features
