@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/auth.css';
+
+export const prerender = false;
+
+const title = 'Login';
+const description = 'Login to your account';
+const permalink = `${Astro.site.href}login`;
+---
+
+<BaseLayout title={title} description={description} permalink={permalink}>
+  <div class="auth-container">
+    <p class="auth-link">
+      Don't have an account? <a href="/signup">Sign up</a>
+    </p>
+    
+    <h1 class="auth-header">Login</h1>
+    <p class="auth-subtitle">act like you've been here before!</p>
+    <form id="login-form" class="auth-form">
+      <div class="form-group">
+        <label for="emailOrUsername">Email or Username</label>
+        <input 
+          type="text" 
+          id="emailOrUsername" 
+          name="emailOrUsername" 
+          required
+          autocomplete="username"
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          required
+          autocomplete="current-password"
+        />
+      </div>
+      
+      <div id="error-message" class="error-message"></div>
+      
+      <button type="submit" class="submit-btn">Login</button>
+    </form>
+  </div>
+</BaseLayout>
+
+
+<script>
+  const form = document.getElementById('login-form') as HTMLFormElement;
+  const errorMessage = document.getElementById('error-message') as HTMLDivElement;
+  const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    errorMessage.textContent = '';
+    errorMessage.classList.remove('show');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Logging in...';
+
+    const formData = new FormData(form);
+    const data = {
+      emailOrUsername: formData.get('emailOrUsername'),
+      password: formData.get('password')
+    };
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Login failed');
+      }
+
+      // Redirect to home or previous page with success message
+      const redirectTo = new URLSearchParams(window.location.search).get('redirect') || '/';
+      const redirectUrl = new URL(redirectTo, window.location.origin);
+      redirectUrl.searchParams.set('login', 'success');
+      window.location.href = redirectUrl.toString();
+    } catch (error) {
+      errorMessage.textContent = error instanceof Error ? error.message : 'Login failed';
+      errorMessage.classList.add('show');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Login';
+    }
+  });
+</script>

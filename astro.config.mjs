@@ -13,9 +13,6 @@ export default defineConfig({
       enabled: true,
       configPath: 'wrangler.json',
       experimentalJsonConfig: true,
-      persist: {
-        path: './.cache/wrangler/v3'
-      },
     },
   }),
   site: 'https://astro-blog-template.netlify.app',

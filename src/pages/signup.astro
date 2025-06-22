@@ -1,0 +1,159 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/auth.css';
+
+export const prerender = false;
+
+const title = 'Sign Up';
+const description = 'Create a new account';
+const permalink = `${Astro.site.href}signup`;
+---
+
+<BaseLayout title={title} description={description} permalink={permalink}>
+  <div class="auth-container">
+    <p class="auth-link">
+      Already have an account? <a href="/login">Login</a>
+    </p>
+    
+    <div class="header-with-help">
+      <h1 class="auth-header">Sign Up</h1>
+      <div class="help-icon" id="help-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="help-tooltip" id="help-tooltip">
+          Signing up allows you to engage with content on the site, and really isn't useful at all. You probably should not do it.
+          <br><br>
+          <a href="https://github.com/emily-flambe/baba-is-win/blob/main/docs/authentication.md" target="_blank">Learn more about authentication →</a>
+        </div>
+      </div>
+    </div>
+    <p class="auth-subtitle">you really don't have to do this.</p>
+    <form id="signup-form" class="auth-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          required
+          autocomplete="email"
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username" 
+          required
+          autocomplete="username"
+          pattern="[a-zA-Z0-9_\\-]+"
+          title="Username can only contain letters, numbers, underscores, and hyphens"
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          required
+          autocomplete="new-password"
+          minlength="8"
+        />
+        <small class="help-text">At least 8 characters</small>
+      </div>
+      
+      <div class="form-group">
+        <label class="section-label">Opt in to email updates (why????):</label>
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              id="emailBlogUpdates" 
+              name="emailBlogUpdates"
+            />
+            <span class="checkbox-text">New blog posts</span>
+          </label>
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              id="emailThoughtUpdates" 
+              name="emailThoughtUpdates"
+            />
+            <span class="checkbox-text">New "thoughts" (???)</span>
+          </label>
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              id="emailAnnouncements" 
+              name="emailAnnouncements"
+            />
+            <span class="checkbox-text">Announcements</span>
+          </label>
+        </div>
+        <small class="help-text">You can change these preferences later. Don't panic.</small>
+      </div>
+      
+      <div id="error-message" class="error-message"></div>
+      
+      <button type="submit" class="submit-btn">Create Account</button>
+    </form>
+  </div>
+</BaseLayout>
+
+
+<script>
+  const form = document.getElementById('signup-form') as HTMLFormElement;
+  const errorMessage = document.getElementById('error-message') as HTMLDivElement;
+  const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    errorMessage.textContent = '';
+    errorMessage.classList.remove('show');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Creating account...';
+
+    const formData = new FormData(form);
+    const data = {
+      email: formData.get('email'),
+      username: formData.get('username'),
+      password: formData.get('password'),
+      emailBlogUpdates: formData.get('emailBlogUpdates') === 'on',
+      emailThoughtUpdates: formData.get('emailThoughtUpdates') === 'on',
+      emailAnnouncements: formData.get('emailAnnouncements') === 'on'
+    };
+
+    try {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Signup failed');
+      }
+
+      // Redirect to home with success message
+      window.location.href = '/?signup=success';
+    } catch (error) {
+      errorMessage.textContent = error instanceof Error ? error.message : 'Signup failed';
+      errorMessage.classList.add('show');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Create Account';
+    }
+  });
+</script>
