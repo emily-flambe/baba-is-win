@@ -28,3 +28,4 @@ pnpm-debug.log*
 .dev.vars
 auth-worktree/
 thoughts-dev/
+.cache/
