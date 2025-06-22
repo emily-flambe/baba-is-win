@@ -34,7 +34,7 @@ Curtis was still married when we went on our dates. Sure, there was a whole stor
 
 Cute dog, though.
 
-# Changed his Profile to "Ethical Nonmonogamy" (rude)
+# Changed his Profile to "Ethical Non-monogamy" (rude)
 
 Andrew and I had a couple of decent casual dates. Neither of them led anywhere exciting, but we had good conversations, and I guess you could say I remained intrigued. His teeth were a bit off-putting, though. Maybe I'm too picky, but there's a lot of games I could be playing instead of hanging out with weird teeth.
 
