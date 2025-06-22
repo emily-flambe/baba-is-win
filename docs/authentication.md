@@ -33,6 +33,9 @@ CREATE TABLE users (
   email TEXT UNIQUE NOT NULL,
   username TEXT UNIQUE NOT NULL,
   password_hash TEXT NOT NULL,
+  email_blog_updates BOOLEAN DEFAULT FALSE,
+  email_thought_updates BOOLEAN DEFAULT FALSE,
+  email_announcements BOOLEAN DEFAULT FALSE,
   created_at INTEGER NOT NULL DEFAULT (unixepoch()),
   updated_at INTEGER NOT NULL DEFAULT (unixepoch())
 );
@@ -70,7 +73,10 @@ Register a new user account.
 {
   "email": "user@example.com",
   "username": "username",
-  "password": "password123"
+  "password": "password123",
+  "emailBlogUpdates": false,
+  "emailThoughtUpdates": false,
+  "emailAnnouncements": false
 }
 ```
 
@@ -201,19 +207,25 @@ Update `wrangler.json`:
     {
       "binding": "DB",
       "database_name": "baba-is-win-db",
-      "database_id": "your_database_id"
+      "database_id": "db4b6f95-ed48-4723-8c77-ee3a028d117e"
     }
   ],
   "vars": {
-    "JWT_SECRET": "your_jwt_secret"
+    "JWT_SECRET": "4wMCazSNE46y8A0hfPiZGuzj8MIr6tLn8A4ThokesBg="
   }
 }
 ```
 
 ### 3. Local Development
 ```bash
-npm run dev -- --port 4322
+# Full development with D1 database (recommended)
+npm run dev
+
+# UI-only development without database
+npm run dev:astro
 ```
+
+The development server runs on http://localhost:8787 when using `npm run dev`.
 
 ## Security Considerations
 
@@ -354,7 +366,7 @@ For development/testing, you can create users via the API:
 
 ```bash
 # Create test user via curl
-curl -X POST http://localhost:4321/api/auth/signup \
+curl -X POST http://localhost:8787/api/auth/signup \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",

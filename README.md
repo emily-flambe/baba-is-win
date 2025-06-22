@@ -63,11 +63,15 @@ src/
 
 | Command           | Action                                       |
 | :---------------- | :------------------------------------------- |
-| `npm run dev`     | Start local development server               |
+| `npm run dev`     | Start development server with D1 database    |
+| `npm run dev:astro` | UI-only development (no database)         |
 | `npm run build`   | Build production site to `./dist/`          |
 | `npm run preview` | Preview production build locally             |
+| `npm run deploy`  | Build and deploy to Cloudflare              |
 | `make dev-clean`  | Clean restart with database migrations      |
 | `make help`       | Show user management commands                |
+
+**Note**: Always use `npm run dev` for full-stack development with authentication features. The development server runs on http://localhost:8787.
 
 ## 👥 User Management (Admin)
 

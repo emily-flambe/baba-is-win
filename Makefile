@@ -8,9 +8,10 @@
 
 # Kill all running dev servers
 kill-servers:
-	@echo "Killing all astro dev processes..."
-	@pkill -f "astro dev" || true
+	@echo "Killing all dev server processes..."
+	@pkill -f "wrangler" || true
 	@pkill -f "workerd" || true
+	@pkill -f "astro" || true
 	@sleep 2
 
 # Check if database tables exist
@@ -68,7 +69,7 @@ delete:
 # Create test user
 test-user:
 	@echo "🧪 Creating test user..."
-	@curl -s -X POST http://localhost:4321/api/auth/signup \
+	@curl -s -X POST http://localhost:8787/api/auth/signup \
 		-H "Content-Type: application/json" \
 		-d '{"email":"test@example.com","username":"testuser","password":"testpass123","emailBlogUpdates":false,"emailThoughtUpdates":false,"emailAnnouncements":false}' \
 		| grep -q '"user"' && echo "✅ Test user created (test@example.com / testuser / testpass123)" || echo "❌ Failed to create test user"

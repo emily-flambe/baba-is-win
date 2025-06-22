@@ -40,11 +40,11 @@ Add the secret to `wrangler.json`:
 
 ### 4. Run Database Migrations
 ```bash
-# Apply the schema to your D1 database
-wrangler d1 execute baba-is-win-db --local --file=./migrations/0001_create_auth_tables.sql
+# Apply all migrations to your local D1 database
+wrangler d1 migrations apply baba-is-win-db --local
 
 # For production
-wrangler d1 execute baba-is-win-db --file=./migrations/0001_create_auth_tables.sql
+wrangler d1 migrations apply baba-is-win-db --remote
 ```
 
 ### 5. Test Locally
@@ -54,14 +54,15 @@ npm run dev
 
 ## Features Implemented
 
-- ✅ User registration with email and username
-- ✅ Secure password hashing with Argon2
+- ✅ User registration with email, username, and email preferences
+- ✅ Secure password hashing with PBKDF2 (Web Crypto API)
 - ✅ JWT-based authentication
 - ✅ Protected routes middleware
 - ✅ Login/Signup pages
 - ✅ User profile page
 - ✅ Logout functionality
 - ✅ Auth state in header
+- ✅ Email subscription preferences (blog updates, thoughts, announcements)
 
 ## API Endpoints
 
@@ -84,7 +85,8 @@ To associate thoughts with users:
 
 ## Security Notes
 
-- Passwords are hashed using Argon2
+- Passwords are hashed using PBKDF2 with 100,000 iterations
 - JWTs expire after 7 days
-- Cookies are HttpOnly, Secure, and SameSite
+- Cookies are HttpOnly, Secure, and SameSite=Strict
 - Protected routes require valid authentication
+- All database queries use parameterized statements

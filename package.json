@@ -34,14 +34,16 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250204.0",
-    "wrangler": "^3.111.0"
+    "wrangler": "^4.20.5"
   },
   "scripts": {
     "astro": "astro",
     "build": "astro build",
     "check": "astro build && tsc && wrangler deploy --dry-run",
     "deploy": "astro build && wrangler deploy",
-    "dev": "astro dev",
+    "dev:astro": "astro dev",
+    "dev": "astro build && wrangler dev",
+    "dev:pages": "astro build && wrangler pages dev dist/ --compatibility-date=2024-11-01 --compatibility-flags nodejs_compat --d1 DB=baba-is-win-db",
     "preview": "astro build && wrangler dev",
     "types": "wrangler types"
   },
