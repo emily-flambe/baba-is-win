@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ImageCarousel from '../../components/ImageCarousel.astro';
 import { processSimpleMarkdown } from '../../utils/simpleMarkdown.js';
 
 const title = 'Thoughts';
@@ -39,6 +40,9 @@ const thoughtsByDate = allThoughts.reduce((acc, thought) => {
               <article class="thought-card" style={`background-color: ${bgColor};`}>
                 <div class="thought-content">
                   <p set:html={processSimpleMarkdown(thought.frontmatter.content)}></p>
+                  {thought.frontmatter.images && thought.frontmatter.images.length > 0 && (
+                    <ImageCarousel images={thought.frontmatter.images} alt="Thought image" />
+                  )}
                 </div>
                 <div class="thought-meta">
                   <time>{thought.frontmatter.publishTime}</time>

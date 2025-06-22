@@ -20,6 +20,16 @@ export default defineConfig({
   }),
   site: 'https://astro-blog-template.netlify.app',
   integrations: [mdx(), svelte()],
+  devToolbar: {
+    enabled: false
+  },
+  vite: {
+    server: {
+      fs: {
+        allow: ['..']
+      }
+    }
+  },
   markdown: {
     shikiConfig: {
       theme: 'nord',

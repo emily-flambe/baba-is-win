@@ -35,6 +35,19 @@ const permalink = `${Astro.site.href}admin/new-thought`;
         />
       </div>
       
+      <div class="form-group">
+        <label for="images">Images (URLs, one per line)</label>
+        <textarea 
+          id="images" 
+          name="images" 
+          rows="4" 
+          placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg&#10;/assets/blog/photo.jpg|30%&#10;/assets/blog/portrait.jpg|80%"
+        ></textarea>
+        <div class="form-hint">
+          Enter image URLs, one per line. Add |offset% to control vertical position (e.g., |20% for top, |80% for bottom). Default is 50% (center).
+        </div>
+      </div>
+      
       <button type="submit">Generate Markdown</button>
     </form>
     
@@ -165,6 +178,13 @@ const permalink = `${Astro.site.href}admin/new-thought`;
     padding: 0.2rem 0.4rem;
     border-radius: 3px;
   }
+
+  .form-hint {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+    font-family: var(--font-family-sans);
+  }
 </style>
 
 <script>
@@ -190,6 +210,18 @@ const permalink = `${Astro.site.href}admin/new-thought`;
     const tagsInput = (document.getElementById('tags') as HTMLInputElement).value;
     const tags = tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag);
     
+    const imagesInput = (document.getElementById('images') as HTMLTextAreaElement).value;
+    const images = imagesInput.split('\n')
+      .map(line => line.trim())
+      .filter(line => line)
+      .map(line => {
+        if (line.includes('|')) {
+          const [url, offset] = line.split('|');
+          return { url: url.trim(), offset: offset.trim() };
+        }
+        return line;
+      });
+    
     const now = new Date();
     const publishDate = now.toLocaleDateString('en-US', { 
       day: 'numeric', 
@@ -207,6 +239,7 @@ content: ${content}
 publishDate: ${publishDate}
 publishTime: ${publishTime}
 tags: ${JSON.stringify(tags)}
+images: ${JSON.stringify(images)}
 ---`;
     
     if (markdownOutput) {
