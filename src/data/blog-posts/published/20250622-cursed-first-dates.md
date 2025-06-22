@@ -38,11 +38,11 @@ Cute dog, though.
 
 Andrew and I had a couple of decent casual dates. Neither of them led anywhere exciting, but we had good conversations, and I guess you could say I remained intrigued. His teeth were a bit off-putting, though. Maybe I'm too picky, but there's a lot of games I could be playing instead of hanging out with weird teeth.
 
-After our second date, Andrew updated his relationship preferences on Bumble to say he was looking for ethical non-monogamy. Of course I was regularly checking for just these sorts of updates because **people do this kind of shit.**
+After our second date, Andrew updated his relationship preferences on Bumble to say he was looking for ethical non-monogamy. Of course I was regularly checking for just these sorts of updates because **people do shit like this!**
 
 Paranoia vindicated, I asked him what the change was about. He said he would call me to explain. He did not.
 
-# Did not disclose ex-wife and two children
+# Did not disclose existence of children (rude!)
 
 My profile clearly states that I do not have and do not want children. Jack, did you really think I would somehow be okay with it if the children were teenagers?
 
