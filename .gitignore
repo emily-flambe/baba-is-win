@@ -29,3 +29,6 @@ pnpm-debug.log*
 auth-worktree/
 thoughts-dev/
 .cache/
+
+# worktrees
+worktrees/
