@@ -1,10 +1,18 @@
-.PHONY: dev-clean dev-restart check-db kill-servers migrate-db
+.PHONY: astro dev dev-clean dev-restart check-db kill-servers migrate-db
 .PHONY: users count info delete test-user find logout recent active cleanup stats
 .PHONY: users-list-prod sessions-cleanup-prod db-stats-prod
 .PHONY: help help-admin
 
 # Development Commands
 # ====================
+
+# Start Astro dev server with hot reload
+astro:
+	npm run dev:astro
+
+# Start Wrangler dev server (production-like)
+dev:
+	npm run dev
 
 # Kill all running dev servers
 kill-servers:
