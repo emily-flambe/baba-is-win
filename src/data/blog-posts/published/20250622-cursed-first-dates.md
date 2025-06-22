@@ -8,7 +8,7 @@ tags: ["dating", "romance", "advice", "stories", "bossbitch"]
 
 # Screw You, REDACTED
 
-As the USA enters war in Iran, I cannot help but remember REDACTED, a charming and attractive startup CEO with a PhD in physics who, after several drinks on a first date in October 2024, disclosed to me that although he was excited to vote for Joe Biden, now that the Democrats had replaced him with Kamala, he "wasn't sure what [he was] going to do."
+As the USA enters war in Iran, I cannot help but remember REDACTED, a charming and attractive startup CEO with a PhD in physics who, after several drinks on a first date in October 2024, disclosed to me that although he was excited to vote for Joe Biden, now that the Democrats had replaced him with Kamala, he "wasn't sure what he was going to do."
 
 REDACTED is an Iranian immigrant whose family still lives in Iran.
 
