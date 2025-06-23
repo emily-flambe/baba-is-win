@@ -156,17 +156,19 @@ const normalizedImages = images.map(img => {
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  function initializeMiniCarousels() {
     const miniCarousels = document.querySelectorAll('[data-mini-carousel]');
     
     miniCarousels.forEach(carousel => {
+      if (carousel.dataset.initialized === 'true') return;
+      
       const track = carousel.querySelector('[data-mini-carousel-track]');
       const slides = carousel.querySelectorAll('[data-mini-slide]');
       const prevBtn = carousel.querySelector('[data-mini-carousel-btn="prev"]');
       const nextBtn = carousel.querySelector('[data-mini-carousel-btn="next"]');
       const indicators = carousel.querySelectorAll('[data-mini-carousel-indicator]');
       
-      if (slides.length <= 1) return;
+      if (!track || slides.length <= 1) return;
       
       let currentSlide = 0;
       
@@ -222,6 +224,16 @@ const normalizedImages = images.map(img => {
           }
         }
       });
+      
+      carousel.dataset.initialized = 'true';
     });
-  });
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeMiniCarousels);
+  } else {
+    initializeMiniCarousels();
+  }
+  
+  setTimeout(initializeMiniCarousels, 100);
 </script>

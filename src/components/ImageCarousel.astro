@@ -173,17 +173,19 @@ const normalizedImages = images.map(img => {
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  function initializeCarousels() {
     const carousels = document.querySelectorAll('[data-carousel]');
     
     carousels.forEach(carousel => {
+      if (carousel.dataset.initialized === 'true') return;
+      
       const track = carousel.querySelector('[data-carousel-track]');
       const slides = carousel.querySelectorAll('[data-slide]');
       const prevBtn = carousel.querySelector('[data-carousel-btn="prev"]');
       const nextBtn = carousel.querySelector('[data-carousel-btn="next"]');
       const indicators = carousel.querySelectorAll('[data-carousel-indicator]');
       
-      if (slides.length <= 1) return;
+      if (!track || slides.length <= 1) return;
       
       let currentSlide = 0;
       
@@ -239,6 +241,16 @@ const normalizedImages = images.map(img => {
           }
         }
       });
+      
+      carousel.dataset.initialized = 'true';
     });
-  });
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeCarousels);
+  } else {
+    initializeCarousels();
+  }
+  
+  setTimeout(initializeCarousels, 100);
 </script>
