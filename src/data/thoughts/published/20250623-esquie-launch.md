@@ -8,6 +8,6 @@ publishTime: "8:57 PM"
 tags: ["esquie", "brainrot", "e33"]
 color: "#4a5568"
 images: [
-  "assets/thoughts/bonjour.png",
+  { "url": "/assets/thoughts/bonjour.png" },
 ]
 ---
