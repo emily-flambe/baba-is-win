@@ -1,8 +1,8 @@
 ---
 content: |
-    I'm going to start referring to my ex-boyfriends as "legacy romance"
+    I don't have ex-boyfriends. I have <em>legacy romance</em> ❤️
 publishDate: 24 Jun 2025
 publishTime: "7:16 PM"
-tags: ["tag1", "tag2", "tag3"]
-color: "#4a5568"
+tags: ["love", "romance", "dating", "advice", "inspiration"]
+color: "#722f37"
 ---
