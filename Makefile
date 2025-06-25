@@ -1,7 +1,7 @@
 .PHONY: astro dev dev-clean dev-restart check-db kill-servers migrate-db
 .PHONY: users count info delete test-user find logout recent active cleanup stats
 .PHONY: users-list-prod sessions-cleanup-prod db-stats-prod
-.PHONY: help help-admin
+.PHONY: help help-admin thought
 
 # Development Commands
 # ====================
@@ -41,6 +41,10 @@ dev-restart: kill-servers check-db
 dev-clean: kill-servers migrate-db check-db
 	@echo "Starting fresh dev server with clean database..."
 	npm run dev
+
+# Create a new thought markdown file
+thought:
+	@test -n "$(SLUG)" && npm run make-thought $(SLUG) || npm run make-thought
 
 # User Management Commands
 # ========================
@@ -220,6 +224,9 @@ help:
 	@echo "  make logout EMAIL=...   - Force logout user"
 	@echo "  make delete EMAIL=...   - Delete user (requires typing DELETE)"
 	@echo
+	@echo "💭 Content:"
+	@echo "  make thought            - Create new thought (optional: SLUG=my-thought)"
+	@echo
 	@echo "🧹 Maintenance:"
 	@echo "  make cleanup            - Remove expired sessions"
 	@echo "  make dev-clean          - Restart with fresh database"
@@ -228,6 +235,7 @@ help:
 	@echo "  make find Q=test"
 	@echo "  make info EMAIL=test@example.com"
 	@echo "  make delete EMAIL=spam@example.com"
+	@echo "  make thought SLUG=my-new-idea"
 
 # Show all admin commands (detailed)
 help-admin:
