@@ -194,7 +194,7 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
     <Logo />
     <div>
       <a href="/" class="site-title">Emily Cogsdill</a>
-      <div class="site-subheader" set:html={subtitleHTML}></div>
+      <div class="site-subheader" id="subtitle" set:html={subtitleHTML}></div>
     </div>
   </div>
   <Nav current={current} />
@@ -326,5 +326,33 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
 
     setupLogoutButton('logout-btn');
     setupLogoutButton('client-logout-btn');
+
+    // Client-side subtitle randomization
+    function randomizeSubtitle() {
+      const subtitles = {JSON.stringify(subtitlesData.subtitles)};
+      const randomIndex = Math.floor(Math.random() * subtitles.length);
+      const selectedSubtitle = subtitles[randomIndex];
+      
+      // Render subtitle with links
+      function renderSubtitleHTML(subtitle) {
+        let html = subtitle.text;
+        
+        // Replace link placeholders
+        subtitle.links.forEach(link => {
+          const linkHTML = `<a href="${link.url}"${link.target ? ` target="${link.target}"` : ''}>${link.text}</a>`;
+          html = html.replace(link.text, linkHTML);
+        });
+        
+        return html;
+      }
+      
+      const subtitleElement = document.getElementById('subtitle');
+      if (subtitleElement) {
+        subtitleElement.innerHTML = renderSubtitleHTML(selectedSubtitle);
+      }
+    }
+
+    // Randomize subtitle on page load
+    randomizeSubtitle();
   });
 </script>
