@@ -1,9 +1,29 @@
 ---
 import Logo from './Logo.astro'
 import Nav from './Nav.astro'
+import subtitlesData from '../data/subtitles.json'
 
 const { current = '' } = Astro.props;
 const user = Astro.locals.user;
+
+// Select a random subtitle
+const randomIndex = Math.floor(Math.random() * subtitlesData.subtitles.length);
+const selectedSubtitle = subtitlesData.subtitles[randomIndex];
+
+// Function to render subtitle with links
+function renderSubtitleHTML(subtitle) {
+  let html = subtitle.text;
+  
+  // Replace link placeholders
+  subtitle.links.forEach(link => {
+    const linkHTML = `<a href="${link.url}"${link.target ? ` target="${link.target}"` : ''}>${link.text}</a>`;
+    html = html.replace(link.text, linkHTML);
+  });
+  
+  return html;
+}
+
+const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
 ---
 
 <style>
@@ -175,7 +195,7 @@ const user = Astro.locals.user;
     <Logo />
     <div>
       <a href="/" class="site-title">Emily Cogsdill</a>
-      <div class="site-subheader">is this site a <a href="https://en.wikipedia.org/wiki/Betteridge%27s_law_of_headlines" target="_blank">cry for help</a>?</div>
+      <div class="site-subheader" set:html={subtitleHTML}></div>
     </div>
   </div>
   <Nav current={current} />
