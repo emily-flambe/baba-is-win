@@ -1,6 +1,6 @@
 # Some sort of personal site
 
-Emily's personal blog and portfolio website, kind of? Features a collection of blog posts, quick thoughts, and personal musings. Due to its sensitive nature, it is recommended for consumption by anyone.
+Emily's personal blog and portfolio website, kind of? Features a collection of blog posts, quick thoughts, and personal musings. Due to its sensitive nature, it is not recommended for anyone.
 
 ## 🌟 What is this?
 
