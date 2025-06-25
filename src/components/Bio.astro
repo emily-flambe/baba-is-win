@@ -1,29 +1,57 @@
-<div>
-  <img src="/assets/profile-pic.png" alt="The Authoress">
-  <p>
-    Hi, I'm <strong>Emily</strong>. I'm a software engineer just trying to have a good time. GOD FORBID.
-    Check me out on <a href="https://www.github.com/emily-flambe" target="_blank">GitHub</a>  (super serious),
-    <a href="https://www.linkedin.com/in/emilycogsdill" target="_blank">LinkedIn</a> (serious),
-    or <a href="https://www.instagram.com/emily_flambe" target="_blank">Instagram</a> (not serious).
-    I have also been known to stream on <a href="https://www.twitch.tv/emilyFlambe" target="_blank">Twitch</a> (extremely non-serious).
-  </p>
+<div class="bio-container">
+  <div class="bio-content">
+    <img src="/assets/portrait_square.png" alt="The Authoress">
+    <p>
+      Hello! I'm <strong>Emily</strong>, an engineering type just trying to have a good time. GOD FORBID.
+      Check out my <a href="https://www.github.com/emily-flambe" target="_blank">GitHub</a> or
+      <a href="https://www.linkedin.com/in/emilycogsdill" target="_blank">LinkedIn</a>, I guess.
+    </p>
+  </div>
 </div>
 
 <style>
-  div {
-    align-items: center;
+  .bio-container {
     display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+    margin-top: 3rem;
+  }
+
+  .bio-content {
+    display: flex;
+    align-items: center;
+    width: 600px;
+    max-width: 90vw;
+    background: #1a1a1a;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid #333;
   }
 
   img {
     width: 100px;
     height: 100px;
-    border-radius: 100px;
+    border-radius: 50%;
     display: block;
     margin-right: 20px;
+    flex-shrink: 0;
   }
 
   p {
     font-size: 1.125rem;
+    margin: 0;
+    line-height: 1.6;
+    color: #e0e0e0;
+  }
+
+  a {
+    color: #66b3ff;
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: #99ccff;
+    text-decoration: underline;
   }
 </style>
