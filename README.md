@@ -1,6 +1,6 @@
 # Some sort of personal site
 
-Emily's personal blog and portfolio website, built with Astro and deployed on Cloudflare Workers. Named after the indie puzzle game [Baba Is You](https://hempuli.com/baba/), this site features a collection of blog posts, quick thoughts, and personal musings. Due to its sensitive nature, it is recommended for consumption by anyone.
+Emily's personal blog and portfolio website, kind of? Features a collection of blog posts, quick thoughts, and personal musings. Due to its sensitive nature, it is recommended for consumption by anyone.
 
 ## 🌟 What is this?
 
