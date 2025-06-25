@@ -1,6 +1,6 @@
-# Baba Is Win
+# Some sort of personal site
 
-Emily's personal blog and portfolio website, built with Astro and deployed on Cloudflare Workers. Named after the indie puzzle game [Baba Is You](https://hempuli.com/baba/), this site features a collection of blog posts, quick thoughts, and personal musings.
+Emily's personal blog and portfolio website, built with Astro and deployed on Cloudflare Workers. Named after the indie puzzle game [Baba Is You](https://hempuli.com/baba/), this site features a collection of blog posts, quick thoughts, and personal musings. Due to its sensitive nature, it is recommended for consumption by anyone.
 
 ## 🌟 What is this?
 
@@ -119,7 +119,3 @@ make cleanup                       # Remove expired sessions
 ## 📖 Original Template
 
 This project started from the [Astro Framework Starter](https://github.com/cloudflare/templates/tree/main/packages/astro) template for Cloudflare Workers, but has been extensively customized with authentication, content management, and personal branding.
-
----
-
-*"Baba is You, but Emily is Win"* 🎮
