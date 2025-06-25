@@ -289,7 +289,7 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
 
       // Close menu when clicking outside
       document.addEventListener('click', (e) => {
-        if (!kebabToggle.contains(e.target as Node) && !kebabDropdown.contains(e.target as Node)) {
+        if (!kebabToggle.contains(e.target as Element) && !kebabDropdown.contains(e.target as Element)) {
           kebabDropdown.classList.remove('show');
         }
       });
@@ -329,7 +329,7 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
 
     // Client-side subtitle randomization
     function randomizeSubtitle() {
-      const subtitles = {JSON.stringify(subtitlesData.subtitles)};
+      const subtitles = JSON.parse(`{JSON.stringify(subtitlesData.subtitles)}`);
       const randomIndex = Math.floor(Math.random() * subtitles.length);
       const selectedSubtitle = subtitles[randomIndex];
       
