@@ -326,26 +326,33 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
     setupLogoutButton('logout-btn');
     setupLogoutButton('client-logout-btn');
 
-    // Client-side subtitle randomization
-    function randomizeSubtitle() {
-      const subtitles = JSON.parse(`${JSON.stringify(subtitlesData.subtitles)}`);
-      const randomIndex = Math.floor(Math.random() * subtitles.length);
-      const selectedSubtitle = subtitles[randomIndex];
-      
-      // Use the same renderSubtitleHTML function logic
-      let html = selectedSubtitle.text;
-      selectedSubtitle.links.forEach(link => {
-        const linkHTML = `<a href="${link.url}"${link.target ? ` target="${link.target}"` : ''}>${link.text}</a>`;
-        html = html.replace(link.text, linkHTML);
-      });
-      
-      const subtitleElement = document.getElementById('subtitle');
-      if (subtitleElement) {
-        subtitleElement.innerHTML = html;
-      }
-    }
-
-    // Randomize subtitle on page load
-    randomizeSubtitle();
   });
+</script>
+
+<script define:vars={{ subtitlesData }}>
+  // Client-side subtitle randomization - runs immediately on every page load
+  function randomizeSubtitle() {
+    const subtitles = JSON.parse(`${JSON.stringify(subtitlesData.subtitles)}`);
+    const randomIndex = Math.floor(Math.random() * subtitles.length);
+    const selectedSubtitle = subtitles[randomIndex];
+    
+    // Use the same renderSubtitleHTML function logic as remote
+    let html = selectedSubtitle.text;
+    selectedSubtitle.links.forEach(link => {
+      const linkHTML = `<a href="${link.url}"${link.target ? ` target="${link.target}"` : ''}>${link.text}</a>`;
+      html = html.replace(link.text, linkHTML);
+    });
+    
+    const subtitleElement = document.getElementById('subtitle');
+    if (subtitleElement) {
+      subtitleElement.innerHTML = html;
+    }
+  }
+
+  // Randomize subtitle immediately and on every page load/refresh
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', randomizeSubtitle);
+  } else {
+    randomizeSubtitle();
+  }
 </script>
