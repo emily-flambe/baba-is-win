@@ -82,7 +82,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
     );
   } catch (error) {
-    console.error('Signup error:', error);
     return new Response(
       JSON.stringify({ error: 'Failed to create account' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }

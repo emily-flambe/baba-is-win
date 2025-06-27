@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import MiniImageCarousel from '../components/MiniImageCarousel.astro';
+import Carousel from '../components/Carousel.astro';
 import { processSimpleMarkdown } from '../utils/simpleMarkdown.js';
 
 const title = 'Emily Cogsdill';
@@ -31,7 +31,7 @@ const recentThoughts = allThoughts.slice(0, 5);
             <article class="thought-item" style={`background-color: ${bgColor};`}>
               <p class="thought-content" set:html={processSimpleMarkdown(thought.frontmatter.content)}></p>
               {thought.frontmatter.images && thought.frontmatter.images.length > 0 && (
-                <MiniImageCarousel images={thought.frontmatter.images} alt="Thought image" />
+                <Carousel images={thought.frontmatter.images} alt="Thought image" size="mini" />
               )}
               <div class="thought-meta">
                 <time>{thought.frontmatter.publishDate}</time>
@@ -44,20 +44,53 @@ const recentThoughts = allThoughts.slice(0, 5);
       <a href="/thoughts" class="view-all">View all thoughts →</a>
     </div>
     <div class="home-copy">
-      <br><img class="baba-img" src="../assets/baba/BABA_char.webp" style="margin-right: 400px;"> <img class="baba-img" src="../assets/baba/flag_object.webp">
-      <p>
-      <p>
-        <img class="baba-img" src="../assets/baba/love.webp" style="margin-left: 30px;"> <img class="baba-img" src="../assets/baba/is.webp"> <img class="baba-img" src="../assets/baba/weak.webp">
-        <br /><img class="baba-img" src="../assets/baba/love.webp" style="margin-left: 80px;"> <img class="baba-img" src="../assets/baba/has.webp"> <img class="baba-img" src="../assets/baba/key.webp">
-        <br /><img class="baba-img" src="../assets/baba/key.webp" style="margin-left: 130px;"> <img class="baba-img" src="../assets/baba/is.webp"> <img class="baba-img" src="../assets/baba/open.webp">
-        <br /><img class="baba-img" src="../assets/baba/door.webp" style="margin-left: 180px;"> <img class="baba-img" src="../assets/baba/is.webp"> <img class="baba-img" src="../assets/baba/shut.webp">
-        <br /><img class="baba-img" src="../assets/baba/flag.webp" style="margin-left: 230px;"> <img class="baba-img" src="../assets/baba/is.webp"> <img class="baba-img" src="../assets/baba/win.webp">
-        <br /><img class="baba-img" src="../assets/baba/baba.webp" style="margin-left: 280px;"> <img class="baba-img" src="../assets/baba/is.webp"> <img class="baba-img" src="../assets/baba/move.webp">
-        <br /><img class="baba-img" src="../assets/baba/baba.webp" style="margin-left: 330px;"> <img class="baba-img" src="../assets/baba/is.webp"> <img class="baba-img" src="../assets/baba/win.webp">
-      </p>
-      <p>
-      <img class="baba-img" src="../assets/baba/BABA_char.webp" style="margin-left: 400px;"> <img class="baba-img" src="../assets/baba/flag_object.webp">
-      </p>
+      <div class="baba-scene">
+        <img class="baba-img" src="../assets/baba/BABA_char.webp" style="margin-right: 400px;"> 
+        <img class="baba-img" src="../assets/baba/flag_object.webp">
+      </div>
+      
+      <div class="baba-rules">
+        <div class="rule-line">
+          <img class="baba-img" src="../assets/baba/love.webp" style="margin-left: 30px;"> 
+          <img class="baba-img" src="../assets/baba/is.webp"> 
+          <img class="baba-img" src="../assets/baba/weak.webp">
+        </div>
+        <div class="rule-line">
+          <img class="baba-img" src="../assets/baba/love.webp" style="margin-left: 80px;"> 
+          <img class="baba-img" src="../assets/baba/has.webp"> 
+          <img class="baba-img" src="../assets/baba/key.webp">
+        </div>
+        <div class="rule-line">
+          <img class="baba-img" src="../assets/baba/key.webp" style="margin-left: 130px;"> 
+          <img class="baba-img" src="../assets/baba/is.webp"> 
+          <img class="baba-img" src="../assets/baba/open.webp">
+        </div>
+        <div class="rule-line">
+          <img class="baba-img" src="../assets/baba/door.webp" style="margin-left: 180px;"> 
+          <img class="baba-img" src="../assets/baba/is.webp"> 
+          <img class="baba-img" src="../assets/baba/shut.webp">
+        </div>
+        <div class="rule-line">
+          <img class="baba-img" src="../assets/baba/flag.webp" style="margin-left: 230px;"> 
+          <img class="baba-img" src="../assets/baba/is.webp"> 
+          <img class="baba-img" src="../assets/baba/win.webp">
+        </div>
+        <div class="rule-line">
+          <img class="baba-img" src="../assets/baba/baba.webp" style="margin-left: 280px;"> 
+          <img class="baba-img" src="../assets/baba/is.webp"> 
+          <img class="baba-img" src="../assets/baba/move.webp">
+        </div>
+        <div class="rule-line">
+          <img class="baba-img" src="../assets/baba/baba.webp" style="margin-left: 330px;"> 
+          <img class="baba-img" src="../assets/baba/is.webp"> 
+          <img class="baba-img" src="../assets/baba/win.webp">
+        </div>
+      </div>
+      
+      <div class="baba-scene">
+        <img class="baba-img" src="../assets/baba/BABA_char.webp" style="margin-left: 400px;"> 
+        <img class="baba-img" src="../assets/baba/flag_object.webp">
+      </div>
     </div>
 
   </div>

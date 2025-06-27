@@ -249,7 +249,7 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
       // Update UI based on auth status
       updateAuthUI(currentUser);
     } catch (error) {
-      console.error('Failed to check auth status:', error);
+      // Silently handle auth check errors
     }
 
     function updateAuthUI(user) {
@@ -317,8 +317,7 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
             // Redirect to home
             window.location.href = '/';
           } catch (error) {
-            console.error('Logout error:', error);
-            alert('Failed to logout. Please try again.');
+            // Silently handle logout errors
           }
         });
       }
@@ -329,26 +328,20 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
 
     // Client-side subtitle randomization
     function randomizeSubtitle() {
-      const subtitles = JSON.parse(`{JSON.stringify(subtitlesData.subtitles)}`);
+      const subtitles = JSON.parse(`${JSON.stringify(subtitlesData.subtitles)}`);
       const randomIndex = Math.floor(Math.random() * subtitles.length);
       const selectedSubtitle = subtitles[randomIndex];
       
-      // Render subtitle with links
-      function renderSubtitleHTML(subtitle) {
-        let html = subtitle.text;
-        
-        // Replace link placeholders
-        subtitle.links.forEach(link => {
-          const linkHTML = `<a href="${link.url}"${link.target ? ` target="${link.target}"` : ''}>${link.text}</a>`;
-          html = html.replace(link.text, linkHTML);
-        });
-        
-        return html;
-      }
+      // Use the same renderSubtitleHTML function logic
+      let html = selectedSubtitle.text;
+      selectedSubtitle.links.forEach(link => {
+        const linkHTML = `<a href="${link.url}"${link.target ? ` target="${link.target}"` : ''}>${link.text}</a>`;
+        html = html.replace(link.text, linkHTML);
+      });
       
       const subtitleElement = document.getElementById('subtitle');
       if (subtitleElement) {
-        subtitleElement.innerHTML = renderSubtitleHTML(selectedSubtitle);
+        subtitleElement.innerHTML = html;
       }
     }
 
