@@ -237,7 +237,7 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
   </div>
 </header>
 
-<script>
+<script define:vars={{ subtitlesData }}>
   document.addEventListener('DOMContentLoaded', async () => {
     // Check authentication status via API
     let currentUser = null;
