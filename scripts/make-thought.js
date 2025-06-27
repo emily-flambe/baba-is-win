@@ -25,14 +25,17 @@ hours = hours ? hours : 12; // the hour '0' should be '12'
 const minutesStr = minutes < 10 ? '0' + minutes : minutes;
 const publishTime = `${hours}:${minutesStr} ${ampm}`;
 
-// Read template
-const templatePath = path.join(__dirname, '..', 'templates', 'thought.md');
+// Read template (try multiple possible locations)
+let templatePath = path.join(__dirname, '..', '..', 'templates', 'thought.md');
+if (!fs.existsSync(templatePath)) {
+  templatePath = path.join(__dirname, '..', '..', '..', 'templates', 'thought.md');
+}
 const template = fs.readFileSync(templatePath, 'utf8');
 
 // Replace placeholders
 const content = template
-  .replace('{{DATE}}', publishDate)
-  .replace('{{TIME}}', publishTime);
+  .replace(/{{DATE}}/g, publishDate)
+  .replace(/{{TIME}}/g, publishTime);
 
 // Generate filename with slug (can be customized later)
 const slug = process.argv[2] || 'new-thought';
