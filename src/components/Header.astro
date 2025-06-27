@@ -329,7 +329,7 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
 
     // Client-side subtitle randomization
     function randomizeSubtitle() {
-      const subtitles = JSON.parse(`{JSON.stringify(subtitlesData.subtitles)}`);
+      const subtitles = JSON.parse(`${JSON.stringify(subtitlesData.subtitles)}`);
       const randomIndex = Math.floor(Math.random() * subtitles.length);
       const selectedSubtitle = subtitles[randomIndex];
       
