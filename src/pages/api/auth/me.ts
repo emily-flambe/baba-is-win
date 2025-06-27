@@ -55,7 +55,6 @@ export const GET: APIRoute = async ({ request, locals }) => {
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Auth check error:', error);
     return new Response(
       JSON.stringify({ error: 'Failed to authenticate' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }

@@ -1,0 +1,291 @@
+---
+export interface Props {
+  images: (string | { url: string; offset?: string })[];
+  alt?: string;
+  size?: 'large' | 'mini';
+}
+
+const { images, alt = "Thought image", size = 'large' } = Astro.props;
+
+if (!images || images.length === 0) {
+  return null;
+}
+
+// Normalize images to objects with url and offset
+const normalizedImages = images.map(img => {
+  if (typeof img === 'string') {
+    return { url: img, offset: '50%' };
+  }
+  return { url: img.url, offset: img.offset || '50%' };
+});
+
+const isMini = size === 'mini';
+const containerClass = isMini ? 'mini-carousel-container' : 'carousel-container';
+const carouselClass = isMini ? 'mini-carousel' : 'carousel';
+const trackClass = isMini ? 'mini-carousel-track' : 'carousel-track';
+const slideClass = isMini ? 'mini-carousel-slide' : 'carousel-slide';
+const buttonClass = isMini ? 'mini-carousel-button' : 'carousel-button';
+const indicatorClass = isMini ? 'mini-carousel-indicator' : 'carousel-indicator';
+const indicatorsClass = isMini ? 'mini-carousel-indicators' : 'carousel-indicators';
+// Data attributes are now handled directly in the template
+---
+
+<div class={containerClass}>
+  <div class={carouselClass} data-carousel={isMini ? undefined : ''} data-mini-carousel={isMini ? '' : undefined}>
+    <div class={trackClass} data-carousel-track={isMini ? undefined : ''} data-mini-carousel-track={isMini ? '' : undefined}>
+      {normalizedImages.map((image, index) => (
+        <div class={slideClass} data-slide={isMini ? undefined : index} data-mini-slide={isMini ? index : undefined}>
+          <img src={image.url} alt={`${alt} ${index + 1}`} loading="lazy" style={`object-position: center ${image.offset};`} />
+        </div>
+      ))}
+    </div>
+    
+    {normalizedImages.length > 1 && (
+      <>
+        <button class={`${buttonClass} ${buttonClass}--prev`} aria-label="Previous image">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15,18 9,12 15,6"></polyline>
+          </svg>
+        </button>
+        <button class={`${buttonClass} ${buttonClass}--next`} aria-label="Next image">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9,18 15,12 9,6"></polyline>
+          </svg>
+        </button>
+        
+        <div class={indicatorsClass}>
+          {normalizedImages.map((_, index) => (
+            <button 
+              class={indicatorClass}
+              data-carousel-indicator={isMini ? undefined : index}
+              data-mini-carousel-indicator={isMini ? index : undefined}
+              aria-label={`Go to image ${index + 1}`}
+            ></button>
+          ))}
+        </div>
+      </>
+    )}
+  </div>
+</div>
+
+<style>
+  .carousel-container {
+    margin: 1rem 0;
+    max-width: 100%;
+  }
+  
+  .mini-carousel-container {
+    margin: 0.5rem 0;
+    max-width: 100%;
+  }
+
+  .carousel, .mini-carousel {
+    position: relative;
+    overflow: hidden;
+    background: var(--background-body);
+    border: 1px solid var(--text-secondary);
+  }
+  
+  .carousel {
+    border-radius: 8px;
+  }
+  
+  .mini-carousel {
+    border-radius: 4px;
+  }
+
+  .carousel-track, .mini-carousel-track {
+    display: flex;
+    transition: transform 0.3s ease;
+  }
+
+  .carousel-slide, .mini-carousel-slide {
+    min-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--background-body);
+  }
+
+  .carousel-slide img {
+    width: 100%;
+    max-width: 500px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .mini-carousel-slide img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  .carousel-button, .mini-carousel-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 0.5rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10;
+  }
+  
+  .carousel-button {
+    width: 3rem;
+    height: 3rem;
+  }
+  
+  .mini-carousel-button {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .carousel-button:hover, .mini-carousel-button:hover {
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .carousel-button--prev, .mini-carousel-button--prev {
+    left: 10px;
+  }
+
+  .carousel-button--next, .mini-carousel-button--next {
+    right: 10px;
+  }
+
+  .carousel-button svg, .mini-carousel-button svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  .mini-carousel-button svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .carousel-indicators, .mini-carousel-indicators {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .carousel-indicator, .mini-carousel-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid white;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .carousel-indicator.active, .mini-carousel-indicator.active {
+    background: white;
+  }
+
+  @media (max-width: 768px) {
+    .carousel-button, .mini-carousel-button {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  function initializeCarousel(selector: string, isMinified: boolean = false) {
+    const carousels = document.querySelectorAll(selector);
+    
+    carousels.forEach(carousel => {
+      const track = carousel.querySelector(isMinified ? '[data-mini-carousel-track]' : '[data-carousel-track]') as HTMLElement;
+      const slides = carousel.querySelectorAll(isMinified ? '[data-mini-slide]' : '[data-slide]');
+      const prevButton = carousel.querySelector(isMinified ? '.mini-carousel-button--prev' : '.carousel-button--prev') as HTMLButtonElement;
+      const nextButton = carousel.querySelector(isMinified ? '.mini-carousel-button--next' : '.carousel-button--next') as HTMLButtonElement;
+      const indicators = carousel.querySelectorAll(isMinified ? '[data-mini-carousel-indicator]' : '[data-carousel-indicator]');
+      
+      if (!track || slides.length === 0) return;
+      
+      let currentIndex = 0;
+      
+      function updateCarousel() {
+        const translateX = -currentIndex * 100;
+        track.style.transform = `translateX(${translateX}%)`;
+        
+        // Update indicators
+        indicators.forEach((indicator, index) => {
+          indicator.classList.toggle('active', index === currentIndex);
+        });
+      }
+      
+      function nextSlide() {
+        currentIndex = (currentIndex + 1) % slides.length;
+        updateCarousel();
+      }
+      
+      function prevSlide() {
+        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+        updateCarousel();
+      }
+      
+      function goToSlide(index: number) {
+        currentIndex = index;
+        updateCarousel();
+      }
+      
+      // Event listeners
+      if (prevButton) prevButton.addEventListener('click', prevSlide);
+      if (nextButton) nextButton.addEventListener('click', nextSlide);
+      
+      indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => goToSlide(index));
+      });
+      
+      // Touch/swipe support
+      let startX = 0;
+      let currentX = 0;
+      let isDragging = false;
+      
+      track.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        isDragging = true;
+      });
+      
+      track.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        currentX = e.touches[0].clientX;
+      });
+      
+      track.addEventListener('touchend', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        
+        const deltaX = startX - currentX;
+        if (Math.abs(deltaX) > 50) {
+          if (deltaX > 0) {
+            nextSlide();
+          } else {
+            prevSlide();
+          }
+        }
+      });
+      
+      // Initialize
+      updateCarousel();
+    });
+  }
+  
+  // Initialize both carousel types
+  document.addEventListener('DOMContentLoaded', () => {
+    initializeCarousel('[data-carousel]', false);
+    initializeCarousel('[data-mini-carousel]', true);
+  });
+</script>
