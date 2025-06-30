@@ -1,0 +1,160 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export interface Props {
+  title: string;
+  description: string;
+  heroImage?: string;
+}
+
+const { title, description, heroImage } = Astro.props;
+const permalink = Astro.url.href;
+---
+
+<BaseLayout title={title} description={description} permalink={permalink} current="museum">
+  <div class="museum-container">
+    <header class="museum-header">
+      <slot name="header">
+        <h1>{title}</h1>
+        <p>{description}</p>
+      </slot>
+      {heroImage && (
+        <div class="hero-image">
+          <img src={heroImage} alt={title} />
+        </div>
+      )}
+    </header>
+
+    <div class="museum-content">
+      <aside class="museum-sidebar">
+        <slot name="filters" />
+      </aside>
+      
+      <main class="museum-gallery">
+        <slot />
+      </main>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .museum-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  .museum-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem 1rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .museum-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 1rem 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .museum-header p {
+    font-size: 1.2rem;
+    color: #64748b;
+    margin: 0;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .hero-image {
+    margin-top: 2rem;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  .hero-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .museum-content {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .museum-sidebar {
+    position: sticky;
+    top: 2rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .museum-gallery {
+    min-height: 400px;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .museum-container {
+      padding: 0 1rem;
+    }
+
+    .museum-header {
+      padding: 1.5rem 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .museum-header h1 {
+      font-size: 2rem;
+    }
+
+    .museum-header p {
+      font-size: 1rem;
+    }
+
+    .museum-content {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .museum-sidebar {
+      position: static;
+      padding: 1rem;
+    }
+  }
+
+  /* Tablet */
+  @media (max-width: 1024px) and (min-width: 769px) {
+    .museum-content {
+      grid-template-columns: 240px 1fr;
+      gap: 1.5rem;
+    }
+
+    .museum-sidebar {
+      padding: 1.25rem;
+    }
+  }
+
+  /* Large screens */
+  @media (min-width: 1200px) {
+    .museum-content {
+      grid-template-columns: 320px 1fr;
+      gap: 3rem;
+    }
+
+    .museum-sidebar {
+      padding: 2rem;
+    }
+  }
+</style>

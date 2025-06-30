@@ -1,0 +1,309 @@
+---
+import MuseumLayout from '../../components/museum/MuseumLayout.astro';
+import MuseumGallery from '../../components/museum/MuseumGallery.astro';
+import MuseumFilters from '../../components/museum/MuseumFilters.svelte';
+import { generateMuseumData } from '../../lib/github/api.js';
+import type { MuseumData } from '../../lib/github/types.js';
+
+// For static generation, we can use the pre-generated data
+// or fetch fresh data during build time
+let museumData: MuseumData;
+
+try {
+  // Try to fetch fresh data during build
+  museumData = await generateMuseumData('emily-flambe');
+} catch (error) {
+  console.warn('Failed to fetch fresh GitHub data, using fallback:', error);
+  // Import fallback data
+  const fallbackData = await import('../../data/github-projects.json');
+  museumData = fallbackData.default as MuseumData;
+}
+
+const { projects, categories, languages, totalProjects, lastUpdated } = museumData;
+
+const pageTitle = "Project Museum | Emily's GitHub Projects";
+const pageDescription = "An interactive museum showcasing Emily's open source projects and development work. Explore productivity tools, web applications, APIs, and more.";
+
+// SEO and social sharing data
+const ogImage = "/assets/social.png"; // Use existing social image
+const keywords = [
+  'GitHub projects',
+  'open source',
+  'Emily Flambe',
+  'TypeScript',
+  'JavaScript',
+  'Python',
+  'productivity tools',
+  'web development',
+  'portfolio'
+].join(', ');
+---
+
+<MuseumLayout title={pageTitle} description={pageDescription}>
+  <Fragment slot="header">
+    <div class="museum-hero">
+      <h1 class="hero-title">
+        <span class="title-main">Project Museum</span>
+        <span class="title-subtitle">🏛️</span>
+      </h1>
+      <p class="hero-description">
+        A curated collection of my open source projects and development experiments.
+        Explore {totalProjects} projects across {categories.length} categories, 
+        built with {languages.join(', ')}.
+      </p>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-number">{totalProjects}</span>
+          <span class="stat-label">Projects</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{categories.length}</span>
+          <span class="stat-label">Categories</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{languages.length}</span>
+          <span class="stat-label">Languages</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{projects.filter(p => p.featured).length}</span>
+          <span class="stat-label">Featured</span>
+        </div>
+      </div>
+      <div class="last-updated">
+        Last updated: {new Date(lastUpdated).toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        })}
+      </div>
+    </div>
+  </Fragment>
+  
+  <Fragment slot="filters">
+    <MuseumFilters 
+      projects={projects} 
+      client:load 
+      onFilter={(filtered) => {
+        // This will be handled by the Svelte component
+        console.log(`Filtered to ${filtered.length} projects`);
+      }}
+    />
+  </Fragment>
+  
+  <MuseumGallery 
+    projects={projects} 
+    layout="grid"
+    showSearch={false}
+    emptyMessage="No projects match your current filters. Try adjusting your selection."
+  />
+</MuseumLayout>
+
+<!-- Enhanced SEO and Social Sharing -->
+<Fragment slot="head">
+  <meta name="keywords" content={keywords} />
+  <meta name="author" content="Emily Flambe" />
+  <meta name="robots" content="index, follow" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={pageTitle} />
+  <meta property="og:description" content={pageDescription} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:site_name" content="Emily Flambe" />
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={pageTitle} />
+  <meta name="twitter:description" content={pageDescription} />
+  <meta name="twitter:image" content={ogImage} />
+  
+  <!-- Structured Data for SEO -->
+  <script type="application/ld+json">
+    {JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": pageTitle,
+      "description": pageDescription,
+      "url": Astro.url.href,
+      "author": {
+        "@type": "Person",
+        "name": "Emily Flambe",
+        "url": "https://github.com/emily-flambe"
+      },
+      "mainEntity": {
+        "@type": "ItemList",
+        "numberOfItems": totalProjects,
+        "itemListElement": projects.map((project, index) => ({
+          "@type": "SoftwareSourceCode",
+          "position": index + 1,
+          "name": project.displayName,
+          "description": project.description,
+          "codeRepository": project.githubUrl,
+          "programmingLanguage": project.language,
+          "keywords": project.topics.join(', ')
+        }))
+      }
+    })}
+  </script>
+</Fragment>
+
+<style>
+  .museum-hero {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .hero-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 0 0 1.5rem 0;
+  }
+
+  .title-main {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #1e293b 0%, #3b82f6 50%, #8b5cf6 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+  }
+
+  .title-subtitle {
+    font-size: 2.5rem;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .hero-description {
+    font-size: 1.25rem;
+    color: #64748b;
+    line-height: 1.7;
+    margin: 0 0 2rem 0;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 1rem;
+    border: 1px solid #e2e8f0;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .last-updated {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    font-style: italic;
+    margin-top: 1rem;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .hero-title {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .title-main {
+      font-size: 2.25rem;
+    }
+
+    .title-subtitle {
+      font-size: 2rem;
+    }
+
+    .hero-description {
+      font-size: 1.125rem;
+      padding: 0 1rem;
+    }
+
+    .hero-stats {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      padding: 1.5rem;
+    }
+
+    .stat-number {
+      font-size: 1.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .title-main {
+      font-size: 1.875rem;
+    }
+
+    .title-subtitle {
+      font-size: 1.5rem;
+    }
+
+    .hero-description {
+      font-size: 1rem;
+    }
+
+    .hero-stats {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      padding: 1rem;
+    }
+  }
+
+  /* Accessibility improvements */
+  @media (prefers-reduced-motion: reduce) {
+    .title-subtitle {
+      animation: none;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .title-main {
+      background: none;
+      -webkit-text-fill-color: initial;
+      color: #000000;
+    }
+
+    .hero-stats {
+      background: #ffffff;
+      border: 2px solid #000000;
+    }
+  }
+</style>

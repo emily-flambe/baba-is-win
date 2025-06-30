@@ -1,0 +1,346 @@
+---
+import type { MuseumProject } from '../../lib/github/types.js';
+import ProjectCard from './ProjectCard.astro';
+
+export interface Props {
+  projects: MuseumProject[];
+  layout?: 'grid' | 'masonry' | 'list';
+  showSearch?: boolean;
+  emptyMessage?: string;
+}
+
+const { 
+  projects, 
+  layout = 'grid', 
+  showSearch = false,
+  emptyMessage = 'No projects found matching your criteria.'
+} = Astro.props;
+
+// Sort projects: featured first, then by stars, then by update date
+const sortedProjects = [...projects].sort((a, b) => {
+  if (a.featured && !b.featured) return -1;
+  if (!a.featured && b.featured) return 1;
+  if (a.stars !== b.stars) return b.stars - a.stars;
+  return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+});
+
+const featuredProjects = sortedProjects.filter(p => p.featured);
+const regularProjects = sortedProjects.filter(p => !p.featured);
+---
+
+<div class="museum-gallery" data-layout={layout}>
+  {showSearch && (
+    <div class="gallery-search">
+      <input 
+        type="text" 
+        placeholder="Search projects..." 
+        class="search-input"
+        id="project-search"
+      />
+    </div>
+  )}
+
+  <div class="gallery-stats">
+    <span class="project-count">
+      {projects.length} project{projects.length !== 1 ? 's' : ''}
+    </span>
+    {featuredProjects.length > 0 && (
+      <span class="featured-count">
+        {featuredProjects.length} featured
+      </span>
+    )}
+  </div>
+
+  {projects.length === 0 ? (
+    <div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h3>No Projects Found</h3>
+      <p>{emptyMessage}</p>
+    </div>
+  ) : (
+    <div class="gallery-container">
+      {featuredProjects.length > 0 && (
+        <section class="featured-section">
+          <h2 class="section-title">
+            <span class="title-icon">⭐</span>
+            Featured Projects
+          </h2>
+          <div class="featured-grid">
+            {featuredProjects.map(project => (
+              <ProjectCard project={project} featured={true} size="large" />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {regularProjects.length > 0 && (
+        <section class="regular-section">
+          {featuredProjects.length > 0 && (
+            <h2 class="section-title">
+              <span class="title-icon">📚</span>
+              All Projects
+            </h2>
+          )}
+          <div class={`projects-grid ${layout}`}>
+            {regularProjects.map(project => (
+              <ProjectCard project={project} featured={false} />
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  )}
+</div>
+
+<style>
+  .museum-gallery {
+    width: 100%;
+  }
+
+  .gallery-search {
+    margin-bottom: 1.5rem;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  .gallery-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 0.75rem 1rem;
+    background: #f8fafc;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+  }
+
+  .project-count {
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .featured-count {
+    color: #f59e0b;
+    font-weight: 500;
+    font-size: 0.875rem;
+  }
+
+  .gallery-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  .title-icon {
+    font-size: 1.25rem;
+  }
+
+  /* Featured Projects Grid */
+  .featured-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  }
+
+  /* Regular Projects Grid */
+  .projects-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .projects-grid.grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+
+  .projects-grid.masonry {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-rows: masonry;
+  }
+
+  .projects-grid.list {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #6b7280;
+  }
+
+  .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  .empty-state h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: #374151;
+  }
+
+  .empty-state p {
+    font-size: 1rem;
+    margin: 0;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .gallery-stats {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+    }
+
+    .featured-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .projects-grid.grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .gallery-container {
+      gap: 2rem;
+    }
+
+    .empty-state {
+      padding: 3rem 1rem;
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .search-input {
+      font-size: 0.875rem;
+    }
+
+    .gallery-stats {
+      padding: 0.5rem 0.75rem;
+    }
+
+    .section-title {
+      font-size: 1.125rem;
+    }
+  }
+
+  /* Animation classes for filtering */
+  .gallery-enter {
+    animation: slideInUp 0.3s ease-out;
+  }
+
+  .gallery-exit {
+    animation: slideOutDown 0.3s ease-in;
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideOutDown {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+  }
+
+  /* Hover effects for the grid */
+  .projects-grid:hover .project-card:not(:hover) {
+    opacity: 0.7;
+    transform: scale(0.98);
+  }
+
+  .featured-grid:hover .project-card:not(:hover) {
+    opacity: 0.8;
+    transform: scale(0.99);
+  }
+
+  /* Focus styles for accessibility */
+  .search-input:focus-visible {
+    outline: 2px dashed #3b82f6;
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  // Add search functionality if enabled
+  const searchInput = document.getElementById('project-search') as HTMLInputElement;
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const target = e.target as HTMLInputElement;
+      const searchTerm = target.value.toLowerCase();
+      const projectCards = document.querySelectorAll('.project-card');
+      
+      projectCards.forEach(card => {
+        const element = card as HTMLElement;
+        const title = element.querySelector('.project-title')?.textContent?.toLowerCase();
+        const description = element.querySelector('.project-description')?.textContent?.toLowerCase();
+        const topics = Array.from(element.querySelectorAll('.topic-tag'))
+          .map(tag => tag.textContent?.toLowerCase())
+          .join(' ');
+        
+        const matches = [title, description, topics].some(text => 
+          text && text.includes(searchTerm)
+        );
+        
+        if (matches) {
+          element.style.display = '';
+          element.classList.add('gallery-enter');
+        } else {
+          element.style.display = 'none';
+          element.classList.remove('gallery-enter');
+        }
+      });
+    });
+  }
+</script>
