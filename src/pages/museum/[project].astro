@@ -3,26 +3,14 @@ import MuseumLayout from '../../components/museum/MuseumLayout.astro';
 import type { MuseumProject } from '../../lib/github/types.js';
 import { generateMuseumData } from '../../lib/github/api.js';
 
-export async function getStaticPaths() {
-  try {
-    const museumData = await generateMuseumData('emily-flambe');
-    
-    return museumData.projects.map(project => ({
-      params: { project: project.id },
-      props: { project }
-    }));
-  } catch (error) {
-    console.error('Error generating static paths for museum projects:', error);
-    // Return empty array if we can't fetch projects
-    return [];
-  }
-}
+const { project: projectId } = Astro.params;
 
-interface Props {
-  project: MuseumProject;
-}
+const museumData = await generateMuseumData('emily-flambe');
+const project = museumData.projects.find(p => p.id === projectId);
 
-const { project } = Astro.props;
+if (!project) {
+  throw new Error(`Project not found: ${projectId}`);
+}
 
 const pageTitle = `${project.displayName} | Project Museum`;
 const pageDescription = `${project.description} - Built with ${project.language || 'various technologies'} and featuring ${project.topics.join(', ')}.`;

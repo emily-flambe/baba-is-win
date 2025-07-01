@@ -4,7 +4,7 @@ import Nav from './Nav.astro'
 import subtitlesData from '../data/subtitles.json'
 
 const { current = '' } = Astro.props;
-const user = Astro.locals.user;
+const user = Astro.locals?.user || null;
 
 // Select a random subtitle
 const randomIndex = Math.floor(Math.random() * subtitlesData.subtitles.length);

@@ -7,7 +7,11 @@ const title = 'Thoughts';
 const description = 'Quick thoughts and musings - my personal micro-blog.';
 const permalink = `${Astro.site.href}thoughts`;
 
-let allThoughts = await Astro.glob('../../data/thoughts/published/*.md');
+const thoughtModules = import.meta.glob('../../data/thoughts/published/*.md', { eager: true });
+let allThoughts = Object.entries(thoughtModules).map(([path, module]) => ({
+  ...module,
+  file: path
+}));
 allThoughts = allThoughts.sort((a, b) => {
   const dateA = new Date(`${a.frontmatter.publishDate} ${a.frontmatter.publishTime}`);
   const dateB = new Date(`${b.frontmatter.publishDate} ${b.frontmatter.publishTime}`);

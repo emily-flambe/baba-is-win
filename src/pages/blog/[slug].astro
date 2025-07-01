@@ -3,18 +3,28 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Bio from '../../components/Bio.astro';
 import getPostData from '../../utils/getPostData';
 
-export async function getStaticPaths() {
-  const posts = await Astro.glob('../../data/blog-posts/published/*.md');
-  return posts.map(p => ({
-    params: { slug: p.file.split('/').pop().split('.').shift() },
-    props: { post: p },
-  }));
+const { slug } = Astro.params;
+
+// Load all posts and find the matching one
+const postModules = import.meta.glob('../../data/blog-posts/published/*.md', { eager: true });
+const posts = Object.entries(postModules).map(([path, module]) => ({
+  ...module,
+  file: path
+}));
+
+const post = posts.find(p => {
+  const postSlug = p.file.split('/').pop().split('.').shift();
+  return postSlug === slug;
+});
+
+if (!post) {
+  throw new Error(`Post not found: ${slug}`);
 }
 
-const { Content, frontmatter } = Astro.props.post;
+const { Content, frontmatter } = post;
 const { title, description, publishDate } = frontmatter;
-const { slug, readingTime } = getPostData(Astro.props.post);
-const permalink = `${Astro.site.href}blog/${slug}`;
+const { slug: postSlug, readingTime } = getPostData(post);
+const permalink = `${Astro.site.href}blog/${postSlug}`;
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="blog">

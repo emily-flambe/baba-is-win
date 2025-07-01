@@ -8,6 +8,10 @@ import cloudflare from '@astrojs/cloudflare'
 
 // https://astro.build/config
 export default defineConfig({
+  output: 'server',
+  image: {
+    service: { entrypoint: 'astro/assets/services/compile' }
+  },
   adapter: cloudflare({
     platformProxy: {
       enabled: true,
