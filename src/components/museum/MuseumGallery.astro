@@ -192,9 +192,53 @@ const allProjects = projects;
     });
   }
 
-  // Initialize masonry layout
-  function runMasonry() {
-    setTimeout(initMasonry, 100);
+  // Wait for all images to load before calculating masonry
+  function waitForImages() {
+    return new Promise((resolve) => {
+      const images = document.querySelectorAll('.project-card img');
+      if (images.length === 0) {
+        resolve(undefined);
+        return;
+      }
+
+      let loadedCount = 0;
+      const totalImages = images.length;
+
+      images.forEach(img => {
+        if (img.complete) {
+          loadedCount++;
+        } else {
+          img.addEventListener('load', () => {
+            loadedCount++;
+            if (loadedCount === totalImages) {
+              resolve(undefined);
+            }
+          });
+          img.addEventListener('error', () => {
+            loadedCount++;
+            if (loadedCount === totalImages) {
+              resolve(undefined);
+            }
+          });
+        }
+      });
+
+      if (loadedCount === totalImages) {
+        resolve(undefined);
+      }
+
+      // Fallback timeout in case some images fail to fire events
+      setTimeout(() => resolve(undefined), 2000);
+    });
+  }
+
+  // Initialize masonry layout with proper image loading detection
+  async function runMasonry() {
+    // Wait for images to load
+    await waitForImages();
+    
+    // Small delay to ensure DOM is settled
+    setTimeout(initMasonry, 50);
   }
 
   // Handle initial page load
@@ -204,6 +248,8 @@ const allProjects = projects;
   document.addEventListener('astro:page-load', runMasonry);
   
   // Handle window resize
-  window.addEventListener('resize', runMasonry);
+  window.addEventListener('resize', () => {
+    setTimeout(initMasonry, 100);
+  });
 </script>
 
