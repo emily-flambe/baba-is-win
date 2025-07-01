@@ -302,7 +302,7 @@ const pageDescription = "An interactive museum showcasing Emily's open source pr
 <MuseumLayout title={pageTitle} description={pageDescription}>
   <Fragment slot="header">
     <h1>Project Museum</h1>
-    <p>A curated collection of my open source projects and development experiments</p>
+    <p>LOOK ON MY WORKS YE MIGHTY AND DESPAIR</p>
   </Fragment>
   
   <Fragment slot="filters">

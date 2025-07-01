@@ -1,0 +1,64 @@
+{
+  "owner": "emily-flambe",
+  "repositories": [
+    {
+      "name": "smart-tool-of-knowing",
+      "displayName": "Smart Tool Of Knowing",
+      "customDescription": null,
+      "extendedDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. This productivity tool streamlines complex workflows and enhances decision-making processes through intelligent automation and data analysis.",
+      "category": "productivity",
+      "demoUrl": null,
+      "order": 1
+    },
+    {
+      "name": "ask-reddit-without-asking-reddit", 
+      "displayName": "Ask Reddit Without Asking Reddit",
+      "customDescription": null,
+      "extendedDescription": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. This web application provides an alternative interface for Reddit-style discussions with enhanced privacy features and improved user experience.",
+      "category": "web-applications",
+      "demoUrl": "https://ask-reddit-alt.example.com",
+      "order": 2
+    },
+    {
+      "name": "notes-for-goats",
+      "displayName": "Notes For Goats", 
+      "customDescription": null,
+      "extendedDescription": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam. Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. A whimsical note-taking application designed with simplicity and efficiency in mind, featuring markdown support and cloud synchronization.",
+      "category": "productivity",
+      "demoUrl": null,
+      "order": 3
+    },
+    {
+      "name": "list-cutter",
+      "displayName": "List Cutter",
+      "customDescription": null,
+      "extendedDescription": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit. Advanced data processing tool for splitting, filtering, and transforming large datasets with precision and speed.",
+      "category": "data-processing", 
+      "demoUrl": null,
+      "order": 4
+    },
+    {
+      "name": "chesscom-helper",
+      "displayName": "Chess.com Helper",
+      "customDescription": null,
+      "extendedDescription": "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident. API integration tool that enhances Chess.com functionality with advanced statistics, game analysis, and automated tournament management features.",
+      "category": "api-integration",
+      "demoUrl": null,
+      "order": 5
+    },
+    {
+      "name": "moonwatch",
+      "displayName": "Moonwatch",
+      "customDescription": null,
+      "extendedDescription": "Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus. Astronomical observation tool that tracks lunar phases, celestial events, and provides detailed astronomical data through multiple API integrations.",
+      "category": "api-integration",
+      "demoUrl": null,
+      "order": 6
+    }
+  ],
+  "settings": {
+    "fallbackToAllRepos": false,
+    "sortBy": "order",
+    "showOnlyConfigured": true
+  }
+}

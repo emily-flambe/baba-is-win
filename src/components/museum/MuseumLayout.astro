@@ -26,48 +26,41 @@ const permalink = Astro.url.href;
     </header>
 
     <div class="museum-content">
-      <aside class="museum-sidebar">
-        <slot name="filters" />
-      </aside>
-      
-      <main class="museum-gallery">
-        <slot />
-      </main>
+      <slot />
     </div>
   </div>
 </BaseLayout>
 
 <style>
   .museum-container {
-    max-width: 1400px;
+    max-width: 65em;
     margin: 0 auto;
-    padding: 0;
+    padding: 0 1rem;
+    background-color: var(--background-body);
+    color: var(--text-main);
+    font-family: var(--font-family-serif);
   }
 
   .museum-header {
     text-align: center;
     margin-bottom: 3rem;
     padding: 2rem 1rem;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-    border-radius: 1rem;
     margin-bottom: 2rem;
   }
 
   .museum-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin: 0 0 1rem 0;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    font-family: var(--font-family-serif);
+    font-size: 3.5em;
+    margin: 0 0 1em 0;
+    color: #ffffff;
   }
 
   .museum-header p {
-    font-size: 1.2rem;
-    color: #64748b;
-    margin: 0;
+    font-size: 1.15rem;
+    line-height: 1.75em;
+    color: var(--text-secondary);
+    margin: 1.2em auto;
     max-width: 600px;
-    margin: 0 auto;
-    line-height: 1.6;
   }
 
   .hero-image {
@@ -84,27 +77,17 @@ const permalink = Astro.url.href;
   }
 
   .museum-content {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 2rem;
-    align-items: start;
-  }
-
-  .museum-sidebar {
-    position: sticky;
-    top: 2rem;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  }
-
-  .museum-gallery {
-    min-height: 400px;
+    width: 100%;
+    margin: 0 auto;
   }
 
   /* Mobile Responsive */
+  @media (max-width: 1020px) {
+    .museum-header h1 {
+      font-size: 3em;
+    }
+  }
+
   @media (max-width: 768px) {
     .museum-container {
       padding: 0 1rem;
@@ -114,47 +97,13 @@ const permalink = Astro.url.href;
       padding: 1.5rem 1rem;
       margin-bottom: 1.5rem;
     }
+  }
 
-    .museum-header h1 {
-      font-size: 2rem;
-    }
-
+  @media (max-width: 480px) {
     .museum-header p {
-      font-size: 1rem;
-    }
-
-    .museum-content {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-
-    .museum-sidebar {
-      position: static;
-      padding: 1rem;
+      font-size: 1.1rem;
+      margin: 1em auto;
     }
   }
 
-  /* Tablet */
-  @media (max-width: 1024px) and (min-width: 769px) {
-    .museum-content {
-      grid-template-columns: 240px 1fr;
-      gap: 1.5rem;
-    }
-
-    .museum-sidebar {
-      padding: 1.25rem;
-    }
-  }
-
-  /* Large screens */
-  @media (min-width: 1200px) {
-    .museum-content {
-      grid-template-columns: 320px 1fr;
-      gap: 3rem;
-    }
-
-    .museum-sidebar {
-      padding: 2rem;
-    }
-  }
 </style>

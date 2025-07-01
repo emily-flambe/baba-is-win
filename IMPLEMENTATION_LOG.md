@@ -5,8 +5,7 @@
 ### Phase 1: Data Layer and API Integration
 - ✅ Created GitHub API integration (`src/lib/github/api.ts`)
 - ✅ Created TypeScript interfaces (`src/lib/github/types.ts`)
-- ✅ Implemented static data generation (`src/data/github-projects.json`)
-- ✅ Created data generation script (`src/lib/github/generate-data.ts`)
+- ✅ Implemented configuration-based project selection (`src/data/museum-config.json`)
 - ✅ Implemented project categorization system with 7 categories
 
 ### Phase 2: Component Architecture
@@ -36,10 +35,9 @@
 src/
 ├── lib/github/
 │   ├── api.ts          ✅ GitHub API client with caching
-│   ├── types.ts        ✅ TypeScript interfaces
-│   └── generate-data.ts ✅ Build-time data generation
+│   └── types.ts        ✅ TypeScript interfaces
 ├── data/
-│   └── github-projects.json ✅ Static project data
+│   └── museum-config.json ✅ Project configuration file
 ├── components/museum/
 │   ├── MuseumLayout.astro    ✅ Base layout
 │   ├── ProjectCard.astro     ✅ Project display cards

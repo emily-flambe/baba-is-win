@@ -5,8 +5,11 @@ import type {
   MuseumProject,
   MuseumData,
   ProjectCategory,
-  PROJECT_CATEGORIES
+  PROJECT_CATEGORIES,
+  MuseumConfig,
+  MuseumRepositoryConfig
 } from './types.js';
+import museumConfig from '../../data/museum-config.json';
 
 const GITHUB_API_BASE = 'https://api.github.com';
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour cache
@@ -68,7 +71,58 @@ async function fetchWithCache<T>(url: string): Promise<T> {
   }
 }
 
+export function loadMuseumConfig(): MuseumConfig {
+  const config = museumConfig as MuseumConfig;
+  
+  // Basic validation
+  if (!config.owner || !config.repositories || !Array.isArray(config.repositories)) {
+    throw new Error('Invalid museum configuration: missing required fields');
+  }
+  
+  if (config.repositories.length === 0) {
+    throw new Error('Invalid museum configuration: no repositories specified');
+  }
+  
+  // Validate each repository config
+  for (const repo of config.repositories) {
+    if (!repo.name || typeof repo.order !== 'number') {
+      throw new Error(`Invalid repository configuration for ${repo.name || 'unknown'}: missing required fields`);
+    }
+  }
+  
+  return config;
+}
+
+export async function fetchConfiguredRepositories(): Promise<GitHubRepository[]> {
+  const config = loadMuseumConfig();
+  const repositories: GitHubRepository[] = [];
+  
+  try {
+    // Fetch each configured repository individually
+    for (const repoConfig of config.repositories) {
+      try {
+        const repo = await fetchRepositoryDetails(config.owner, repoConfig.name);
+        repositories.push(repo);
+      } catch (error) {
+        console.warn(`Failed to fetch repository ${repoConfig.name}:`, error);
+        // Continue with other repositories
+      }
+    }
+    
+    return repositories;
+  } catch (error) {
+    console.error('Error fetching configured repositories:', error);
+    return getFallbackRepositories();
+  }
+}
+
 export async function fetchUserRepositories(username: string): Promise<GitHubRepository[]> {
+  const config = loadMuseumConfig();
+  
+  if (config.settings.showOnlyConfigured) {
+    return fetchConfiguredRepositories();
+  }
+  
   const url = `${GITHUB_API_BASE}/users/${username}/repos?type=owner&sort=updated&per_page=100`;
   
   try {
@@ -164,20 +218,20 @@ function categorizeProject(repo: GitHubRepository): string {
   return 'other';
 }
 
-function transformRepositoryToMuseumProject(repo: GitHubRepository): MuseumProject {
+function transformRepositoryToMuseumProject(repo: GitHubRepository, config?: MuseumRepositoryConfig): MuseumProject {
+  const defaultDisplayName = repo.name.split('-').map(word => 
+    word.charAt(0).toUpperCase() + word.slice(1)
+  ).join(' ');
+  
   return {
     id: repo.name,
-    displayName: repo.name.split('-').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' '),
-    description: repo.description || 'No description available',
+    displayName: config?.displayName || defaultDisplayName,
+    description: config?.customDescription || repo.description || 'No description available',
+    extendedDescription: config?.extendedDescription || null,
     language: repo.language,
-    category: categorizeProject(repo),
-    featured: repo.stargazers_count > 5 || repo.forks_count > 2, // Simple featured logic
-    demoUrl: repo.homepage || null,
+    category: config?.category || categorizeProject(repo),
+    demoUrl: config?.demoUrl ?? repo.homepage ?? null,
     githubUrl: repo.html_url,
-    stars: repo.stargazers_count,
-    forks: repo.forks_count,
     topics: repo.topics || [],
     updatedAt: repo.updated_at,
     createdAt: repo.created_at,
@@ -187,23 +241,57 @@ function transformRepositoryToMuseumProject(repo: GitHubRepository): MuseumProje
 
 export async function generateMuseumData(username: string): Promise<MuseumData> {
   try {
+    const config = loadMuseumConfig();
     const repositories = await fetchUserRepositories(username);
-    const projects = repositories.map(transformRepositoryToMuseumProject);
     
-    const categories = Array.from(new Set(projects.map(p => p.category)));
-    const languages = Array.from(new Set(projects.map(p => p.language).filter(Boolean)));
+    // Create a map of repository configs for easy lookup
+    const configMap = new Map(config.repositories.map(rc => [rc.name, rc]));
+    
+    // Transform repositories with their config overrides
+    const projects = repositories.map(repo => {
+      const repoConfig = configMap.get(repo.name);
+      return transformRepositoryToMuseumProject(repo, repoConfig);
+    });
+    
+    // Sort projects based on configuration
+    const sortedProjects = sortProjects(projects, config.settings.sortBy, config.repositories);
+    
+    const categories = Array.from(new Set(sortedProjects.map(p => p.category)));
+    const languages = Array.from(new Set(sortedProjects.map(p => p.language).filter(Boolean)));
     
     return {
       lastUpdated: new Date().toISOString(),
-      projects,
+      projects: sortedProjects,
       categories,
       languages,
-      totalProjects: projects.length
+      totalProjects: sortedProjects.length
     };
   } catch (error) {
     console.error('Error generating museum data:', error);
-    return getFallbackMuseumData();
+    return generateFallbackMuseumData();
   }
+}
+
+function sortProjects(projects: MuseumProject[], sortBy: 'order' | 'updated' | 'created', repoConfigs: MuseumRepositoryConfig[]): MuseumProject[] {
+  const configMap = new Map(repoConfigs.map(rc => [rc.name, rc]));
+  
+  return [...projects].sort((a, b) => {
+    switch (sortBy) {
+      case 'order':
+        const orderA = configMap.get(a.id)?.order ?? 999;
+        const orderB = configMap.get(b.id)?.order ?? 999;
+        return orderA - orderB;
+      
+      case 'updated':
+        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+      
+      case 'created':
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      
+      default:
+        return 0;
+    }
+  });
 }
 
 // Fallback data for development and error cases
@@ -256,17 +344,44 @@ function getFallbackRepositories(): GitHubRepository[] {
   ];
 }
 
-function getFallbackMuseumData(): MuseumData {
-  const fallbackRepos = getFallbackRepositories();
-  const projects = fallbackRepos.map(transformRepositoryToMuseumProject);
-  
-  return {
-    lastUpdated: new Date().toISOString(),
-    projects,
-    categories: ['productivity'],
-    languages: ['TypeScript'],
-    totalProjects: projects.length
-  };
+function generateFallbackMuseumData(): MuseumData {
+  try {
+    const config = loadMuseumConfig();
+    const fallbackRepos = getFallbackRepositories();
+    
+    // Create a map of repository configs for easy lookup
+    const configMap = new Map(config.repositories.map(rc => [rc.name, rc]));
+    
+    // Transform repositories with their config overrides
+    const projects = fallbackRepos.map(repo => {
+      const repoConfig = configMap.get(repo.name);
+      return transformRepositoryToMuseumProject(repo, repoConfig);
+    });
+    
+    // Sort projects based on configuration
+    const sortedProjects = sortProjects(projects, config.settings.sortBy, config.repositories);
+    
+    const categories = Array.from(new Set(sortedProjects.map(p => p.category)));
+    const languages = Array.from(new Set(sortedProjects.map(p => p.language).filter(Boolean)));
+    
+    return {
+      lastUpdated: new Date().toISOString(),
+      projects: sortedProjects,
+      categories,
+      languages,
+      totalProjects: sortedProjects.length
+    };
+  } catch (error) {
+    console.error('Error generating fallback museum data:', error);
+    // Last resort fallback
+    return {
+      lastUpdated: new Date().toISOString(),
+      projects: [],
+      categories: [],
+      languages: [],
+      totalProjects: 0
+    };
+  }
 }
 
 export { PROJECT_CATEGORIES };

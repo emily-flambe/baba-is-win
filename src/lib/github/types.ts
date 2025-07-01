@@ -53,13 +53,11 @@ export interface MuseumProject {
   id: string;
   displayName: string;
   description: string;
+  extendedDescription?: string | null;
   language: string | null;
   category: string;
-  featured: boolean;
   demoUrl: string | null;
   githubUrl: string;
-  stars: number;
-  forks: number;
   topics: string[];
   updatedAt: string;
   createdAt: string;
@@ -144,4 +142,24 @@ export interface GitHubApiError {
   message: string;
   status: number;
   documentation_url?: string;
+}
+
+export interface MuseumRepositoryConfig {
+  name: string;
+  displayName?: string;
+  customDescription?: string | null;
+  extendedDescription?: string | null;
+  category?: string;
+  demoUrl?: string | null;
+  order: number;
+}
+
+export interface MuseumConfig {
+  owner: string;
+  repositories: MuseumRepositoryConfig[];
+  settings: {
+    fallbackToAllRepos: boolean;
+    sortBy: 'order' | 'updated' | 'created';
+    showOnlyConfigured: boolean;
+  };
 }
