@@ -14,9 +14,14 @@ try {
   museumData = await generateMuseumData('emily-flambe');
 } catch (error) {
   console.warn('Failed to fetch fresh GitHub data, using fallback:', error);
-  // Import fallback data
-  const fallbackData = await import('../../data/github-projects.json');
-  museumData = fallbackData.default as MuseumData;
+  // Fallback is handled internally by generateMuseumData
+  museumData = {
+    lastUpdated: new Date().toISOString(),
+    projects: [],
+    categories: [],
+    languages: [],
+    totalProjects: 0
+  };
 }
 
 const { projects, categories, languages, totalProjects, lastUpdated } = museumData;
@@ -43,52 +48,24 @@ const keywords = [
   <Fragment slot="header">
     <div class="museum-hero">
       <h1 class="hero-title">
-        <span class="title-main">Project Museum</span>
-        <span class="title-subtitle">🏛️</span>
+        <span class="emoji-group">
+          <span class="emoji emoji-1">🏛️</span>
+          <span class="emoji emoji-2">🏺</span>
+          <span class="emoji emoji-3">🖼️</span>
+        </span>
+        <span class="title-main">Museum</span>
+        <span class="emoji-group">
+          <span class="emoji emoji-4">🏛️</span>
+          <span class="emoji emoji-5">🏺</span>
+          <span class="emoji emoji-6">🖼️</span>
+        </span>
       </h1>
       <p class="hero-description">
         A curated collection of my open source projects and development experiments.
-        Explore {totalProjects} projects across {categories.length} categories, 
-        built with {languages.join(', ')}.
       </p>
-      <div class="hero-stats">
-        <div class="stat-item">
-          <span class="stat-number">{totalProjects}</span>
-          <span class="stat-label">Projects</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number">{categories.length}</span>
-          <span class="stat-label">Categories</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number">{languages.length}</span>
-          <span class="stat-label">Languages</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number">{projects.filter(p => p.featured).length}</span>
-          <span class="stat-label">Featured</span>
-        </div>
-      </div>
-      <div class="last-updated">
-        Last updated: {new Date(lastUpdated).toLocaleDateString('en-US', { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
-        })}
-      </div>
     </div>
   </Fragment>
   
-  <Fragment slot="filters">
-    <MuseumFilters 
-      projects={projects} 
-      client:load 
-      onFilter={(filtered) => {
-        // This will be handled by the Svelte component
-        console.log(`Filtered to ${filtered.length} projects`);
-      }}
-    />
-  </Fragment>
   
   <MuseumGallery 
     projects={projects} 
@@ -163,18 +140,51 @@ const keywords = [
   }
 
   .title-main {
-    font-size: 3rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #1e293b 0%, #3b82f6 50%, #8b5cf6 100%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: none;
+    font-family: var(--font-family-serif);
+    font-size: 1.5em;
+    color: #ffffff;
   }
 
-  .title-subtitle {
+  .emoji-group {
     font-size: 2.5rem;
-    animation: float 3s ease-in-out infinite;
+    display: inline-block;
+  }
+
+  .emoji {
+    display: inline-block;
+    animation-name: float;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+
+  .emoji-1 {
+    animation-duration: 2.5s;
+    animation-delay: 0s;
+  }
+
+  .emoji-2 {
+    animation-duration: 3s;
+    animation-delay: 0.4s;
+  }
+
+  .emoji-3 {
+    animation-duration: 2.8s;
+    animation-delay: 0.8s;
+  }
+
+  .emoji-4 {
+    animation-duration: 3.2s;
+    animation-delay: 0.2s;
+  }
+
+  .emoji-5 {
+    animation-duration: 2.7s;
+    animation-delay: 0.6s;
+  }
+
+  .emoji-6 {
+    animation-duration: 2.9s;
+    animation-delay: 1s;
   }
 
   @keyframes float {
@@ -183,63 +193,26 @@ const keywords = [
   }
 
   .hero-description {
-    font-size: 1.25rem;
-    color: #64748b;
-    line-height: 1.7;
-    margin: 0 0 2rem 0;
+    font-family: var(--font-family-serif);
+    font-size: 1.15rem;
+    line-height: 1.75em;
+    color: var(--text-secondary);
+    margin: 1.2em auto;
     max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
   }
 
-  .hero-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 1.5rem;
-    margin: 2rem 0;
-    padding: 2rem;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-    border-radius: 1rem;
-    border: 1px solid #e2e8f0;
-  }
-
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .stat-number {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #1e293b;
-  }
-
-  .stat-label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .last-updated {
-    font-size: 0.875rem;
-    color: #94a3b8;
-    font-style: italic;
-    margin-top: 1rem;
-  }
 
   /* Mobile Responsive */
+  @media (max-width: 1020px) {
+    .title-main {
+      font-size: 3em;
+    }
+  }
+
   @media (max-width: 768px) {
     .hero-title {
       flex-direction: column;
       gap: 0.5rem;
-    }
-
-    .title-main {
-      font-size: 2.25rem;
     }
 
     .title-subtitle {
@@ -247,42 +220,18 @@ const keywords = [
     }
 
     .hero-description {
-      font-size: 1.125rem;
       padding: 0 1rem;
-    }
-
-    .hero-stats {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-      padding: 1.5rem;
-    }
-
-    .stat-number {
-      font-size: 1.5rem;
-    }
-
-    .stat-label {
-      font-size: 0.75rem;
     }
   }
 
   @media (max-width: 480px) {
-    .title-main {
-      font-size: 1.875rem;
-    }
-
     .title-subtitle {
       font-size: 1.5rem;
     }
 
     .hero-description {
-      font-size: 1rem;
-    }
-
-    .hero-stats {
-      grid-template-columns: 1fr;
-      gap: 0.75rem;
-      padding: 1rem;
+      font-size: 1.1rem;
+      margin: 1em auto;
     }
   }
 
@@ -296,14 +245,7 @@ const keywords = [
   /* High contrast mode support */
   @media (prefers-contrast: high) {
     .title-main {
-      background: none;
-      -webkit-text-fill-color: initial;
-      color: #000000;
-    }
-
-    .hero-stats {
-      background: #ffffff;
-      border: 2px solid #000000;
+      color: #ffffff;
     }
   }
 </style>
