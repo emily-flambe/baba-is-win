@@ -18,7 +18,7 @@ Therefore: please be advised that I am making practically zero effort to use tok
 
 # Quick tips
 
-### use --dangerously-skip-permissions
+### Dangerously skip permissions (you're worth it)
 
 I have aliased `claude --dangerously-skip-permissions` to `claudia` (that saucy minx!), which I use 100% of the time when working on personal projects. This unlocks truly degenerate levels of velocity!
 
@@ -43,6 +43,14 @@ Use `/clear` early and often.
 Maybe this foible of LLMs will resolve itself in the fullness of time, but I have heard this tip a lot.
 
 It's good advice for talking to humans, too.
+
+### One weird old tip to make `cd` not suck 
+
+Claude has a toxic trait of confusing itself when it uses `cd` to bop around your project.
+
+Add this line to your ~/.zshrc (or bashrc or what have you) to help it not hurt itself in its confusion.
+
+`export CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR=1`
 
 ### Memorize rules
 

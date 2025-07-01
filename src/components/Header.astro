@@ -289,8 +289,10 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
 
       // Close menu when clicking outside
       document.addEventListener('click', (e) => {
-        if (!kebabToggle.contains(e.target as Element) && !kebabDropdown.contains(e.target as Element)) {
-          kebabDropdown.classList.remove('show');
+        if (e.target && e.target instanceof Element) {
+          if (!kebabToggle.contains(e.target) && !kebabDropdown.contains(e.target)) {
+            kebabDropdown.classList.remove('show');
+          }
         }
       });
 
