@@ -244,7 +244,7 @@ const allProjects = projects;
   // Handle initial page load
   document.addEventListener('DOMContentLoaded', runMasonry);
   
-  // Handle Astro ViewTransitions navigation
+  // Handle Astro ViewTransitions navigation (key for fixing the header link issue)
   document.addEventListener('astro:page-load', runMasonry);
   
   // Handle window resize
