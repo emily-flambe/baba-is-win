@@ -192,10 +192,18 @@ const allProjects = projects;
     });
   }
 
-  // Initialize on load and resize
-  document.addEventListener('DOMContentLoaded', initMasonry);
-  window.addEventListener('resize', () => {
+  // Initialize masonry layout
+  function runMasonry() {
     setTimeout(initMasonry, 100);
-  });
+  }
+
+  // Handle initial page load
+  document.addEventListener('DOMContentLoaded', runMasonry);
+  
+  // Handle Astro ViewTransitions navigation (key for fixing the header link issue)
+  document.addEventListener('astro:page-load', runMasonry);
+  
+  // Handle window resize
+  window.addEventListener('resize', runMasonry);
 </script>
 
