@@ -244,8 +244,17 @@ const allProjects = projects;
   // Handle initial page load
   document.addEventListener('DOMContentLoaded', runMasonry);
   
-  // Handle Astro ViewTransitions navigation (key for fixing the header link issue)
-  document.addEventListener('astro:page-load', runMasonry);
+  // Handle Astro ViewTransitions navigation (enhanced timing for header link fix)
+  document.addEventListener('astro:page-load', async () => {
+    // Wait for next animation frame
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    
+    // Additional small delay for view transitions
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    // Run existing masonry logic
+    await runMasonry();
+  });
   
   // Handle window resize
   window.addEventListener('resize', () => {
