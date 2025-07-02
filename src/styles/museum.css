@@ -1,0 +1,456 @@
+/* Museum-specific design system and styles */
+
+/* Museum Color Palette */
+:root {
+  /* Primary Museum Colors */
+  --museum-primary: #2a4d3a;       /* Deep forest green */
+  --museum-secondary: #f7f3e9;     /* Warm cream */
+  --museum-accent: #d4af37;        /* Museum gold */
+  --museum-text: #1a1a1a;          /* Rich black */
+  --museum-muted: #6b7280;         /* Warm gray */
+  
+  /* Extended Color System */
+  --museum-bg-primary: #ffffff;
+  --museum-bg-secondary: #f8fafc;
+  --museum-bg-tertiary: #f1f5f9;
+  --museum-border: #e2e8f0;
+  --museum-border-hover: #cbd5e1;
+  
+  /* Status Colors */
+  --museum-success: #059669;
+  --museum-warning: #f59e0b;
+  --museum-error: #dc2626;
+  --museum-info: #3b82f6;
+  
+  /* Museum Spacing System */
+  --museum-space-xs: 0.25rem;      /* 4px */
+  --museum-space-sm: 0.5rem;       /* 8px */
+  --museum-space-md: 1rem;         /* 16px */
+  --museum-space-lg: 1.5rem;       /* 24px */
+  --museum-space-xl: 2rem;         /* 32px */
+  --museum-space-2xl: 3rem;        /* 48px */
+  --museum-space-3xl: 4rem;        /* 64px */
+  
+  /* Museum Typography Scale */
+  --museum-text-xs: 0.75rem;       /* 12px */
+  --museum-text-sm: 0.875rem;      /* 14px */
+  --museum-text-base: 1rem;        /* 16px */
+  --museum-text-lg: 1.125rem;      /* 18px */
+  --museum-text-xl: 1.25rem;       /* 20px */
+  --museum-text-2xl: 1.5rem;       /* 24px */
+  --museum-text-3xl: 1.875rem;     /* 30px */
+  --museum-text-4xl: 2.25rem;      /* 36px */
+  --museum-text-5xl: 3rem;         /* 48px */
+  
+  /* Museum Shadows */
+  --museum-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --museum-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --museum-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --museum-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --museum-shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --museum-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  
+  /* Museum Border Radius */
+  --museum-radius-sm: 0.375rem;    /* 6px */
+  --museum-radius-md: 0.5rem;      /* 8px */
+  --museum-radius-lg: 0.75rem;     /* 12px */
+  --museum-radius-xl: 1rem;        /* 16px */
+  --museum-radius-2xl: 1.5rem;     /* 24px */
+  
+  /* Museum Transitions */
+  --museum-transition-fast: 0.15s ease;
+  --museum-transition-base: 0.2s ease;
+  --museum-transition-slow: 0.3s ease;
+  --museum-transition-all: all var(--museum-transition-base);
+}
+
+/* Dark Theme Overrides */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --museum-bg-primary: #1e293b;
+    --museum-bg-secondary: #334155;
+    --museum-bg-tertiary: #475569;
+    --museum-text: #f8fafc;
+    --museum-muted: #94a3b8;
+    --museum-border: #475569;
+    --museum-border-hover: #64748b;
+    --museum-secondary: #1e293b;
+  }
+}
+
+/* Museum Base Styles */
+.museum-page {
+  background: var(--museum-bg-primary);
+  color: var(--museum-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Museum Layout Utilities */
+.museum-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--museum-space-lg);
+}
+
+.museum-section {
+  margin-bottom: var(--museum-space-2xl);
+}
+
+.museum-grid {
+  display: grid;
+  gap: var(--museum-space-lg);
+}
+
+.museum-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.museum-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.museum-grid-4 {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* Museum Card System */
+.museum-card {
+  background: var(--museum-bg-primary);
+  border: 1px solid var(--museum-border);
+  border-radius: var(--museum-radius-lg);
+  box-shadow: var(--museum-shadow-card);
+  transition: var(--museum-transition-all);
+  overflow: hidden;
+}
+
+.museum-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--museum-shadow-hover);
+  border-color: var(--museum-border-hover);
+}
+
+.museum-card-header {
+  padding: var(--museum-space-lg);
+  border-bottom: 1px solid var(--museum-border);
+  background: var(--museum-bg-secondary);
+}
+
+.museum-card-body {
+  padding: var(--museum-space-lg);
+}
+
+.museum-card-footer {
+  padding: var(--museum-space-lg);
+  border-top: 1px solid var(--museum-border);
+  background: var(--museum-bg-secondary);
+}
+
+/* Museum Typography */
+.museum-title {
+  font-size: var(--museum-text-4xl);
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0 0 var(--museum-space-lg) 0;
+  color: var(--museum-text);
+}
+
+.museum-subtitle {
+  font-size: var(--museum-text-2xl);
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0 0 var(--museum-space-md) 0;
+  color: var(--museum-text);
+}
+
+.museum-heading {
+  font-size: var(--museum-text-xl);
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0 0 var(--museum-space-sm) 0;
+  color: var(--museum-text);
+}
+
+.museum-text {
+  font-size: var(--museum-text-base);
+  line-height: 1.6;
+  color: var(--museum-muted);
+  margin: 0 0 var(--museum-space-md) 0;
+}
+
+.museum-text-small {
+  font-size: var(--museum-text-sm);
+  line-height: 1.5;
+  color: var(--museum-muted);
+}
+
+/* Museum Buttons */
+.museum-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--museum-space-sm);
+  padding: var(--museum-space-sm) var(--museum-space-lg);
+  border-radius: var(--museum-radius-md);
+  font-size: var(--museum-text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  transition: var(--museum-transition-all);
+  cursor: pointer;
+  border: none;
+}
+
+.museum-btn-primary {
+  background: var(--museum-primary);
+  color: white;
+}
+
+.museum-btn-primary:hover {
+  background: color-mix(in srgb, var(--museum-primary) 85%, black);
+  transform: translateY(-1px);
+}
+
+.museum-btn-secondary {
+  background: var(--museum-bg-secondary);
+  color: var(--museum-text);
+  border: 1px solid var(--museum-border);
+}
+
+.museum-btn-secondary:hover {
+  background: var(--museum-bg-tertiary);
+  border-color: var(--museum-border-hover);
+  transform: translateY(-1px);
+}
+
+.museum-btn-accent {
+  background: var(--museum-accent);
+  color: white;
+}
+
+.museum-btn-accent:hover {
+  background: color-mix(in srgb, var(--museum-accent) 85%, black);
+  transform: translateY(-1px);
+}
+
+/* Museum Badges */
+.museum-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--museum-space-xs);
+  padding: var(--museum-space-xs) var(--museum-space-sm);
+  border-radius: var(--museum-radius-sm);
+  font-size: var(--museum-text-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.museum-badge-primary {
+  background: color-mix(in srgb, var(--museum-primary) 15%, transparent);
+  color: var(--museum-primary);
+  border: 1px solid color-mix(in srgb, var(--museum-primary) 30%, transparent);
+}
+
+.museum-badge-accent {
+  background: color-mix(in srgb, var(--museum-accent) 15%, transparent);
+  color: color-mix(in srgb, var(--museum-accent) 80%, black);
+  border: 1px solid color-mix(in srgb, var(--museum-accent) 30%, transparent);
+}
+
+.museum-badge-success {
+  background: color-mix(in srgb, var(--museum-success) 15%, transparent);
+  color: var(--museum-success);
+  border: 1px solid color-mix(in srgb, var(--museum-success) 30%, transparent);
+}
+
+/* Museum Form Elements */
+.museum-input {
+  width: 100%;
+  padding: var(--museum-space-sm) var(--museum-space-md);
+  border: 1px solid var(--museum-border);
+  border-radius: var(--museum-radius-md);
+  background: var(--museum-bg-primary);
+  color: var(--museum-text);
+  font-size: var(--museum-text-base);
+  transition: var(--museum-transition-all);
+}
+
+.museum-input:focus {
+  outline: none;
+  border-color: var(--museum-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--museum-primary) 20%, transparent);
+}
+
+.museum-select {
+  width: 100%;
+  padding: var(--museum-space-sm) var(--museum-space-md);
+  border: 1px solid var(--museum-border);
+  border-radius: var(--museum-radius-md);
+  background: var(--museum-bg-primary);
+  color: var(--museum-text);
+  font-size: var(--museum-text-base);
+  cursor: pointer;
+  transition: var(--museum-transition-all);
+}
+
+.museum-select:focus {
+  outline: none;
+  border-color: var(--museum-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--museum-primary) 20%, transparent);
+}
+
+/* Museum Animations */
+.museum-fade-in {
+  animation: museumFadeIn 0.5s ease-out;
+}
+
+.museum-slide-up {
+  animation: museumSlideUp 0.3s ease-out;
+}
+
+.museum-bounce {
+  animation: museumBounce 0.6s ease-out;
+}
+
+@keyframes museumFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes museumSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes museumBounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -5px, 0);
+  }
+  70% {
+    transform: translate3d(0, -3px, 0);
+  }
+  90% {
+    transform: translate3d(0, -1px, 0);
+  }
+}
+
+/* Museum Loading States */
+.museum-loading {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--museum-border);
+  border-radius: 50%;
+  border-top-color: var(--museum-primary);
+  animation: museumSpin 1s linear infinite;
+}
+
+@keyframes museumSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Museum Responsive Utilities */
+@media (max-width: 768px) {
+  .museum-container {
+    padding: 0 var(--museum-space-md);
+  }
+  
+  .museum-grid-2,
+  .museum-grid-3,
+  .museum-grid-4 {
+    grid-template-columns: 1fr;
+  }
+  
+  .museum-title {
+    font-size: var(--museum-text-3xl);
+  }
+  
+  .museum-subtitle {
+    font-size: var(--museum-text-xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .museum-container {
+    padding: 0 var(--museum-space-sm);
+  }
+  
+  .museum-title {
+    font-size: var(--museum-text-2xl);
+  }
+  
+  .museum-subtitle {
+    font-size: var(--museum-text-lg);
+  }
+  
+  .museum-card-header,
+  .museum-card-body,
+  .museum-card-footer {
+    padding: var(--museum-space-md);
+  }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+  .museum-card,
+  .museum-btn,
+  .museum-input,
+  .museum-select {
+    transition: none;
+  }
+  
+  .museum-fade-in,
+  .museum-slide-up,
+  .museum-bounce,
+  .museum-loading {
+    animation: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  :root {
+    --museum-border: #000000;
+    --museum-border-hover: #333333;
+    --museum-shadow-card: 0 0 0 2px #000000;
+    --museum-shadow-hover: 0 0 0 3px #000000;
+  }
+  
+  .museum-card {
+    border-width: 2px;
+  }
+}
+
+/* Focus Visible for Better Keyboard Navigation */
+.museum-btn:focus-visible,
+.museum-input:focus-visible,
+.museum-select:focus-visible {
+  outline: 2px dashed var(--museum-primary);
+  outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+  .museum-card {
+    border: 1px solid #000000 !important;
+    box-shadow: none !important;
+  }
+  
+  .museum-btn {
+    border: 1px solid #000000 !important;
+  }
+}

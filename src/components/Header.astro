@@ -4,7 +4,7 @@ import Nav from './Nav.astro'
 import subtitlesData from '../data/subtitles.json'
 
 const { current = '' } = Astro.props;
-const user = Astro.locals.user;
+const user = Astro.locals?.user || null;
 
 // Select a random subtitle
 const randomIndex = Math.floor(Math.random() * subtitlesData.subtitles.length);
@@ -289,8 +289,10 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
 
       // Close menu when clicking outside
       document.addEventListener('click', (e) => {
-        if (!kebabToggle.contains(e.target as Element) && !kebabDropdown.contains(e.target as Element)) {
-          kebabDropdown.classList.remove('show');
+        if (e.target && e.target instanceof Element) {
+          if (!kebabToggle.contains(e.target) && !kebabDropdown.contains(e.target)) {
+            kebabDropdown.classList.remove('show');
+          }
         }
       });
 

@@ -3,17 +3,26 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Carousel from '../../components/Carousel.astro';
 import { processSimpleMarkdown } from '../../utils/simpleMarkdown.js';
 
-export async function getStaticPaths() {
-  const thoughts = await Astro.glob('../../data/thoughts/published/*.md');
-  return thoughts.map(t => ({
-    params: { slug: t.file.split('/').pop().split('.').shift() },
-    props: { thought: t },
-  }));
+const { slug } = Astro.params;
+
+// Load all thoughts and find the matching one
+const thoughtModules = import.meta.glob('../../data/thoughts/published/*.md', { eager: true });
+const thoughts = Object.entries(thoughtModules).map(([path, module]) => ({
+  ...module,
+  file: path
+}));
+
+const thought = thoughts.find(t => {
+  const thoughtSlug = t.file.split('/').pop().split('.').shift();
+  return thoughtSlug === slug;
+});
+
+if (!thought) {
+  throw new Error(`Thought not found: ${slug}`);
 }
 
-const { frontmatter } = Astro.props.thought;
+const { frontmatter } = thought;
 const { content, publishDate, publishTime, tags, images } = frontmatter;
-const slug = Astro.props.thought.file.split('/').pop().split('.').shift();
 const permalink = `${Astro.site.href}thoughts/${slug}`;
 ---
 

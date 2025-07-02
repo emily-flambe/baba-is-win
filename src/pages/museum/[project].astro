@@ -1,0 +1,604 @@
+---
+import MuseumLayout from '../../components/museum/MuseumLayout.astro';
+import type { MuseumProject } from '../../lib/github/types.js';
+import { generateMuseumData } from '../../lib/github/api.js';
+
+const { project: projectId } = Astro.params;
+
+const museumData = await generateMuseumData('emily-flambe');
+const project = museumData.projects.find(p => p.id === projectId);
+
+if (!project) {
+  throw new Error(`Project not found: ${projectId}`);
+}
+
+const pageTitle = `${project.displayName} | Project Museum`;
+const pageDescription = `${project.description} - Built with ${project.language || 'various technologies'} and featuring ${project.topics.join(', ')}.`;
+
+// Format dates
+const createdDate = new Date(project.createdAt).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+
+const updatedDate = new Date(project.updatedAt).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+---
+
+<MuseumLayout title={pageTitle} description={pageDescription}>
+  <Fragment slot="header">
+    <div class="project-hero">
+      <div class="breadcrumb">
+        <a href="/museum">← Back to Museum</a>
+      </div>
+      
+      <div class="project-header">
+        <h1 class="project-title">
+          {project.displayName}
+          {project.featured && <span class="featured-star">⭐</span>}
+        </h1>
+        
+        <p class="project-description">{project.description}</p>
+        
+        <div class="project-meta">
+          {project.language && (
+            <span class="meta-item language">
+              <span class="meta-label">Language:</span>
+              <span class="language-tag" data-language={project.language}>
+                {project.language}
+              </span>
+            </span>
+          )}
+          
+          <span class="meta-item category">
+            <span class="meta-label">Category:</span>
+            <span class="category-tag">{project.category}</span>
+          </span>
+          
+          <span class="meta-item dates">
+            <span class="meta-label">Created:</span>
+            <time datetime={project.createdAt}>{createdDate}</time>
+          </span>
+          
+          <span class="meta-item dates">
+            <span class="meta-label">Updated:</span>
+            <time datetime={project.updatedAt}>{updatedDate}</time>
+          </span>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  <div class="project-content">
+    <div class="project-sidebar">
+      <div class="project-stats">
+        <h3>Project Stats</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-icon">⭐</span>
+            <span class="stat-value">{project.stars}</span>
+            <span class="stat-label">Stars</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-icon">🍴</span>
+            <span class="stat-value">{project.forks}</span>
+            <span class="stat-label">Forks</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-icon">🏷️</span>
+            <span class="stat-value">{project.topics.length}</span>
+            <span class="stat-label">Topics</span>
+          </div>
+        </div>
+      </div>
+
+      {project.topics.length > 0 && (
+        <div class="project-topics">
+          <h3>Topics</h3>
+          <div class="topics-list">
+            {project.topics.map(topic => (
+              <span class="topic-tag">#{topic}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div class="project-actions">
+        <h3>Quick Actions</h3>
+        <div class="actions-list">
+          <a 
+            href={project.githubUrl} 
+            class="action-link github"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+            View Source Code
+          </a>
+          
+          {project.demoUrl && (
+            <a 
+              href={project.demoUrl} 
+              class="action-link demo"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m9 18 6-6-6-6"/>
+              </svg>
+              Live Demo
+            </a>
+          )}
+          
+          <a 
+            href={`${project.githubUrl}/issues`}
+            class="action-link issues"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            Report Issues
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <main class="project-main">
+      <div class="content-section">
+        <h2>About This Project</h2>
+        <p>
+          {project.displayName} is {project.description.toLowerCase().startsWith('a') ? '' : 'a '}
+          {project.description.toLowerCase()}.
+          {project.language && ` This project is built primarily with ${project.language}.`}
+        </p>
+        
+        {project.featured && (
+          <div class="featured-notice">
+            <h3>⭐ Featured Project</h3>
+            <p>This project has been selected as a featured project, highlighting its quality, innovation, or impact.</p>
+          </div>
+        )}
+      </div>
+
+      <div class="content-section">
+        <h2>Project Timeline</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-date">{createdDate}</div>
+            <div class="timeline-content">
+              <h4>Project Created</h4>
+              <p>Initial repository setup and first commit.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">{updatedDate}</div>
+            <div class="timeline-content">
+              <h4>Last Updated</h4>
+              <p>Most recent changes and improvements.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>Getting Started</h2>
+        <div class="code-section">
+          <h4>Clone the Repository</h4>
+          <pre class="code-block"><code>git clone {project.githubUrl}.git
+cd {project.id}
+{project.language === 'TypeScript' || project.language === 'JavaScript' ? 'npm install' : project.language === 'Python' ? 'pip install -r requirements.txt' : '# Follow README instructions'}</code></pre>
+        </div>
+        <p>For detailed setup instructions, please refer to the README file in the repository.</p>
+      </div>
+    </main>
+  </div>
+</MuseumLayout>
+
+<style>
+  .project-hero {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .breadcrumb {
+    margin-bottom: 1rem;
+  }
+
+  .breadcrumb a {
+    color: #64748b;
+    text-decoration: none;
+    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: color 0.2s ease;
+  }
+
+  .breadcrumb a:hover {
+    color: #3b82f6;
+  }
+
+  .project-header {
+    text-align: center;
+  }
+
+  .project-title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .featured-star {
+    font-size: 2rem;
+    animation: twinkle 2s ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.1); }
+  }
+
+  .project-description {
+    font-size: 1.25rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0 0 2rem 0;
+  }
+
+  .project-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    font-size: 0.875rem;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .meta-label {
+    color: #6b7280;
+    font-weight: 500;
+  }
+
+  .language-tag {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+  }
+
+  .language-tag[data-language="TypeScript"] { background: #3178c6; color: white; }
+  .language-tag[data-language="JavaScript"] { background: #f7df1e; color: black; }
+  .language-tag[data-language="Python"] { background: #3776ab; color: white; }
+
+  .category-tag {
+    background: #e0e7ff;
+    color: #3730a3;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+
+  .project-content {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 3rem;
+    margin-top: 3rem;
+    align-items: start;
+  }
+
+  .project-sidebar {
+    position: sticky;
+    top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .project-sidebar > div {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+  }
+
+  .project-sidebar h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-icon {
+    display: block;
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .topics-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .topic-tag {
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #e2e8f0;
+  }
+
+  .actions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .action-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .action-link.github {
+    background: #24292f;
+    color: #ffffff;
+  }
+
+  .action-link.demo {
+    background: #3b82f6;
+    color: #ffffff;
+  }
+
+  .action-link.issues {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+  }
+
+  .action-link:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .project-main {
+    min-height: 100vh;
+  }
+
+  .content-section {
+    margin-bottom: 3rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 2rem;
+  }
+
+  .content-section h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 1rem 0;
+  }
+
+  .content-section h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .content-section p {
+    color: #6b7280;
+    line-height: 1.6;
+    margin: 0 0 1rem 0;
+  }
+
+  .featured-notice {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: 1px solid #f59e0b;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .featured-notice h3 {
+    color: #92400e;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.125rem;
+  }
+
+  .featured-notice p {
+    color: #78350f;
+    margin: 0;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e5e7eb;
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -2.25rem;
+    top: 0.25rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    background: #3b82f6;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 2px #e5e7eb;
+  }
+
+  .timeline-date {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+
+  .timeline-content h4 {
+    margin: 0 0 0.25rem 0;
+    color: #1f2937;
+  }
+
+  .timeline-content p {
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  .code-section {
+    margin: 1.5rem 0;
+  }
+
+  .code-block {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #374151;
+    overflow-x: auto;
+    margin: 0.5rem 0;
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 1024px) {
+    .project-content {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .project-sidebar {
+      position: static;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .project-title {
+      font-size: 2.25rem;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .project-description {
+      font-size: 1.125rem;
+    }
+
+    .project-meta {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .content-section {
+      padding: 1.5rem;
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .project-title {
+      font-size: 1.875rem;
+    }
+
+    .project-description {
+      font-size: 1rem;
+    }
+
+    .content-section {
+      padding: 1rem;
+    }
+
+    .project-sidebar {
+      grid-template-columns: 1fr;
+    }
+
+    .project-sidebar > div {
+      padding: 1rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .featured-star {
+      animation: none;
+    }
+  }
+</style>

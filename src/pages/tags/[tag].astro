@@ -2,34 +2,22 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogPost from '../../components/BlogPost.astro';
 
-export async function getStaticPaths() {
-  const allPosts = Object.values(
-    import.meta.glob('../../data/blog-posts/published/*.md', { eager: true })
-  );
-
-  // Safely extract tags from posts (ensure tags exist and are arrays)
-  const uniqueTags = [...new Set(
-    allPosts.flatMap(post => post.frontmatter.tags || [])
-  )];
-
-  // Generate paths, filtering posts safely
-  return uniqueTags.map(tag => {
-    const filteredPosts = allPosts.filter(
-      post => Array.isArray(post.frontmatter.tags) && post.frontmatter.tags.includes(tag)
-    );
-
-    // Sort posts by date in descending order
-    filteredPosts.sort((a, b) => new Date(b.frontmatter.publishDate) - new Date(a.frontmatter.publishDate));
-
-    return {
-      params: { tag },
-      props: { posts: filteredPosts },
-    };
-  });
-}
-
 const { tag } = Astro.params;
-const { posts } = Astro.props;
+
+// Load all posts
+const postModules = import.meta.glob('../../data/blog-posts/published/*.md', { eager: true });
+const allPosts = Object.entries(postModules).map(([path, module]) => ({
+  ...module,
+  file: path
+}));
+
+// Filter posts by tag
+const posts = allPosts.filter(
+  post => Array.isArray(post.frontmatter.tags) && post.frontmatter.tags.includes(tag)
+);
+
+// Sort posts by date in descending order
+posts.sort((a, b) => new Date(b.frontmatter.publishDate) - new Date(a.frontmatter.publishDate));
 ---
 
 <BaseLayout pageTitle={`Posts tagged "${tag}"`}>
