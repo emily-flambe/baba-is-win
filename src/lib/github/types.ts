@@ -86,57 +86,6 @@ export interface ProjectCategory {
   icon?: string;
 }
 
-export const PROJECT_CATEGORIES: Record<string, ProjectCategory> = {
-  'productivity': {
-    id: 'productivity',
-    name: 'Productivity Tools',
-    description: 'Tools to enhance workflow and productivity',
-    color: '#2563eb',
-    icon: '🛠️'
-  },
-  'data-processing': {
-    id: 'data-processing', 
-    name: 'Data Processing',
-    description: 'Tools for data manipulation and analysis',
-    color: '#059669',
-    icon: '📊'
-  },
-  'api-integration': {
-    id: 'api-integration',
-    name: 'APIs & Integration',
-    description: 'API clients and integration tools',
-    color: '#dc2626',
-    icon: '🔌'
-  },
-  'web-applications': {
-    id: 'web-applications',
-    name: 'Web Applications',
-    description: 'Full-featured web applications',
-    color: '#7c3aed',
-    icon: '🌐'
-  },
-  'libraries': {
-    id: 'libraries',
-    name: 'Libraries & Frameworks',
-    description: 'Reusable code libraries and frameworks',
-    color: '#ea580c',
-    icon: '📚'
-  },
-  'automation': {
-    id: 'automation',
-    name: 'Automation',
-    description: 'Scripts and tools for automation',
-    color: '#0891b2',
-    icon: '⚙️'
-  },
-  'other': {
-    id: 'other',
-    name: 'Other Projects',
-    description: 'Miscellaneous projects and experiments',
-    color: '#6b7280',
-    icon: '🔬'
-  }
-};
 
 export interface GitHubApiError {
   message: string;
@@ -157,6 +106,7 @@ export interface MuseumRepositoryConfig {
 export interface MuseumConfig {
   owner: string;
   repositories: MuseumRepositoryConfig[];
+  categories: Record<string, ProjectCategory>;
   settings: {
     fallbackToAllRepos: boolean;
     sortBy: 'order' | 'updated' | 'created';

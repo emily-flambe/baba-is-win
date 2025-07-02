@@ -16,8 +16,8 @@
       "customDescription": null,
       "extendedDescription": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. This web application provides an alternative interface for Reddit-style discussions with enhanced privacy features and improved user experience.",
       "category": "web-applications",
-      "demoUrl": "https://ask-reddit-alt.example.com",
-      "order": 2
+      "demoUrl": null,
+      "order": 6
     },
     {
       "name": "notes-for-goats",
@@ -43,19 +43,77 @@
       "customDescription": null,
       "extendedDescription": "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident. API integration tool that enhances Chess.com functionality with advanced statistics, game analysis, and automated tournament management features.",
       "category": "api-integration",
-      "demoUrl": null,
+      "demoUrl": "https://chesscomhelper.emilycogsdill.com",
       "order": 5
     },
     {
-      "name": "moonwatch",
-      "displayName": "Moonwatch",
-      "customDescription": null,
-      "extendedDescription": "Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus. Astronomical observation tool that tracks lunar phases, celestial events, and provides detailed astronomical data through multiple API integrations.",
-      "category": "api-integration",
-      "demoUrl": null,
-      "order": 6
+      "name": "esquie",
+      "displayName": "Esquie",
+      "customDescription": "Mon ami!!!",
+      "extendedDescription": "Wheeee, whoooo",
+      "category": "heartwarming",
+      "demoUrl": "https://esquie.emilycogsdill.com",
+      "order": 2
     }
   ],
+  "categories": {
+    "productivity": {
+      "id": "productivity",
+      "name": "Productivity Tools",
+      "description": "Tools to enhance workflow and productivity",
+      "color": "#059669",
+      "icon": "⚡"
+    },
+    "web-applications": {
+      "id": "web-applications",
+      "name": "Web Applications",
+      "description": "Full-featured web applications",
+      "color": "#3b82f6",
+      "icon": "🌐"
+    },
+    "data-processing": {
+      "id": "data-processing", 
+      "name": "Data Processing",
+      "description": "Tools for data manipulation and analysis",
+      "color": "#f59e0b",
+      "icon": "📊"
+    },
+    "api-integration": {
+      "id": "api-integration",
+      "name": "APIs & Integration",
+      "description": "API clients and integration tools",
+      "color": "#d4af37",
+      "icon": "🔌"
+    },
+    "heartwarming": {
+      "id": "heartwarming",
+      "name": "Heartwarming",
+      "description": "Projects that warm the heart and bring joy",
+      "color": "#ec4899",
+      "icon": "💖"
+    },
+    "libraries": {
+      "id": "libraries",
+      "name": "Libraries & Frameworks",
+      "description": "Reusable code libraries and frameworks",
+      "color": "#ea580c",
+      "icon": "📚"
+    },
+    "automation": {
+      "id": "automation",
+      "name": "Automation",
+      "description": "Scripts and tools for automation",
+      "color": "#0891b2",
+      "icon": "⚙️"
+    },
+    "other": {
+      "id": "other",
+      "name": "Other Projects",
+      "description": "Miscellaneous projects and experiments",
+      "color": "#6b7280",
+      "icon": "🔬"
+    }
+  },
   "settings": {
     "fallbackToAllRepos": false,
     "sortBy": "order",

@@ -5,7 +5,6 @@ import type {
   MuseumProject,
   MuseumData,
   ProjectCategory,
-  PROJECT_CATEGORIES,
   MuseumConfig,
   MuseumRepositoryConfig
 } from './types.js';
@@ -384,5 +383,6 @@ function generateFallbackMuseumData(): MuseumData {
   }
 }
 
-export { PROJECT_CATEGORIES };
+// Export categories from config for backwards compatibility
+export const PROJECT_CATEGORIES = (museumConfig as MuseumConfig).categories;
 export type { ProjectCategory };

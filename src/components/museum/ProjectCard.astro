@@ -1,6 +1,6 @@
 ---
-import type { MuseumProject } from '../../lib/github/types.js';
-import { PROJECT_CATEGORIES } from '../../lib/github/types.js';
+import type { MuseumProject, ProjectCategory } from '../../lib/github/types.js';
+import { PROJECT_CATEGORIES } from '../../lib/github/api.js';
 
 export interface Props {
   project: MuseumProject;
@@ -16,20 +16,8 @@ const updatedDate = new Date(project.updatedAt).toLocaleDateString('en-US', {
   day: 'numeric'
 });
 
-// Category to emoji mapping
-const categoryEmojis = {
-  'productivity': '⚡',
-  'web-applications': '🌐',
-  'data-processing': '📊',
-  'api-integration': '🔌',
-  'mobile-applications': '📱',
-  'games': '🎮',
-  'cli-tools': '⌨️',
-  'browser-extensions': '🧩',
-  'desktop-applications': '💻'
-};
-
-const categoryEmoji = categoryEmojis[project.category] || '📱';
+// Get emoji from category config, fallback to generic icon
+const categoryEmoji = category?.icon || '📱';
 ---
 
 <article 
@@ -54,7 +42,16 @@ const categoryEmoji = categoryEmojis[project.category] || '📱';
     
     <!-- Tech Badges -->
     <div class="project-badges">
-      <span class="tech-badge category-badge">{category?.name || 'Project'}</span>
+      <span 
+        class="tech-badge category-badge"
+        style={category ? `
+          background: color-mix(in srgb, ${category.color} 15%, transparent);
+          color: ${category.color};
+          border-color: color-mix(in srgb, ${category.color} 30%, transparent);
+        ` : ''}
+      >
+        {category?.name || 'Project'}
+      </span>
       {project.language && (
         <span class="tech-badge">{project.language}</span>
       )}
@@ -272,29 +269,9 @@ const categoryEmoji = categoryEmojis[project.category] || '📱';
     letter-spacing: 0.05em;
   }
 
-  /* Category-specific badge colors */
-  .project-card[data-category="productivity"] .category-badge {
-    background: color-mix(in srgb, var(--museum-success) 15%, transparent);
-    color: var(--museum-success);
-    border-color: color-mix(in srgb, var(--museum-success) 30%, transparent);
-  }
-
-  .project-card[data-category="web-applications"] .category-badge {
-    background: color-mix(in srgb, var(--museum-info) 15%, transparent);
-    color: var(--museum-info);
-    border-color: color-mix(in srgb, var(--museum-info) 30%, transparent);
-  }
-
-  .project-card[data-category="data-processing"] .category-badge {
-    background: color-mix(in srgb, var(--museum-warning) 15%, transparent);
-    color: color-mix(in srgb, var(--museum-warning) 80%, black);
-    border-color: color-mix(in srgb, var(--museum-warning) 30%, transparent);
-  }
-
-  .project-card[data-category="api-integration"] .category-badge {
-    background: color-mix(in srgb, var(--museum-accent) 15%, transparent);
-    color: color-mix(in srgb, var(--museum-accent) 80%, black);
-    border-color: color-mix(in srgb, var(--museum-accent) 30%, transparent);
+  /* Category badge gets color from inline style */
+  .category-badge {
+    /* Color will be set via inline style from config */
   }
 
   /* Card Footer */
