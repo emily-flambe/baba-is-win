@@ -27,7 +27,7 @@ try {
 const { projects, categories, languages, totalProjects, lastUpdated } = museumData;
 
 const pageTitle = "Project Museum | Emily's GitHub Projects";
-const pageDescription = "An interactive museum showcasing Emily's open source projects and development work. Explore productivity tools, web applications, APIs, and more.";
+const pageDescription = "A curated digital museum showcasing coding projects and creative works. Explore an interactive gallery of tools, applications, and innovations crafted with passion and precision.";
 
 // SEO and social sharing data
 const ogImage = "/assets/social.png"; // Use existing social image
@@ -47,21 +47,19 @@ const keywords = [
 <MuseumLayout title={pageTitle} description={pageDescription}>
   <Fragment slot="header">
     <div class="museum-hero">
-      <h1 class="hero-title">
-        <span class="emoji-group">
-          <span class="emoji emoji-1">🏛️</span>
-          <span class="emoji emoji-2">🏺</span>
-          <span class="emoji emoji-3">🖼️</span>
-        </span>
-        <span class="title-main">Museum</span>
-        <span class="emoji-group">
-          <span class="emoji emoji-4">🏛️</span>
-          <span class="emoji emoji-5">🏺</span>
-          <span class="emoji emoji-6">🖼️</span>
-        </span>
-      </h1>
+      <div class="bouncing-emojis">
+        <span class="emoji emoji-1">🏛️</span>
+        <span class="emoji emoji-2">🏺</span>
+        <span class="emoji emoji-3">🖼️</span>
+        <span class="emoji emoji-4">📚</span>
+        <span class="emoji emoji-5">🎨</span>
+        <span class="emoji emoji-6">⚡</span>
+      </div>
+      <h1 class="hero-title">Project Museum</h1>
       <p class="hero-description">
-        LOOK ON MY WORKS YE MIGHTY AND DESPAIR
+        A curated digital collection showcasing coding projects and creative works. 
+        Each piece represents a journey of learning, building, and problem-solving 
+        in the ever-evolving landscape of software development.
       </p>
     </div>
   </Fragment>
@@ -125,29 +123,21 @@ const keywords = [
 </Fragment>
 
 <style>
+  /* Museum Hero Section */
   .museum-hero {
     text-align: center;
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
+    padding: var(--museum-space-2xl) 0;
   }
 
-  .hero-title {
+  .bouncing-emojis {
     display: flex;
-    align-items: center;
     justify-content: center;
-    gap: 1rem;
-    margin: 0 0 1.5rem 0;
-  }
-
-  .title-main {
-    font-family: var(--font-family-serif);
-    font-size: 1.5em;
-    color: #ffffff;
-  }
-
-  .emoji-group {
-    font-size: 2.5rem;
-    display: inline-block;
+    align-items: center;
+    gap: var(--museum-space-lg);
+    margin-bottom: var(--museum-space-2xl);
+    font-size: 3.5rem;
   }
 
   .emoji {
@@ -188,58 +178,93 @@ const keywords = [
   }
 
   @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+    0%, 100% { 
+      transform: translateY(0px);
+    }
+    50% { 
+      transform: translateY(-10px);
+    }
+  }
+
+  .hero-title {
+    font-size: var(--museum-text-5xl);
+    font-weight: 800;
+    color: var(--museum-text);
+    margin: 0 0 var(--museum-space-xl) 0;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
   }
 
   .hero-description {
-    font-family: var(--font-family-serif);
-    font-size: 1.15rem;
-    line-height: 1.75em;
-    color: var(--text-secondary);
-    margin: 1.2em auto;
-    max-width: 600px;
+    font-size: var(--museum-text-lg);
+    line-height: 1.7;
+    color: var(--museum-muted);
+    margin: 0 auto var(--museum-space-2xl) auto;
+    max-width: 700px;
+    font-weight: 400;
   }
 
-
-  /* Mobile Responsive */
+  /* Responsive Design */
   @media (max-width: 768px) {
-    .hero-title {
-      flex-direction: column;
-      gap: 0.5rem;
+    .museum-hero {
+      padding: var(--museum-space-xl) 0;
     }
 
-    .title-main {
-      font-size: 1.2em;
+    .bouncing-emojis {
+      gap: var(--museum-space-md);
+      font-size: 2.5rem;
+      margin-bottom: var(--museum-space-xl);
+    }
+
+    .hero-title {
+      font-size: var(--museum-text-4xl);
     }
 
     .hero-description {
-      padding: 0 1rem;
+      font-size: var(--museum-text-base);
+      padding: 0 var(--museum-space-md);
     }
   }
 
   @media (max-width: 480px) {
-    .title-main {
-      font-size: 1.1em;
+    .bouncing-emojis {
+      gap: var(--museum-space-sm);
+      font-size: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-title {
+      font-size: var(--museum-text-3xl);
     }
 
     .hero-description {
-      font-size: 1.1rem;
-      margin: 1em auto;
+      font-size: var(--museum-text-sm);
+      line-height: 1.6;
     }
   }
 
-  /* Accessibility improvements */
+  /* Accessibility and Motion Preferences */
   @media (prefers-reduced-motion: reduce) {
-    .title-subtitle {
+    .emoji {
       animation: none;
     }
   }
 
-  /* High contrast mode support */
+  /* High Contrast Support */
   @media (prefers-contrast: high) {
-    .title-main {
-      color: #ffffff;
+    .hero-title {
+      color: var(--museum-text);
+    }
+    
+    .hero-description {
+      color: var(--museum-text);
+    }
+  }
+
+  /* Dark Theme Adjustments */
+  @media (prefers-color-scheme: dark) {
+    .hero-title {
+      color: var(--museum-secondary);
     }
   }
 </style>

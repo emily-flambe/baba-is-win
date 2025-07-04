@@ -10,209 +10,316 @@ export interface Props {
 
 const { project, featured = false, size = 'medium' } = Astro.props;
 const category = PROJECT_CATEGORIES[project.category];
-const updatedDate = new Date(project.updatedAt).toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric'
-});
-const createdDate = new Date(project.createdAt).toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric'
-});
+
+// Handle dates safely - they might not exist in config-only data
+const updatedDate = project.updatedAt 
+  ? new Date(project.updatedAt).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    })
+  : null;
+
+const createdDate = project.createdAt 
+  ? new Date(project.createdAt).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    })
+  : null;
+
+// Generate placeholder image URL based on project name with 16:10 aspect ratio
+const placeholderUrl = `https://via.placeholder.com/480x300/2a4d3a/f7f3e9?text=${encodeURIComponent(project.displayName)}`;
+
+// Create GitHub URL from project name and owner (for config-only projects)
+const githubUrl = project.githubUrl || `https://github.com/emily-flambe/${project.displayName.toLowerCase().replace(/\s+/g, '-')}`;
 ---
 
 <article 
-  class={`project-card ${size} ${featured ? 'featured' : ''}`}
+  class={`project-card museum-card ${size} ${featured ? 'featured' : ''}`}
   data-category={project.category}
   data-language={project.language || 'unknown'}
 >
-  <header class="card-header">
-    <div class="project-title-group">
-      <h3 class="project-title">{project.displayName}</h3>
-    </div>
-    
-    <div class="project-meta">
-      {project.language && (
-        <span class="language-tag" data-language={project.language}>
-          {project.language}
-        </span>
-      )}
-    </div>
-  </header>
-
-  <div class="card-content">
-    <p class="project-description">{project.description}</p>
-    
-    {project.extendedDescription && (
-      <div class="accordion-section">
-        <button class="accordion-toggle" aria-expanded="false">
-          <span class="toggle-text">More details</span>
-          <svg class="chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M4 3L8 6L4 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-        <div class="accordion-content">
-          <p class="extended-description">{project.extendedDescription}</p>
-        </div>
+  <!-- Project Image/Visual -->
+  <div class="project-image">
+    <img 
+      src={placeholderUrl} 
+      alt={`${project.displayName} preview`}
+      loading="lazy"
+      class="project-thumbnail"
+    />
+    <div class="project-overlay">
+      <div class="category-badge museum-badge museum-badge-primary">
+        <span class="category-icon">{category?.icon || '📁'}</span>
+        <span class="category-name">{category?.name || 'Other'}</span>
       </div>
-    )}
-    
-    {project.topics.length > 0 && (
-      <div class="project-topics">
-        {project.topics.slice(0, 3).map(topic => (
-          <span class="topic-tag">#{topic}</span>
-        ))}
-        {project.topics.length > 3 && (
-          <span class="topic-more">+{project.topics.length - 3} more</span>
-        )}
-      </div>
-    )}
+    </div>
   </div>
 
-  <footer class="card-footer">
-    <div class="project-stats">
-      <span class="stat-item created" title={`Created ${createdDate}`}>
-        Created {createdDate}
-      </span>
-      <span class="stat-item updated" title={`Updated ${updatedDate}`}>
-        Updated {updatedDate}
-      </span>
-    </div>
-    
-    <div class="project-links">
-      <a 
-        href={project.githubUrl} 
-        class="github-link"
-        target="_blank"
-        rel="noopener noreferrer"
-        title="View source code"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-        </svg>
-        Code
-      </a>
+  <!-- Project Content -->
+  <div class="project-content">
+    <header class="project-header">
+      <h3 class="project-title museum-heading">{project.displayName}</h3>
       
-      {project.demoUrl && (
-        <a 
-          href={project.demoUrl} 
-          class="demo-link"
-          target="_blank"
-          rel="noopener noreferrer"
-          title="View live demo"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="m9 18 6-6-6-6"/>
-          </svg>
-          Demo
-        </a>
+      <div class="project-meta">
+        {project.language && (
+          <span class="language-tag museum-badge museum-badge-accent" data-language={project.language}>
+            {project.language}
+          </span>
+        )}
+      </div>
+    </header>
+
+    <div class="project-body">
+      <p class="project-description museum-text">{project.description}</p>
+      
+      {project.extendedDescription && (
+        <div class="accordion-section">
+          <button class="accordion-toggle museum-btn-secondary" aria-expanded="false">
+            <span class="toggle-text">More details</span>
+            <svg class="chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M4 3L8 6L4 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div class="accordion-content">
+            <p class="extended-description museum-text-small">{project.extendedDescription}</p>
+          </div>
+        </div>
+      )}
+      
+      {project.topics && project.topics.length > 0 && (
+        <div class="project-topics">
+          {project.topics.slice(0, 3).map(topic => (
+            <span class="topic-tag museum-badge museum-badge-success">#{topic}</span>
+          ))}
+          {project.topics.length > 3 && (
+            <span class="topic-more museum-text-small">+{project.topics.length - 3} more</span>
+          )}
+        </div>
       )}
     </div>
-  </footer>
+
+    <footer class="project-footer">
+      <div class="project-stats">
+        {updatedDate && (
+          <span class="stat-item museum-text-small" title={`Updated ${updatedDate}`}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12,6 12,12 16,14"/>
+            </svg>
+            {updatedDate}
+          </span>
+        )}
+        <span class="category-indicator museum-text-small" style={`color: ${category?.color || 'var(--museum-muted)'}`}>
+          {category?.icon || '📁'} {category?.name || 'Other'}
+        </span>
+      </div>
+      
+      <div class="project-links">
+        <a 
+          href={githubUrl} 
+          class="github-link museum-btn museum-btn-secondary"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="View source code"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+          Code
+        </a>
+        
+        {project.demoUrl && (
+          <a 
+            href={project.demoUrl} 
+            class="demo-link museum-btn museum-btn-primary"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="View live demo"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m9 18 6-6-6-6"/>
+            </svg>
+            Demo
+          </a>
+        )}
+      </div>
+    </footer>
+  </div>
 </article>
 
 <style>
+  /* Base Project Card - Optimized for 16:10 Aspect Ratio */
   .project-card {
-    background: rgba(200, 200, 200, 0.1);
-    border: 1px solid rgba(200, 200, 200, 0.15);
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    transition: all 0.2s ease;
+    /* Use museum card as base and enhance for 16:10 layout */
     display: flex;
     flex-direction: column;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
-    font-family: var(--font-family-serif);
-    color: var(--text-main);
+    height: 100%;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    position: relative;
+    background: var(--museum-bg-primary);
+    border: 1px solid var(--museum-border);
+    border-radius: var(--museum-radius-lg);
+    box-shadow: var(--museum-shadow-card);
+    transition: var(--museum-transition-all);
   }
 
   .project-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
-    border-color: var(--primary-color);
+    box-shadow: var(--museum-shadow-hover);
+    border-color: var(--museum-border-hover);
   }
 
   .project-card.featured {
-    border-color: #fbbf24;
-    background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%);
+    border-color: var(--museum-accent);
+    background: linear-gradient(135deg, var(--museum-secondary) 0%, var(--museum-bg-primary) 100%);
   }
 
   .project-card.featured:hover {
-    border-color: #f59e0b;
-    box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.2), 0 10px 10px -5px rgba(245, 158, 11, 0.1);
+    border-color: var(--museum-accent);
+    box-shadow: 0 10px 25px -5px color-mix(in srgb, var(--museum-accent) 25%, transparent);
   }
 
-  /* Card Sizes */
-  .project-card.small {
-    padding: 1rem;
+  /* Project Image Section - 40% of card height */
+  .project-image {
+    position: relative;
+    height: 40%;
+    overflow: hidden;
+    background: var(--museum-bg-secondary);
   }
 
-  .project-card.large {
-    padding: 2rem;
+  .project-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--museum-transition-slow);
   }
 
-  /* Header */
-  .card-header {
-    margin-bottom: 1rem;
+  .project-card:hover .project-thumbnail {
+    transform: scale(1.05);
   }
 
-  .project-title-group {
+  .project-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+      rgba(42, 77, 58, 0.1) 0%, 
+      transparent 50%, 
+      rgba(42, 77, 58, 0.05) 100%);
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: var(--museum-space-sm);
+  }
+
+  .category-badge {
+    backdrop-filter: blur(8px);
+    background: color-mix(in srgb, var(--museum-primary) 90%, white) !important;
+    color: white !important;
+    border: 1px solid color-mix(in srgb, var(--museum-primary) 50%, transparent);
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
+    gap: var(--museum-space-xs);
+    font-size: var(--museum-text-xs);
+    padding: var(--museum-space-xs) var(--museum-space-sm);
+  }
+
+  .category-icon {
+    font-size: 0.75em;
+  }
+
+  /* Project Content Section - 60% of card height */
+  .project-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--museum-space-md);
+    height: 60%;
+  }
+
+  /* Project Header */
+  .project-header {
+    margin-bottom: var(--museum-space-sm);
   }
 
   .project-title {
-    font-family: var(--font-family-sans);
-    font-size: 1.6em;
+    margin: 0 0 var(--museum-space-xs) 0;
+    font-size: var(--museum-text-lg);
     font-weight: 700;
-    color: #cce8ec;
-    margin: 0 0 0.5em 0;
-    line-height: 1.2;
+    line-height: 1.3;
+    color: var(--museum-text);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
   }
-
 
   .project-meta {
     display: flex;
-    gap: 0.5rem;
+    gap: var(--museum-space-xs);
     flex-wrap: wrap;
   }
 
   .language-tag {
-    background: rgba(200, 200, 200, 0.15);
-    color: var(--text-secondary);
-    font-size: 0.75rem;
-    font-weight: 500;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.375rem;
-    border: 1px solid rgba(200, 200, 200, 0.2);
-    font-family: var(--font-family-sans);
+    font-size: var(--museum-text-xs) !important;
+    padding: 2px var(--museum-space-xs) !important;
   }
 
-  .language-tag[data-language="TypeScript"] { background: #3178c6; color: white; }
-  .language-tag[data-language="JavaScript"] { background: #f7df1e; color: black; }
-  .language-tag[data-language="Python"] { background: #3776ab; color: white; }
-  .language-tag[data-language="HTML"] { background: #e34f26; color: white; }
-  .language-tag[data-language="CSS"] { background: #1572b6; color: white; }
+  /* Language-specific colors */
+  .language-tag[data-language="TypeScript"] { 
+    background: #3178c6 !important; 
+    color: white !important; 
+    border-color: #3178c6 !important;
+  }
+  .language-tag[data-language="JavaScript"] { 
+    background: #f7df1e !important; 
+    color: black !important; 
+    border-color: #f7df1e !important;
+  }
+  .language-tag[data-language="Python"] { 
+    background: #3776ab !important; 
+    color: white !important; 
+    border-color: #3776ab !important;
+  }
+  .language-tag[data-language="HTML"] { 
+    background: #e34f26 !important; 
+    color: white !important; 
+    border-color: #e34f26 !important;
+  }
+  .language-tag[data-language="CSS"] { 
+    background: #1572b6 !important; 
+    color: white !important; 
+    border-color: #1572b6 !important;
+  }
 
-
-  /* Content */
-  .card-content {
-    margin-bottom: 1rem;
+  /* Project Body - Flexible content area */
+  .project-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
   .project-description {
-    color: var(--text-secondary);
-    font-size: 1.15rem;
-    line-height: 1.75em;
-    margin: 1.2em 0;
-    font-family: var(--font-family-serif);
+    margin: 0 0 var(--museum-space-sm) 0;
+    flex: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    font-size: var(--museum-text-sm);
+    line-height: 1.5;
   }
 
   /* Accordion Styles */
   .accordion-section {
-    margin: 1rem 0;
+    margin: var(--museum-space-xs) 0;
   }
 
   .accordion-toggle {
@@ -220,24 +327,22 @@ const createdDate = new Date(project.createdAt).toLocaleDateString('en-US', {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 0.5rem 0;
+    padding: var(--museum-space-xs) 0;
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--primary-color);
+    font-size: var(--museum-text-xs);
+    color: var(--museum-primary);
     text-align: left;
-    transition: color 0.2s ease;
-    font-family: var(--font-family-sans);
+    transition: var(--museum-transition-base);
   }
 
   .accordion-toggle:hover {
-    color: #80c8d2;
+    color: color-mix(in srgb, var(--museum-primary) 80%, black);
   }
 
   .chevron {
-    transition: transform 0.2s ease;
+    transition: transform var(--museum-transition-base);
     flex-shrink: 0;
   }
 
@@ -248,75 +353,72 @@ const createdDate = new Date(project.createdAt).toLocaleDateString('en-US', {
   .accordion-content {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease;
+    transition: max-height var(--museum-transition-slow);
   }
 
   .accordion-content.expanded {
-    max-height: 200px;
+    max-height: 60px;
   }
 
   .extended-description {
-    padding: 0.75rem 0 0 0;
+    padding: var(--museum-space-xs) 0 0 0;
     margin: 0;
-    color: var(--text-secondary);
-    line-height: 1.75em;
-    font-size: 1rem;
-    border-top: 1px solid rgba(200, 200, 200, 0.15);
-    font-family: var(--font-family-serif);
+    line-height: 1.4;
+    font-size: var(--museum-text-xs);
+    border-top: 1px solid var(--museum-border);
   }
 
   .project-topics {
     display: flex;
-    gap: 0.375rem;
+    gap: var(--museum-space-xs);
     flex-wrap: wrap;
     align-items: center;
+    margin-top: var(--museum-space-xs);
   }
 
   .topic-tag {
-    background: rgba(200, 200, 200, 0.1);
-    color: var(--text-secondary);
-    font-size: 0.75rem;
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-    border: 1px solid rgba(200, 200, 200, 0.2);
-    font-family: var(--font-family-sans);
+    font-size: 10px !important;
+    padding: 1px var(--museum-space-xs) !important;
+    line-height: 1.2;
   }
 
   .topic-more {
-    color: var(--text-secondary);
-    font-size: 0.75rem;
     font-style: italic;
-    font-family: var(--font-family-sans);
+    opacity: 0.7;
   }
 
-  /* Footer */
-  .card-footer {
+  /* Project Footer */
+  .project-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(200, 200, 200, 0.15);
-    gap: 1rem;
+    margin-top: auto;
+    padding-top: var(--museum-space-sm);
+    border-top: 1px solid var(--museum-border);
+    gap: var(--museum-space-sm);
   }
 
   .project-stats {
     display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
+    gap: var(--museum-space-sm);
   }
 
   .stat-item {
-    color: var(--text-secondary);
-    font-size: 0.875rem;
     display: flex;
     align-items: center;
-    gap: 0.25rem;
-    font-family: var(--font-family-sans);
+    gap: var(--museum-space-xs);
+    font-size: var(--museum-text-xs);
+    color: var(--museum-muted);
+    white-space: nowrap;
+  }
+
+  .stat-item svg {
+    opacity: 0.6;
   }
 
   .project-links {
     display: flex;
-    gap: 0.5rem;
+    gap: var(--museum-space-xs);
     flex-shrink: 0;
   }
 
@@ -324,62 +426,144 @@ const createdDate = new Date(project.createdAt).toLocaleDateString('en-US', {
   .demo-link {
     display: flex;
     align-items: center;
-    gap: 0.375rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
+    gap: var(--museum-space-xs);
+    padding: var(--museum-space-xs) var(--museum-space-sm);
+    border-radius: var(--museum-radius-sm);
+    font-size: var(--museum-text-xs);
     font-weight: 500;
     text-decoration: none;
-    transition: all 0.2s ease;
-    font-family: var(--font-family-sans);
+    transition: var(--museum-transition-all);
   }
 
-  .github-link {
-    background: rgba(200, 200, 200, 0.1);
-    color: var(--text-main);
-    border: 1px solid rgba(200, 200, 200, 0.2);
+  /* Size Variations */
+  .project-card.small {
+    aspect-ratio: 16 / 11;
   }
 
-  .github-link:hover {
-    background: rgba(200, 200, 200, 0.2);
-    color: var(--primary-color);
-    transform: translateY(-1px);
+  .project-card.small .project-content {
+    padding: var(--museum-space-sm);
   }
 
-  .demo-link {
-    background: var(--primary-color);
-    color: #ffffff;
+  .project-card.small .project-title {
+    font-size: var(--museum-text-base);
+    -webkit-line-clamp: 1;
   }
 
-  .demo-link:hover {
-    background: #6ab8c5;
-    transform: translateY(-1px);
+  .project-card.small .project-description {
+    -webkit-line-clamp: 2;
   }
 
-  /* Mobile responsive */
-  @media (max-width: 640px) {
+  .project-card.large {
+    aspect-ratio: 16 / 9;
+  }
+
+  .project-card.large .project-content {
+    padding: var(--museum-space-lg);
+  }
+
+  .project-card.large .project-title {
+    font-size: var(--museum-text-xl);
+  }
+
+  .project-card.large .project-description {
+    -webkit-line-clamp: 4;
+    font-size: var(--museum-text-base);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
     .project-card {
-      padding: 1rem;
+      aspect-ratio: 4 / 3;
+    }
+
+    .project-image {
+      height: 35%;
+    }
+
+    .project-content {
+      height: 65%;
+      padding: var(--museum-space-sm);
     }
 
     .project-title {
-      font-size: 1.125rem;
+      font-size: var(--museum-text-base);
+      -webkit-line-clamp: 1;
     }
 
-    .card-footer {
+    .project-description {
+      -webkit-line-clamp: 2;
+      font-size: var(--museum-text-xs);
+    }
+
+    .project-footer {
+      flex-wrap: wrap;
+      gap: var(--museum-space-xs);
+    }
+
+    .category-badge {
+      padding: 2px var(--museum-space-xs);
+      font-size: 10px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .project-card {
+      aspect-ratio: 1 / 1;
+    }
+
+    .project-image {
+      height: 30%;
+    }
+
+    .project-content {
+      padding: var(--museum-space-xs);
+    }
+
+    .project-footer {
       flex-direction: column;
       align-items: flex-start;
-      gap: 0.75rem;
-    }
-
-    .project-stats {
-      gap: 0.75rem;
+      gap: var(--museum-space-xs);
     }
 
     .project-links {
       width: 100%;
       justify-content: flex-end;
     }
+  }
+
+  /* Accessibility Improvements */
+  @media (prefers-reduced-motion: reduce) {
+    .project-card,
+    .project-thumbnail,
+    .accordion-toggle,
+    .github-link,
+    .demo-link {
+      transition: none;
+    }
+
+    .project-card:hover .project-thumbnail {
+      transform: none;
+    }
+  }
+
+  @media (prefers-contrast: high) {
+    .project-card {
+      border-width: 2px;
+    }
+
+    .category-badge {
+      background: var(--museum-text) !important;
+      color: var(--museum-bg-primary) !important;
+      border-color: var(--museum-text) !important;
+    }
+  }
+
+  /* Focus Visible for Better Keyboard Navigation */
+  .accordion-toggle:focus-visible,
+  .github-link:focus-visible,
+  .demo-link:focus-visible {
+    outline: 2px dashed var(--museum-primary);
+    outline-offset: 2px;
   }
 </style>
 
