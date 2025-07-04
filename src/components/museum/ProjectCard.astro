@@ -1,6 +1,7 @@
 ---
 import type { MuseumProject, ProjectCategory } from '../../lib/github/types.js';
 import { PROJECT_CATEGORIES } from '../../lib/github/api.js';
+import { Image } from 'astro:assets';
 
 export interface Props {
   project: MuseumProject;
@@ -27,9 +28,18 @@ const categoryEmoji = category?.icon || '📱';
 >
   <!-- Image Container with 16:10 Aspect Ratio -->
   <div class="project-image" data-category={project.category}>
-    <div class="image-placeholder">
-      <span class="category-icon">{categoryEmoji}</span>
-    </div>
+    {project.screenshot ? (
+      <img 
+        src={project.screenshot} 
+        alt={`Screenshot of ${project.displayName}`}
+        class="screenshot"
+        loading="lazy"
+      />
+    ) : (
+      <div class="image-placeholder">
+        <span class="category-icon">{categoryEmoji}</span>
+      </div>
+    )}
   </div>
 
   <!-- Card Content -->
@@ -213,6 +223,17 @@ const categoryEmoji = category?.icon || '📱';
     font-size: 2rem;
     opacity: 0.3;
     z-index: 1;
+  }
+
+  .screenshot {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--museum-transition-base);
+  }
+
+  .project-card:hover .screenshot {
+    transform: scale(1.05);
   }
 
   /* Card Content */

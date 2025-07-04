@@ -8,7 +8,8 @@
       "extendedDescription": "This comprehensive command-line tool creates a unified intelligence layer across your team's workflow platforms, seamlessly connecting Linear project management, Coda documentation, and GitHub development data. With AI-powered summarization from OpenAI and Anthropic, it provides advanced search, cross-platform analysis, and intelligent insights to streamline team knowledge management and project tracking.",
       "category": "productivity",
       "demoUrl": null,
-      "order": 1
+      "order": 1,
+      "screenshot": "/assets/museum/smart-tool-of-knowing.png"
     },
     {
       "name": "ask-reddit-without-asking-reddit", 

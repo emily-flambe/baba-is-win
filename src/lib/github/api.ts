@@ -234,7 +234,9 @@ function transformRepositoryToMuseumProject(repo: GitHubRepository, config?: Mus
     topics: repo.topics || [],
     updatedAt: repo.updated_at,
     createdAt: repo.created_at,
-    homepage: repo.homepage
+    homepage: repo.homepage,
+    screenshot: config?.screenshot || null,
+    screenshots: config?.screenshots || null
   };
 }
 
