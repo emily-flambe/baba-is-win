@@ -90,9 +90,9 @@ const categoryEmoji = category?.icon || '📱';
       )}
     </div>
     
-    <div class="project-status">
-      <div class="status-dot"></div>
-      <span>Active</span>
+    <div class="project-updated">
+      <span class="updated-label">Updated:</span>
+      <span class="updated-date">{updatedDate}</span>
     </div>
   </div>
 </article>
@@ -324,7 +324,7 @@ const categoryEmoji = category?.icon || '📱';
     pointer-events: none;
   }
 
-  .project-status {
+  .project-updated {
     display: flex;
     align-items: center;
     gap: var(--museum-space-xs);
@@ -332,11 +332,12 @@ const categoryEmoji = category?.icon || '📱';
     color: var(--museum-muted);
   }
 
-  .status-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--museum-success);
+  .updated-label {
+    font-weight: 500;
+  }
+
+  .updated-date {
+    font-variant-numeric: tabular-nums;
   }
 
   /* Mobile Responsive */
