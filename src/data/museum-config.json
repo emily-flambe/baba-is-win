@@ -4,17 +4,18 @@
     {
       "name": "smart-tool-of-knowing",
       "displayName": "Smart Tool Of Knowing",
-      "customDescription": null,
-      "extendedDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. This productivity tool streamlines complex workflows and enhances decision-making processes through intelligent automation and data analysis.",
+      "customDescription": "A unified CLI that transforms team collaboration by integrating Linear, Coda, and GitHub data with AI-powered insights and intelligent summarization.",
+      "extendedDescription": "This comprehensive command-line tool creates a unified intelligence layer across your team's workflow platforms, seamlessly connecting Linear project management, Coda documentation, and GitHub development data. With AI-powered summarization from OpenAI and Anthropic, it provides advanced search, cross-platform analysis, and intelligent insights to streamline team knowledge management and project tracking.",
       "category": "productivity",
       "demoUrl": null,
-      "order": 1
+      "order": 1,
+      "screenshot": "/assets/museum/smart-tool-of-knowing.png"
     },
     {
       "name": "ask-reddit-without-asking-reddit", 
       "displayName": "Ask Reddit Without Asking Reddit",
-      "customDescription": null,
-      "extendedDescription": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. This web application provides an alternative interface for Reddit-style discussions with enhanced privacy features and improved user experience.",
+      "customDescription": "AI-powered Reddit search that summarizes discussions to answer your questions without the endless scrolling.",
+      "extendedDescription": "This experimental web app combines Reddit's vast discussion archive with OpenAI's summarization capabilities to provide AI-generated answers to life's questions. Built as a playful exploration of AI and content aggregation, it offers an alternative way to extract insights from Reddit's community wisdom.",
       "category": "web-applications",
       "demoUrl": null,
       "order": 6
@@ -22,8 +23,8 @@
     {
       "name": "notes-for-goats",
       "displayName": "Notes For Goats", 
-      "customDescription": null,
-      "extendedDescription": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam. Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. A whimsical note-taking application designed with simplicity and efficiency in mind, featuring markdown support and cloud synchronization.",
+      "customDescription": "An AI-powered personal knowledge management system that transforms how professionals organize and interact with their notes about people, projects, and daily events.",
+      "extendedDescription": "Notes for Goats is a sophisticated web application that combines structured note-taking with AI-powered querying capabilities. It allows users to create workspaces, link entities, define relationships, and ask natural language questions about their knowledge base using either OpenAI or local Ollama models for privacy-conscious operation.",
       "category": "productivity",
       "demoUrl": null,
       "order": 3
@@ -31,8 +32,8 @@
     {
       "name": "list-cutter",
       "displayName": "List Cutter",
-      "customDescription": null,
-      "extendedDescription": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit. Advanced data processing tool for splitting, filtering, and transforming large datasets with precision and speed.",
+      "customDescription": "A no-nonsense CSV list filtering tool that lets you cut through data with SQL-like conditions and download the results.",
+      "extendedDescription": "Built with Django and React, this web application provides both basic and pro-level CSV manipulation features. Users can upload CSV files, filter columns using conditions like `<= 20` or `!= \"NY\"`, and download the filtered results, with optional account-based file management for power users.",
       "category": "data-processing", 
       "demoUrl": null,
       "order": 4
@@ -40,8 +41,8 @@
     {
       "name": "chesscom-helper",
       "displayName": "Chess.com Helper",
-      "customDescription": null,
-      "extendedDescription": "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident. API integration tool that enhances Chess.com functionality with advanced statistics, game analysis, and automated tournament management features.",
+      "customDescription": "A real-time Chess.com player monitoring tool built on Cloudflare Workers that tracks player activities and sends notifications.",
+      "extendedDescription": "This TypeScript-based application leverages Chess.com's official API to validate and monitor multiple chess players simultaneously. Built with modern edge computing technology, it features secure JWT authentication, real-time player status tracking, and automated database management through Cloudflare's infrastructure.",
       "category": "api-integration",
       "demoUrl": "https://chesscomhelper.emilycogsdill.com",
       "order": 5
@@ -71,13 +72,6 @@
       "color": "#3b82f6",
       "icon": "🌐"
     },
-    "data-processing": {
-      "id": "data-processing", 
-      "name": "Data Processing",
-      "description": "Tools for data manipulation and analysis",
-      "color": "#f59e0b",
-      "icon": "📊"
-    },
     "api-integration": {
       "id": "api-integration",
       "name": "APIs & Integration",
@@ -92,31 +86,24 @@
       "color": "#ec4899",
       "icon": "💖"
     },
-    "libraries": {
-      "id": "libraries",
-      "name": "Libraries & Frameworks",
-      "description": "Reusable code libraries and frameworks",
-      "color": "#ea580c",
-      "icon": "📚"
-    },
-    "automation": {
-      "id": "automation",
-      "name": "Automation",
-      "description": "Scripts and tools for automation",
+    "pointless": {
+      "id": "pointless",
+      "name": "Pointless",
+      "description": "This really wasn't necessary at all.",
       "color": "#0891b2",
-      "icon": "⚙️"
+      "icon": "👍"
     },
     "other": {
       "id": "other",
       "name": "Other Projects",
       "description": "Miscellaneous projects and experiments",
       "color": "#6b7280",
-      "icon": "🔬"
+      "icon": "💋"
     }
   },
   "settings": {
     "fallbackToAllRepos": false,
-    "sortBy": "order",
+    "sortBy": "updated",
     "showOnlyConfigured": true
   }
 }

@@ -190,6 +190,35 @@ const updatedDate = new Date(project.updatedAt).toLocaleDateString('en-US', {
         </div>
       </div>
 
+      {(project.screenshot || project.screenshots) && (
+        <div class="content-section">
+          <h2>Screenshots</h2>
+          {project.screenshot && (
+            <div class="screenshot-primary">
+              <img 
+                src={project.screenshot} 
+                alt={`Screenshot of ${project.displayName}`} 
+                class="screenshot-image"
+              />
+            </div>
+          )}
+          {project.screenshots && project.screenshots.length > 0 && (
+            <div class="screenshot-gallery">
+              {project.screenshots.map((screenshot, index) => (
+                <div class="screenshot-item">
+                  <img 
+                    src={screenshot} 
+                    alt={`${project.displayName} screenshot ${index + 1}`} 
+                    class="screenshot-image"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       <div class="content-section">
         <h2>Getting Started</h2>
         <div class="code-section">
@@ -599,6 +628,44 @@ cd {project.id}
   @media (prefers-reduced-motion: reduce) {
     .featured-star {
       animation: none;
+    }
+  }
+
+  /* Screenshot Styles */
+  .screenshot-primary {
+    margin-bottom: 1.5rem;
+  }
+
+  .screenshot-image {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .screenshot-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+
+  .screenshot-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+  }
+
+  .screenshot-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    .screenshot-gallery {
+      grid-template-columns: 1fr;
     }
   }
 </style>

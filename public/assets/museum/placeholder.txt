@@ -1,0 +1,9 @@
+This directory contains museum project screenshots.
+
+To add a screenshot for a project:
+1. Add your screenshot image file to this directory
+2. Name it using the project ID (e.g., smart-tool-of-knowing.png)
+3. Update the museum-config.json file to include the screenshot path
+
+Supported formats: .png, .jpg, .jpeg, .webp
+Recommended dimensions: 1600x1000 (16:10 aspect ratio)
