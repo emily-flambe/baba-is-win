@@ -2,30 +2,38 @@
 title: {{TITLE}}
 publishDate: {{DATE}}
 description: {{DESCRIPTION}}
-thumbnail: /assets/blog/{{FOLDER}}/thumbnail.jpg
+thumbnail: {{THUMBNAIL}}
 tags: ["tag1", "tag2", "tag3"]
 ---
 
-![{{TITLE}}]({{THUMBNAIL}})
+![Image alt text](/assets/blog/{{FOLDER}}/image.jpg)
 
-[Your blog post content goes here]
+Your blog post content goes here. Write in markdown format.
 
-## Heading Example
+## Section Heading
 
-Write your blog post content using Markdown. You can include:
+Content...
 
-- Lists like this one
-- Images with captions
+### Subsection 
+
+More content...
+
+You can include:
+- Lists
+- **Bold text**
+- *Italic text*
+- [Links](https://example.com)
 - Code blocks
-- Links and other formatting
+- Images: `![Alt text](/assets/blog/{{FOLDER}}/filename.jpg)`
 
-<figure style="width: 600px; margin: 0 auto;">
-  <img src="{{THUMBNAIL}}" width="600" />
-  <figcaption style="text-align: center; font-size: small;">
-    <i>Example caption for your image</i>
+For multiple images in a row:
+<img src="/assets/blog/{{FOLDER}}/1.jpg" width="300" />
+<img src="/assets/blog/{{FOLDER}}/2.jpg" width="300" />
+
+For images with captions:
+<figure style="float: center; width: 800px; padding-right: 20px;">
+  <img src="/assets/blog/{{FOLDER}}/image.png" width="800" />
+  <figcaption style="text-align: left; font-size: small;">
+    <i>Caption text here</i>
   </figcaption>
 </figure>
-
-## Final Thoughts
-
-Wrap up your blog post here.

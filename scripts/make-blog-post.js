@@ -90,11 +90,18 @@ async function main() {
     // Generate thumbnail path
     const thumbnailPath = `/assets/blog/${finalFolder}/thumbnail.jpg`;
 
-    // Read template (look in main repo directory for worktrees)
-    const templatePath = path.join(__dirname, '..', '..', 'templates', 'blog-post.md');
+    // Read template - try current directory first, then parent directories
+    let templatePath = path.join(__dirname, '..', 'templates', 'blog-post.md');
+    
+    // If not found in current directory, try parent directory (for worktrees)
+    if (!fs.existsSync(templatePath)) {
+      templatePath = path.join(__dirname, '..', '..', 'templates', 'blog-post.md');
+    }
     
     if (!fs.existsSync(templatePath)) {
-      console.error(`❌ Template not found: ${templatePath}`);
+      console.error(`❌ Template not found. Looked in:`);
+      console.error(`   - ${path.join(__dirname, '..', 'templates', 'blog-post.md')}`);
+      console.error(`   - ${path.join(__dirname, '..', '..', 'templates', 'blog-post.md')}`);
       process.exit(1);
     }
     
