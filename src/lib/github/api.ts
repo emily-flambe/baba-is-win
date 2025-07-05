@@ -8,7 +8,7 @@ import type {
   MuseumConfig,
   MuseumRepositoryConfig
 } from './types.js';
-import museumConfig from '../../data/museum-config.json';
+import museumConfig from '../../data/museum-config.json' with { type: 'json' };
 
 const GITHUB_API_BASE = 'https://api.github.com';
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour cache
@@ -84,8 +84,12 @@ export function loadMuseumConfig(): MuseumConfig {
   
   // Validate each repository config
   for (const repo of config.repositories) {
-    if (!repo.name || typeof repo.order !== 'number') {
-      throw new Error(`Invalid repository configuration for ${repo.name || 'unknown'}: missing required fields`);
+    if (!repo.name) {
+      throw new Error(`Invalid repository configuration: missing name field`);
+    }
+    // Only require order if sortBy is set to 'order'
+    if (config.settings?.sortBy === 'order' && typeof repo.order !== 'number') {
+      throw new Error(`Invalid repository configuration for ${repo.name}: order field is required when sortBy is 'order'`);
     }
   }
   
@@ -163,59 +167,6 @@ export async function fetchRepositoryReadme(owner: string, repo: string): Promis
   }
 }
 
-function categorizeProject(repo: GitHubRepository): string {
-  const name = repo.name.toLowerCase();
-  const description = (repo.description || '').toLowerCase();
-  const topics = repo.topics?.map(t => t.toLowerCase()) || [];
-  
-  // Check topics first (most reliable)
-  if (topics.some(topic => ['productivity', 'tool', 'workflow'].includes(topic))) {
-    return 'productivity';
-  }
-  
-  if (topics.some(topic => ['data', 'processing', 'analysis'].includes(topic))) {
-    return 'data-processing';
-  }
-  
-  if (topics.some(topic => ['api', 'integration', 'client'].includes(topic))) {
-    return 'api-integration';
-  }
-  
-  if (topics.some(topic => ['webapp', 'website', 'frontend'].includes(topic))) {
-    return 'web-applications';
-  }
-  
-  if (topics.some(topic => ['library', 'framework', 'package'].includes(topic))) {
-    return 'libraries';
-  }
-  
-  if (topics.some(topic => ['automation', 'script', 'bot'].includes(topic))) {
-    return 'automation';
-  }
-  
-  // Fallback to name/description analysis
-  if (name.includes('tool') || description.includes('tool') || description.includes('productivity')) {
-    return 'productivity';
-  }
-  
-  if (name.includes('data') || description.includes('data') || description.includes('process')) {
-    return 'data-processing';
-  }
-  
-  if (name.includes('api') || description.includes('api') || name.includes('client')) {
-    return 'api-integration';
-  }
-  
-  if (name.includes('web') || name.includes('app') || description.includes('application')) {
-    return 'web-applications';
-  }
-  
-  if (name.includes('lib') || description.includes('library')) {
-    return 'libraries';
-  }
-  
-  return 'other';
-}
 
 function transformRepositoryToMuseumProject(repo: GitHubRepository, config?: MuseumRepositoryConfig): MuseumProject {
   const defaultDisplayName = repo.name.split('-').map(word => 
@@ -228,7 +179,6 @@ function transformRepositoryToMuseumProject(repo: GitHubRepository, config?: Mus
     description: config?.customDescription || repo.description || 'No description available',
     extendedDescription: config?.extendedDescription || null,
     language: repo.language,
-    category: config?.category || categorizeProject(repo),
     demoUrl: config?.demoUrl ?? repo.homepage ?? null,
     githubUrl: repo.html_url,
     topics: repo.topics || [],
@@ -257,13 +207,11 @@ export async function generateMuseumData(username: string): Promise<MuseumData> 
     // Sort projects based on configuration
     const sortedProjects = sortProjects(projects, config.settings.sortBy, config.repositories);
     
-    const categories = Array.from(new Set(sortedProjects.map(p => p.category)));
     const languages = Array.from(new Set(sortedProjects.map(p => p.language).filter(Boolean)));
     
     return {
       lastUpdated: new Date().toISOString(),
       projects: sortedProjects,
-      categories,
       languages,
       totalProjects: sortedProjects.length
     };
@@ -362,13 +310,11 @@ function generateFallbackMuseumData(): MuseumData {
     // Sort projects based on configuration
     const sortedProjects = sortProjects(projects, config.settings.sortBy, config.repositories);
     
-    const categories = Array.from(new Set(sortedProjects.map(p => p.category)));
     const languages = Array.from(new Set(sortedProjects.map(p => p.language).filter(Boolean)));
     
     return {
       lastUpdated: new Date().toISOString(),
       projects: sortedProjects,
-      categories,
       languages,
       totalProjects: sortedProjects.length
     };
@@ -378,13 +324,9 @@ function generateFallbackMuseumData(): MuseumData {
     return {
       lastUpdated: new Date().toISOString(),
       projects: [],
-      categories: [],
       languages: [],
       totalProjects: 0
     };
   }
 }
 
-// Export categories from config for backwards compatibility
-export const PROJECT_CATEGORIES = (museumConfig as MuseumConfig).categories;
-export type { ProjectCategory };

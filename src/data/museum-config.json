@@ -2,6 +2,13 @@
   "owner": "emily-flambe",
   "repositories": [
     {
+      "name": "baba-is-win",
+      "displayName": "This site lmao",
+      "customDescription": "It insists upon itself.",
+      "demoUrl": "https://www.emilycogsdill.com",
+      "screenshot": "/assets/museum/personal-site.png"
+    },
+    {
       "name": "smart-tool-of-knowing",
       "displayName": "Smart Tool Of Knowing",
       "customDescription": "A unified CLI that transforms team collaboration by integrating Linear, Coda, and GitHub data with AI-powered insights and intelligent summarization.",
@@ -23,8 +30,7 @@
     {
       "name": "notes-for-goats",
       "displayName": "Notes For Goats", 
-      "customDescription": "An AI-powered personal knowledge management system that transforms how professionals organize and interact with their notes about people, projects, and daily events.",
-      "extendedDescription": "Notes for Goats is a sophisticated web application that combines structured note-taking with AI-powered querying capabilities. It allows users to create workspaces, link entities, define relationships, and ask natural language questions about their knowledge base using either OpenAI or local Ollama models for privacy-conscious operation.",
+      "customDescription": "I wanted a personal notetaking app with AI features and I was bored so I kinda vibecoded my own. Turns out I'm not actually much of a note-taker, though...",
       "category": "productivity",
       "demoUrl": null,
       "order": 3
@@ -32,15 +38,15 @@
     {
       "name": "list-cutter",
       "displayName": "List Cutter",
-      "customDescription": "A no-nonsense CSV list filtering tool that lets you cut through data with SQL-like conditions and download the results.",
+      "customDescription": "Ceci n'est pas un CRM.",
       "extendedDescription": "Built with Django and React, this web application provides both basic and pro-level CSV manipulation features. Users can upload CSV files, filter columns using conditions like `<= 20` or `!= \"NY\"`, and download the filtered results, with optional account-based file management for power users.",
-      "category": "data-processing", 
+      "category": "data-processing",
       "demoUrl": null,
-      "order": 4
+      "screenshot": "/assets/museum/cutty.png"
     },
     {
       "name": "chesscom-helper",
-      "displayName": "Chess.com Helper",
+      "displayName": "Chesscom Helper",
       "customDescription": "A real-time Chess.com player monitoring tool built on Cloudflare Workers that tracks player activities and sends notifications.",
       "extendedDescription": "This TypeScript-based application leverages Chess.com's official API to validate and monitor multiple chess players simultaneously. Built with modern edge computing technology, it features secure JWT authentication, real-time player status tracking, and automated database management through Cloudflare's infrastructure.",
       "category": "api-integration",
@@ -52,55 +58,23 @@
       "displayName": "Esquie",
       "customDescription": "Mon ami!!!",
       "extendedDescription": "Wheeee, whoooo",
-      "category": "heartwarming",
       "demoUrl": "https://esquie.emilycogsdill.com",
-      "order": 2
+      "screenshot": "/assets/museum/esquie.png"
+    },
+    {
+      "name": "SuperClaude",
+      "displayName": "SuperClaude",
+      "customDescription": "A sophisticated configuration framework that transforms Claude Code into a specialized development powerhouse with 19 commands and 9 cognitive personas.",
+      "extendedDescription": "SuperClaude is an advanced enhancement framework for Claude Code that provides systematic, evidence-based development capabilities. It features 19 specialized commands for different aspects of development, 9 cognitive personas offering domain-specific expertise, and MCP integration with tools like Context7 and Sequential. The framework emphasizes token efficiency, structured workflows, and validation patterns to deliver consistent, professional AI assistance across the software development lifecycle.",
+      "category": "productivity"
+    },
+    {
+      "name": "dotfiles",
+      "displayName": "dotfiles",
+      "customDescription": "Custom configurations for Kitty (terminal) and AeroSpace (window management). Extremely advanced. Big-brain users ONLY.",
+      "screenshot": "/assets/museum/kitty.png"
     }
   ],
-  "categories": {
-    "productivity": {
-      "id": "productivity",
-      "name": "Productivity Tools",
-      "description": "Tools to enhance workflow and productivity",
-      "color": "#059669",
-      "icon": "⚡"
-    },
-    "web-applications": {
-      "id": "web-applications",
-      "name": "Web Applications",
-      "description": "Full-featured web applications",
-      "color": "#3b82f6",
-      "icon": "🌐"
-    },
-    "api-integration": {
-      "id": "api-integration",
-      "name": "APIs & Integration",
-      "description": "API clients and integration tools",
-      "color": "#d4af37",
-      "icon": "🔌"
-    },
-    "heartwarming": {
-      "id": "heartwarming",
-      "name": "Heartwarming",
-      "description": "Projects that warm the heart and bring joy",
-      "color": "#ec4899",
-      "icon": "💖"
-    },
-    "pointless": {
-      "id": "pointless",
-      "name": "Pointless",
-      "description": "This really wasn't necessary at all.",
-      "color": "#0891b2",
-      "icon": "👍"
-    },
-    "other": {
-      "id": "other",
-      "name": "Other Projects",
-      "description": "Miscellaneous projects and experiments",
-      "color": "#6b7280",
-      "icon": "💋"
-    }
-  },
   "settings": {
     "fallbackToAllRepos": false,
     "sortBy": "updated",

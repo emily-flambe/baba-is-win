@@ -55,7 +55,6 @@ export interface MuseumProject {
   description: string;
   extendedDescription?: string | null;
   language: string | null;
-  category: string;
   demoUrl: string | null;
   githubUrl: string;
   topics: string[];
@@ -75,7 +74,6 @@ export interface GitHubApiResponse {
 export interface MuseumData {
   lastUpdated: string;
   projects: MuseumProject[];
-  categories: string[];
   languages: string[];
   totalProjects: number;
 }
@@ -100,9 +98,8 @@ export interface MuseumRepositoryConfig {
   displayName?: string;
   customDescription?: string | null;
   extendedDescription?: string | null;
-  category?: string;
   demoUrl?: string | null;
-  order: number;
+  order?: number;
   screenshot?: string | null;
   screenshots?: string[] | null;
 }
@@ -110,7 +107,6 @@ export interface MuseumRepositoryConfig {
 export interface MuseumConfig {
   owner: string;
   repositories: MuseumRepositoryConfig[];
-  categories: Record<string, ProjectCategory>;
   settings: {
     fallbackToAllRepos: boolean;
     sortBy: 'order' | 'updated' | 'created';
