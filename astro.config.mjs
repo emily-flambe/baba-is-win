@@ -10,7 +10,9 @@ import cloudflare from '@astrojs/cloudflare'
 export default defineConfig({
   output: 'server',
   image: {
-    service: { entrypoint: 'astro/assets/services/compile' }
+    service: { entrypoint: 'astro/assets/services/sharp' },
+    domains: ['github.com'],
+    formats: ['avif', 'webp', 'png', 'jpg']
   },
   adapter: cloudflare({
     platformProxy: {
