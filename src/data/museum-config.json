@@ -33,13 +33,14 @@
     {
       "name": "list-cutter",
       "displayName": "List Cutter",
-      "customDescription": "A no-nonsense CSV list filtering tool that lets you cut through data with SQL-like conditions and download the results.",
+      "customDescription": "Ceci n'est pas un CRM.",
       "extendedDescription": "Built with Django and React, this web application provides both basic and pro-level CSV manipulation features. Users can upload CSV files, filter columns using conditions like `<= 20` or `!= \"NY\"`, and download the filtered results, with optional account-based file management for power users.",
-      "demoUrl": null
+      "demoUrl": null,
+      "screenshot": "/assets/museum/cutty.png"
     },
     {
       "name": "chesscom-helper",
-      "displayName": "Chess.com Helper",
+      "displayName": "Chesscom Helper",
       "customDescription": "A real-time Chess.com player monitoring tool built on Cloudflare Workers that tracks player activities and sends notifications.",
       "extendedDescription": "This TypeScript-based application leverages Chess.com's official API to validate and monitor multiple chess players simultaneously. Built with modern edge computing technology, it features secure JWT authentication, real-time player status tracking, and automated database management through Cloudflare's infrastructure.",
       "demoUrl": "https://chesscomhelper.emilycogsdill.com"
