@@ -26,8 +26,7 @@
     {
       "name": "notes-for-goats",
       "displayName": "Notes For Goats", 
-      "customDescription": "An AI-powered personal knowledge management system that transforms how professionals organize and interact with their notes about people, projects, and daily events.",
-      "extendedDescription": "Notes for Goats is a sophisticated web application that combines structured note-taking with AI-powered querying capabilities. It allows users to create workspaces, link entities, define relationships, and ask natural language questions about their knowledge base using either OpenAI or local Ollama models for privacy-conscious operation.",
+      "customDescription": "I wanted a personal notetaking app with AI features and I was bored so I kinda vibecoded my own. Turns out I'm not actually much of a note-taker, though...",
       "demoUrl": null
     },
     {
