@@ -2,6 +2,8 @@
 
 The Thoughts feature is a personal micro-blog system that allows you to share quick thoughts, musings, and observations with optional image attachments.
 
+It's basically the bird app but we don't talk about the bird app anymore.
+
 ## Overview
 
 Thoughts are:
