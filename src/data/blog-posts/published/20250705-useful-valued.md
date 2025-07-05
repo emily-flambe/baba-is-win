@@ -21,9 +21,7 @@ An excerpt:
 >
 > Being <span style="color: #00ff00">valued</span>, on the other hand, means that you are brought into more conversations, not just to execute, but to help shape the direction. This comes with opportunities to grow and contribute in ways that are meaningful to you and the business.
 
-The main thesis of the article is that being _<span style="color: #00ff00">valued</span>_ is the way to advance in one's career. I'm not sure I completely agree with that conclusion, but I'm not really interested in debating that point.
-
-What is more interesting to me is how the distinction between being _<span style="color: yellow">useful</span>_ versus being _<span style="color: #00ff00">valued</span>_ has helped solidify in my mind something that has repeatedly haunted me over the years.
+This distinction between being _<span style="color: yellow">useful</span>_ versus being _<span style="color: #00ff00">valued</span>_ has really stuck in my craw. Why? Because it has helped solidify in my mind something that has repeatedly haunted me over the years.
 
 ## I get hired to be <span style="color: yellow">useful</span> when I really want to be <span style="color: #00ff00">valued</span>
 
