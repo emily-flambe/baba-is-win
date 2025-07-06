@@ -41,7 +41,7 @@
       "customDescription": "Ceci n'est pas un CRM.",
       "extendedDescription": "Built with Django and React, this web application provides both basic and pro-level CSV manipulation features. Users can upload CSV files, filter columns using conditions like `<= 20` or `!= \"NY\"`, and download the filtered results, with optional account-based file management for power users.",
       "category": "data-processing",
-      "demoUrl": null,
+      "demoUrl": "https://cutty.emilycogsdill.com",
       "screenshot": "/assets/museum/cutty.png"
     },
     {
