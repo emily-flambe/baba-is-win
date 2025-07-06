@@ -51,7 +51,8 @@
       "extendedDescription": "This TypeScript-based application leverages Chess.com's official API to validate and monitor multiple chess players simultaneously. Built with modern edge computing technology, it features secure JWT authentication, real-time player status tracking, and automated database management through Cloudflare's infrastructure.",
       "category": "api-integration",
       "demoUrl": "https://chesscomhelper.emilycogsdill.com",
-      "order": 5
+      "order": 5,
+      "screenshot": "/assets/museum/chesscomhelper.png"
     },
     {
       "name": "esquie",
