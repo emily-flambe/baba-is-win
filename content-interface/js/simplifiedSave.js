@@ -1,6 +1,6 @@
 /**
  * Simplified File Saving
- * A more reliable approach to file saving that works consistently
+ * Intelligently builds the full path from a parent directory selection
  */
 class SimplifiedSave {
     static async saveFile(file) {
@@ -25,35 +25,42 @@ class SimplifiedSave {
     }
     
     static async saveWithDirectoryPicker(file) {
-        // Always prompt for directory - this is more reliable than trying to persist
+        // Prompt for a parent directory - user can select Documents or any parent folder
         const directoryHandle = await window.showDirectoryPicker({
             mode: 'readwrite',
             startIn: 'documents'
         });
         
-        // Navigate to the target subdirectory, creating if needed
-        const pathParts = file.path.split('/').filter(p => p && p !== '.');
+        // Build the full path: GitHub/baba-is-win/src/data/blog-posts/draft/filename.md
+        const fullPath = ['GitHub', 'baba-is-win'].concat(file.path.split('/').filter(p => p && p !== '.'));
         let currentDir = directoryHandle;
         
-        // Navigate/create path: src/data/blog-posts/draft (or published, thoughts, etc.)
-        for (const dirName of pathParts.slice(0, -1)) { // All except filename
+        // Navigate/create the full path
+        for (const dirName of fullPath.slice(0, -1)) { // All except filename
             try {
                 currentDir = await currentDir.getDirectoryHandle(dirName);
             } catch {
                 // Directory doesn't exist, create it
-                currentDir = await currentDir.getDirectoryHandle(dirName, { create: true });
+                try {
+                    currentDir = await currentDir.getDirectoryHandle(dirName, { create: true });
+                } catch (createError) {
+                    // If we can't create the directory, show a helpful error
+                    throw new Error(`Cannot create directory "${dirName}". Make sure you selected a folder that contains or can contain GitHub/baba-is-win/`);
+                }
             }
         }
         
         // Create/overwrite the file
-        const fileHandle = await currentDir.getFileHandle(file.name, { create: true });
+        const fileName = fullPath[fullPath.length - 1];
+        const fileHandle = await currentDir.getFileHandle(fileName, { create: true });
         const writable = await fileHandle.createWritable();
         await writable.write(file.content);
         await writable.close();
         
+        const savedPath = fullPath.join('/');
         return {
             success: true,
-            message: `File saved successfully to: ${file.path}`,
+            message: `File saved successfully to: ${savedPath}`,
             savedDirectly: true,
             needsManualMove: false
         };
@@ -78,7 +85,7 @@ class SimplifiedSave {
         
         return {
             success: true,
-            message: `Downloaded "${file.name}". Please move it to: ${file.path}`,
+            message: `Downloaded "${file.name}". Please move it to: GitHub/baba-is-win/${file.path}`,
             needsManualMove: true,
             savedDirectly: false
         };

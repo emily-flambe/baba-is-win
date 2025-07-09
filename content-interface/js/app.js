@@ -322,11 +322,11 @@ class ContentCreator {
                     this.showFileInstructions(file);
                 } else if (result.savedDirectly) {
                     this.showToast(`✅ File saved directly to: ${file.path}`, 'success');
-                    // Show a tip about directory persistence behavior
-                    if (!localStorage.getItem('directory-tip-shown-v2')) {
+                    // Show a tip about smart folder selection
+                    if (!localStorage.getItem('smart-folder-tip-shown')) {
                         setTimeout(() => {
-                            this.showToast('💡 Note: You may need to select the folder each time (browser limitation)', 'success');
-                            localStorage.setItem('directory-tip-shown-v2', 'true');
+                            this.showToast('💡 Tip: Select Documents folder and we build the full path for you!', 'success');
+                            localStorage.setItem('smart-folder-tip-shown', 'true');
                         }, 2000);
                     }
                 } else {
@@ -384,15 +384,15 @@ class ContentCreator {
 📁 File Location Instructions:
 
 1. Your file "${file.name}" has been downloaded to Downloads folder
-2. You need to move it to: ${file.path}
+2. You need to move it to: GitHub/baba-is-win/${file.path}
 
 🔧 Steps:
 • Open Finder
-• Navigate to: /Users/emilycogsdill/Documents/GitHub/baba-is-win/
+• Navigate to: Documents/GitHub/baba-is-win/
 • Go to: ${file.path.substring(0, file.path.lastIndexOf('/'))}
 • Move "${file.name}" from Downloads to this folder
 
-💡 Tip: Use "📋 Copy Path" button to copy the exact folder path!
+💡 Tip: Next time, select your Documents folder and we'll create the full path automatically!
         `;
         
         // For now, use an alert (could be replaced with a better modal)
