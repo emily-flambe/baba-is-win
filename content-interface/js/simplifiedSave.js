@@ -31,8 +31,9 @@ class SimplifiedSave {
             startIn: 'documents'
         });
         
-        // Build the full path: GitHub/baba-is-win/src/data/blog-posts/draft/filename.md
-        const fullPath = ['GitHub', 'baba-is-win'].concat(file.path.split('/').filter(p => p && p !== '.'));
+        // Build the full path: baba-is-win/src/data/blog-posts/draft/filename.md
+        // User should select the baba-is-win directory directly
+        const fullPath = file.path.split('/').filter(p => p && p !== '.');
         let currentDir = directoryHandle;
         
         // Navigate/create the full path
@@ -45,7 +46,7 @@ class SimplifiedSave {
                     currentDir = await currentDir.getDirectoryHandle(dirName, { create: true });
                 } catch (createError) {
                     // If we can't create the directory, show a helpful error
-                    throw new Error(`Cannot create directory "${dirName}". Make sure you selected a folder that contains or can contain GitHub/baba-is-win/`);
+                    throw new Error(`Cannot create directory "${dirName}". Make sure you selected the baba-is-win folder.`);
                 }
             }
         }
@@ -85,7 +86,7 @@ class SimplifiedSave {
         
         return {
             success: true,
-            message: `Downloaded "${file.name}". Please move it to: GitHub/baba-is-win/${file.path}`,
+            message: `Downloaded "${file.name}". Please move it to: baba-is-win/${file.path}`,
             needsManualMove: true,
             savedDirectly: false
         };

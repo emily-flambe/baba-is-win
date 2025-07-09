@@ -322,11 +322,11 @@ class ContentCreator {
                     this.showFileInstructions(file);
                 } else if (result.savedDirectly) {
                     this.showToast(`✅ File saved directly to: ${file.path}`, 'success');
-                    // Show a tip about smart folder selection
-                    if (!localStorage.getItem('smart-folder-tip-shown')) {
+                    // Show a tip about folder selection
+                    if (!localStorage.getItem('folder-tip-shown')) {
                         setTimeout(() => {
-                            this.showToast('💡 Tip: Select Documents folder and we build the full path for you!', 'success');
-                            localStorage.setItem('smart-folder-tip-shown', 'true');
+                            this.showToast('💡 Tip: Select the baba-is-win folder and we handle the rest!', 'success');
+                            localStorage.setItem('folder-tip-shown', 'true');
                         }, 2000);
                     }
                 } else {
@@ -346,7 +346,7 @@ class ContentCreator {
 
     async saveAndOpenFolder() {
         const data = this.gatherFormData();
-        const isPublished = document.getElementById('is-published').checked;
+        const isPublished = document.getElementById('is-published').value === 'true';
         
         const validation = FileGenerator.validateContent(data);
         if (!validation.isValid) {
@@ -384,7 +384,7 @@ class ContentCreator {
 📁 File Location Instructions:
 
 1. Your file "${file.name}" has been downloaded to Downloads folder
-2. You need to move it to: GitHub/baba-is-win/${file.path}
+2. You need to move it to: baba-is-win/${file.path}
 
 🔧 Steps:
 • Open Finder
@@ -392,7 +392,7 @@ class ContentCreator {
 • Go to: ${file.path.substring(0, file.path.lastIndexOf('/'))}
 • Move "${file.name}" from Downloads to this folder
 
-💡 Tip: Next time, select your Documents folder and we'll create the full path automatically!
+💡 Tip: Next time, select the baba-is-win folder and we'll create the path automatically!
         `;
         
         // For now, use an alert (could be replaced with a better modal)
@@ -414,7 +414,7 @@ class ContentCreator {
 
     async copyToClipboard() {
         const data = this.gatherFormData();
-        const isPublished = document.getElementById('is-published').checked;
+        const isPublished = document.getElementById('is-published').value === 'true';
         
         const validation = FileGenerator.validateContent(data);
         if (!validation.isValid) {
