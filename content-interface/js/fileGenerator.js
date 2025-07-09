@@ -149,50 +149,35 @@ slug: ${slug}`;
 
     // File saving utilities
     static async saveFile(file) {
-        try {
-            // Try File System Access API first (Chrome/Edge)
-            if ('showDirectoryPicker' in window) {
-                return await this.saveWithFileSystemAPI(file);
-            } else {
-                // Fallback: download with instructions
-                this.downloadFile(file.name, file.content);
-                return {
-                    success: true,
-                    message: `Downloaded "${file.name}". Please move it to: ${file.path}`,
-                    needsManualMove: true
-                };
-            }
-        } catch (error) {
-            // If File System API fails, fallback to download
-            this.downloadFile(file.name, file.content);
-            return {
-                success: true,
-                message: `Downloaded "${file.name}". Please move it to: ${file.path}`,
-                needsManualMove: true
-            };
-        }
+        // Use the simplified save approach
+        return await SimplifiedSave.saveFile(file);
     }
 
     static async saveWithFileSystemAPI(file) {
         try {
-            // Get the blog directory (will prompt if not previously selected)
-            const dirHandle = await DirectoryHelper.getBlogDirectoryHandle();
+            // Use a simpler approach - just use the browser's built-in persistence
+            const dirHandle = await window.showDirectoryPicker({
+                id: 'baba-is-win-blog-v2', // Change ID to reset any corrupted state
+                mode: 'readwrite',
+                startIn: 'documents'
+            });
             
-            // Validate it looks like the right directory
-            const isValid = await DirectoryHelper.validateBlogDirectory(dirHandle);
-            if (!isValid) {
-                const tryAgain = confirm(
-                    `This doesn't look like the baba-is-win blog directory.\n\n` +
-                    `Expected to find: src/, package.json, astro.config.mjs\n\n` +
-                    `Try selecting a different folder?`
+            // Optional: Quick validation (but don't block if it fails)
+            try {
+                await dirHandle.getDirectoryHandle('src');
+                console.log('✓ Directory validation passed');
+            } catch {
+                // Directory might be valid but structured differently
+                console.warn('Directory validation failed, but proceeding anyway');
+                
+                const proceed = confirm(
+                    `This folder might not be the baba-is-win directory.\n\n` +
+                    `Expected to find a 'src' folder inside.\n\n` +
+                    `Continue saving anyway?`
                 );
                 
-                if (tryAgain) {
-                    // Clear stored directory and try again
-                    await DirectoryHelper.clearStoredDirectory();
-                    return await this.saveWithFileSystemAPI(file);
-                } else {
-                    throw new Error('Invalid blog directory selected');
+                if (!proceed) {
+                    throw new Error('Directory validation failed');
                 }
             }
 

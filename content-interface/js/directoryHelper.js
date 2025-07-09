@@ -16,27 +16,32 @@ class DirectoryHelper {
      * Get or prompt for the blog directory handle
      */
     static async getBlogDirectoryHandle() {
+        // For now, let's use the built-in browser persistence instead of IndexedDB
+        // This should work more reliably with the File System Access API
         try {
-            // Try to get previously selected directory first
-            const existingHandle = await this.getStoredDirectoryHandle();
-            if (existingHandle) {
-                // Verify the directory still exists and has permission
-                const permission = await existingHandle.queryPermission({ mode: 'readwrite' });
-                if (permission === 'granted') {
-                    return existingHandle;
-                } else if (permission === 'prompt') {
-                    const newPermission = await existingHandle.requestPermission({ mode: 'readwrite' });
-                    if (newPermission === 'granted') {
-                        return existingHandle;
-                    }
-                }
-            }
+            // Use the browser's built-in directory picker with a specific ID
+            // The browser should remember this automatically
+            const dirHandle = await window.showDirectoryPicker({
+                id: this.BLOG_DIRECTORY_ID,
+                mode: 'readwrite',
+                startIn: 'documents'
+            });
+            
+            return dirHandle;
         } catch (error) {
-            console.log('Previous directory not available, prompting for new selection');
+            if (error.name === 'AbortError') {
+                throw error; // User cancelled
+            }
+            
+            // If that fails, try without the ID
+            console.warn('Directory picker with ID failed, trying without ID');
+            const dirHandle = await window.showDirectoryPicker({
+                mode: 'readwrite',
+                startIn: 'documents'
+            });
+            
+            return dirHandle;
         }
-        
-        // Prompt for directory selection
-        return await this.promptForBlogDirectory();
     }
     
     /**

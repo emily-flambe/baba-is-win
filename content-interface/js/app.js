@@ -322,11 +322,11 @@ class ContentCreator {
                     this.showFileInstructions(file);
                 } else if (result.savedDirectly) {
                     this.showToast(`✅ File saved directly to: ${file.path}`, 'success');
-                    // Show a quick tip about the directory selection being remembered
-                    if (!localStorage.getItem('directory-tip-shown')) {
+                    // Show a tip about directory persistence behavior
+                    if (!localStorage.getItem('directory-tip-shown-v2')) {
                         setTimeout(() => {
-                            this.showToast('💡 Tip: Browser will remember this folder for future saves!', 'success');
-                            localStorage.setItem('directory-tip-shown', 'true');
+                            this.showToast('💡 Note: You may need to select the folder each time (browser limitation)', 'success');
+                            localStorage.setItem('directory-tip-shown-v2', 'true');
                         }, 2000);
                     }
                 } else {
@@ -754,38 +754,22 @@ class ContentCreator {
 
     checkDirectorySupport() {
         if (DirectoryHelper.isFileSystemAccessSupported()) {
-            document.getElementById('directory-tools').style.display = 'block';
-            this.updateDirectoryDisplay();
+            // For now, hide the directory tools since browser should handle persistence
+            // document.getElementById('directory-tools').style.display = 'block';
+            console.log('✓ File System Access API supported');
         }
     }
     
     async updateDirectoryDisplay() {
+        // Simplified - let browser handle directory persistence
         const currentDir = document.getElementById('current-directory');
-        try {
-            const dirHandle = await DirectoryHelper.getStoredDirectoryHandle();
-            if (dirHandle) {
-                currentDir.innerHTML = `<small>Current: ${dirHandle.name || 'Blog directory selected'}</small>`;
-            } else {
-                currentDir.innerHTML = `<small>No directory selected</small>`;
-            }
-        } catch (error) {
-            currentDir.innerHTML = `<small>No directory selected</small>`;
-        }
+        currentDir.innerHTML = `<small>Browser will remember your folder selection</small>`;
     }
     
     async changeDirectory() {
-        try {
-            await DirectoryHelper.clearStoredDirectory();
-            const newHandle = await DirectoryHelper.promptForBlogDirectory();
-            if (newHandle) {
-                this.showToast('Blog directory updated!', 'success');
-                this.updateDirectoryDisplay();
-            }
-        } catch (error) {
-            if (error.name !== 'AbortError') {
-                this.showToast('Error changing directory: ' + error.message, 'error');
-            }
-        }
+        // This would clear the browser's remembered directory
+        // For now, let's just show a helpful message
+        this.showToast('To change directory: just select a different folder next time you save', 'success');
     }
 
     showToast(message, type = 'success') {
