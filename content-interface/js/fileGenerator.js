@@ -175,11 +175,26 @@ slug: ${slug}`;
 
     static async saveWithFileSystemAPI(file) {
         try {
-            // Ask user to select the blog root directory
-            const dirHandle = await window.showDirectoryPicker({
-                id: 'blog-directory',
-                startIn: 'documents'
-            });
+            // Get the blog directory (will prompt if not previously selected)
+            const dirHandle = await DirectoryHelper.getBlogDirectoryHandle();
+            
+            // Validate it looks like the right directory
+            const isValid = await DirectoryHelper.validateBlogDirectory(dirHandle);
+            if (!isValid) {
+                const tryAgain = confirm(
+                    `This doesn't look like the baba-is-win blog directory.\n\n` +
+                    `Expected to find: src/, package.json, astro.config.mjs\n\n` +
+                    `Try selecting a different folder?`
+                );
+                
+                if (tryAgain) {
+                    // Clear stored directory and try again
+                    await DirectoryHelper.clearStoredDirectory();
+                    return await this.saveWithFileSystemAPI(file);
+                } else {
+                    throw new Error('Invalid blog directory selected');
+                }
+            }
 
             // Navigate to the correct subdirectory
             const pathParts = file.path.split('/').filter(p => p);
@@ -202,7 +217,8 @@ slug: ${slug}`;
             return {
                 success: true,
                 message: `File saved successfully to: ${file.path}`,
-                needsManualMove: false
+                needsManualMove: false,
+                savedDirectly: true
             };
         } catch (error) {
             if (error.name === 'AbortError') {

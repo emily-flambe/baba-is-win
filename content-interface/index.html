@@ -133,6 +133,12 @@
                         Dark mode
                     </label>
                 </div>
+                
+                <div class="tool-group" id="directory-tools" style="display: none;">
+                    <h4>Directory</h4>
+                    <button id="change-directory" class="btn btn-secondary btn-sm">📁 Change Blog Folder</button>
+                    <div id="current-directory" class="help-content" style="margin-top: 0.5rem;"></div>
+                </div>
             </section>
             
             <section class="help-section">
@@ -171,6 +177,7 @@
     <!-- Scripts -->
     <script src="js/markdown.js"></script>
     <script src="js/storage.js"></script>
+    <script src="js/directoryHelper.js"></script>
     <script src="js/fileGenerator.js"></script>
     <script src="js/app.js"></script>
 </body>

@@ -18,6 +18,7 @@ class ContentCreator {
         this.loadSettings();
         this.setupAutoSave();
         this.loadTagSuggestions();
+        this.checkDirectorySupport();
         this.showToast('Content Creator loaded! Start writing your content.', 'success');
     }
 
@@ -102,6 +103,11 @@ class ContentCreator {
         document.getElementById('dark-mode').addEventListener('change', (e) => {
             this.updateSetting('darkMode', e.target.checked);
             this.applyTheme();
+        });
+        
+        // Directory management
+        document.getElementById('change-directory').addEventListener('click', () => {
+            this.changeDirectory();
         });
 
         // Keyboard shortcuts
@@ -314,8 +320,17 @@ class ContentCreator {
                 if (result.needsManualMove) {
                     this.showToast(`Downloaded "${file.name}". Please move it to: ${file.path}`, 'success');
                     this.showFileInstructions(file);
+                } else if (result.savedDirectly) {
+                    this.showToast(`✅ File saved directly to: ${file.path}`, 'success');
+                    // Show a quick tip about the directory selection being remembered
+                    if (!localStorage.getItem('directory-tip-shown')) {
+                        setTimeout(() => {
+                            this.showToast('💡 Tip: Browser will remember this folder for future saves!', 'success');
+                            localStorage.setItem('directory-tip-shown', 'true');
+                        }, 2000);
+                    }
                 } else {
-                    this.showToast(`File saved directly to: ${file.path}`, 'success');
+                    this.showToast(`File saved to: ${file.path}`, 'success');
                 }
             } else {
                 this.showToast(result.message, 'error');
@@ -735,6 +750,42 @@ class ContentCreator {
             type: this.currentType,
             timestamp: Date.now()
         };
+    }
+
+    checkDirectorySupport() {
+        if (DirectoryHelper.isFileSystemAccessSupported()) {
+            document.getElementById('directory-tools').style.display = 'block';
+            this.updateDirectoryDisplay();
+        }
+    }
+    
+    async updateDirectoryDisplay() {
+        const currentDir = document.getElementById('current-directory');
+        try {
+            const dirHandle = await DirectoryHelper.getStoredDirectoryHandle();
+            if (dirHandle) {
+                currentDir.innerHTML = `<small>Current: ${dirHandle.name || 'Blog directory selected'}</small>`;
+            } else {
+                currentDir.innerHTML = `<small>No directory selected</small>`;
+            }
+        } catch (error) {
+            currentDir.innerHTML = `<small>No directory selected</small>`;
+        }
+    }
+    
+    async changeDirectory() {
+        try {
+            await DirectoryHelper.clearStoredDirectory();
+            const newHandle = await DirectoryHelper.promptForBlogDirectory();
+            if (newHandle) {
+                this.showToast('Blog directory updated!', 'success');
+                this.updateDirectoryDisplay();
+            }
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                this.showToast('Error changing directory: ' + error.message, 'error');
+            }
+        }
     }
 
     showToast(message, type = 'success') {
