@@ -59,6 +59,7 @@ class ContentCreator {
 
         // Action buttons
         document.getElementById('save-content').addEventListener('click', () => this.saveContent());
+        document.getElementById('save-and-open').addEventListener('click', () => this.saveAndOpenFolder());
         document.getElementById('copy-content').addEventListener('click', () => this.copyToClipboard());
         document.getElementById('clear-form').addEventListener('click', () => this.clearForm());
         
@@ -310,7 +311,12 @@ class ContentCreator {
             const result = await FileGenerator.saveFile(file);
             
             if (result.success) {
-                this.showToast(`File saved! Please move "${file.name}" to: ${file.path}`, 'success');
+                if (result.needsManualMove) {
+                    this.showToast(`Downloaded "${file.name}". Please move it to: ${file.path}`, 'success');
+                    this.showFileInstructions(file);
+                } else {
+                    this.showToast(`File saved directly to: ${file.path}`, 'success');
+                }
             } else {
                 this.showToast(result.message, 'error');
             }
@@ -321,6 +327,74 @@ class ContentCreator {
             console.error('Error saving file:', error);
             this.showToast('Error saving file: ' + error.message, 'error');
         }
+    }
+
+    async saveAndOpenFolder() {
+        const data = this.gatherFormData();
+        const isPublished = document.getElementById('is-published').checked;
+        
+        const validation = FileGenerator.validateContent(data);
+        if (!validation.isValid) {
+            this.showToast('Validation errors: ' + validation.errors.join(', '), 'error');
+            return;
+        }
+
+        try {
+            const file = FileGenerator.generate(data, this.currentType, isPublished);
+            const result = await FileGenerator.saveFile(file);
+            
+            if (result.success) {
+                if (result.needsManualMove) {
+                    this.showToast(`Downloaded "${file.name}". Opening folder instructions...`, 'success');
+                    this.showFileInstructions(file);
+                    // Try to open the target directory
+                    this.openTargetDirectory(file);
+                } else {
+                    this.showToast(`File saved directly to: ${file.path}`, 'success');
+                }
+            } else {
+                this.showToast(result.message, 'error');
+            }
+            
+            this.updateFileInfo();
+        } catch (error) {
+            console.error('Error saving file:', error);
+            this.showToast('Error saving file: ' + error.message, 'error');
+        }
+    }
+
+    showFileInstructions(file) {
+        // Show a more detailed instruction modal/popup
+        const instructions = `
+📁 File Location Instructions:
+
+1. Your file "${file.name}" has been downloaded to Downloads folder
+2. You need to move it to: ${file.path}
+
+🔧 Steps:
+• Open Finder
+• Navigate to: /Users/emilycogsdill/Documents/GitHub/baba-is-win/
+• Go to: ${file.path.substring(0, file.path.lastIndexOf('/'))}
+• Move "${file.name}" from Downloads to this folder
+
+💡 Tip: Use "📋 Copy Path" button to copy the exact folder path!
+        `;
+        
+        // For now, use an alert (could be replaced with a better modal)
+        alert(instructions.trim());
+    }
+
+    openTargetDirectory(file) {
+        // Try to open the directory using file:// URL (may not work in all browsers)
+        const folderPath = file.fullPath.substring(0, file.fullPath.lastIndexOf('/'));
+        const fileUrl = `file://${folderPath}`;
+        
+        // Copy folder path to clipboard as a fallback
+        FileGenerator.copyToClipboard(folderPath).then(success => {
+            if (success) {
+                this.showToast('Target folder path copied to clipboard!', 'success');
+            }
+        });
     }
 
     async copyToClipboard() {

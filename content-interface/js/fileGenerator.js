@@ -150,18 +150,68 @@ slug: ${slug}`;
     // File saving utilities
     static async saveFile(file) {
         try {
-            // For now, we'll use the download method and provide instructions
-            // In a real implementation, you'd need a local server or file system access
+            // Try File System Access API first (Chrome/Edge)
+            if ('showDirectoryPicker' in window) {
+                return await this.saveWithFileSystemAPI(file);
+            } else {
+                // Fallback: download with instructions
+                this.downloadFile(file.name, file.content);
+                return {
+                    success: true,
+                    message: `Downloaded "${file.name}". Please move it to: ${file.path}`,
+                    needsManualMove: true
+                };
+            }
+        } catch (error) {
+            // If File System API fails, fallback to download
             this.downloadFile(file.name, file.content);
             return {
                 success: true,
-                message: `File "${file.name}" downloaded. Please move it to: ${file.path}`
+                message: `Downloaded "${file.name}". Please move it to: ${file.path}`,
+                needsManualMove: true
+            };
+        }
+    }
+
+    static async saveWithFileSystemAPI(file) {
+        try {
+            // Ask user to select the blog root directory
+            const dirHandle = await window.showDirectoryPicker({
+                id: 'blog-directory',
+                startIn: 'documents'
+            });
+
+            // Navigate to the correct subdirectory
+            const pathParts = file.path.split('/').filter(p => p);
+            let currentDir = dirHandle;
+            
+            for (const part of pathParts.slice(0, -1)) { // All except filename
+                try {
+                    currentDir = await currentDir.getDirectoryHandle(part);
+                } catch {
+                    currentDir = await currentDir.getDirectoryHandle(part, { create: true });
+                }
+            }
+
+            // Create the file
+            const fileHandle = await currentDir.getFileHandle(file.name, { create: true });
+            const writable = await fileHandle.createWritable();
+            await writable.write(file.content);
+            await writable.close();
+
+            return {
+                success: true,
+                message: `File saved successfully to: ${file.path}`,
+                needsManualMove: false
             };
         } catch (error) {
-            return {
-                success: false,
-                message: `Failed to save file: ${error.message}`
-            };
+            if (error.name === 'AbortError') {
+                return {
+                    success: false,
+                    message: 'Save cancelled by user'
+                };
+            }
+            throw error;
         }
     }
 
