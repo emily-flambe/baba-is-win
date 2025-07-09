@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Creator - Local Blog Interface</title>
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/markdown.css">
+</head>
+<body>
+    <div class="app">
+        <header class="app-header">
+            <h1>🖋️ Content Creator</h1>
+            <p class="subtitle">Simple local interface for blog posts and thoughts</p>
+            <nav class="content-type-nav">
+                <button id="blog-btn" data-type="blog" class="nav-btn active">📝 Blog Post</button>
+                <button id="thought-btn" data-type="thought" class="nav-btn">💭 Thought</button>
+            </nav>
+        </header>
+        
+        <main class="app-main">
+            <div class="editor-panel">
+                <form id="content-form" class="content-form">
+                    <div class="form-group">
+                        <label for="title">Title <span class="optional">(optional for thoughts)</span></label>
+                        <input type="text" id="title" placeholder="Enter your title...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tags">Tags</label>
+                        <input type="text" id="tags" placeholder="personal, tech, life (comma-separated)">
+                        <div class="tag-suggestions" id="tag-suggestions"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="content">Content</label>
+                        <textarea id="content" placeholder="Write your content using Markdown..."></textarea>
+                        <div class="editor-meta">
+                            <div class="char-count">
+                                Characters: <span id="char-counter">0</span>
+                                <span id="char-limit" class="limit-indicator"></span>
+                            </div>
+                            <div class="word-count">
+                                Words: <span id="word-counter">0</span>
+                                | Reading time: <span id="reading-time">0</span> min
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="publish-status">
+                    <label class="status-toggle">
+                        <input type="checkbox" id="is-published">
+                        <span class="toggle-slider"></span>
+                        <span class="toggle-label">
+                            <span class="draft-label">📝 Draft</span>
+                            <span class="published-label">🚀 Published</span>
+                        </span>
+                    </label>
+                </div>
+                
+                <div class="actions">
+                    <button id="save-content" class="btn btn-primary">💾 Save Content</button>
+                    <button id="save-and-open" class="btn btn-secondary">💾 Save & Open Folder</button>
+                    <button id="copy-content" class="btn btn-secondary">📋 Copy to Clipboard</button>
+                    <button id="clear-form" class="btn btn-ghost">🗑️ Clear</button>
+                </div>
+                
+                <div class="file-info" id="file-info">
+                    <h4>File Details:</h4>
+                    <p><strong>Will save to:</strong> <span id="file-location"></span></p>
+                    <p><strong>Filename:</strong> <span id="filename"></span></p>
+                    <div class="file-actions">
+                        <button id="open-folder" class="btn btn-ghost btn-sm">📂 Open Folder</button>
+                        <button id="copy-path" class="btn btn-ghost btn-sm">📋 Copy Path</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="preview-panel">
+                <div class="preview-header">
+                    <h3>📖 Preview</h3>
+                    <button id="toggle-preview" class="btn btn-ghost">Hide</button>
+                </div>
+                <div id="preview" class="preview-content">
+                    <p class="preview-placeholder">Start typing to see preview...</p>
+                </div>
+            </div>
+        </main>
+        
+        <aside class="sidebar">
+            <section class="content-browser">
+                <div class="section-header">
+                    <h3>📁 Content Browser</h3>
+                    <button id="refresh-content" class="btn btn-ghost btn-sm">🔄 Refresh</button>
+                </div>
+                
+                <div class="content-tabs">
+                    <button class="tab-btn active" data-tab="drafts">📝 Drafts</button>
+                    <button class="tab-btn" data-tab="published">🚀 Published</button>
+                </div>
+                
+                <div class="tab-content">
+                    <div id="drafts-tab" class="tab-pane active">
+                        <ul id="drafts-list" class="content-list">
+                            <li class="no-content">No drafts found</li>
+                        </ul>
+                    </div>
+                    <div id="published-tab" class="tab-pane">
+                        <ul id="published-list" class="content-list">
+                            <li class="no-content">No published content found</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="tools-section">
+                <h3>🛠️ Tools</h3>
+                <div class="tool-group">
+                    <h4>Import Content</h4>
+                    <input type="file" id="file-upload" accept=".md,.txt" multiple style="display: none;">
+                    <button id="upload-btn" class="btn btn-secondary btn-sm">📂 Upload Files</button>
+                </div>
+                
+                <div class="tool-group">
+                    <h4>Settings</h4>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="auto-save" checked>
+                        Auto-save drafts
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="dark-mode">
+                        Dark mode
+                    </label>
+                </div>
+                
+                <div class="tool-group" id="directory-tools" style="display: none;">
+                    <h4>Directory</h4>
+                    <button id="change-directory" class="btn btn-secondary btn-sm">📁 Change Blog Folder</button>
+                    <div id="current-directory" class="help-content" style="margin-top: 0.5rem;"></div>
+                </div>
+            </section>
+            
+            <section class="help-section">
+                <h3>❓ Quick Help</h3>
+                <details>
+                    <summary>Markdown Syntax</summary>
+                    <div class="help-content">
+                        <p><code>**bold**</code> → <strong>bold</strong></p>
+                        <p><code>*italic*</code> → <em>italic</em></p>
+                        <p><code>[link](url)</code> → link</p>
+                        <p><code>![alt](image.jpg)</code> → image</p>
+                        <p><code>## Heading</code> → heading</p>
+                        <p><code>- item</code> → list item</p>
+                    </div>
+                </details>
+                
+                <details>
+                    <summary>File Structure</summary>
+                    <div class="help-content">
+                        <p><strong>Simple Path Building:</strong></p>
+                        <p>Select the <code>baba-is-win</code> folder and we'll create:</p>
+                        <p>• <code>src/data/blog-posts/draft/</code></p>
+                        <p>• <code>src/data/thoughts/published/</code></p>
+                        <p><strong>Format:</strong> <code>YYYYMMDD-slug.md</code></p>
+                    </div>
+                </details>
+                
+                <details>
+                    <summary>Folder Selection</summary>
+                    <div class="help-content">
+                        <p><strong>What to select:</strong></p>
+                        <p>Navigate to and select the <code>baba-is-win</code> folder</p>
+                        <p><strong>Location:</strong> <code>Documents/GitHub/baba-is-win</code></p>
+                        <p><strong>We'll automatically</strong> create the src/data subdirectories and organize your files!</p>
+                    </div>
+                </details>
+            </section>
+        </aside>
+    </div>
+    
+    <!-- Status Toast -->
+    <div id="toast" class="toast"></div>
+    
+    <!-- Scripts -->
+    <script src="js/markdown.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/directoryHelper.js"></script>
+    <script src="js/simplifiedSave.js"></script>
+    <script src="js/fileGenerator.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

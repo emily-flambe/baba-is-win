@@ -46,10 +46,7 @@
     "dev": "astro build && wrangler dev",
     "dev:pages": "astro build && wrangler pages dev dist/ --compatibility-date=2024-11-01 --compatibility-flags nodejs_compat --d1 DB=baba-is-win-db",
     "preview": "astro build && wrangler dev",
-    "types": "wrangler types",
-    "make-thought": "node scripts/make-thought.js",
-    "make-blog-post": "node scripts/make-blog-post.js",
-    "make-draft-blog-post": "node scripts/make-draft-blog-post.js"
+    "types": "wrangler types"
   },
   "type": "module"
 }

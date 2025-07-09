@@ -1,7 +1,7 @@
 .PHONY: astro dev dev-clean dev-restart check-db kill-servers migrate-db
 .PHONY: users count info delete test-user find logout recent active cleanup stats
 .PHONY: users-list-prod sessions-cleanup-prod db-stats-prod
-.PHONY: help help-admin thought blog-post draft-blog-post
+.PHONY: help help-admin content
 
 # Development Commands
 # ====================
@@ -42,18 +42,14 @@ dev-clean: kill-servers migrate-db check-db
 	@echo "Starting fresh dev server with clean database..."
 	npm run dev
 
-# Create a new thought markdown file
-thought:
-	@test -n "$(SLUG)" && npm run make-thought $(SLUG) || npm run make-thought
 
-# Create a new blog post with interactive prompts
-blog-post:
-	@npm run make-blog-post
 
-# Create a new draft blog post markdown file
-draft-blog-post:
-	@test -n "$(SLUG)" || (echo "❌ Usage: make draft-blog-post SLUG=my-post-slug [TITLE='My Post Title'] [DESC='Post description']" && exit 1)
-	@npm run make-draft-blog-post $(SLUG) $(if $(TITLE),"$(TITLE)","New Blog Post Draft") $(if $(DESC),"$(DESC)","A new blog post draft - work in progress.")
+# Open Content Creator interface
+content:
+	@echo "🖋️  Opening Content Creator interface..."
+	@open content-interface/index.html
+
+
 
 # User Management Commands
 # ========================
@@ -234,9 +230,7 @@ help:
 	@echo "  make delete EMAIL=...   - Delete user (requires typing DELETE)"
 	@echo
 	@echo "💭 Content:"
-	@echo "  make thought            - Create new thought (optional: SLUG=my-thought)"
-	@echo "  make blog-post          - Create new blog post (interactive prompts)"
-	@echo "  make draft-blog-post SLUG=... - Create new draft blog post (required: SLUG, optional: TITLE, DESC)"
+	@echo "  make content            - Open Content Creator interface"
 	@echo
 	@echo "🧹 Maintenance:"
 	@echo "  make cleanup            - Remove expired sessions"
@@ -246,9 +240,7 @@ help:
 	@echo "  make find Q=test"
 	@echo "  make info EMAIL=test@example.com"
 	@echo "  make delete EMAIL=spam@example.com"
-	@echo "  make thought SLUG=my-new-idea"
-	@echo "  make blog-post          - Interactive blog post creation"
-	@echo "  make draft-blog-post SLUG=draft-post TITLE=\\\"Draft Post\\\" DESC=\\\"Working on this...\\\""
+	@echo "  make content            - Open Content Creator interface"
 
 # Show all admin commands (detailed)
 help-admin:
