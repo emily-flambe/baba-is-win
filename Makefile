@@ -1,7 +1,7 @@
 .PHONY: astro dev dev-clean dev-restart check-db kill-servers migrate-db
 .PHONY: users count info delete test-user find logout recent active cleanup stats
 .PHONY: users-list-prod sessions-cleanup-prod db-stats-prod
-.PHONY: help help-admin thought blog-post draft-blog-post
+.PHONY: help help-admin thought blog content blog-post draft-blog-post
 
 # Development Commands
 # ====================
@@ -46,7 +46,17 @@ dev-clean: kill-servers migrate-db check-db
 thought:
 	@test -n "$(SLUG)" && npm run make-thought $(SLUG) || npm run make-thought
 
-# Create a new blog post with interactive prompts
+# Open Content Creator interface (replaces old CLI blog script)
+blog:
+	@echo "🖋️  Opening Content Creator interface..."
+	@open content-interface/index.html
+
+# Alias for Content Creator interface
+content:
+	@echo "🖋️  Opening Content Creator interface..."
+	@open content-interface/index.html
+
+# Create a new blog post with interactive prompts (legacy CLI)
 blog-post:
 	@npm run make-blog-post
 
@@ -234,8 +244,10 @@ help:
 	@echo "  make delete EMAIL=...   - Delete user (requires typing DELETE)"
 	@echo
 	@echo "💭 Content:"
+	@echo "  make blog               - Open Content Creator interface"
+	@echo "  make content            - Open Content Creator interface (alias)"
 	@echo "  make thought            - Create new thought (optional: SLUG=my-thought)"
-	@echo "  make blog-post          - Create new blog post (interactive prompts)"
+	@echo "  make blog-post          - Create new blog post (legacy CLI)"
 	@echo "  make draft-blog-post SLUG=... - Create new draft blog post (required: SLUG, optional: TITLE, DESC)"
 	@echo
 	@echo "🧹 Maintenance:"
