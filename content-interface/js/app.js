@@ -58,17 +58,31 @@ class ContentCreator {
         });
 
         // Action buttons
-        document.getElementById('save-draft').addEventListener('click', () => this.saveDraft());
-        document.getElementById('generate-file').addEventListener('click', () => this.generateFile());
+        document.getElementById('save-content').addEventListener('click', () => this.saveContent());
         document.getElementById('copy-content').addEventListener('click', () => this.copyToClipboard());
         document.getElementById('clear-form').addEventListener('click', () => this.clearForm());
+        
+        // File actions
+        document.getElementById('open-folder').addEventListener('click', () => this.openFolder());
+        document.getElementById('copy-path').addEventListener('click', () => this.copyPath());
+        
+        // Publish status toggle
+        document.getElementById('is-published').addEventListener('change', () => {
+            this.updateFileInfo();
+        });
 
         // Preview toggle
         document.getElementById('toggle-preview').addEventListener('click', () => this.togglePreview());
 
-        // Draft management
-        document.getElementById('clear-drafts').addEventListener('click', () => this.clearAllDrafts());
-        document.getElementById('export-drafts').addEventListener('click', () => this.exportDrafts());
+        // Content browser
+        document.getElementById('refresh-content').addEventListener('click', () => this.refreshContent());
+        
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                this.switchTab(e.target.dataset.tab);
+            });
+        });
 
         // File upload
         document.getElementById('upload-btn').addEventListener('click', () => {
@@ -157,20 +171,25 @@ class ContentCreator {
 
     updateFileInfo() {
         const data = this.gatherFormData();
+        const isPublished = document.getElementById('is-published').checked;
         
         if (data.content.trim() === '') {
-            document.getElementById('file-info').style.display = 'none';
+            document.getElementById('filename').textContent = 'No content';
+            document.getElementById('file-location').textContent = 'Start writing to see file details';
             return;
         }
 
         try {
-            const fileInfo = FileGenerator.generateFileInfo(data, this.currentType);
-            document.getElementById('filename').textContent = fileInfo.filename;
-            document.getElementById('file-location').textContent = fileInfo.path;
-            document.getElementById('file-info').style.display = 'block';
+            const file = FileGenerator.generate(data, this.currentType, isPublished);
+            document.getElementById('filename').textContent = file.name;
+            document.getElementById('file-location').textContent = file.path;
+            
+            // Store the current file info for actions
+            this.currentFileInfo = file;
         } catch (error) {
             console.error('Error updating file info:', error);
-            document.getElementById('file-info').style.display = 'none';
+            document.getElementById('filename').textContent = 'Error generating filename';
+            document.getElementById('file-location').textContent = 'Please check your content';
         }
     }
 
@@ -276,8 +295,9 @@ class ContentCreator {
         }
     }
 
-    generateFile() {
+    async saveContent() {
         const data = this.gatherFormData();
+        const isPublished = document.getElementById('is-published').checked;
         
         const validation = FileGenerator.validateContent(data);
         if (!validation.isValid) {
@@ -286,20 +306,26 @@ class ContentCreator {
         }
 
         try {
-            const file = FileGenerator.generate(data, this.currentType);
-            FileGenerator.downloadFile(file.name, file.content);
-            this.showToast(`File "${file.name}" downloaded successfully!`, 'success');
+            const file = FileGenerator.generate(data, this.currentType, isPublished);
+            const result = await FileGenerator.saveFile(file);
+            
+            if (result.success) {
+                this.showToast(`File saved! Please move "${file.name}" to: ${file.path}`, 'success');
+            } else {
+                this.showToast(result.message, 'error');
+            }
             
             // Update file info display
             this.updateFileInfo();
         } catch (error) {
-            console.error('Error generating file:', error);
-            this.showToast('Error generating file: ' + error.message, 'error');
+            console.error('Error saving file:', error);
+            this.showToast('Error saving file: ' + error.message, 'error');
         }
     }
 
     async copyToClipboard() {
         const data = this.gatherFormData();
+        const isPublished = document.getElementById('is-published').checked;
         
         const validation = FileGenerator.validateContent(data);
         if (!validation.isValid) {
@@ -308,7 +334,7 @@ class ContentCreator {
         }
 
         try {
-            const file = FileGenerator.generate(data, this.currentType);
+            const file = FileGenerator.generate(data, this.currentType, isPublished);
             const success = await FileGenerator.copyToClipboard(file.content);
             
             if (success) {
@@ -319,6 +345,24 @@ class ContentCreator {
         } catch (error) {
             console.error('Error copying to clipboard:', error);
             this.showToast('Error copying to clipboard: ' + error.message, 'error');
+        }
+    }
+    
+    openFolder() {
+        if (this.currentFileInfo) {
+            const folderPath = this.currentFileInfo.fullPath.substring(0, this.currentFileInfo.fullPath.lastIndexOf('/'));
+            this.showToast(`Folder path: ${folderPath}\n\nNote: Cannot auto-open folders from browser. Please navigate manually.`, 'success');
+        }
+    }
+    
+    async copyPath() {
+        if (this.currentFileInfo) {
+            const success = await FileGenerator.copyToClipboard(this.currentFileInfo.fullPath);
+            if (success) {
+                this.showToast('File path copied to clipboard!', 'success');
+            } else {
+                this.showToast('Failed to copy path', 'error');
+            }
         }
     }
 
@@ -349,28 +393,45 @@ class ContentCreator {
         }
     }
 
+    switchTab(tabName) {
+        // Update tab buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        
+        // Update tab content
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+        
+        // Load content for the active tab
+        if (tabName === 'drafts') {
+            this.loadDrafts();
+        } else if (tabName === 'published') {
+            this.loadPublished();
+        }
+    }
+    
     loadDrafts() {
         const drafts = StorageManager.getDrafts();
         const container = document.getElementById('drafts-list');
         
         if (drafts.length === 0) {
-            container.innerHTML = '<li class="no-drafts">No drafts saved</li>';
+            container.innerHTML = '<li class="no-content">No drafts found</li>';
             return;
         }
 
         container.innerHTML = drafts.map(draft => {
-            const preview = MarkdownRenderer.stripMarkdown(draft.content).substring(0, 50) + '...';
+            const preview = MarkdownRenderer.stripMarkdown(draft.content).substring(0, 40) + '...';
             const title = draft.title || preview;
             
             return `
-                <li class="draft-item" data-draft-id="${draft.id}">
-                    <div class="draft-title">${title}</div>
-                    <div class="draft-meta">
-                        ${draft.type} • ${draft.updatedAtFormatted || 'Unknown date'}
+                <li class="content-item" data-draft-id="${draft.id}">
+                    <div class="content-item-title">${title}</div>
+                    <div class="content-item-meta">
+                        <span>${draft.type} • ${draft.updatedAtFormatted || 'Unknown date'}</span>
                     </div>
-                    <div class="draft-actions" style="margin-top: 0.5rem;">
-                        <button class="btn btn-ghost btn-sm load-draft">Load</button>
-                        <button class="btn btn-ghost btn-sm delete-draft" style="color: var(--error);">Delete</button>
+                    <div class="content-item-actions">
+                        <button class="btn btn-ghost btn-sm load-draft">✏️ Edit</button>
+                        <button class="btn btn-ghost btn-sm delete-draft" style="color: var(--error);">🗑️ Delete</button>
                     </div>
                 </li>
             `;
@@ -379,17 +440,42 @@ class ContentCreator {
         // Add event listeners for draft actions
         container.querySelectorAll('.load-draft').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const draftId = e.target.closest('.draft-item').dataset.draftId;
+                const draftId = e.target.closest('.content-item').dataset.draftId;
                 this.loadDraft(draftId);
             });
         });
 
         container.querySelectorAll('.delete-draft').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const draftId = e.target.closest('.draft-item').dataset.draftId;
+                const draftId = e.target.closest('.content-item').dataset.draftId;
                 this.deleteDraft(draftId);
             });
         });
+    }
+    
+    loadPublished() {
+        // Since we can't directly read the file system, show instructions
+        const container = document.getElementById('published-list');
+        container.innerHTML = `
+            <li class="no-content">
+                <p>Published content browser requires file system access.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.875rem;">
+                    Check your published folders:<br>
+                    • <code>src/data/blog-posts/published/</code><br>
+                    • <code>src/data/thoughts/published/</code>
+                </p>
+            </li>
+        `;
+    }
+    
+    refreshContent() {
+        const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+        if (activeTab === 'drafts') {
+            this.loadDrafts();
+        } else {
+            this.loadPublished();
+        }
+        this.showToast('Content refreshed', 'success');
     }
 
     loadDraft(draftId) {

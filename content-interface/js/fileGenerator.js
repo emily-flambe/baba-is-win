@@ -3,7 +3,7 @@
  * Creates properly formatted markdown files for the blog system
  */
 class FileGenerator {
-    static generate(data, type) {
+    static generate(data, type, isPublished = false) {
         const slug = this.generateSlug(data.title || data.content.substring(0, 50));
         const date = new Date();
         const dateString = this.formatDate(date);
@@ -11,13 +11,18 @@ class FileGenerator {
         
         let frontmatter;
         let targetPath;
+        let fullPath;
+        
+        const status = isPublished ? 'published' : 'draft';
         
         if (type === 'blog') {
             frontmatter = this.generateBlogFrontmatter(data, dateString, slug);
-            targetPath = 'src/data/blog-posts/published/';
+            targetPath = `src/data/blog-posts/${status}/`;
+            fullPath = `/Users/emilycogsdill/Documents/GitHub/baba-is-win/${targetPath}`;
         } else {
             frontmatter = this.generateThoughtFrontmatter(data, dateString, slug);
-            targetPath = 'src/data/thoughts/published/';
+            targetPath = `src/data/thoughts/${status}/`;
+            fullPath = `/Users/emilycogsdill/Documents/GitHub/baba-is-win/${targetPath}`;
         }
         
         const content = `${frontmatter}\n\n${data.content.trim()}`;
@@ -26,8 +31,10 @@ class FileGenerator {
             name: filename, 
             content: content,
             path: targetPath + filename,
+            fullPath: fullPath + filename,
             slug: slug,
-            type: type
+            type: type,
+            status: status
         };
     }
 
@@ -140,7 +147,25 @@ slug: ${slug}`;
         return JSON.stringify(archive, null, 2);
     }
 
-    // Download utilities
+    // File saving utilities
+    static async saveFile(file) {
+        try {
+            // For now, we'll use the download method and provide instructions
+            // In a real implementation, you'd need a local server or file system access
+            this.downloadFile(file.name, file.content);
+            return {
+                success: true,
+                message: `File "${file.name}" downloaded. Please move it to: ${file.path}`
+            };
+        } catch (error) {
+            return {
+                success: false,
+                message: `Failed to save file: ${error.message}`
+            };
+        }
+    }
+
+    // Download utilities  
     static downloadFile(filename, content, mimeType = 'text/markdown') {
         const blob = new Blob([content], { type: mimeType });
         const url = URL.createObjectURL(blob);

@@ -48,17 +48,31 @@
                     </div>
                 </form>
                 
+                <div class="publish-status">
+                    <label class="status-toggle">
+                        <input type="checkbox" id="is-published">
+                        <span class="toggle-slider"></span>
+                        <span class="toggle-label">
+                            <span class="draft-label">📝 Draft</span>
+                            <span class="published-label">🚀 Published</span>
+                        </span>
+                    </label>
+                </div>
+                
                 <div class="actions">
-                    <button id="save-draft" class="btn btn-secondary">💾 Save Draft</button>
-                    <button id="generate-file" class="btn btn-primary">📄 Generate File</button>
+                    <button id="save-content" class="btn btn-primary">💾 Save Content</button>
                     <button id="copy-content" class="btn btn-secondary">📋 Copy to Clipboard</button>
                     <button id="clear-form" class="btn btn-ghost">🗑️ Clear</button>
                 </div>
                 
-                <div class="file-info" id="file-info" style="display: none;">
-                    <h4>Generated File Info:</h4>
+                <div class="file-info" id="file-info">
+                    <h4>File Details:</h4>
+                    <p><strong>Will save to:</strong> <span id="file-location"></span></p>
                     <p><strong>Filename:</strong> <span id="filename"></span></p>
-                    <p><strong>Location:</strong> <span id="file-location"></span></p>
+                    <div class="file-actions">
+                        <button id="open-folder" class="btn btn-ghost btn-sm">📂 Open Folder</button>
+                        <button id="copy-path" class="btn btn-ghost btn-sm">📋 Copy Path</button>
+                    </div>
                 </div>
             </div>
             
@@ -74,16 +88,28 @@
         </main>
         
         <aside class="sidebar">
-            <section class="drafts-section">
+            <section class="content-browser">
                 <div class="section-header">
-                    <h3>📋 Drafts</h3>
-                    <button id="clear-drafts" class="btn btn-ghost btn-sm">Clear All</button>
+                    <h3>📁 Content Browser</h3>
+                    <button id="refresh-content" class="btn btn-ghost btn-sm">🔄 Refresh</button>
                 </div>
-                <ul id="drafts-list" class="drafts-list">
-                    <li class="no-drafts">No drafts saved</li>
-                </ul>
-                <div class="drafts-actions">
-                    <button id="export-drafts" class="btn btn-secondary btn-sm">📦 Export All</button>
+                
+                <div class="content-tabs">
+                    <button class="tab-btn active" data-tab="drafts">📝 Drafts</button>
+                    <button class="tab-btn" data-tab="published">🚀 Published</button>
+                </div>
+                
+                <div class="tab-content">
+                    <div id="drafts-tab" class="tab-pane active">
+                        <ul id="drafts-list" class="content-list">
+                            <li class="no-content">No drafts found</li>
+                        </ul>
+                    </div>
+                    <div id="published-tab" class="tab-pane">
+                        <ul id="published-list" class="content-list">
+                            <li class="no-content">No published content found</li>
+                        </ul>
+                    </div>
                 </div>
             </section>
             
@@ -123,12 +149,15 @@
                 </details>
                 
                 <details>
-                    <summary>File Conventions</summary>
+                    <summary>File Structure</summary>
                     <div class="help-content">
-                        <p><strong>Blog posts:</strong> saved to <code>src/data/blog-posts/published/</code></p>
-                        <p><strong>Thoughts:</strong> saved to <code>src/data/thoughts/published/</code></p>
+                        <p><strong>Drafts:</strong></p>
+                        <p>• Blog: <code>src/data/blog-posts/draft/</code></p>
+                        <p>• Thoughts: <code>src/data/thoughts/draft/</code></p>
+                        <p><strong>Published:</strong></p>
+                        <p>• Blog: <code>src/data/blog-posts/published/</code></p>
+                        <p>• Thoughts: <code>src/data/thoughts/published/</code></p>
                         <p><strong>Format:</strong> <code>YYYYMMDD-slug.md</code></p>
-                        <p>Files include proper frontmatter for your blog system.</p>
                     </div>
                 </details>
             </section>
