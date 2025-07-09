@@ -35,23 +35,27 @@ export class UnsubscribeService {
     return `${this.env.SITE_URL}/unsubscribe?token=${token}`;
   }
   
-  async processUnsubscribe(token: string, ipAddress?: string, userAgent?: string): Promise<string> {
-    // Validate token
-    const tokenData = await this.validateUnsubscribeToken(token);
-    if (!tokenData) {
-      throw new Error('Invalid or expired unsubscribe token');
+  async processUnsubscribe(token: string, ipAddress?: string, userAgent?: string): Promise<{ success: boolean; error?: string; userId?: string }> {
+    try {
+      // Validate token
+      const tokenData = await this.authDB.validateUnsubscribeToken(token);
+      if (!tokenData) {
+        return { success: false, error: 'Invalid or expired unsubscribe token' };
+      }
+      
+      // Mark token as used
+      await this.authDB.useUnsubscribeToken(tokenData.id, ipAddress, userAgent);
+      
+      // Unsubscribe user from all emails
+      await this.authDB.unsubscribeUserFromAll(tokenData.userId);
+      
+      // Log the unsubscribe action
+      await this.logUnsubscribeAction(tokenData.userId, tokenData.tokenType, ipAddress, userAgent);
+      
+      return { success: true, userId: tokenData.userId };
+    } catch (error) {
+      return { success: false, error: error.message };
     }
-    
-    // Mark token as used
-    await this.useUnsubscribeToken(tokenData.id, ipAddress, userAgent);
-    
-    // Unsubscribe user from all emails
-    await this.unsubscribeUserFromAll(tokenData.userId);
-    
-    // Log the unsubscribe action
-    await this.logUnsubscribeAction(tokenData.userId, tokenData.tokenType, ipAddress, userAgent);
-    
-    return tokenData.userId;
   }
   
   private generateSecureToken(): string {
@@ -67,45 +71,24 @@ export class UnsubscribeService {
     tokenType: 'one_click' | 'list_unsubscribe' | 'manual';
     expiresAt: number;
   }): Promise<void> {
-    const now = Date.now();
-    const id = crypto.randomUUID();
-    
-    // For now, we'll use a simple approach without extending the database
-    // In a production system, you'd want to add an unsubscribe_tokens table
-    // For this implementation, we'll store it as a simple key-value in a mock way
-    
-    // This is a simplified implementation - in reality you'd want a proper database table
-    console.log(`Creating unsubscribe token for user ${params.userId}: ${params.token}`);
+    await this.authDB.createUnsubscribeToken({
+      userId: params.userId,
+      token: params.token,
+      tokenType: params.tokenType,
+      expiresAt: params.expiresAt
+    });
   }
   
   private async validateUnsubscribeToken(token: string): Promise<UnsubscribeToken | null> {
-    // In a real implementation, this would query the database
-    // For now, we'll return a mock implementation
-    
-    // This is a simplified validation - in reality you'd query the database
-    console.log(`Validating unsubscribe token: ${token}`);
-    
-    // Mock return for now - in production this would be a database query
-    return {
-      id: crypto.randomUUID(),
-      userId: 'mock-user-id',
-      token,
-      tokenType: 'one_click',
-      expiresAt: Math.floor(Date.now() / 1000) + (365 * 24 * 60 * 60),
-      createdAt: new Date()
-    };
+    return await this.authDB.validateUnsubscribeToken(token);
   }
   
   private async useUnsubscribeToken(tokenId: string, ipAddress?: string, userAgent?: string): Promise<void> {
-    // Mark token as used in database
-    console.log(`Marking token ${tokenId} as used`);
+    await this.authDB.useUnsubscribeToken(tokenId, ipAddress, userAgent);
   }
   
   private async unsubscribeUserFromAll(userId: string): Promise<void> {
-    // Update user preferences to disable all email notifications
-    await this.authDB.db.prepare(
-      'UPDATE users SET email_blog_updates = 0, email_thought_updates = 0, email_announcements = 0, updated_at = ? WHERE id = ?'
-    ).bind(Date.now(), userId).run();
+    await this.authDB.unsubscribeUserFromAll(userId);
   }
   
   private async logUnsubscribeAction(

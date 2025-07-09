@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import EmailPreferences from '../components/EmailPreferences.astro';
 
 export const prerender = false;
 
@@ -8,6 +9,13 @@ const user = Astro.locals.user!;
 const title = `${user.username}'s Profile`;
 const description = 'User profile page';
 const permalink = `${Astro.site.href}profile`;
+
+// Get user's current email preferences
+const initialPreferences = {
+  emailBlogUpdates: user.emailBlogUpdates || false,
+  emailThoughtUpdates: user.emailThoughtUpdates || false,
+  emailAnnouncements: user.emailAnnouncements || false
+};
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink}>
@@ -35,6 +43,8 @@ const permalink = `${Astro.site.href}profile`;
       </div>
     </div>
     
+    <EmailPreferences initialPreferences={initialPreferences} />
+    
     <div class="profile-actions">
       <a href="/admin/new-thought" class="action-btn">Create New Thought</a>
     </div>
@@ -43,7 +53,7 @@ const permalink = `${Astro.site.href}profile`;
 
 <style>
   .profile-container {
-    max-width: 600px;
+    max-width: 700px;
     margin: 2rem auto;
     padding: 2rem;
   }
@@ -57,7 +67,7 @@ const permalink = `${Astro.site.href}profile`;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
 
   .info-group {
@@ -99,5 +109,13 @@ const permalink = `${Astro.site.href}profile`;
 
   .action-btn:hover {
     opacity: 0.9;
+  }
+
+  @media (max-width: 768px) {
+    .profile-container {
+      max-width: 100%;
+      padding: 1rem;
+      margin: 1rem;
+    }
   }
 </style>

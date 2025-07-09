@@ -1,0 +1,423 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/auth.css';
+
+export const prerender = false;
+
+const title = 'Unsubscribe from Email Updates';
+const description = 'Unsubscribe from email notifications';
+const permalink = `${Astro.site.href}unsubscribe`;
+
+// Get token from URL parameters
+const token = Astro.url.searchParams.get('token');
+---
+
+<BaseLayout title={title} description={description} permalink={permalink}>
+  <div class="auth-container">
+    <div class="unsubscribe-header">
+      <h1 class="auth-header">Unsubscribe from Emails</h1>
+      <p class="auth-subtitle">Manage your email preferences below</p>
+    </div>
+
+    {!token ? (
+      <div class="no-token-message">
+        <div class="error-message show">
+          <p>No unsubscribe token provided. Please use the link from your email.</p>
+        </div>
+        <div class="help-section">
+          <p>If you need help unsubscribing, please:</p>
+          <ul>
+            <li>Check your email for the unsubscribe link</li>
+            <li>Make sure you're using the complete link</li>
+            <li>Contact support if you continue having issues</li>
+          </ul>
+        </div>
+      </div>
+    ) : (
+      <div class="unsubscribe-content">
+        <div class="preference-options">
+          <h3>What would you like to do?</h3>
+          
+          <div class="option-group">
+            <label class="option-label">
+              <input 
+                type="radio" 
+                name="unsubscribe-option" 
+                value="all" 
+                id="unsubscribe-all"
+                checked 
+              />
+              <span class="option-text">
+                <strong>Unsubscribe from all emails</strong>
+                <br />
+                <small>You will no longer receive any email notifications</small>
+              </span>
+            </label>
+            
+            <label class="option-label">
+              <input 
+                type="radio" 
+                name="unsubscribe-option" 
+                value="specific" 
+                id="unsubscribe-specific"
+              />
+              <span class="option-text">
+                <strong>Update specific preferences</strong>
+                <br />
+                <small>Choose which types of emails you want to receive</small>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="specific-preferences hidden" id="specific-preferences">
+          <h4>Email Preferences</h4>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                id="emailBlogUpdates" 
+                name="emailBlogUpdates"
+              />
+              <span class="checkbox-text">New blog posts</span>
+            </label>
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                id="emailThoughtUpdates" 
+                name="emailThoughtUpdates"
+              />
+              <span class="checkbox-text">New thoughts</span>
+            </label>
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                id="emailAnnouncements" 
+                name="emailAnnouncements"
+              />
+              <span class="checkbox-text">Announcements</span>
+            </label>
+          </div>
+        </div>
+
+        <div id="error-message" class="error-message"></div>
+        <div id="success-message" class="success-message-inline"></div>
+        
+        <div class="action-buttons">
+          <button type="button" id="unsubscribe-btn" class="submit-btn">
+            <span class="btn-text">Unsubscribe from All</span>
+            <span class="btn-loading">Processing...</span>
+          </button>
+          
+          <button type="button" id="update-preferences-btn" class="submit-btn secondary hidden">
+            <span class="btn-text">Update Preferences</span>
+            <span class="btn-loading">Updating...</span>
+          </button>
+        </div>
+
+        <div class="info-section">
+          <p><strong>Note:</strong> Changes will take effect immediately. You can always update your preferences later by visiting your profile page.</p>
+        </div>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .unsubscribe-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .no-token-message {
+    text-align: center;
+  }
+
+  .help-section {
+    margin-top: 2rem;
+    text-align: left;
+  }
+
+  .help-section ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+  }
+
+  .help-section li {
+    margin: 0.5rem 0;
+    font-size: 0.875rem;
+  }
+
+  .unsubscribe-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .preference-options h3 {
+    margin: 0 0 1rem 0;
+    font-family: var(--font-family-sans);
+    font-size: 1.1rem;
+    color: var(--text-main);
+  }
+
+  .option-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .option-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    cursor: pointer;
+    padding: 1rem;
+    border: 1px solid var(--text-secondary);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+
+  .option-label:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--primary-color);
+  }
+
+  .option-label input[type="radio"] {
+    margin: 0;
+    margin-top: 0.125rem;
+    cursor: pointer;
+  }
+
+  .option-text {
+    flex: 1;
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  .option-text strong {
+    color: var(--text-main);
+  }
+
+  .option-text small {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+  }
+
+  .specific-preferences {
+    border-top: 1px solid var(--text-secondary);
+    padding-top: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .specific-preferences h4 {
+    margin: 0 0 1rem 0;
+    font-family: var(--font-family-sans);
+    font-size: 1rem;
+    color: var(--text-main);
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .submit-btn.secondary {
+    background: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+  }
+
+  .submit-btn.secondary:hover:not(:disabled) {
+    background: var(--primary-color);
+    color: white;
+  }
+
+  .info-section {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 1rem;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .success-message-inline {
+    color: #28a745;
+    font-size: 0.875rem;
+    display: none;
+    padding: 0.75rem;
+    background: rgba(40, 167, 69, 0.1);
+    border-radius: 4px;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+    text-align: center;
+  }
+
+  .success-message-inline.show {
+    display: block;
+  }
+
+  .btn-loading {
+    display: none;
+  }
+
+  .submit-btn.loading .btn-text {
+    display: none;
+  }
+
+  .submit-btn.loading .btn-loading {
+    display: inline;
+  }
+
+  @media (max-width: 480px) {
+    .option-label {
+      padding: 0.75rem;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+    }
+
+    .submit-btn {
+      width: 100%;
+    }
+  }
+</style>
+
+<script define:vars={{token}}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const unsubscribeAllRadio = document.getElementById('unsubscribe-all') as HTMLInputElement;
+    const unsubscribeSpecificRadio = document.getElementById('unsubscribe-specific') as HTMLInputElement;
+    const specificPreferences = document.getElementById('specific-preferences') as HTMLDivElement;
+    const unsubscribeBtn = document.getElementById('unsubscribe-btn') as HTMLButtonElement;
+    const updatePreferencesBtn = document.getElementById('update-preferences-btn') as HTMLButtonElement;
+    const errorMessage = document.getElementById('error-message') as HTMLDivElement;
+    const successMessage = document.getElementById('success-message') as HTMLDivElement;
+
+    if (!token) return;
+
+    // Handle radio button changes
+    function handleOptionChange() {
+      const isSpecific = unsubscribeSpecificRadio.checked;
+      
+      if (isSpecific) {
+        specificPreferences.classList.remove('hidden');
+        unsubscribeBtn.classList.add('hidden');
+        updatePreferencesBtn.classList.remove('hidden');
+        loadCurrentPreferences();
+      } else {
+        specificPreferences.classList.add('hidden');
+        unsubscribeBtn.classList.remove('hidden');
+        updatePreferencesBtn.classList.add('hidden');
+      }
+    }
+
+    unsubscribeAllRadio.addEventListener('change', handleOptionChange);
+    unsubscribeSpecificRadio.addEventListener('change', handleOptionChange);
+
+    // Load current preferences for specific option
+    async function loadCurrentPreferences() {
+      try {
+        const response = await fetch(`/api/user/preferences?token=${token}`);
+        if (response.ok) {
+          const data = await response.json();
+          
+          // Update checkboxes with current preferences
+          const emailBlogUpdates = document.getElementById('emailBlogUpdates') as HTMLInputElement;
+          const emailThoughtUpdates = document.getElementById('emailThoughtUpdates') as HTMLInputElement;
+          const emailAnnouncements = document.getElementById('emailAnnouncements') as HTMLInputElement;
+          
+          if (emailBlogUpdates) emailBlogUpdates.checked = data.emailBlogUpdates;
+          if (emailThoughtUpdates) emailThoughtUpdates.checked = data.emailThoughtUpdates;
+          if (emailAnnouncements) emailAnnouncements.checked = data.emailAnnouncements;
+        }
+      } catch (error) {
+        console.error('Error loading preferences:', error);
+      }
+    }
+
+    // Handle unsubscribe from all
+    unsubscribeBtn.addEventListener('click', async () => {
+      await handleUnsubscribe(true);
+    });
+
+    // Handle update specific preferences
+    updatePreferencesBtn.addEventListener('click', async () => {
+      await handleUnsubscribe(false);
+    });
+
+    async function handleUnsubscribe(unsubscribeAll: boolean) {
+      // Clear previous messages
+      errorMessage.textContent = '';
+      errorMessage.classList.remove('show');
+      successMessage.textContent = '';
+      successMessage.classList.remove('show');
+      
+      const activeBtn = unsubscribeAll ? unsubscribeBtn : updatePreferencesBtn;
+      activeBtn.disabled = true;
+      activeBtn.classList.add('loading');
+
+      try {
+        let requestData;
+        
+        if (unsubscribeAll) {
+          requestData = {
+            token,
+            unsubscribeAll: true
+          };
+        } else {
+          const emailBlogUpdates = document.getElementById('emailBlogUpdates') as HTMLInputElement;
+          const emailThoughtUpdates = document.getElementById('emailThoughtUpdates') as HTMLInputElement;
+          const emailAnnouncements = document.getElementById('emailAnnouncements') as HTMLInputElement;
+          
+          requestData = {
+            token,
+            emailBlogUpdates: emailBlogUpdates.checked,
+            emailThoughtUpdates: emailThoughtUpdates.checked,
+            emailAnnouncements: emailAnnouncements.checked
+          };
+        }
+
+        const response = await fetch('/api/user/unsubscribe', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestData)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Operation failed');
+        }
+
+        // Show success message
+        const message = unsubscribeAll 
+          ? 'Successfully unsubscribed from all emails.' 
+          : 'Email preferences updated successfully.';
+        
+        successMessage.textContent = message;
+        successMessage.classList.add('show');
+        
+        // Hide form elements after successful unsubscribe
+        if (unsubscribeAll) {
+          document.querySelector('.preference-options')?.classList.add('hidden');
+          document.querySelector('.action-buttons')?.classList.add('hidden');
+        }
+
+      } catch (error) {
+        errorMessage.textContent = error instanceof Error ? error.message : 'Operation failed';
+        errorMessage.classList.add('show');
+      } finally {
+        activeBtn.disabled = false;
+        activeBtn.classList.remove('loading');
+      }
+    }
+  });
+</script>

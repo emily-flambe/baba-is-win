@@ -2,23 +2,8 @@ import type { Env } from '../../types/env';
 import { AuthDB } from '../auth/db';
 import { EmailNotificationService } from './notification-service';
 import { type BlogPost, type Thought } from './template-engine';
-import { getPostData } from '../../utils/getPostData';
-
-export interface ContentItem {
-  id: string;
-  slug: string;
-  contentType: 'blog' | 'thought';
-  title: string;
-  description?: string;
-  contentPreview: string;
-  publishDate: number; // Unix timestamp
-  filePath: string;
-  contentHash: string;
-  tags: string[];
-  notificationSent: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import getPostData from '../../utils/getPostData';
+import type { ContentItem } from '../auth/types';
 
 export class ContentProcessor {
   constructor(

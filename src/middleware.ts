@@ -4,18 +4,21 @@ import { AuthDB } from './lib/auth/db';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   // Skip auth check for public routes and API endpoints
-  const publicRoutes = ['/login', '/signup', '/api/auth/login', '/api/auth/signup'];
+  const publicRoutes = ['/login', '/signup', '/api/auth/login', '/api/auth/signup', '/api/user/unsubscribe'];
   const isPublicRoute = publicRoutes.some(route => context.url.pathname.startsWith(route));
   
   // Skip auth for static assets and non-HTML requests
   const isStaticAsset = context.url.pathname.match(/\.(css|js|jpg|jpeg|png|gif|svg|ico|woff|woff2|ttf|eot)$/);
   
-  if (isPublicRoute || isStaticAsset) {
+  // Skip auth for cron endpoints - they use their own secret-based auth
+  const isCronRoute = context.url.pathname.startsWith('/api/cron/');
+  
+  if (isPublicRoute || isStaticAsset || isCronRoute) {
     return next();
   }
 
   // Protected routes that require authentication
-  const protectedRoutes = ['/admin', '/profile', '/api/auth/me'];
+  const protectedRoutes = ['/admin', '/profile', '/api/auth/me', '/api/user/preferences', '/api/admin/notifications'];
   const isProtectedRoute = protectedRoutes.some(route => context.url.pathname.startsWith(route));
 
   if (isProtectedRoute) {
