@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Creator - Local Blog Interface</title>
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/markdown.css">
+</head>
+<body>
+    <div class="app">
+        <header class="app-header">
+            <h1>🖋️ Content Creator</h1>
+            <p class="subtitle">Simple local interface for blog posts and thoughts</p>
+            <nav class="content-type-nav">
+                <button id="blog-btn" data-type="blog" class="nav-btn active">📝 Blog Post</button>
+                <button id="thought-btn" data-type="thought" class="nav-btn">💭 Thought</button>
+            </nav>
+        </header>
+        
+        <main class="app-main">
+            <div class="editor-panel">
+                <form id="content-form" class="content-form">
+                    <div class="form-group">
+                        <label for="title">Title <span class="optional">(optional for thoughts)</span></label>
+                        <input type="text" id="title" placeholder="Enter your title...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tags">Tags</label>
+                        <input type="text" id="tags" placeholder="personal, tech, life (comma-separated)">
+                        <div class="tag-suggestions" id="tag-suggestions"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="content">Content</label>
+                        <textarea id="content" placeholder="Write your content using Markdown..."></textarea>
+                        <div class="editor-meta">
+                            <div class="char-count">
+                                Characters: <span id="char-counter">0</span>
+                                <span id="char-limit" class="limit-indicator"></span>
+                            </div>
+                            <div class="word-count">
+                                Words: <span id="word-counter">0</span>
+                                | Reading time: <span id="reading-time">0</span> min
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="actions">
+                    <button id="save-draft" class="btn btn-secondary">💾 Save Draft</button>
+                    <button id="generate-file" class="btn btn-primary">📄 Generate File</button>
+                    <button id="copy-content" class="btn btn-secondary">📋 Copy to Clipboard</button>
+                    <button id="clear-form" class="btn btn-ghost">🗑️ Clear</button>
+                </div>
+                
+                <div class="file-info" id="file-info" style="display: none;">
+                    <h4>Generated File Info:</h4>
+                    <p><strong>Filename:</strong> <span id="filename"></span></p>
+                    <p><strong>Location:</strong> <span id="file-location"></span></p>
+                </div>
+            </div>
+            
+            <div class="preview-panel">
+                <div class="preview-header">
+                    <h3>📖 Preview</h3>
+                    <button id="toggle-preview" class="btn btn-ghost">Hide</button>
+                </div>
+                <div id="preview" class="preview-content">
+                    <p class="preview-placeholder">Start typing to see preview...</p>
+                </div>
+            </div>
+        </main>
+        
+        <aside class="sidebar">
+            <section class="drafts-section">
+                <div class="section-header">
+                    <h3>📋 Drafts</h3>
+                    <button id="clear-drafts" class="btn btn-ghost btn-sm">Clear All</button>
+                </div>
+                <ul id="drafts-list" class="drafts-list">
+                    <li class="no-drafts">No drafts saved</li>
+                </ul>
+                <div class="drafts-actions">
+                    <button id="export-drafts" class="btn btn-secondary btn-sm">📦 Export All</button>
+                </div>
+            </section>
+            
+            <section class="tools-section">
+                <h3>🛠️ Tools</h3>
+                <div class="tool-group">
+                    <h4>Import Content</h4>
+                    <input type="file" id="file-upload" accept=".md,.txt" multiple style="display: none;">
+                    <button id="upload-btn" class="btn btn-secondary btn-sm">📂 Upload Files</button>
+                </div>
+                
+                <div class="tool-group">
+                    <h4>Settings</h4>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="auto-save" checked>
+                        Auto-save drafts
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="dark-mode">
+                        Dark mode
+                    </label>
+                </div>
+            </section>
+            
+            <section class="help-section">
+                <h3>❓ Quick Help</h3>
+                <details>
+                    <summary>Markdown Syntax</summary>
+                    <div class="help-content">
+                        <p><code>**bold**</code> → <strong>bold</strong></p>
+                        <p><code>*italic*</code> → <em>italic</em></p>
+                        <p><code>[link](url)</code> → link</p>
+                        <p><code>![alt](image.jpg)</code> → image</p>
+                        <p><code>## Heading</code> → heading</p>
+                        <p><code>- item</code> → list item</p>
+                    </div>
+                </details>
+                
+                <details>
+                    <summary>File Conventions</summary>
+                    <div class="help-content">
+                        <p><strong>Blog posts:</strong> saved to <code>src/data/blog-posts/published/</code></p>
+                        <p><strong>Thoughts:</strong> saved to <code>src/data/thoughts/published/</code></p>
+                        <p><strong>Format:</strong> <code>YYYYMMDD-slug.md</code></p>
+                        <p>Files include proper frontmatter for your blog system.</p>
+                    </div>
+                </details>
+            </section>
+        </aside>
+    </div>
+    
+    <!-- Status Toast -->
+    <div id="toast" class="toast"></div>
+    
+    <!-- Scripts -->
+    <script src="js/markdown.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/fileGenerator.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
