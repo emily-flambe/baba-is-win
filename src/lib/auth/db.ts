@@ -1,5 +1,21 @@
 import type { D1Database } from '@cloudflare/workers-types';
-import type { User, Session } from './types';
+import type { 
+  User, 
+  Session, 
+  EmailNotification,
+  CreateEmailNotificationParams,
+  EmailNotificationHistory,
+  CreateNotificationHistoryParams,
+  ContentItem,
+  CreateContentItemParams,
+  EmailTemplate,
+  CreateEmailTemplateParams,
+  UnsubscribeToken,
+  CreateUnsubscribeTokenParams,
+  EmailPreferences,
+  EmailStatistics,
+  EmailStatisticsUpdate
+} from './types';
 import { nanoid } from 'nanoid';
 
 export class AuthDB {
@@ -143,5 +159,363 @@ export class AuthDB {
       .prepare('DELETE FROM sessions WHERE expires_at <= ?')
       .bind(Date.now())
       .run();
+  }
+
+  // === EMAIL NOTIFICATION METHODS ===
+  
+  async createEmailNotification(params: CreateEmailNotificationParams): Promise<string> {
+    const id = nanoid();
+    const now = Math.floor(Date.now() / 1000);
+    
+    await this.db.prepare(`
+      INSERT INTO email_notifications (
+        id, user_id, content_type, content_id, content_title, content_url, 
+        content_excerpt, notification_type, scheduled_for
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      id,
+      params.userId,
+      params.contentType,
+      params.contentId,
+      params.contentTitle,
+      params.contentUrl,
+      params.contentExcerpt || null,
+      params.notificationType,
+      params.scheduledFor || null
+    ).run();
+    
+    return id;
+  }
+
+  async getSubscribersForContentType(contentType: string): Promise<User[]> {
+    const columnMap: { [key: string]: string } = {
+      'blog': 'email_blog_updates',
+      'thought': 'email_thought_updates',
+      'announcement': 'email_announcements'
+    };
+    
+    const column = columnMap[contentType];
+    if (!column) throw new Error(`Invalid content type: ${contentType}`);
+    
+    const result = await this.db.prepare(`
+      SELECT * FROM users 
+      WHERE ${column} = TRUE 
+        AND email_status = 'active' 
+        AND unsubscribe_all = FALSE
+        AND email_verified = TRUE
+    `).all();
+    
+    return result.results.map(row => this.mapDbUserToUser(row));
+  }
+
+  async updateNotificationStatus(
+    notificationId: string, 
+    status: string, 
+    errorMessage?: string,
+    emailMessageId?: string
+  ): Promise<void> {
+    const now = Math.floor(Date.now() / 1000);
+    
+    await this.db.prepare(`
+      UPDATE email_notifications 
+      SET status = ?, 
+          sent_at = ?, 
+          error_message = ?, 
+          email_message_id = ?,
+          retry_count = retry_count + 1
+      WHERE id = ?
+    `).bind(
+      status,
+      status === 'sent' ? now : null,
+      errorMessage || null,
+      emailMessageId || null,
+      notificationId
+    ).run();
+  }
+
+  async createNotificationHistory(params: CreateNotificationHistoryParams): Promise<void> {
+    const id = nanoid();
+    const now = Math.floor(Date.now() / 1000);
+    
+    await this.db.prepare(`
+      INSERT INTO email_notification_history (
+        id, user_id, notification_id, action, timestamp, details, 
+        ip_address, user_agent, error_code, retry_attempt
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      id,
+      params.userId,
+      params.notificationId,
+      params.action,
+      now,
+      JSON.stringify(params.details || {}),
+      params.ipAddress || null,
+      params.userAgent || null,
+      params.errorCode || null,
+      params.retryAttempt || 0
+    ).run();
+  }
+
+  // === CONTENT TRACKING METHODS ===
+  
+  async createContentItem(params: CreateContentItemParams): Promise<string> {
+    const id = nanoid();
+    const now = Math.floor(Date.now() / 1000);
+    
+    await this.db.prepare(`
+      INSERT INTO content_items (
+        id, slug, content_type, title, description, content_preview, 
+        publish_date, file_path, content_hash, tags
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      id,
+      params.slug,
+      params.contentType,
+      params.title,
+      params.description || null,
+      params.contentPreview || null,
+      params.publishDate,
+      params.filePath,
+      params.contentHash || null,
+      JSON.stringify(params.tags || [])
+    ).run();
+    
+    return id;
+  }
+
+  async getContentItemBySlug(slug: string): Promise<ContentItem | null> {
+    const result = await this.db.prepare(`
+      SELECT * FROM content_items WHERE slug = ?
+    `).bind(slug).first();
+    
+    return result ? this.mapDbContentItemToContentItem(result) : null;
+  }
+
+  async getUnnotifiedContent(): Promise<ContentItem[]> {
+    const result = await this.db.prepare(`
+      SELECT * FROM content_items 
+      WHERE notification_sent = FALSE 
+      ORDER BY publish_date DESC
+    `).all();
+    
+    return result.results.map(row => this.mapDbContentItemToContentItem(row));
+  }
+
+  async markContentNotified(contentId: string): Promise<void> {
+    const now = Math.floor(Date.now() / 1000);
+    
+    await this.db.prepare(`
+      UPDATE content_items 
+      SET notification_sent = TRUE, 
+          notification_count = notification_count + 1,
+          updated_at = ?
+      WHERE id = ?
+    `).bind(now, contentId).run();
+  }
+
+  // === EMAIL TEMPLATE METHODS ===
+  
+  async getEmailTemplate(templateName: string): Promise<EmailTemplate | null> {
+    const result = await this.db.prepare(`
+      SELECT * FROM email_templates 
+      WHERE template_name = ? AND is_active = TRUE
+    `).bind(templateName).first();
+    
+    return result ? this.mapDbEmailTemplateToEmailTemplate(result) : null;
+  }
+
+  async createEmailTemplate(params: CreateEmailTemplateParams): Promise<string> {
+    const id = nanoid();
+    const now = Math.floor(Date.now() / 1000);
+    
+    await this.db.prepare(`
+      INSERT INTO email_templates (
+        id, template_name, template_type, subject_template, 
+        html_template, text_template, variables, created_by
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      id,
+      params.templateName,
+      params.templateType,
+      params.subjectTemplate,
+      params.htmlTemplate,
+      params.textTemplate,
+      JSON.stringify(params.variables || []),
+      params.createdBy || null
+    ).run();
+    
+    return id;
+  }
+
+  // === UNSUBSCRIBE TOKEN METHODS ===
+  
+  async createUnsubscribeToken(params: CreateUnsubscribeTokenParams): Promise<string> {
+    const id = nanoid();
+    const now = Math.floor(Date.now() / 1000);
+    
+    await this.db.prepare(`
+      INSERT INTO unsubscribe_tokens (
+        id, user_id, token, token_type, expires_at
+      ) VALUES (?, ?, ?, ?, ?)
+    `).bind(
+      id,
+      params.userId,
+      params.token,
+      params.tokenType,
+      params.expiresAt
+    ).run();
+    
+    return id;
+  }
+
+  async validateUnsubscribeToken(token: string): Promise<UnsubscribeToken | null> {
+    const now = Math.floor(Date.now() / 1000);
+    
+    const result = await this.db.prepare(`
+      SELECT * FROM unsubscribe_tokens 
+      WHERE token = ? AND used_at IS NULL AND expires_at > ?
+    `).bind(token, now).first();
+    
+    return result ? this.mapDbUnsubscribeTokenToUnsubscribeToken(result) : null;
+  }
+
+  async useUnsubscribeToken(tokenId: string, ipAddress?: string, userAgent?: string): Promise<void> {
+    const now = Math.floor(Date.now() / 1000);
+    
+    await this.db.prepare(`
+      UPDATE unsubscribe_tokens 
+      SET used_at = ?, ip_address = ?, user_agent = ?
+      WHERE id = ?
+    `).bind(now, ipAddress || null, userAgent || null, tokenId).run();
+  }
+
+  // === USER PREFERENCE METHODS ===
+  
+  async updateUserPreferences(userId: string, preferences: EmailPreferences): Promise<void> {
+    const now = Math.floor(Date.now() / 1000);
+    
+    await this.db.prepare(`
+      UPDATE users 
+      SET email_blog_updates = ?, 
+          email_thought_updates = ?, 
+          email_announcements = ?,
+          email_frequency = ?,
+          updated_at = ?
+      WHERE id = ?
+    `).bind(
+      preferences.emailBlogUpdates ? 1 : 0,
+      preferences.emailThoughtUpdates ? 1 : 0,
+      preferences.emailAnnouncements ? 1 : 0,
+      preferences.emailFrequency || 'immediate',
+      now,
+      userId
+    ).run();
+  }
+
+  async unsubscribeUserFromAll(userId: string): Promise<void> {
+    const now = Math.floor(Date.now() / 1000);
+    
+    await this.db.prepare(`
+      UPDATE users 
+      SET unsubscribe_all = TRUE,
+          email_blog_updates = FALSE,
+          email_thought_updates = FALSE,
+          email_announcements = FALSE,
+          email_status = 'unsubscribed',
+          updated_at = ?
+      WHERE id = ?
+    `).bind(now, userId).run();
+  }
+
+  // === STATISTICS METHODS ===
+  
+  async updateEmailStatistics(dateKey: string, contentType: string, stats: EmailStatisticsUpdate): Promise<void> {
+    const now = Math.floor(Date.now() / 1000);
+    
+    await this.db.prepare(`
+      INSERT INTO email_statistics (
+        id, date_key, content_type, total_sent, total_delivered, 
+        total_bounced, total_failed, total_opened, total_clicked, 
+        total_unsubscribed, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(date_key, content_type) DO UPDATE SET
+        total_sent = total_sent + ?,
+        total_delivered = total_delivered + ?,
+        total_bounced = total_bounced + ?,
+        total_failed = total_failed + ?,
+        total_opened = total_opened + ?,
+        total_clicked = total_clicked + ?,
+        total_unsubscribed = total_unsubscribed + ?,
+        updated_at = ?
+    `).bind(
+      nanoid(), dateKey, contentType,
+      stats.sent || 0, stats.delivered || 0, stats.bounced || 0,
+      stats.failed || 0, stats.opened || 0, stats.clicked || 0,
+      stats.unsubscribed || 0, now, now,
+      stats.sent || 0, stats.delivered || 0, stats.bounced || 0,
+      stats.failed || 0, stats.opened || 0, stats.clicked || 0,
+      stats.unsubscribed || 0, now
+    ).run();
+  }
+
+  // === HELPER METHODS ===
+  
+  private mapDbUserToUser(dbUser: any): User {
+    return {
+      id: dbUser.id,
+      email: dbUser.email,
+      username: dbUser.username,
+      createdAt: new Date(dbUser.created_at),
+      emailBlogUpdates: !!dbUser.email_blog_updates,
+      emailThoughtUpdates: !!dbUser.email_thought_updates,
+      emailAnnouncements: !!dbUser.email_announcements
+    };
+  }
+
+  private mapDbContentItemToContentItem(dbItem: any): ContentItem {
+    return {
+      id: dbItem.id,
+      slug: dbItem.slug,
+      contentType: dbItem.content_type,
+      title: dbItem.title,
+      description: dbItem.description,
+      contentPreview: dbItem.content_preview,
+      publishDate: new Date(dbItem.publish_date * 1000),
+      filePath: dbItem.file_path,
+      contentHash: dbItem.content_hash,
+      notificationSent: !!dbItem.notification_sent,
+      notificationCount: dbItem.notification_count,
+      createdAt: new Date(dbItem.created_at * 1000),
+      updatedAt: new Date(dbItem.updated_at * 1000),
+      tags: JSON.parse(dbItem.tags || '[]')
+    };
+  }
+
+  private mapDbEmailTemplateToEmailTemplate(dbTemplate: any): EmailTemplate {
+    return {
+      id: dbTemplate.id,
+      templateName: dbTemplate.template_name,
+      templateType: dbTemplate.template_type,
+      subjectTemplate: dbTemplate.subject_template,
+      htmlTemplate: dbTemplate.html_template,
+      textTemplate: dbTemplate.text_template,
+      isActive: !!dbTemplate.is_active,
+      version: dbTemplate.version,
+      variables: JSON.parse(dbTemplate.variables || '[]'),
+      createdAt: new Date(dbTemplate.created_at * 1000),
+      updatedAt: new Date(dbTemplate.updated_at * 1000)
+    };
+  }
+
+  private mapDbUnsubscribeTokenToUnsubscribeToken(dbToken: any): UnsubscribeToken {
+    return {
+      id: dbToken.id,
+      userId: dbToken.user_id,
+      token: dbToken.token,
+      tokenType: dbToken.token_type,
+      createdAt: new Date(dbToken.created_at * 1000),
+      expiresAt: new Date(dbToken.expires_at * 1000),
+      usedAt: dbToken.used_at ? new Date(dbToken.used_at * 1000) : undefined
+    };
   }
 }
