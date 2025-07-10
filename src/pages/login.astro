@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import GoogleOAuthButton from '../components/auth/GoogleOAuthButton.astro';
 import '../styles/auth.css';
 
 export const prerender = false;
@@ -7,6 +8,21 @@ export const prerender = false;
 const title = 'Login';
 const description = 'Login to your account';
 const permalink = `${Astro.site.href}login`;
+
+const url = new URL(Astro.request.url);
+const error = url.searchParams.get('error');
+const email = url.searchParams.get('email');
+const returnUrl = url.searchParams.get('returnUrl') || '/';
+
+const errorMessages: Record<string, string> = {
+  email_exists: 'An account with this email already exists. Please log in with your password or link your Google account.',
+  email_not_verified: 'Your Google account email is not verified. Please verify your email with Google.',
+  oauth_failed: 'Google sign-in failed. Please try again.',
+  account_already_linked: 'This Google account is already linked to another user.',
+  missing_parameters: 'Missing required parameters. Please try again.',
+  invalid_credentials: 'Invalid email or password.',
+  user_not_found: 'No account found with this email address.',
+};
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink}>
@@ -17,7 +33,21 @@ const permalink = `${Astro.site.href}login`;
     
     <h1 class="auth-header">Login</h1>
     <p class="auth-subtitle">act like you've been here before!</p>
-    <form id="login-form" class="auth-form">
+    
+    {error && (
+      <div class="error-message show">
+        {errorMessages[error] || 'An error occurred. Please try again.'}
+      </div>
+    )}
+
+    <div class="auth-methods">
+      <GoogleOAuthButton mode="login" returnUrl={returnUrl} />
+      
+      <div class="auth-divider">
+        <span>or</span>
+      </div>
+
+      <form id="login-form" class="auth-form">
       <div class="form-group">
         <label for="emailOrUsername">Email or Username</label>
         <input 
@@ -26,6 +56,7 @@ const permalink = `${Astro.site.href}login`;
           name="emailOrUsername" 
           required
           autocomplete="username"
+          value={email || ''}
         />
       </div>
       
@@ -44,6 +75,7 @@ const permalink = `${Astro.site.href}login`;
       
       <button type="submit" class="submit-btn">Login</button>
     </form>
+    </div>
   </div>
 </BaseLayout>
 
