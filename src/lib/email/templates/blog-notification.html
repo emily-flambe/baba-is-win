@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  <style>
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+      line-height: 1.6; 
+      color: #333; 
+      max-width: 600px; 
+      margin: 0 auto; 
+      padding: 20px; 
+      background-color: #f8f9fa;
+    }
+    .email-container {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .header { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white; 
+      padding: 30px; 
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0 0 10px 0;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    .content { 
+      padding: 30px; 
+    }
+    .content p {
+      margin: 0 0 15px 0;
+    }
+    .post-preview {
+      background: #f8f9fa;
+      border-left: 4px solid #667eea;
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .post-preview h2 {
+      margin: 0 0 10px 0;
+      color: #333;
+      font-size: 20px;
+    }
+    .meta { 
+      color: #666; 
+      font-size: 14px; 
+      margin: 15px 0; 
+    }
+    .tags { 
+      margin: 15px 0; 
+    }
+    .tag { 
+      background: #e9ecef; 
+      color: #495057;
+      padding: 4px 8px; 
+      border-radius: 12px; 
+      font-size: 12px; 
+      margin-right: 5px; 
+      display: inline-block;
+    }
+    .button { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white !important; 
+      padding: 12px 24px; 
+      text-decoration: none; 
+      border-radius: 6px; 
+      display: inline-block; 
+      margin: 20px 0; 
+      font-weight: 600;
+      transition: transform 0.2s;
+    }
+    .button:hover {
+      transform: translateY(-1px);
+    }
+    .footer { 
+      border-top: 1px solid #eee; 
+      padding: 20px 30px; 
+      font-size: 12px; 
+      color: #666; 
+      background: #f8f9fa;
+    }
+    .unsubscribe { 
+      font-size: 11px; 
+      color: #999; 
+      margin-top: 15px;
+    }
+    .unsubscribe a {
+      color: #666;
+      text-decoration: underline;
+    }
+    @media (max-width: 600px) {
+      .email-container {
+        margin: 0;
+        border-radius: 0;
+      }
+      .header, .content, .footer {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="header">
+      <h1>New Blog Post Published</h1>
+      <div class="meta">{{publish_date}}</div>
+    </div>
+    
+    <div class="content">
+      <p>Hi {{user_name}},</p>
+      <p>I've published a new blog post that you might find interesting:</p>
+      
+      <div class="post-preview">
+        <h2>{{title}}</h2>
+        <p>{{description}}</p>
+        
+        <div class="tags">
+          <strong>Tags:</strong> {{tags}}
+        </div>
+      </div>
+      
+      <a href="{{url}}" class="button">Read Full Post</a>
+      
+      <p>Thanks for being a subscriber!</p>
+    </div>
+    
+    <div class="footer">
+      <p>Best regards,<br><strong>{{site_name}}</strong></p>
+      <p class="unsubscribe">
+        <a href="{{unsubscribe_url}}">Unsubscribe</a> from these notifications
+      </p>
+    </div>
+  </div>
+</body>
+</html>

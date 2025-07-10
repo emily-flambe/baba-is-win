@@ -6,7 +6,8 @@ export const prerender = false;
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
-    const { token } = await request.json();
+    const requestData = await request.json();
+    const { token, unsubscribeAll, emailBlogUpdates, emailThoughtUpdates, emailAnnouncements } = requestData;
 
     // Validate input
     if (!token || typeof token !== 'string') {
@@ -36,11 +37,32 @@ export const POST: APIRoute = async ({ request, locals }) => {
                      undefined;
 
     // Process the unsubscribe request
-    const result = await unsubscribeService.processUnsubscribe(
-      token,
-      ipAddress,
-      userAgent
-    );
+    let result;
+    let message;
+    
+    if (unsubscribeAll) {
+      // Complete unsubscribe
+      result = await unsubscribeService.processUnsubscribe(
+        token,
+        ipAddress,
+        userAgent
+      );
+      message = 'Successfully unsubscribed from all email notifications';
+    } else {
+      // Partial unsubscribe - update specific preferences
+      result = await unsubscribeService.processPartialUnsubscribe(
+        token,
+        {
+          emailBlogUpdates: Boolean(emailBlogUpdates),
+          emailThoughtUpdates: Boolean(emailThoughtUpdates),
+          emailAnnouncements: Boolean(emailAnnouncements),
+          emailFrequency: 'immediate'
+        },
+        ipAddress,
+        userAgent
+      );
+      message = 'Email preferences updated successfully';
+    }
 
     if (!result.success) {
       return new Response(
@@ -49,7 +71,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    // Mark token as used
+    // Mark token as used (for one-time use tokens)
     await db.useUnsubscribeToken(tokenData.id, ipAddress, userAgent);
 
     // Get the user to return confirmation details
@@ -57,10 +79,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
     
     return new Response(
       JSON.stringify({
-        message: 'Successfully unsubscribed from all email notifications',
+        message,
         user: user ? {
           email: user.email,
-          username: user.username
+          username: user.username,
+          emailBlogUpdates: user.emailBlogUpdates,
+          emailThoughtUpdates: user.emailThoughtUpdates,
+          emailAnnouncements: user.emailAnnouncements
         } : null,
         tokenType: tokenData.tokenType,
         processedAt: new Date().toISOString()

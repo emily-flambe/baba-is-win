@@ -1,0 +1,672 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/auth.css';
+
+export const prerender = false;
+
+// Check if user is admin (this would need to be implemented based on your auth system)
+const isAdmin = true; // For now, we'll assume admin access
+
+const title = 'Email Notifications Admin';
+const description = 'Manage email notifications and view statistics';
+const permalink = `${Astro.site.href}admin/notifications`;
+---
+
+<BaseLayout title={title} description={description} permalink={permalink}>
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1>Email Notifications Dashboard</h1>
+      <p>Manage and monitor email notifications</p>
+    </div>
+
+    {!isAdmin ? (
+      <div class="error-message show">
+        <p>Admin access required to view this page.</p>
+      </div>
+    ) : (
+      <div class="admin-content">
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Notifications Sent</h3>
+            <div class="stat-value" id="stat-sent">-</div>
+            <div class="stat-label">Total sent</div>
+          </div>
+          <div class="stat-card">
+            <h3>Failed Notifications</h3>
+            <div class="stat-value error" id="stat-failed">-</div>
+            <div class="stat-label">Need retry</div>
+          </div>
+          <div class="stat-card">
+            <h3>Pending Notifications</h3>
+            <div class="stat-value warning" id="stat-pending">-</div>
+            <div class="stat-label">Awaiting delivery</div>
+          </div>
+          <div class="stat-card">
+            <h3>Total Subscribers</h3>
+            <div class="stat-value" id="stat-subscribers">-</div>
+            <div class="stat-label">Active users</div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-section">
+          <h2>Actions</h2>
+          <div class="action-buttons">
+            <button id="refresh-btn" class="btn btn-primary">
+              <span class="btn-text">Refresh Data</span>
+              <span class="btn-loading">Loading...</span>
+            </button>
+            <button id="retry-failed-btn" class="btn btn-secondary">
+              <span class="btn-text">Retry Failed</span>
+              <span class="btn-loading">Processing...</span>
+            </button>
+            <button id="process-content-btn" class="btn btn-accent">
+              <span class="btn-text">Process New Content</span>
+              <span class="btn-loading">Processing...</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Subscriber Stats -->
+        <div class="subscriber-section">
+          <h2>Subscriber Statistics</h2>
+          <div class="subscriber-stats">
+            <div class="subscriber-stat">
+              <label>Blog Subscribers:</label>
+              <span id="blog-subscribers">-</span>
+            </div>
+            <div class="subscriber-stat">
+              <label>Thought Subscribers:</label>
+              <span id="thought-subscribers">-</span>
+            </div>
+            <div class="subscriber-stat">
+              <label>Announcement Subscribers:</label>
+              <span id="announcement-subscribers">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Unnotified Content -->
+        <div class="content-section">
+          <h2>Unnotified Content</h2>
+          <div class="content-list" id="unnotified-content">
+            <div class="loading">Loading unnotified content...</div>
+          </div>
+        </div>
+
+        <!-- Recent Notifications -->
+        <div class="notifications-section">
+          <h2>Recent Notifications</h2>
+          <div class="notifications-table-container">
+            <table class="notifications-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Content</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>Sent</th>
+                </tr>
+              </thead>
+              <tbody id="notifications-table-body">
+                <tr>
+                  <td colspan="6" class="loading">Loading notifications...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message" class="error-message"></div>
+        <div id="success-message" class="success-message"></div>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .admin-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .admin-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+  }
+
+  .admin-header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .stat-card {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid var(--text-secondary);
+  }
+
+  .stat-card h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .stat-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-value.error {
+    color: #dc3545;
+  }
+
+  .stat-value.warning {
+    color: #ffc107;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .action-section {
+    margin-bottom: 3rem;
+  }
+
+  .action-section h2 {
+    margin-bottom: 1rem;
+    color: var(--text-main);
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .btn-primary {
+    background: var(--primary-color);
+    color: white;
+  }
+
+  .btn-secondary {
+    background: #6c757d;
+    color: white;
+  }
+
+  .btn-accent {
+    background: #28a745;
+    color: white;
+  }
+
+  .btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .btn-loading {
+    display: none;
+  }
+
+  .btn.loading .btn-text {
+    display: none;
+  }
+
+  .btn.loading .btn-loading {
+    display: inline;
+  }
+
+  .subscriber-section {
+    margin-bottom: 3rem;
+  }
+
+  .subscriber-section h2 {
+    margin-bottom: 1rem;
+    color: var(--text-main);
+  }
+
+  .subscriber-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .subscriber-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: 6px;
+    border: 1px solid var(--text-secondary);
+  }
+
+  .subscriber-stat label {
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .subscriber-stat span {
+    font-weight: bold;
+    color: var(--primary-color);
+  }
+
+  .content-section {
+    margin-bottom: 3rem;
+  }
+
+  .content-section h2 {
+    margin-bottom: 1rem;
+    color: var(--text-main);
+  }
+
+  .content-list {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--text-secondary);
+  }
+
+  .content-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  .content-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .content-info {
+    flex: 1;
+  }
+
+  .content-title {
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 0.25rem;
+  }
+
+  .content-meta {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .content-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+    border-radius: 4px;
+  }
+
+  .notifications-section {
+    margin-bottom: 3rem;
+  }
+
+  .notifications-section h2 {
+    margin-bottom: 1rem;
+    color: var(--text-main);
+  }
+
+  .notifications-table-container {
+    overflow-x: auto;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--text-secondary);
+  }
+
+  .notifications-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .notifications-table th,
+  .notifications-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--text-secondary);
+  }
+
+  .notifications-table th {
+    background: var(--bg-main);
+    font-weight: 600;
+    color: var(--text-main);
+  }
+
+  .notifications-table td {
+    color: var(--text-secondary);
+  }
+
+  .notifications-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .status-sent {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .status-failed {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  .status-pending {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  .loading {
+    color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .error-message,
+  .success-message {
+    display: none;
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 6px;
+    text-align: center;
+  }
+
+  .error-message {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+
+  .success-message {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+
+  .error-message.show,
+  .success-message.show {
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    .admin-container {
+      padding: 1rem;
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+    }
+
+    .btn {
+      width: 100%;
+    }
+
+    .subscriber-stats {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const refreshBtn = document.getElementById('refresh-btn') as HTMLButtonElement;
+    const retryFailedBtn = document.getElementById('retry-failed-btn') as HTMLButtonElement;
+    const processContentBtn = document.getElementById('process-content-btn') as HTMLButtonElement;
+    const errorMessage = document.getElementById('error-message') as HTMLDivElement;
+    const successMessage = document.getElementById('success-message') as HTMLDivElement;
+
+    // Load initial data
+    await loadDashboardData();
+
+    // Refresh button handler
+    refreshBtn.addEventListener('click', async () => {
+      await loadDashboardData();
+    });
+
+    // Retry failed notifications
+    retryFailedBtn.addEventListener('click', async () => {
+      await executeAction('retry_failed', retryFailedBtn);
+    });
+
+    // Process new content
+    processContentBtn.addEventListener('click', async () => {
+      await executeAction('process_content', processContentBtn);
+    });
+
+    async function loadDashboardData() {
+      try {
+        setButtonLoading(refreshBtn, true);
+        clearMessages();
+
+        const response = await fetch('/api/admin/notifications');
+        if (!response.ok) {
+          throw new Error('Failed to load dashboard data');
+        }
+
+        const data = await response.json();
+        
+        // Update stats
+        updateStats(data.stats);
+        
+        // Update subscriber stats
+        updateSubscriberStats(data.subscriberStats);
+        
+        // Update unnotified content
+        updateUnnotifiedContent(data.unnotifiedContent);
+        
+        // Update recent notifications
+        updateRecentNotifications(data.recentNotifications);
+
+      } catch (error) {
+        showError(error instanceof Error ? error.message : 'Failed to load dashboard data');
+      } finally {
+        setButtonLoading(refreshBtn, false);
+      }
+    }
+
+    async function executeAction(action: string, button: HTMLButtonElement) {
+      try {
+        setButtonLoading(button, true);
+        clearMessages();
+
+        const response = await fetch('/api/admin/notifications', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ action })
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Action failed');
+        }
+
+        const result = await response.json();
+        showSuccess(result.message || 'Action completed successfully');
+        
+        // Refresh data after successful action
+        setTimeout(() => loadDashboardData(), 1000);
+
+      } catch (error) {
+        showError(error instanceof Error ? error.message : 'Action failed');
+      } finally {
+        setButtonLoading(button, false);
+      }
+    }
+
+    function updateStats(stats: any) {
+      document.getElementById('stat-sent')!.textContent = stats.sent?.toString() || '0';
+      document.getElementById('stat-failed')!.textContent = stats.failed?.toString() || '0';
+      document.getElementById('stat-pending')!.textContent = stats.pending?.toString() || '0';
+      document.getElementById('stat-subscribers')!.textContent = stats.total?.toString() || '0';
+    }
+
+    function updateSubscriberStats(stats: any) {
+      document.getElementById('blog-subscribers')!.textContent = stats.blog?.toString() || '0';
+      document.getElementById('thought-subscribers')!.textContent = stats.thought?.toString() || '0';
+      document.getElementById('announcement-subscribers')!.textContent = stats.announcement?.toString() || '0';
+    }
+
+    function updateUnnotifiedContent(content: any[]) {
+      const container = document.getElementById('unnotified-content')!;
+      
+      if (content.length === 0) {
+        container.innerHTML = '<div class="loading">No unnotified content found.</div>';
+        return;
+      }
+
+      container.innerHTML = content.map(item => `
+        <div class="content-item">
+          <div class="content-info">
+            <div class="content-title">${item.title}</div>
+            <div class="content-meta">
+              ${item.contentType} • ${item.slug} • ${new Date(item.publishDate).toLocaleDateString()}
+            </div>
+          </div>
+          <div class="content-actions">
+            <button class="btn btn-primary btn-small" onclick="sendNotification('${item.slug}', '${item.contentType}')">
+              Send Notification
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateRecentNotifications(notifications: any[]) {
+      const tbody = document.getElementById('notifications-table-body')!;
+      
+      if (notifications.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="loading">No notifications found.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = notifications.map(notification => `
+        <tr>
+          <td>${notification.username}<br><small>${notification.userEmail}</small></td>
+          <td>${notification.contentTitle}<br><small>${notification.contentType}</small></td>
+          <td>${notification.contentType}</td>
+          <td><span class="status-badge status-${notification.status}">${notification.status}</span></td>
+          <td>${new Date(notification.createdAt).toLocaleDateString()}</td>
+          <td>${notification.sentAt ? new Date(notification.sentAt).toLocaleDateString() : '-'}</td>
+        </tr>
+      `).join('');
+    }
+
+    function setButtonLoading(button: HTMLButtonElement, loading: boolean) {
+      button.disabled = loading;
+      if (loading) {
+        button.classList.add('loading');
+      } else {
+        button.classList.remove('loading');
+      }
+    }
+
+    function showError(message: string) {
+      errorMessage.textContent = message;
+      errorMessage.classList.add('show');
+      successMessage.classList.remove('show');
+    }
+
+    function showSuccess(message: string) {
+      successMessage.textContent = message;
+      successMessage.classList.add('show');
+      errorMessage.classList.remove('show');
+    }
+
+    function clearMessages() {
+      errorMessage.classList.remove('show');
+      successMessage.classList.remove('show');
+    }
+
+    // Make sendNotification available globally
+    (window as any).sendNotification = async (contentId: string, contentType: string) => {
+      try {
+        const response = await fetch('/api/admin/notifications', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ 
+            action: 'send_notification', 
+            contentId, 
+            contentType 
+          })
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to send notification');
+        }
+
+        const result = await response.json();
+        showSuccess(result.message);
+        
+        // Refresh data after successful notification
+        setTimeout(() => loadDashboardData(), 1000);
+
+      } catch (error) {
+        showError(error instanceof Error ? error.message : 'Failed to send notification');
+      }
+    };
+  });
+</script>

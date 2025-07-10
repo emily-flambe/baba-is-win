@@ -3,7 +3,7 @@ import { AuthDB } from '../auth/db';
 import { GmailAuth } from './gmail-auth';
 import { EmailTemplateEngine, type BlogPost, type Thought } from './template-engine';
 import { UnsubscribeService } from './unsubscribe-service';
-import { EmailErrorHandler } from './error-handler';
+import { EmailErrorHandler } from './error-handler';\nimport { EmailMonitor } from '../monitoring/email-monitor';
 
 export interface EmailNotification {
   id: string;
@@ -28,15 +28,17 @@ export class EmailNotificationService {
   private templateEngine: EmailTemplateEngine;
   private unsubscribeService: UnsubscribeService;
   private errorHandler: EmailErrorHandler;
+  private monitor: EmailMonitor;
   
   constructor(
     private env: Env,
     private authDB: AuthDB
   ) {
     this.gmailAuth = new GmailAuth(env);
-    this.templateEngine = new EmailTemplateEngine(env);
+    this.templateEngine = new EmailTemplateEngine(env, authDB);
     this.unsubscribeService = new UnsubscribeService(env, authDB);
     this.errorHandler = new EmailErrorHandler(authDB);
+    this.monitor = new EmailMonitor(env, authDB);
   }
   
   async sendBlogNotification(post: BlogPost): Promise<void> {
@@ -80,18 +82,7 @@ export class EmailNotificationService {
   }
   
   private async getSubscribersForContentType(contentType: 'blog' | 'thought'): Promise<any[]> {
-    const column = contentType === 'blog' ? 'email_blog_updates' : 'email_thought_updates';
-    
-    const result = await this.authDB.db.prepare(
-      `SELECT id, email, username, created_at FROM users WHERE ${column} = 1`
-    ).all();
-    
-    return result.results.map(row => ({
-      id: row.id,
-      email: row.email,
-      username: row.username,
-      createdAt: new Date(row.created_at as number)
-    }));
+    return await this.authDB.getSubscribersForContentType(contentType);
   }
   
   private async createNotificationsForSubscribers(
@@ -102,8 +93,21 @@ export class EmailNotificationService {
     const notifications: EmailNotification[] = [];
     
     for (const subscriber of subscribers) {
+      // Create notification in database
+      const notificationId = await this.authDB.createEmailNotification({
+        userId: subscriber.id,
+        contentType,
+        contentId: content.slug,
+        contentTitle: content.title || 'New Content',
+        contentUrl: `${this.env.SITE_URL}/${contentType === 'blog' ? 'blog' : 'thoughts'}/${content.slug}`,
+        contentExcerpt: contentType === 'blog' 
+          ? (content as BlogPost).description 
+          : content.content.substring(0, 200),
+        notificationType: 'new_content'
+      });
+      
       const notification: EmailNotification = {
-        id: crypto.randomUUID(),
+        id: notificationId,
         userId: subscriber.id,
         contentType,
         contentId: content.slug,
@@ -154,8 +158,15 @@ export class EmailNotificationService {
     notification: EmailNotification,
     content: BlogPost | Thought
   ): Promise<void> {
+    const startTime = Date.now();
+    
     try {
       console.log(`Processing notification ${notification.id} for user ${notification.userId}`);
+      
+      // Check circuit breaker
+      if (this.monitor.isCircuitBreakerOpen()) {
+        throw new Error('Email service circuit breaker is open');
+      }
       
       // Get user details
       const user = await this.authDB.getUserById(notification.userId);
@@ -181,15 +192,44 @@ export class EmailNotificationService {
         emailContent.text
       );
       
-      // Update notification status
+      // Update notification status in database
+      await this.authDB.updateNotificationStatus(
+        notification.id,
+        'sent',
+        undefined,
+        emailMessageId
+      );
+      
       notification.status = 'sent';
       notification.emailMessageId = emailMessageId;
       notification.updatedAt = new Date();
+      
+      // Track success metrics
+      const duration = Date.now() - startTime;
+      await this.monitor.logPerformanceMetric('send_notification', duration, true, {
+        notification_id: notification.id,
+        content_type: notification.contentType,
+        user_id: notification.userId
+      });
+      
+      await this.monitor.trackEmailEvent('sent', notification.id, notification.userId);
+      this.monitor.recordSuccess();
       
       console.log(`Successfully sent notification ${notification.id} to ${user.email}`);
       
     } catch (error) {
       console.error(`Failed to send notification ${notification.id}:`, error);
+      
+      // Track failure metrics
+      const duration = Date.now() - startTime;
+      await this.monitor.logPerformanceMetric('send_notification', duration, false, {
+        notification_id: notification.id,
+        content_type: notification.contentType,
+        user_id: notification.userId,
+        error: error.message
+      });
+      
+      this.monitor.recordFailure();
       
       // Handle error using error handler
       const emailError = await this.errorHandler.handleEmailError(
@@ -202,7 +242,13 @@ export class EmailNotificationService {
         }
       );
       
-      // Update notification status
+      // Update notification status in database
+      await this.authDB.updateNotificationStatus(
+        notification.id,
+        'failed',
+        emailError.message
+      );
+      
       notification.status = 'failed';
       notification.errorMessage = emailError.message;
       notification.retryCount += 1;
@@ -238,14 +284,19 @@ export class EmailNotificationService {
     failed: number;
     retryable: number;
   }> {
-    // In a real implementation, you'd query the database for stats
-    // For now, return mock stats
+    const metrics = await this.monitor.getEmailMetrics();
+    
     return {
-      total: 0,
-      pending: 0,
-      sent: 0,
-      failed: 0,
-      retryable: 0
+      total: metrics.total_notifications,
+      pending: metrics.pending_notifications,
+      sent: metrics.sent_notifications,
+      failed: metrics.failed_notifications,
+      retryable: 0 // Calculate this based on failed notifications with retry_count < 3
     };
+  }
+  
+  // Method to get system monitoring data
+  async getSystemStatus() {
+    return await this.monitor.getSystemStatus();
   }
 }

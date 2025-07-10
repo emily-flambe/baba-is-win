@@ -43,14 +43,41 @@ export class UnsubscribeService {
         return { success: false, error: 'Invalid or expired unsubscribe token' };
       }
       
-      // Mark token as used
-      await this.authDB.useUnsubscribeToken(tokenData.id, ipAddress, userAgent);
-      
       // Unsubscribe user from all emails
       await this.authDB.unsubscribeUserFromAll(tokenData.userId);
       
       // Log the unsubscribe action
-      await this.logUnsubscribeAction(tokenData.userId, tokenData.tokenType, ipAddress, userAgent);
+      await this.logUnsubscribeAction(tokenData.userId, tokenData.tokenType, ipAddress, userAgent, 'unsubscribe_all');
+      
+      return { success: true, userId: tokenData.userId };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+  
+  async processPartialUnsubscribe(
+    token: string, 
+    preferences: {
+      emailBlogUpdates: boolean;
+      emailThoughtUpdates: boolean;
+      emailAnnouncements: boolean;
+      emailFrequency: string;
+    },
+    ipAddress?: string, 
+    userAgent?: string
+  ): Promise<{ success: boolean; error?: string; userId?: string }> {
+    try {
+      // Validate token
+      const tokenData = await this.authDB.validateUnsubscribeToken(token);
+      if (!tokenData) {
+        return { success: false, error: 'Invalid or expired unsubscribe token' };
+      }
+      
+      // Update user preferences
+      await this.authDB.updateUserPreferences(tokenData.userId, preferences);
+      
+      // Log the preference update action
+      await this.logUnsubscribeAction(tokenData.userId, tokenData.tokenType, ipAddress, userAgent, 'update_preferences', preferences);
       
       return { success: true, userId: tokenData.userId };
     } catch (error) {
@@ -95,14 +122,36 @@ export class UnsubscribeService {
     userId: string, 
     tokenType: string, 
     ipAddress?: string, 
-    userAgent?: string
+    userAgent?: string,
+    action: string = 'unsubscribe',
+    details?: any
   ): Promise<void> {
     // Log the unsubscribe action for auditing
-    console.log(`User ${userId} unsubscribed via ${tokenType}`, {
+    const logData = {
+      userId,
+      tokenType,
+      action,
       ipAddress,
       userAgent,
+      details,
       timestamp: new Date().toISOString()
-    });
+    };
+    
+    console.log(`User ${userId} performed ${action} via ${tokenType}`, logData);
+    
+    // Store in database for audit trail
+    try {
+      await this.authDB.createNotificationHistory({
+        userId,
+        notificationId: `unsubscribe_${Date.now()}`,
+        action,
+        details: logData,
+        ipAddress,
+        userAgent
+      });
+    } catch (error) {
+      console.error('Failed to log unsubscribe action to database:', error);
+    }
   }
   
   // Helper method to generate List-Unsubscribe header

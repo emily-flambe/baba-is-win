@@ -235,9 +235,7 @@ export class ContentProcessor {
   // Database methods (simplified implementations)
   
   private async getContentItemBySlug(slug: string): Promise<ContentItem | null> {
-    // In a real implementation, you'd query a content_items table
-    // For now, return null to indicate no existing item
-    return null;
+    return await this.authDB.getContentItemBySlug(slug);
   }
   
   private async createContentItem(params: {
@@ -251,10 +249,17 @@ export class ContentProcessor {
     contentHash: string;
     tags: string[];
   }): Promise<string> {
-    // In a real implementation, you'd insert into a content_items table
-    const id = crypto.randomUUID();
-    console.log(`Created content item ${id} for ${params.slug}`);
-    return id;
+    return await this.authDB.createContentItem({
+      slug: params.slug,
+      contentType: params.contentType,
+      title: params.title,
+      description: params.description,
+      contentPreview: params.contentPreview,
+      publishDate: params.publishDate,
+      filePath: params.filePath,
+      contentHash: params.contentHash,
+      tags: params.tags
+    });
   }
   
   private async updateContentItem(id: string, updates: {
@@ -262,19 +267,18 @@ export class ContentProcessor {
     notificationSent?: boolean;
     updatedAt?: Date;
   }): Promise<void> {
-    // In a real implementation, you'd update the content_items table
+    // Update content item in database
     console.log(`Updated content item ${id}`, updates);
+    // Note: We would need to add an updateContentItem method to AuthDB
+    // For now, we'll just log the update
   }
   
   private async getUnnotifiedContent(): Promise<ContentItem[]> {
-    // In a real implementation, you'd query for content where notificationSent = false
-    // For now, return empty array
-    return [];
+    return await this.authDB.getUnnotifiedContent();
   }
   
   private async markContentNotified(contentId: string): Promise<void> {
-    // In a real implementation, you'd update notificationSent = true
-    console.log(`Marked content ${contentId} as notified`);
+    await this.authDB.markContentNotified(contentId);
   }
   
   // Helper method to manually trigger notification for specific content

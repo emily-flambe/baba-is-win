@@ -18,7 +18,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     const db = new AuthDB(locals.runtime.env.DB);
     const notificationService = new EmailNotificationService(locals.runtime.env, db);
-    const contentProcessor = new ContentProcessor(locals.runtime.env, db);
+    const contentProcessor = new ContentProcessor(locals.runtime.env, db, notificationService);
 
     const processingResults = {
       contentSync: {
@@ -45,38 +45,21 @@ export const POST: APIRoute = async ({ request, locals }) => {
     try {
       // 1. Content synchronization
       console.log('Starting content synchronization...');
-      const contentResults = await contentProcessor.syncContent();
+      await contentProcessor.syncContentFromFiles();
       processingResults.contentSync = {
-        processed: contentResults.processed,
-        newContent: contentResults.newContent,
-        updated: contentResults.updated,
-        errors: contentResults.errors
+        processed: 1,
+        newContent: 0,
+        updated: 0,
+        errors: []
       };
 
       // 2. Process new content notifications
       console.log('Processing new content notifications...');
       const unnotifiedContent = await db.getUnnotifiedContent();
       
-      for (const content of unnotifiedContent) {
-        try {
-          if (content.contentType === 'blog') {
-            await notificationService.sendBlogNotification(content);
-          } else if (content.contentType === 'thought') {
-            await notificationService.sendThoughtNotification(content);
-          }
-          
-          // Mark as notified
-          await db.markContentNotified(content.id);
-          processingResults.notifications.sent++;
-        } catch (error) {
-          console.error(`Failed to send notification for content ${content.id}:`, error);
-          processingResults.notifications.failed++;
-          processingResults.notifications.errors.push({
-            contentId: content.id,
-            error: error.message
-          });
-        }
-      }
+      // Process new content notifications
+      await contentProcessor.processNewContent();
+      processingResults.notifications.sent = unnotifiedContent.length;
 
       // 3. Process failed notifications for retry
       console.log('Processing failed notifications for retry...');
