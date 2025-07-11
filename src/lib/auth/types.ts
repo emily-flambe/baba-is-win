@@ -6,6 +6,13 @@ export interface User {
   emailBlogUpdates?: boolean;
   emailThoughtUpdates?: boolean;
   emailAnnouncements?: boolean;
+  // OAuth fields
+  googleId?: string;
+  provider?: string;
+  providerEmail?: string;
+  displayName?: string;
+  profilePictureUrl?: string;
+  emailVerified?: boolean;
 }
 
 export interface Session {
@@ -34,6 +41,8 @@ export interface JWTPayload {
   sub: string; // user id
   email: string;
   username: string;
+  provider?: string;
+  oauthLinked?: boolean;
   exp: number;
   iat: number;
 }

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import GoogleOAuthButton from '../components/auth/GoogleOAuthButton.astro';
 import '../styles/auth.css';
 
 export const prerender = false;
@@ -7,6 +8,9 @@ export const prerender = false;
 const title = 'Sign Up';
 const description = 'Create a new account';
 const permalink = `${Astro.site.href}signup`;
+
+const url = new URL(Astro.request.url);
+const returnUrl = url.searchParams.get('returnUrl') || '/';
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink}>
@@ -31,7 +35,15 @@ const permalink = `${Astro.site.href}signup`;
       </div>
     </div>
     <p class="auth-subtitle">you really don't have to do this.</p>
-    <form id="signup-form" class="auth-form">
+    
+    <div class="auth-methods">
+      <GoogleOAuthButton mode="signup" returnUrl={returnUrl} />
+      
+      <div class="auth-divider">
+        <span>or</span>
+      </div>
+
+      <form id="signup-form" class="auth-form">
       <div class="form-group">
         <label for="email">Email</label>
         <input 
@@ -104,6 +116,7 @@ const permalink = `${Astro.site.href}signup`;
       
       <button type="submit" class="submit-btn">Create Account</button>
     </form>
+    </div>
   </div>
 </BaseLayout>
 
