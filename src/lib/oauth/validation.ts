@@ -65,26 +65,40 @@ export class OAuthRequestValidator {
 
   private static isValidReturnUrl(url: string): boolean {
     try {
-      const parsedUrl = new URL(url, 'https://example.com');
+      // Check if it's a relative URL (starts with /)
+      if (url.startsWith('/')) {
+        return true;
+      }
       
-      // Only allow relative URLs or same origin
+      // Parse as absolute URL
+      const parsedUrl = new URL(url);
+      
+      // Only allow HTTPS/HTTP protocols
       if (parsedUrl.protocol !== 'https:' && parsedUrl.protocol !== 'http:') {
         return false;
       }
 
-      // Prevent open redirects
+      // Prevent open redirects - check against allowed domains
       const allowedDomains = [
         'localhost',
-        'your-domain.com',
-        'www.your-domain.com'
+        'emilycogsdill.com',
+        'www.emilycogsdill.com'
       ];
 
-      if (parsedUrl.host && !allowedDomains.includes(parsedUrl.host)) {
+      // Extract hostname and check if it's in allowed list
+      const hostname = parsedUrl.hostname;
+      
+      // Special handling for localhost with any port
+      if (hostname === 'localhost' || hostname.endsWith('.localhost')) {
+        return true;
+      }
+      
+      if (!allowedDomains.includes(hostname)) {
         return false;
       }
 
       return true;
-    } catch {
+    } catch (error) {
       return false;
     }
   }
@@ -96,12 +110,12 @@ export class OAuthRequestValidator {
     }
 
     // Check code length (Google auth codes are typically 60+ chars)
-    if (code.length < 40) {
+    if (code.length < 50) {
       return false;
     }
 
-    // Validate character set (alphanumeric, -, _, =)
-    const validCodePattern = /^[a-zA-Z0-9\-_=]+$/;
+    // Validate character set (alphanumeric, -, _, =, /)
+    const validCodePattern = /^[a-zA-Z0-9\-_=\/]+$/;
     if (!validCodePattern.test(code)) {
       return false;
     }
@@ -116,9 +130,17 @@ export class OAuthRequestValidator {
     }
 
     try {
-      // Validate each part can be decoded
-      atob(parts[0]);
-      atob(parts[1]);
+      // Validate header (part 0) and payload (part 1) are valid base64 JSON
+      for (let i = 0; i < 2; i++) {
+        const part = parts[i];
+        // Base64 pattern check (must be at least 4 characters for valid base64)
+        if (part.length < 4 || !/^[A-Za-z0-9+/]*={0,2}$/.test(part)) {
+          return false;
+        }
+        // Try to decode and parse as JSON
+        const decoded = atob(part);
+        JSON.parse(decoded);
+      }
       return true;
     } catch {
       return false;

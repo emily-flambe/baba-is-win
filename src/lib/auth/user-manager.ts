@@ -115,4 +115,21 @@ export class UserManager {
       throw new Error('Failed to update OAuth user');
     }
   }
+
+  async disconnectGoogleAccount(userId: string): Promise<void> {
+    const result = await this.db.prepare(`
+      UPDATE users 
+      SET google_id = NULL, 
+          provider_email = NULL, 
+          display_name = NULL, 
+          profile_picture_url = NULL,
+          provider = 'email',
+          updated_at = ?
+      WHERE id = ?
+    `).bind(Date.now(), userId).run();
+
+    if (!result.success) {
+      throw new Error('Failed to disconnect Google account');
+    }
+  }
 }
