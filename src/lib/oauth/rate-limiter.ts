@@ -14,6 +14,8 @@ interface AttemptRecord {
 export class OAuthRateLimiter {
   private attempts: Map<string, AttemptRecord[]> = new Map();
   private readonly windowMs = 15 * 60 * 1000; // 15 minutes
+  private readonly isDevelopment = typeof process !== 'undefined' && 
+    (process.env.NODE_ENV === 'development' || process.env.ENVIRONMENT === 'preview');
   
   async checkRateLimit(request: Request): Promise<RateLimitResult> {
     const clientId = this.getClientIdentifier(request);
@@ -63,7 +65,8 @@ export class OAuthRateLimiter {
   }
 
   private checkGeneralRateLimit(attempts: AttemptRecord[]): RateLimitResult {
-    const limit = 10; // 10 attempts per window
+    // More lenient limits for development/preview
+    const limit = this.isDevelopment ? 50 : 10; // 50 for dev, 10 for prod
     if (attempts.length >= limit) {
       return {
         allowed: false,
@@ -76,7 +79,8 @@ export class OAuthRateLimiter {
 
   private checkFailureRateLimit(attempts: AttemptRecord[]): RateLimitResult {
     const failures = attempts.filter(a => !a.success);
-    const limit = 5; // 5 failures per window
+    // More lenient limits for development/preview
+    const limit = this.isDevelopment ? 20 : 5; // 20 for dev, 5 for prod
     
     if (failures.length >= limit) {
       return {
@@ -89,14 +93,17 @@ export class OAuthRateLimiter {
   }
 
   private checkBurstLimit(attempts: AttemptRecord[]): RateLimitResult {
-    // Check for burst activity (5 attempts in 1 minute)
+    // Check for burst activity - more lenient for development
     const burstWindow = 60000; // 1 minute
     const now = Date.now();
     const burstAttempts = attempts.filter(
       a => now - a.timestamp < burstWindow
     );
 
-    if (burstAttempts.length >= 5) {
+    // More lenient limits for development/preview
+    const limit = this.isDevelopment ? 20 : 5; // 20 for dev, 5 for prod
+    
+    if (burstAttempts.length >= limit) {
       return {
         allowed: false,
         retryAfter: 60,
@@ -107,6 +114,11 @@ export class OAuthRateLimiter {
   }
 
   private checkSuspiciousActivity(attempts: AttemptRecord[]): RateLimitResult {
+    // Skip suspicious activity checks in development/preview
+    if (this.isDevelopment) {
+      return { allowed: true, retryAfter: 0 };
+    }
+
     // Check for suspicious patterns
     const uniqueIPs = new Set(attempts.map(a => a.ip));
     const uniqueUserAgents = new Set(attempts.map(a => a.userAgent));
@@ -133,10 +145,19 @@ export class OAuthRateLimiter {
   }
 
   private getClientIdentifier(request: Request): string {
-    // Use IP + User Agent as client identifier
+    // Use IP + simplified User Agent as client identifier
     const ip = this.getClientIP(request);
     const userAgent = request.headers.get('User-Agent') || '';
-    return `${ip}:${btoa(userAgent)}`;
+    
+    // Simplify user agent to avoid btoa issues with long strings
+    const simpleUA = userAgent.split(' ')[0] || 'unknown';
+    
+    // In development, use a more lenient identifier
+    if (this.isDevelopment) {
+      return `dev:${ip}:${simpleUA}`;
+    }
+    
+    return `${ip}:${simpleUA}`;
   }
 
   private getClientIP(request: Request): string {
