@@ -36,11 +36,15 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250204.0",
-    "@types/jest": "^30.0.0",
     "@types/node": "^24.0.13",
-    "jest": "^30.0.4",
-    "ts-jest": "^29.4.0",
     "wrangler": "^4.20.5"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.34.8",
+    "@rollup/rollup-linux-arm64-gnu": "^4.34.8",
+    "@rollup/rollup-darwin-x64": "^4.34.8",
+    "@rollup/rollup-darwin-arm64": "^4.34.8",
+    "@rollup/rollup-win32-x64-msvc": "^4.34.8"
   },
   "scripts": {
     "astro": "astro",
@@ -51,11 +55,7 @@
     "dev": "astro build && wrangler dev",
     "dev:pages": "astro build && wrangler pages dev dist/ --compatibility-date=2024-11-01 --compatibility-flags nodejs_compat --d1 DB=baba-is-win-db",
     "preview": "astro build && wrangler dev",
-    "types": "wrangler types",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "test:oauth": "jest src/lib/oauth/__tests__"
+    "types": "wrangler types"
   },
   "type": "module"
 }
