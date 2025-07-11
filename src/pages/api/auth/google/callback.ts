@@ -51,25 +51,38 @@ export const GET: APIRoute = async ({ request, locals }) => {
       });
     }
 
+    console.log('OAuth callback step 1: Initializing services');
     const config = getGoogleOAuthConfig(locals.runtime.env);
     const oauthService = new GoogleOAuthService(config);
     const stateManager = new OAuthStateManager(locals.runtime.env.JWT_SECRET);
     const userManager = new UserManager(locals.runtime.env.DB);
     const authService = new AuthService(locals.runtime.env.JWT_SECRET);
 
+    console.log('OAuth callback step 2: Verifying state');
     // Verify state
     const stateData = await stateManager.verifyState(state);
+    console.log('State verified:', stateData);
     
+    console.log('OAuth callback step 3: Exchanging code for tokens');
     // Exchange code for tokens
     const tokens = await oauthService.exchangeCodeForTokens(code);
+    console.log('Tokens received (access_token length):', tokens.access_token.length);
     
+    console.log('OAuth callback step 4: Verifying ID token');
     // Verify ID token
     await oauthService.verifyIdToken(tokens.id_token);
+    console.log('ID token verified');
     
+    console.log('OAuth callback step 5: Getting user info');
     // Get user info
     const userInfo = await oauthService.getUserInfo(tokens.access_token);
 
-    if (!userInfo.verified_email) {
+    // Debug logging to see what Google actually returns
+    console.log('Google userInfo response:', JSON.stringify(userInfo, null, 2));
+    console.log('email_verified value:', userInfo.email_verified);
+    console.log('email_verified type:', typeof userInfo.email_verified);
+
+    if (!userInfo.email_verified) {
       return new Response(null, {
         status: 302,
         headers: {
@@ -83,7 +96,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
     // Check if this is account linking
     if (stateData.linkAccount && stateData.userId) {
-      const existingUser = await userManager.findUserByGoogleId(userInfo.id);
+      const existingUser = await userManager.findUserByGoogleId(userInfo.sub);
       if (existingUser && existingUser.id !== stateData.userId) {
         return new Response(null, {
           status: 302,
@@ -94,7 +107,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
       }
 
       await userManager.linkGoogleAccount(stateData.userId, {
-        googleId: userInfo.id,
+        googleId: userInfo.sub,
         email: userInfo.email,
         displayName: userInfo.name,
         profilePictureUrl: userInfo.picture,
@@ -107,7 +120,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
       await OAuthSecurityMonitor.logAccountLinking(stateData.userId, 'google', true, request);
     } else {
       // Check if user exists by Google ID
-      user = await userManager.findUserByGoogleId(userInfo.id);
+      user = await userManager.findUserByGoogleId(userInfo.sub);
 
       if (!user) {
         // Check if user exists by email
@@ -125,7 +138,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
         // Create new user
         user = await userManager.createOAuthUser({
-          googleId: userInfo.id,
+          googleId: userInfo.sub,
           email: userInfo.email,
           displayName: userInfo.name,
           profilePictureUrl: userInfo.picture,
@@ -135,7 +148,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
         await OAuthSecurityMonitor.logUserCreation(user.id, 'google', request);
       } else {
         // Update existing OAuth user info
-        await userManager.updateOAuthUser(userInfo.id, {
+        await userManager.updateOAuthUser(userInfo.sub, {
           displayName: userInfo.name,
           profilePictureUrl: userInfo.picture
         });
@@ -167,10 +180,12 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
   } catch (error) {
     console.error('OAuth callback error:', error);
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     
     await OAuthSecurityMonitor.monitorOAuthAttempt(null, false, 'oauth_failed', request);
     await OAuthSecurityMonitor.logSecurityEvent('oauth_callback_error', 'high', {
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : 'No stack trace'
     }, request);
 
     return new Response(null, {
