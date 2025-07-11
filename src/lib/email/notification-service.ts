@@ -3,7 +3,8 @@ import { AuthDB } from '../auth/db';
 import { GmailAuth } from './gmail-auth';
 import { EmailTemplateEngine, type BlogPost, type Thought } from './template-engine';
 import { UnsubscribeService } from './unsubscribe-service';
-import { EmailErrorHandler } from './error-handler';\nimport { EmailMonitor } from '../monitoring/email-monitor';
+import { EmailErrorHandler } from './error-handler';
+import { EmailMonitor } from '../monitoring/email-monitor';
 
 export interface EmailNotification {
   id: string;

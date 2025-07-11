@@ -14,4 +14,10 @@ export interface Env {
   // Site Configuration
   SITE_URL: string;
   SITE_NAME: string;
+  
+  // Content Storage (optional)
+  CONTENT_KV?: KVNamespace;
+  
+  // Cron Security
+  CRON_SECRET: string;
 }

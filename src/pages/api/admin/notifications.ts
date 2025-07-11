@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { verifyJWT } from '../../../lib/auth/jwt';
 import { AuthDB } from '../../../lib/auth/db';
 import { EmailNotificationService } from '../../../lib/email/notification-service';
+import { ContentProcessor } from '../../../lib/email/content-processor';
 
 export const prerender = false;
 
@@ -51,6 +52,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
     const db = new AuthDB(locals.runtime.env.DB);
     const notificationService = new EmailNotificationService(locals.runtime.env, db);
+    const contentProcessor = new ContentProcessor(locals.runtime.env, db, notificationService);
 
     // Get notification statistics
     const stats = await notificationService.getNotificationStats();
@@ -144,6 +146,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     const db = new AuthDB(locals.runtime.env.DB);
     const notificationService = new EmailNotificationService(locals.runtime.env, db);
+    const contentProcessor = new ContentProcessor(locals.runtime.env, db, notificationService);
 
     let result;
 
@@ -173,15 +176,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
           );
         }
 
-        // Send notification based on content type
-        if (contentType === 'blog') {
-          await notificationService.sendBlogNotification(content);
-        } else if (contentType === 'thought') {
-          await notificationService.sendThoughtNotification(content);
-        } else {
+        // Send notification based on content type using ContentProcessor
+        try {
+          await contentProcessor.triggerNotificationForContent(content.slug, contentType);
+        } catch (error) {
+          console.error(`Failed to trigger notification for ${contentType} ${content.slug}:`, error);
           return new Response(
-            JSON.stringify({ error: 'Invalid content type' }),
-            { status: 400, headers: { 'Content-Type': 'application/json' } }
+            JSON.stringify({ error: `Failed to send notification: ${error.message}` }),
+            { status: 500, headers: { 'Content-Type': 'application/json' } }
           );
         }
 

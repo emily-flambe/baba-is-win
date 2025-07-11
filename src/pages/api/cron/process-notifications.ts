@@ -86,9 +86,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
           // Retry sending the notification
           if (notification.content_type === 'blog') {
-            await notificationService.sendBlogNotification(content);
+            const blogPost = await contentProcessor.triggerNotificationForContent(content.slug, 'blog');
           } else if (notification.content_type === 'thought') {
-            await notificationService.sendThoughtNotification(content);
+            const thought = await contentProcessor.triggerNotificationForContent(content.slug, 'thought');
           }
 
           // Update status to sent

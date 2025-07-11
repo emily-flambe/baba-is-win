@@ -313,6 +313,45 @@ export class AuthDB {
     `).bind(now, contentId).run();
   }
 
+  async updateContentItem(id: string, updates: {
+    contentHash?: string;
+    notificationSent?: boolean;
+    updatedAt?: Date;
+  }): Promise<void> {
+    const now = Math.floor(Date.now() / 1000);
+    
+    const setParts: string[] = [];
+    const bindValues: any[] = [];
+    
+    if (updates.contentHash !== undefined) {
+      setParts.push('content_hash = ?');
+      bindValues.push(updates.contentHash);
+    }
+    
+    if (updates.notificationSent !== undefined) {
+      setParts.push('notification_sent = ?');
+      bindValues.push(updates.notificationSent ? 1 : 0);
+    }
+    
+    if (updates.updatedAt !== undefined) {
+      setParts.push('updated_at = ?');
+      bindValues.push(Math.floor(updates.updatedAt.getTime() / 1000));
+    } else {
+      setParts.push('updated_at = ?');
+      bindValues.push(now);
+    }
+    
+    if (setParts.length === 0) return;
+    
+    bindValues.push(id);
+    
+    await this.db.prepare(`
+      UPDATE content_items 
+      SET ${setParts.join(', ')}
+      WHERE id = ?
+    `).bind(...bindValues).run();
+  }
+
   // === EMAIL TEMPLATE METHODS ===
   
   async getEmailTemplate(templateName: string): Promise<EmailTemplate | null> {

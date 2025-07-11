@@ -1,0 +1,18 @@
+WELCOME TO {{site_name}}!
+
+Hi {{user_name}},
+
+Thank you for subscribing to our notifications. We're excited to have you as a subscriber.
+
+You'll receive email notifications for:
+- New blog posts
+- New thoughts and updates
+- Important announcements
+
+You can update your preferences or unsubscribe at any time by visiting: {{site_url}}/profile
+
+Best regards,
+{{site_name}}
+
+---
+To unsubscribe from all notifications, visit: {{unsubscribe_url}}

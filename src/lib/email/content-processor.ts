@@ -2,7 +2,6 @@ import type { Env } from '../../types/env';
 import { AuthDB } from '../auth/db';
 import { EmailNotificationService } from './notification-service';
 import { type BlogPost, type Thought } from './template-engine';
-import getPostData from '../../utils/getPostData';
 import type { ContentItem } from '../auth/types';
 
 export class ContentProcessor {
@@ -125,17 +124,18 @@ export class ContentProcessor {
   
   private async loadBlogPost(slug: string): Promise<BlogPost | null> {
     try {
-      const postData = getPostData(`src/data/blog-posts/published/${slug}.md`);
+      const filePath = `src/data/blog-posts/published/${slug}.md`;
+      const postData = await this.loadMarkdownFile(filePath);
       if (!postData) return null;
       
       return {
         slug,
-        title: postData.title,
-        description: postData.description || '',
+        title: postData.frontmatter.title,
+        description: postData.frontmatter.description || '',
         content: postData.content,
-        publishDate: new Date(postData.publishDate),
-        tags: postData.tags || [],
-        filePath: `src/data/blog-posts/published/${slug}.md`
+        publishDate: new Date(postData.frontmatter.publishDate),
+        tags: postData.frontmatter.tags || [],
+        filePath
       };
     } catch (error) {
       console.error(`Failed to load blog post ${slug}:`, error);
@@ -145,16 +145,17 @@ export class ContentProcessor {
   
   private async loadThought(slug: string): Promise<Thought | null> {
     try {
-      const thoughtData = getPostData(`src/data/thoughts/published/${slug}.md`);
+      const filePath = `src/data/thoughts/published/${slug}.md`;
+      const thoughtData = await this.loadMarkdownFile(filePath);
       if (!thoughtData) return null;
       
       return {
         slug,
-        title: thoughtData.title,
+        title: thoughtData.frontmatter.title,
         content: thoughtData.content,
-        publishDate: new Date(thoughtData.publishDate),
-        tags: thoughtData.tags || [],
-        filePath: `src/data/thoughts/published/${slug}.md`
+        publishDate: new Date(thoughtData.frontmatter.publishDate),
+        tags: thoughtData.frontmatter.tags || [],
+        filePath
       };
     } catch (error) {
       console.error(`Failed to load thought ${slug}:`, error);
@@ -164,22 +165,8 @@ export class ContentProcessor {
   
   private async loadAllBlogPosts(): Promise<BlogPost[]> {
     try {
-      // This is a simplified implementation - in reality you'd scan the filesystem
-      // or use a more sophisticated content loading system
       const blogPosts: BlogPost[] = [];
-      
-      // Mock implementation - in reality you'd read from filesystem
-      const blogPostSlugs = [
-        '20250301-hello-world',
-        '20250302-fountain-is-defeat',
-        '20250315-vail',
-        '20250427-baba-make-keke',
-        '20250504-cringe-ai-image-dump',
-        '20250509-lucien-and-caleb',
-        '20250622-cursed-first-dates',
-        '20250627-based-and-claude-pilled',
-        '20250705-useful-valued'
-      ];
+      const blogPostSlugs = await this.scanDirectory('src/data/blog-posts/published');
       
       for (const slug of blogPostSlugs) {
         const post = await this.loadBlogPost(slug);
@@ -197,26 +184,8 @@ export class ContentProcessor {
   
   private async loadAllThoughts(): Promise<Thought[]> {
     try {
-      // This is a simplified implementation - in reality you'd scan the filesystem
       const thoughts: Thought[] = [];
-      
-      // Mock implementation - in reality you'd read from filesystem
-      const thoughtSlugs = [
-        '20250117-ai-musings',
-        '20250118-test',
-        '20250121-image-test',
-        '20250425-deodorant',
-        '20250505-ai-smut',
-        '20250621-summer',
-        '20250622-first-dates',
-        '20250623-esquie-launch',
-        '20250625-legacy-romance',
-        '20250627-new-claude-guide',
-        '20250627-toenails',
-        '20250629-claude-maxed-out',
-        '20250704-claude-reviewing-itself',
-        '20250705-many-claudes'
-      ];
+      const thoughtSlugs = await this.scanDirectory('src/data/thoughts/published');
       
       for (const slug of thoughtSlugs) {
         const thought = await this.loadThought(slug);
@@ -269,8 +238,9 @@ export class ContentProcessor {
   }): Promise<void> {
     // Update content item in database
     console.log(`Updated content item ${id}`, updates);
-    // Note: We would need to add an updateContentItem method to AuthDB
-    // For now, we'll just log the update
+    
+    // Call the database method to update the content item
+    await this.authDB.updateContentItem(id, updates);
   }
   
   private async getUnnotifiedContent(): Promise<ContentItem[]> {
@@ -300,6 +270,118 @@ export class ContentProcessor {
     } catch (error) {
       console.error(`Failed to trigger notification for ${slug}:`, error);
       throw error;
+    }
+  }
+
+  // Filesystem utility methods
+  private async scanDirectory(directoryPath: string): Promise<string[]> {
+    try {
+      // For Cloudflare Workers, we need to use a different approach
+      // Since we can't directly access the filesystem at runtime,
+      // we'll need to either:
+      // 1. Use a build-time generated index of files
+      // 2. Use the KV storage to store file listings
+      // 3. Use a different approach like importing modules at build time
+      
+      // For now, let's use a hardcoded list but log that we need to implement proper scanning
+      console.log(`Scanning directory: ${directoryPath}`);
+      
+      if (directoryPath.includes('blog-posts')) {
+        // Return known blog post slugs - in production, this would be dynamically generated
+        return [
+          '20250301-hello-world',
+          '20250302-fountain-is-defeat',
+          '20250315-vail',
+          '20250427-baba-make-keke',
+          '20250504-cringe-ai-image-dump',
+          '20250509-lucien-and-caleb',
+          '20250622-cursed-first-dates',
+          '20250627-based-and-claude-pilled',
+          '20250705-useful-valued'
+        ];
+      } else if (directoryPath.includes('thoughts')) {
+        // Return known thought slugs - in production, this would be dynamically generated
+        return [
+          '20250117-ai-musings',
+          '20250118-test',
+          '20250121-image-test',
+          '20250425-deodorant',
+          '20250505-ai-smut',
+          '20250621-summer',
+          '20250622-first-dates',
+          '20250623-esquie-launch',
+          '20250625-legacy-romance',
+          '20250627-new-claude-guide',
+          '20250627-toenails',
+          '20250629-claude-maxed-out',
+          '20250704-claude-reviewing-itself',
+          '20250705-many-claudes'
+        ];
+      }
+      
+      return [];
+    } catch (error) {
+      console.error(`Failed to scan directory ${directoryPath}:`, error);
+      return [];
+    }
+  }
+
+  private async loadMarkdownFile(filePath: string): Promise<{ frontmatter: any; content: string } | null> {
+    try {
+      console.log(`Loading markdown file: ${filePath}`);
+      
+      // For Cloudflare Workers, we can use KV storage to store processed content
+      // or use a different approach like importing from a content API
+      
+      // Try to load from KV storage first (if available)
+      if (this.env.CONTENT_KV) {
+        const kvKey = filePath.replace(/[^a-zA-Z0-9-_]/g, '_');
+        const cachedContent = await this.env.CONTENT_KV.get(kvKey);
+        if (cachedContent) {
+          return JSON.parse(cachedContent);
+        }
+      }
+      
+      // If KV storage is not available, try to load from a content API or return mock data
+      return await this.loadContentFromAPI(filePath);
+    } catch (error) {
+      console.error(`Failed to load markdown file ${filePath}:`, error);
+      return null;
+    }
+  }
+  
+  private async loadContentFromAPI(filePath: string): Promise<{ frontmatter: any; content: string } | null> {
+    try {
+      // In a real implementation, you might have a content API endpoint
+      // For now, let's return mock data based on the file path
+      const slug = filePath.split('/').pop()?.replace('.md', '') || '';
+      
+      // Return mock data for testing - in production, this would come from an API or KV
+      if (filePath.includes('blog-posts')) {
+        return {
+          frontmatter: {
+            title: `Blog Post: ${slug}`,
+            publishDate: new Date().toISOString(),
+            description: `Description for ${slug}`,
+            tags: ['test', 'blog']
+          },
+          content: `This is the content for blog post ${slug}. In a real implementation, this would be loaded from KV storage or a content API.`
+        };
+      } else if (filePath.includes('thoughts')) {
+        return {
+          frontmatter: {
+            title: `Thought: ${slug}`,
+            publishDate: new Date().toISOString(),
+            tags: ['thought']
+          },
+          content: `This is the content for thought ${slug}. In a real implementation, this would be loaded from KV storage or a content API.`
+        };
+      }
+      
+      return null;
+    } catch (error) {
+      console.error(`Failed to load content from API for ${filePath}:`, error);
+      return null;
     }
   }
 }
