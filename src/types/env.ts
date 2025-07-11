@@ -10,6 +10,7 @@ export interface Env {
   GMAIL_CLIENT_SECRET: string;
   GMAIL_REFRESH_TOKEN: string;
   GMAIL_SENDER_EMAIL: string;
+  GMAIL_FROM_EMAIL: string;
   
   // Site Configuration
   SITE_URL: string;
