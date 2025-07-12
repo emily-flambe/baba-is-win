@@ -50,33 +50,33 @@ h1 {
   font-family: var(--font-family-serif);
   font-size: 3.5em;
   margin: 0 0 1em 0;
-  color: #ffffff;
+  color: #ffd4b3;
 }
 
 h2 {
   margin: 1.6em 0 0 0;
   font-size: 1.6em;
-  color: #cce8ec;
+  color: #ffb366;
 }
 
 h3 {
   font-size: 1.6em;
-  color: #a6d8df;
+  color: #ff9933;
 }
 
 h4 {
   font-size: 1.4em;
-  color: #80c8d2;
+  color: #e68000;
 }
 
 h5 {
   font-size: 1.3em;
-  color: #6ab8c5;
+  color: #cc6600;
 }
 
 h6 {
   font-size: 1.2em;
-  color: #548e9b;
+  color: #b35900;
 }
 
 p,
