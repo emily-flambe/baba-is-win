@@ -18,14 +18,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   // Protected routes that require authentication
-  const protectedRoutes = ['/admin', '/profile', '/api/auth/me', '/api/user/preferences', '/api/admin/notifications'];
+  const protectedRoutes = ['/admin', '/profile', '/api/auth/me', '/api/user/preferences', '/api/admin/notifications', '/api/auth/google/status', '/api/auth/google/disconnect'];
   const isProtectedRoute = protectedRoutes.some(route => context.url.pathname.startsWith(route));
 
   if (isProtectedRoute) {
     const cookieHeader = context.request.headers.get('cookie');
     const token = cookieHeader
       ?.split('; ')
-      .find(row => row.startsWith('auth-token='))
+      .find(row => row.startsWith('session='))
       ?.split('=')[1];
 
     if (!token) {
@@ -68,7 +68,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const cookieHeader = context.request.headers.get('cookie');
   const token = cookieHeader
     ?.split('; ')
-    .find(row => row.startsWith('auth-token='))
+    .find(row => row.startsWith('session='))
     ?.split('=')[1];
 
   if (token) {

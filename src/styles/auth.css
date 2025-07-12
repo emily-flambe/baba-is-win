@@ -202,3 +202,64 @@
 .help-tooltip a:hover {
   text-decoration: underline;
 }
+
+/* OAuth and authentication methods styling */
+.auth-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.5rem 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--text-secondary);
+  opacity: 0.3;
+}
+
+.auth-divider span {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+/* OAuth button styling - inherits theme colors */
+.oauth-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--text-secondary);
+  border-radius: 4px;
+  background: var(--background-body);
+  color: var(--text-main);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  font-family: var(--font-family-sans);
+}
+
+.oauth-button:hover {
+  background: #2a2b2c;
+  border-color: var(--primary-color);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.oauth-button__icon {
+  flex-shrink: 0;
+}
+
+.oauth-button__text {
+  white-space: nowrap;
+}

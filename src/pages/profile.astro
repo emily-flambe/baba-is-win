@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import EmailPreferences from '../components/EmailPreferences.astro';
+import GoogleOAuthButton from '../components/auth/GoogleOAuthButton.astro';
 
 export const prerender = false;
 
@@ -16,13 +17,32 @@ const initialPreferences = {
   emailThoughtUpdates: user.emailThoughtUpdates || false,
   emailAnnouncements: user.emailAnnouncements || false
 };
+
+const url = new URL(Astro.request.url);
+const error = url.searchParams.get('error');
+const success = url.searchParams.get('success');
+const hasGoogleAccount = !!user.googleId;
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink}>
   <div class="profile-container">
     <h1>Profile</h1>
     
-    <div class="profile-info">
+    {error && (
+      <div class="error-message">
+        {error === 'account_already_linked' && 'This Google account is already linked to another user.'}
+      </div>
+    )}
+
+    {success && (
+      <div class="success-message">
+        {success === 'account_linked' && 'Your Google account has been successfully linked!'}
+      </div>
+    )}
+    
+    <div class="profile-section">
+      <h2>Account Information</h2>
+      <div class="profile-info">
       <div class="info-group">
         <label>Username</label>
         <p>@{user.username}</p>
@@ -41,6 +61,50 @@ const initialPreferences = {
           day: 'numeric' 
         })}</p>
       </div>
+      
+      {user.displayName && (
+        <div class="info-group">
+          <label>Display Name</label>
+          <p>{user.displayName}</p>
+        </div>
+      )}
+      
+      <div class="info-group">
+        <label>Account Type</label>
+        <p>{user.provider === 'google' ? 'Google Account' : 'Email Account'}</p>
+      </div>
+    </div>
+    </div>
+
+    <div class="profile-section">
+      <h2>Connected Accounts</h2>
+      
+      <div class="connected-accounts">
+        {hasGoogleAccount ? (
+          <div class="connected-account">
+            <div class="account-info">
+              <svg class="account-icon" viewBox="0 0 24 24" width="24" height="24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              <div>
+                <div class="account-name">Google</div>
+                <div class="account-email">{user.providerEmail}</div>
+              </div>
+            </div>
+            <span class="account-status">Connected</span>
+          </div>
+        ) : (
+          <div class="connect-account">
+            <div class="connect-info">
+              <p>Link your Google account to sign in with Google</p>
+            </div>
+            <GoogleOAuthButton mode="link" class="connect-button" />
+          </div>
+        )}
+      </div>
     </div>
     
     <EmailPreferences initialPreferences={initialPreferences} />
@@ -53,7 +117,7 @@ const initialPreferences = {
 
 <style>
   .profile-container {
-    max-width: 700px;
+    max-width: 800px;
     margin: 2rem auto;
     padding: 2rem;
   }
@@ -63,11 +127,45 @@ const initialPreferences = {
     font-family: var(--font-family-sans);
   }
 
+  h2 {
+    margin: 0 0 1.5rem 0;
+    font-family: var(--font-family-sans);
+    font-size: 1.25rem;
+    color: var(--text-main);
+  }
+
+  .error-message {
+    background: #4a1e1e;
+    border: 1px solid #8b1e1e;
+    color: #ff6b6b;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+  }
+
+  .success-message {
+    background: #1e4a1e;
+    border: 1px solid #1e8b1e;
+    color: #6bff6b;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+  }
+
+  .profile-section {
+    background: #2a2b2c;
+    border: 1px solid var(--text-secondary);
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
   .profile-info {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    margin-bottom: 1rem;
   }
 
   .info-group {
@@ -109,6 +207,68 @@ const initialPreferences = {
 
   .action-btn:hover {
     opacity: 0.9;
+  }
+
+  .connected-accounts {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .connected-account {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border: 1px solid var(--text-secondary);
+    border-radius: 4px;
+    background: var(--background-body);
+  }
+
+  .account-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .account-icon {
+    flex-shrink: 0;
+  }
+
+  .account-name {
+    font-weight: 600;
+    font-family: var(--font-family-sans);
+    color: var(--text-main);
+  }
+
+  .account-email {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .account-status {
+    font-size: 0.875rem;
+    color: #6bff6b;
+    font-weight: 500;
+  }
+
+  .connect-account {
+    padding: 1rem;
+    border: 1px solid var(--text-secondary);
+    border-radius: 4px;
+    background: var(--background-body);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .connect-info p {
+    margin: 0;
+    color: var(--text-secondary);
+  }
+
+  .connect-button {
+    flex-shrink: 0;
   }
 
   @media (max-width: 768px) {
