@@ -20,7 +20,8 @@
   ],
   "vars": {
     "SITE_URL": "https://personal.emily-cogsdill.workers.dev",
-    "SITE_NAME": "Emily's Blog"
+    "SITE_NAME": "Emily's Blog",
+    "ENVIRONMENT": "preview"
   },
   "triggers": {
     "crons": ["0 */6 * * *"]
