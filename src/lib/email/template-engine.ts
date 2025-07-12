@@ -78,8 +78,32 @@ export class EmailTemplateEngine {
         console.warn(`Template variable not found: ${key}`);
         return match;
       }
-      return Array.isArray(value) ? value.join(', ') : String(value);
+      const stringValue = Array.isArray(value) ? value.join(', ') : String(value);
+      
+      // Don't sanitize URLs or safe content
+      if (key.includes('url') || key === 'site_name' || key === 'user_name') {
+        return stringValue;
+      }
+      
+      // Sanitize potentially dangerous content
+      return this.sanitizeHtml(stringValue);
     });
+  }
+
+  private sanitizeHtml(input: string): string {
+    // Basic HTML sanitization - escape dangerous characters
+    return input
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;')
+      .replace(/\//g, '&#x2F;')
+      // Remove javascript: and data: protocols
+      .replace(/javascript:/gi, '')
+      .replace(/data:/gi, '')
+      // Remove script tags and their content
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
   }
   
   private validateTemplateVariables(template: EmailTemplate, variables: TemplateVariables): void {
@@ -188,7 +212,7 @@ export class EmailTemplateEngine {
         subjectTemplate: 'New Blog Post: {{title}}',
         htmlTemplate: `
           <!DOCTYPE html>
-          <html>
+          <html lang="en">
           <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -264,7 +288,7 @@ To unsubscribe from these notifications, visit: {{unsubscribe_url}}
         subjectTemplate: 'New Thought: {{title}}',
         htmlTemplate: `
           <!DOCTYPE html>
-          <html>
+          <html lang="en">
           <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -342,7 +366,7 @@ To unsubscribe from these notifications, visit: {{unsubscribe_url}}
         subjectTemplate: 'Welcome to {{site_name}}!',
         htmlTemplate: `
           <!DOCTYPE html>
-          <html>
+          <html lang="en">
           <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -419,7 +443,7 @@ To unsubscribe from all notifications, visit: {{unsubscribe_url}}
         subjectTemplate: 'Unsubscribed from {{site_name}}',
         htmlTemplate: `
           <!DOCTYPE html>
-          <html>
+          <html lang="en">
           <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">

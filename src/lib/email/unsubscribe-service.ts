@@ -43,6 +43,9 @@ export class UnsubscribeService {
         return { success: false, error: 'Invalid or expired unsubscribe token' };
       }
       
+      // Mark token as used to prevent reuse
+      await this.authDB.useUnsubscribeToken(tokenData.id, ipAddress, userAgent);
+      
       // Unsubscribe user from all emails
       await this.authDB.unsubscribeUserFromAll(tokenData.userId);
       
@@ -72,6 +75,9 @@ export class UnsubscribeService {
       if (!tokenData) {
         return { success: false, error: 'Invalid or expired unsubscribe token' };
       }
+      
+      // Mark token as used to prevent reuse
+      await this.authDB.useUnsubscribeToken(tokenData.id, ipAddress, userAgent);
       
       // Update user preferences
       await this.authDB.updateUserPreferences(tokenData.userId, preferences);
