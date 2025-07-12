@@ -19,6 +19,11 @@
     }
   ],
   "vars": {
-    "JWT_SECRET": "4wMCazSNE46y8A0hfPiZGuzj8MIr6tLn8A4ThokesBg="
+    "SITE_URL": "https://personal.emily-cogsdill.workers.dev",
+    "SITE_NAME": "Emily's Blog",
+    "ENVIRONMENT": "preview"
+  },
+  "triggers": {
+    "crons": ["0 */6 * * *"]
   }
 }

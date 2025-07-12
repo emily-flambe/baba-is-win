@@ -3,10 +3,9 @@ import { verifyPassword } from '../../../../lib/auth/password';
 import { UserManager } from '../../../../lib/auth/user-manager';
 import { OAuthRateLimiter } from '../../../../lib/oauth/rate-limiter';
 
-const rateLimiter = new OAuthRateLimiter();
-
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
+    const rateLimiter = new OAuthRateLimiter(locals.runtime?.env);
     // Check authentication
     if (!locals.user) {
       return new Response(JSON.stringify({ 

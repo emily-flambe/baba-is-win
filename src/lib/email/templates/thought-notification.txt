@@ -1,0 +1,20 @@
+NEW THOUGHT: {{title}}
+
+Hi {{user_name}},
+
+I've shared a new thought:
+
+"{{content}}"
+
+Published on: {{publish_date}}
+Tags: {{tags}}
+
+Read the full thought: {{url}}
+
+Thanks for following my thoughts!
+
+Best regards,
+{{site_name}}
+
+---
+To unsubscribe from these notifications, visit: {{unsubscribe_url}}

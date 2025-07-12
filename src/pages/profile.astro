@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import EmailPreferences from '../components/EmailPreferences.astro';
 import GoogleOAuthButton from '../components/auth/GoogleOAuthButton.astro';
 
 export const prerender = false;
@@ -9,6 +10,13 @@ const user = Astro.locals.user!;
 const title = `${user.username}'s Profile`;
 const description = 'User profile page';
 const permalink = `${Astro.site.href}profile`;
+
+// Get user's current email preferences
+const initialPreferences = {
+  emailBlogUpdates: user.emailBlogUpdates || false,
+  emailThoughtUpdates: user.emailThoughtUpdates || false,
+  emailAnnouncements: user.emailAnnouncements || false
+};
 
 const url = new URL(Astro.request.url);
 const error = url.searchParams.get('error');
@@ -98,6 +106,8 @@ const hasGoogleAccount = !!user.googleId;
         )}
       </div>
     </div>
+    
+    <EmailPreferences initialPreferences={initialPreferences} />
     
     <div class="profile-actions">
       <a href="/admin/new-thought" class="action-btn">Create New Thought</a>
@@ -259,5 +269,13 @@ const hasGoogleAccount = !!user.googleId;
 
   .connect-button {
     flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    .profile-container {
+      max-width: 100%;
+      padding: 1rem;
+      margin: 1rem;
+    }
   }
 </style>

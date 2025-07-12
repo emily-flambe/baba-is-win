@@ -1,0 +1,35 @@
+# Project Identity & Configuration
+
+ProjectIdentity:
+  name: "Baba Is Win - Personal Website & Portfolio"
+  description: "Personal website and portfolio project built with modern web technologies"
+  tech_stack:
+    - "Astro: Static site generation with dynamic capabilities"
+    - "TypeScript: Type safety for all code"
+    - "Cloudflare: Pages for hosting, D1 for database, Workers for serverless functions"
+    - "Content Management: File-based content with frontmatter metadata"
+
+ProjectStructure:
+  content_directories:
+    - "src/data/blog-posts/published/"
+    - "src/data/thoughts/published/"
+    - "public/assets/ (with proper subdirectories)"
+  key_files:
+    - "Content interface for easy content creation"
+    - "Migration scripts for Cloudflare D1"
+
+DevelopmentCommands:
+  local_dev: "npm run dev"
+  build: "npm run build"
+  test: "npm test"
+  deploy: "Cloudflare Pages with automatic deployments"
+
+WorktreeManagement:
+  location: "worktrees/ folder"
+  naming: "worktrees/[feature-name]"
+  purpose: "Keep repository organized with isolated feature development"
+
+PullRequestGuidelines:
+  workflow: "Share PR URLs immediately after creation"
+  testing: "Test builds locally before deployment"
+  asset_organization: "Maintain clean asset organization"

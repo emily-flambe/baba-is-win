@@ -1,0 +1,21 @@
+NEW BLOG POST: {{title}}
+
+Hi {{user_name}},
+
+I've published a new blog post that you might find interesting:
+
+{{title}}
+{{description}}
+
+Published on: {{publish_date}}
+Tags: {{tags}}
+
+Read the full post: {{url}}
+
+Thanks for being a subscriber!
+
+Best regards,
+{{site_name}}
+
+---
+To unsubscribe from these notifications, visit: {{unsubscribe_url}}

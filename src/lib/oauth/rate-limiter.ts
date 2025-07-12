@@ -14,10 +14,21 @@ interface AttemptRecord {
 export class OAuthRateLimiter {
   private attempts: Map<string, AttemptRecord[]> = new Map();
   private readonly windowMs = 15 * 60 * 1000; // 15 minutes
-  private readonly isDevelopment = typeof process !== 'undefined' && 
-    (process.env.NODE_ENV === 'development' || process.env.ENVIRONMENT === 'preview');
+  private readonly isDevelopment: boolean;
+  
+  constructor(private env?: any) {
+    this.isDevelopment = typeof process !== 'undefined' && 
+      (process.env.NODE_ENV === 'development' || 
+       process.env.ENVIRONMENT === 'preview' ||
+       env?.ENVIRONMENT === 'preview');
+  }
   
   async checkRateLimit(request: Request): Promise<RateLimitResult> {
+    // Allow bypassing rate limits in development or if explicitly disabled
+    if (this.isDevelopment) {
+      return { allowed: true, retryAfter: 0 };
+    }
+
     const clientId = this.getClientIdentifier(request);
     const now = Date.now();
 
@@ -65,8 +76,8 @@ export class OAuthRateLimiter {
   }
 
   private checkGeneralRateLimit(attempts: AttemptRecord[]): RateLimitResult {
-    // More lenient limits for development/preview
-    const limit = this.isDevelopment ? 50 : 10; // 50 for dev, 10 for prod
+    // More lenient limits for normal usage
+    const limit = this.isDevelopment ? 100 : 30; // 100 for dev, 30 for prod
     if (attempts.length >= limit) {
       return {
         allowed: false,
@@ -79,8 +90,8 @@ export class OAuthRateLimiter {
 
   private checkFailureRateLimit(attempts: AttemptRecord[]): RateLimitResult {
     const failures = attempts.filter(a => !a.success);
-    // More lenient limits for development/preview
-    const limit = this.isDevelopment ? 20 : 5; // 20 for dev, 5 for prod
+    // More lenient limits for normal usage
+    const limit = this.isDevelopment ? 50 : 15; // 50 for dev, 15 for prod
     
     if (failures.length >= limit) {
       return {
@@ -93,15 +104,15 @@ export class OAuthRateLimiter {
   }
 
   private checkBurstLimit(attempts: AttemptRecord[]): RateLimitResult {
-    // Check for burst activity - more lenient for development
+    // Check for burst activity - more lenient for normal usage
     const burstWindow = 60000; // 1 minute
     const now = Date.now();
     const burstAttempts = attempts.filter(
       a => now - a.timestamp < burstWindow
     );
 
-    // More lenient limits for development/preview
-    const limit = this.isDevelopment ? 20 : 5; // 20 for dev, 5 for prod
+    // More lenient limits for normal usage
+    const limit = this.isDevelopment ? 50 : 15; // 50 for dev, 15 for prod
     
     if (burstAttempts.length >= limit) {
       return {

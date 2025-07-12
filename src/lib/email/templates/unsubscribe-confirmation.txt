@@ -1,0 +1,15 @@
+SUCCESSFULLY UNSUBSCRIBED FROM {{site_name}}
+
+Hi {{user_name}},
+
+We've successfully unsubscribed you from {{site_name}} email notifications.
+
+You will no longer receive:
+- Blog post notifications
+- Thought updates
+- Announcements
+
+We're sorry to see you go, but we understand. If you change your mind, you can always resubscribe by visiting: {{site_url}}/signup
+
+Best regards,
+{{site_name}}

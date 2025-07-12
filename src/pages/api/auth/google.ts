@@ -5,10 +5,11 @@ import { OAuthRateLimiter } from '../../../lib/oauth/rate-limiter';
 import { OAuthRequestValidator } from '../../../lib/oauth/validation';
 import { OAuthSecurityMonitor } from '../../../lib/oauth/security-monitor';
 
-const rateLimiter = new OAuthRateLimiter();
-
 export const GET: APIRoute = async ({ request, locals }) => {
   try {
+    const env = locals.runtime.env;
+    const rateLimiter = new OAuthRateLimiter(env);
+    
     // Rate limiting check
     const rateLimit = await rateLimiter.checkRateLimit(request);
     if (!rateLimit.allowed) {

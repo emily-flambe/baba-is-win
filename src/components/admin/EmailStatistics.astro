@@ -1,0 +1,238 @@
+---
+export interface EmailStats {
+  blog: number;
+  thought: number;
+  announcement: number;
+  total: number;
+}
+
+export interface Props {
+  stats: EmailStats;
+}
+
+const { stats } = Astro.props;
+---
+
+<div class="email-statistics">
+  <div class="statistics-header">
+    <h2>Subscriber Statistics</h2>
+    <p>Breakdown of subscribers by content type</p>
+  </div>
+  
+  <div class="statistics-grid">
+    <div class="statistic-item">
+      <div class="statistic-icon">📝</div>
+      <div class="statistic-content">
+        <div class="statistic-number">{stats.blog}</div>
+        <div class="statistic-label">Blog Subscribers</div>
+        <div class="statistic-description">Users who receive blog post notifications</div>
+      </div>
+    </div>
+    
+    <div class="statistic-item">
+      <div class="statistic-icon">💭</div>
+      <div class="statistic-content">
+        <div class="statistic-number">{stats.thought}</div>
+        <div class="statistic-label">Thought Subscribers</div>
+        <div class="statistic-description">Users who receive thought notifications</div>
+      </div>
+    </div>
+    
+    <div class="statistic-item">
+      <div class="statistic-icon">📢</div>
+      <div class="statistic-content">
+        <div class="statistic-number">{stats.announcement}</div>
+        <div class="statistic-label">Announcement Subscribers</div>
+        <div class="statistic-description">Users who receive announcement notifications</div>
+      </div>
+    </div>
+    
+    <div class="statistic-item featured">
+      <div class="statistic-icon">👥</div>
+      <div class="statistic-content">
+        <div class="statistic-number">{stats.total}</div>
+        <div class="statistic-label">Total Unique Subscribers</div>
+        <div class="statistic-description">Total number of unique email subscribers</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="statistics-chart">
+    <h3>Subscription Distribution</h3>
+    <div class="chart-container">
+      <div class="chart-bar">
+        <div class="chart-segment blog" style={`width: ${stats.total > 0 ? (stats.blog / stats.total * 100) : 0}%`}>
+          <span class="chart-label">Blog</span>
+        </div>
+      </div>
+      <div class="chart-bar">
+        <div class="chart-segment thought" style={`width: ${stats.total > 0 ? (stats.thought / stats.total * 100) : 0}%`}>
+          <span class="chart-label">Thoughts</span>
+        </div>
+      </div>
+      <div class="chart-bar">
+        <div class="chart-segment announcement" style={`width: ${stats.total > 0 ? (stats.announcement / stats.total * 100) : 0}%`}>
+          <span class="chart-label">Announcements</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .email-statistics {
+    margin-bottom: 2rem;
+  }
+
+  .statistics-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .statistics-header h2 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-main);
+    font-size: 1.5rem;
+  }
+
+  .statistics-header p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .statistics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .statistic-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--text-secondary);
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: all 0.2s ease;
+  }
+
+  .statistic-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .statistic-item.featured {
+    background: linear-gradient(135deg, var(--primary-color) 0%, rgba(102, 126, 234, 0.1) 100%);
+    border-color: var(--primary-color);
+  }
+
+  .statistic-icon {
+    font-size: 2rem;
+    opacity: 0.8;
+  }
+
+  .statistic-content {
+    flex: 1;
+  }
+
+  .statistic-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-main);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .statistic-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 0.25rem;
+  }
+
+  .statistic-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+
+  .statistics-chart {
+    background: var(--bg-secondary);
+    border: 1px solid var(--text-secondary);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .statistics-chart h3 {
+    margin: 0 0 1rem 0;
+    color: var(--text-main);
+    font-size: 1.1rem;
+  }
+
+  .chart-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .chart-bar {
+    background: var(--bg-main);
+    border-radius: 4px;
+    height: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chart-segment {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    color: white;
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: width 0.3s ease;
+    min-width: 60px;
+  }
+
+  .chart-segment.blog {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .chart-segment.thought {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  }
+
+  .chart-segment.announcement {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+  }
+
+  .chart-label {
+    white-space: nowrap;
+  }
+
+  @media (max-width: 768px) {
+    .statistics-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .statistic-item {
+      padding: 1rem;
+    }
+    
+    .statistic-icon {
+      font-size: 1.5rem;
+    }
+    
+    .statistic-number {
+      font-size: 1.5rem;
+    }
+    
+    .chart-segment {
+      font-size: 0.75rem;
+      padding: 0 0.5rem;
+    }
+  }
+</style>
