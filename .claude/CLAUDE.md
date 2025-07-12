@@ -16,6 +16,7 @@ Personal website and portfolio project built with modern web technologies.
 
 ## Development Workflows
 @include development-commands.yml#DevelopmentWorkflow
+@include development-commands.yml#DevelopmentServerRules
 @include development-commands.yml#DeploymentStrategy
 @include development-commands.yml#ContentGuidelines
 @include development-commands.yml#WorkflowStandards

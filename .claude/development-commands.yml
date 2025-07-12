@@ -5,6 +5,11 @@ DevelopmentWorkflow:
   build_validation: "npm run build"
   testing_suite: "npm test"
   
+DevelopmentServerRules:
+  background_execution: "NEVER start development servers with & (background execution)"
+  rationale: "Background servers can cause port conflicts, zombie processes, and debugging difficulties"
+  correct_approach: "Always run development servers in foreground for proper control and monitoring"
+  
 AstroFrameworkIssues:
   common_problems:
     - "Build failures due to import path issues"
