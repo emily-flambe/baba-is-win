@@ -42,4 +42,3 @@ coverage/
 worker-configuration.d.ts
 
 # Claude Code project-specific configuration
-.claude/
