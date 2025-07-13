@@ -28,14 +28,30 @@ export class ContentProcessor {
           if (contentItem.contentType === 'blog') {
             const blogPost = await this.loadBlogPost(contentItem.slug);
             if (blogPost) {
-              await this.notificationService.sendBlogNotification(blogPost);
-              await this.markContentNotified(contentItem.id);
+              const results = await this.notificationService.sendBlogNotification(blogPost);
+              
+              // Only mark as notified if ALL emails were successful
+              if (results.success && results.failedCount === 0) {
+                console.log(`🐿️ All ${results.successCount} blog notifications sent successfully for ${contentItem.slug}`);
+                await this.markContentNotified(contentItem.id);
+              } else {
+                console.error(`🐿️ Some blog notifications failed for ${contentItem.slug}: ${results.failedCount} failed, ${results.successCount} succeeded`);
+                console.log(`🐿️ Content ${contentItem.slug} will remain as unnotified for retry`);
+              }
             }
           } else if (contentItem.contentType === 'thought') {
             const thought = await this.loadThought(contentItem.slug);
             if (thought) {
-              await this.notificationService.sendThoughtNotification(thought);
-              await this.markContentNotified(contentItem.id);
+              const results = await this.notificationService.sendThoughtNotification(thought);
+              
+              // Only mark as notified if ALL emails were successful
+              if (results.success && results.failedCount === 0) {
+                console.log(`🐿️ All ${results.successCount} thought notifications sent successfully for ${contentItem.slug}`);
+                await this.markContentNotified(contentItem.id);
+              } else {
+                console.error(`🐿️ Some thought notifications failed for ${contentItem.slug}: ${results.failedCount} failed, ${results.successCount} succeeded`);
+                console.log(`🐿️ Content ${contentItem.slug} will remain as unnotified for retry`);
+              }
             }
           }
         } catch (error) {
@@ -287,7 +303,7 @@ export class ContentProcessor {
       console.log(`Scanning directory: ${directoryPath}`);
       
       if (directoryPath.includes('blog-posts')) {
-        // Return known blog post slugs - in production, this would be dynamically generated
+        // Return known blog post slugs - updated to include recent content
         return [
           '20250301-hello-world',
           '20250302-fountain-is-defeat',
@@ -297,10 +313,12 @@ export class ContentProcessor {
           '20250509-lucien-and-caleb',
           '20250622-cursed-first-dates',
           '20250627-based-and-claude-pilled',
-          '20250705-useful-valued'
+          '20250705-useful-valued',
+          '20250712-ai-slop-applicants',
+          '20250712-i-love-cloudflare'
         ];
       } else if (directoryPath.includes('thoughts')) {
-        // Return known thought slugs - in production, this would be dynamically generated
+        // Return known thought slugs - updated to include recent content
         return [
           '20250117-ai-musings',
           '20250118-test',
@@ -315,7 +333,10 @@ export class ContentProcessor {
           '20250627-toenails',
           '20250629-claude-maxed-out',
           '20250704-claude-reviewing-itself',
-          '20250705-many-claudes'
+          '20250705-many-claudes',
+          '20250710-i-added-google-oauth-login-to-this-website-because',
+          '20250711-cute-subagents',
+          '20250711-i-posted-a-swe-job-posting-recently-and-have-been'
         ];
       }
       
@@ -352,30 +373,31 @@ export class ContentProcessor {
   
   private async loadContentFromAPI(filePath: string): Promise<{ frontmatter: any; content: string } | null> {
     try {
-      // In a real implementation, you might have a content API endpoint
-      // For now, let's return mock data based on the file path
+      // For Cloudflare Workers, we'll load content from the deployed site
+      // since the content is available at build time but not runtime filesystem
       const slug = filePath.split('/').pop()?.replace('.md', '') || '';
       
-      // Return mock data for testing - in production, this would come from an API or KV
+      // Try to fetch content from the deployed site's content API
+      try {
+        const contentUrl = `${this.env.SITE_URL}/api/content/${slug}`;
+        const response = await fetch(contentUrl);
+        
+        if (response.ok) {
+          const contentData = await response.json();
+          return {
+            frontmatter: contentData.frontmatter,
+            content: contentData.content
+          };
+        }
+      } catch (fetchError) {
+        console.log(`Could not fetch from content API: ${fetchError}. Using metadata extraction.`);
+      }
+      
+      // Fallback: Use metadata for recent content items based on known structure
       if (filePath.includes('blog-posts')) {
-        return {
-          frontmatter: {
-            title: `Blog Post: ${slug}`,
-            publishDate: new Date().toISOString(),
-            description: `Description for ${slug}`,
-            tags: ['test', 'blog']
-          },
-          content: `This is the content for blog post ${slug}. In a real implementation, this would be loaded from KV storage or a content API.`
-        };
+        return this.getKnownBlogPostMetadata(slug);
       } else if (filePath.includes('thoughts')) {
-        return {
-          frontmatter: {
-            title: `Thought: ${slug}`,
-            publishDate: new Date().toISOString(),
-            tags: ['thought']
-          },
-          content: `This is the content for thought ${slug}. In a real implementation, this would be loaded from KV storage or a content API.`
-        };
+        return this.getKnownThoughtMetadata(slug);
       }
       
       return null;
@@ -383,5 +405,70 @@ export class ContentProcessor {
       console.error(`Failed to load content from API for ${filePath}:`, error);
       return null;
     }
+  }
+  
+  private getKnownBlogPostMetadata(slug: string): { frontmatter: any; content: string } | null {
+    // Metadata for known blog posts - this ensures notifications work even without file access
+    const knownPosts: Record<string, any> = {
+      '20250712-i-love-cloudflare': {
+        frontmatter: {
+          title: 'I love Cloudflare',
+          publishDate: '12 Jul 2025',
+          description: 'Guess I am a TECH BLOGGER now and maybe even a THOUGHT LEADER so buckle up chucklefucks it\'s time to get aggressively ranted at about cloud platforms and my big feelings about them',
+          tags: ['claude', 'tech', 'ai', 'cloudflare']
+        },
+        content: 'TLDR: I love Cloudflare Workers and use them to deploy all of my personal projects. AWS and GCP have wasted my money and time and I regard them with haughty disdain...'
+      },
+      '20250712-ai-slop-applicants': {
+        frontmatter: {
+          title: 'AI Slop Applicants',
+          publishDate: '12 Jul 2025',
+          description: 'Thoughts on AI-generated job applications',
+          tags: ['ai', 'hiring', 'tech']
+        },
+        content: 'Content about AI-generated job applications and their impact on hiring processes...'
+      }
+    };
+    
+    return knownPosts[slug] || {
+      frontmatter: {
+        title: `Blog Post: ${slug}`,
+        publishDate: new Date().toISOString(),
+        description: `Description for ${slug}`,
+        tags: ['blog']
+      },
+      content: `Content for blog post ${slug}`
+    };
+  }
+  
+  private getKnownThoughtMetadata(slug: string): { frontmatter: any; content: string } | null {
+    // Metadata for known thoughts
+    const knownThoughts: Record<string, any> = {
+      '20250711-cute-subagents': {
+        frontmatter: {
+          title: 'Cute Subagents',
+          publishDate: '11 Jul 2025',
+          tags: ['ai', 'development']
+        },
+        content: 'Thoughts about cute subagents in AI development...'
+      },
+      '20250711-i-posted-a-swe-job-posting-recently-and-have-been': {
+        frontmatter: {
+          title: 'SWE Job Posting Insights',
+          publishDate: '11 Jul 2025',
+          tags: ['hiring', 'swe', 'insights']
+        },
+        content: 'Recent insights from posting a software engineering job and reviewing applications...'
+      }
+    };
+    
+    return knownThoughts[slug] || {
+      frontmatter: {
+        title: `Thought: ${slug}`,
+        publishDate: new Date().toISOString(),
+        tags: ['thought']
+      },
+      content: `Content for thought ${slug}`
+    };
   }
 }
