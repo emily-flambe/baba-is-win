@@ -1,5 +1,9 @@
 name: Wait and Notify Subscribers
 
+# IMPORTANT: This workflow does NOT deploy code - Cloudflare Workers auto-deploys on push to main.
+# This workflow only waits for auto-deployment to complete, then triggers email notifications.
+# DO NOT add wrangler deploy steps here - they conflict with auto-deployment.
+
 on:
   push:
     branches: [main]

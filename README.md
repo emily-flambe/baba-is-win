@@ -108,10 +108,25 @@ make cleanup                       # Remove expired sessions
 - **User Management**: Detailed admin instructions
 - **API Reference**: Complete endpoint documentation
 
+## 🚀 Deployment
+
+### Cloudflare Workers Auto-Deployment
+This project uses **Cloudflare Workers auto-deployment**:
+- **Automatic**: Deploys on every push to `main` branch
+- **No CI/CD deployment needed**: Cloudflare handles builds and deployment
+- **GitHub Actions**: Only waits for auto-deployment, then triggers email notifications
+
+⚠️ **IMPORTANT**: Do NOT add `wrangler deploy` to CI/CD workflows - it conflicts with auto-deployment.
+
+### Email Notification System
+- **Cron Jobs**: Runs every 6 hours automatically (`0 */6 * * *`)
+- **Manual Trigger**: Available at `/api/admin/trigger-content-sync`
+- **GitHub Integration**: Triggers notifications after content changes
+
 ## 🛠️ Built With
 
 - **[Astro](https://astro.build)** - Static site generator
-- **[Cloudflare Workers](https://workers.cloudflare.com)** - Serverless runtime
+- **[Cloudflare Workers](https://workers.cloudflare.com)** - Serverless runtime with auto-deployment
 - **[Cloudflare D1](https://developers.cloudflare.com/d1/)** - SQLite database
 - **[Svelte](https://svelte.dev)** - Interactive components
 - **TypeScript** - Type safety and better DX
