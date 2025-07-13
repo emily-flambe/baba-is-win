@@ -28,14 +28,30 @@ export class ContentProcessor {
           if (contentItem.contentType === 'blog') {
             const blogPost = await this.loadBlogPost(contentItem.slug);
             if (blogPost) {
-              await this.notificationService.sendBlogNotification(blogPost);
-              await this.markContentNotified(contentItem.id);
+              const results = await this.notificationService.sendBlogNotification(blogPost);
+              
+              // Only mark as notified if ALL emails were successful
+              if (results.success && results.failedCount === 0) {
+                console.log(`🐿️ All ${results.successCount} blog notifications sent successfully for ${contentItem.slug}`);
+                await this.markContentNotified(contentItem.id);
+              } else {
+                console.error(`🐿️ Some blog notifications failed for ${contentItem.slug}: ${results.failedCount} failed, ${results.successCount} succeeded`);
+                console.log(`🐿️ Content ${contentItem.slug} will remain as unnotified for retry`);
+              }
             }
           } else if (contentItem.contentType === 'thought') {
             const thought = await this.loadThought(contentItem.slug);
             if (thought) {
-              await this.notificationService.sendThoughtNotification(thought);
-              await this.markContentNotified(contentItem.id);
+              const results = await this.notificationService.sendThoughtNotification(thought);
+              
+              // Only mark as notified if ALL emails were successful
+              if (results.success && results.failedCount === 0) {
+                console.log(`🐿️ All ${results.successCount} thought notifications sent successfully for ${contentItem.slug}`);
+                await this.markContentNotified(contentItem.id);
+              } else {
+                console.error(`🐿️ Some thought notifications failed for ${contentItem.slug}: ${results.failedCount} failed, ${results.successCount} succeeded`);
+                console.log(`🐿️ Content ${contentItem.slug} will remain as unnotified for retry`);
+              }
             }
           }
         } catch (error) {

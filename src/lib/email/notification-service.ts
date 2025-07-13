@@ -45,44 +45,50 @@ export class EmailNotificationService {
     this.eventLogger = new EmailEventLogger(env, authDB);
   }
   
-  async sendBlogNotification(post: BlogPost): Promise<void> {
-    console.log(`Processing blog notification for: ${post.title}`);
+  async sendBlogNotification(post: BlogPost): Promise<{ success: boolean; failedCount: number; successCount: number }> {
+    console.log(`🐿️ Processing blog notification for: ${post.title}`);
     
     // Get subscribers for blog updates
     const subscribers = await this.getSubscribersForContentType('blog');
     
     if (subscribers.length === 0) {
-      console.log('No blog subscribers found');
-      return;
+      console.log('🐿️ No blog subscribers found');
+      return { success: true, failedCount: 0, successCount: 0 };
     }
     
-    console.log(`Found ${subscribers.length} blog subscribers`);
+    console.log(`🐿️ Found ${subscribers.length} blog subscribers`);
     
     // Create notifications for each subscriber
     const notifications = await this.createNotificationsForSubscribers(subscribers, post, 'blog');
     
-    // Process notifications in batches
-    await this.processBatchNotifications(notifications, post);
+    // Process notifications in batches and return results
+    const results = await this.processBatchNotifications(notifications, post);
+    console.log(`🐿️ Notification results: ${results.successCount} success, ${results.failedCount} failed`);
+    
+    return results;
   }
   
-  async sendThoughtNotification(thought: Thought): Promise<void> {
-    console.log(`Processing thought notification for: ${thought.title}`);
+  async sendThoughtNotification(thought: Thought): Promise<{ success: boolean; failedCount: number; successCount: number }> {
+    console.log(`🐿️ Processing thought notification for: ${thought.title}`);
     
     // Get subscribers for thought updates
     const subscribers = await this.getSubscribersForContentType('thought');
     
     if (subscribers.length === 0) {
-      console.log('No thought subscribers found');
-      return;
+      console.log('🐿️ No thought subscribers found');
+      return { success: true, failedCount: 0, successCount: 0 };
     }
     
-    console.log(`Found ${subscribers.length} thought subscribers`);
+    console.log(`🐿️ Found ${subscribers.length} thought subscribers`);
     
     // Create notifications for each subscriber
     const notifications = await this.createNotificationsForSubscribers(subscribers, thought, 'thought');
     
-    // Process notifications in batches
-    await this.processBatchNotifications(notifications, thought);
+    // Process notifications in batches and return results
+    const results = await this.processBatchNotifications(notifications, thought);
+    console.log(`🐿️ Notification results: ${results.successCount} success, ${results.failedCount} failed`);
+    
+    return results;
   }
   
   private async getSubscribersForContentType(contentType: 'blog' | 'thought'): Promise<any[]> {
@@ -136,26 +142,44 @@ export class EmailNotificationService {
   private async processBatchNotifications(
     notifications: EmailNotification[], 
     content: BlogPost | Thought
-  ): Promise<void> {
+  ): Promise<{ success: boolean; failedCount: number; successCount: number }> {
     const batchSize = 10; // Process 10 notifications at a time
+    let successCount = 0;
+    let failedCount = 0;
     
     for (let i = 0; i < notifications.length; i += batchSize) {
       const batch = notifications.slice(i, i + batchSize);
       
-      console.log(`Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(notifications.length / batchSize)}`);
+      console.log(`🐿️ Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(notifications.length / batchSize)}`);
       
-      await Promise.all(batch.map(notification => 
+      const batchResults = await Promise.allSettled(batch.map(notification => 
         this.processNotification(notification, content)
       ));
       
+      // Count successes and failures
+      batchResults.forEach(result => {
+        if (result.status === 'fulfilled') {
+          successCount++;
+        } else {
+          failedCount++;
+          console.error(`🐿️ Notification failed:`, result.reason);
+        }
+      });
+      
       // Rate limiting: wait 2 seconds between batches
       if (i + batchSize < notifications.length) {
-        console.log('Waiting 2 seconds before next batch...');
+        console.log('🐿️ Waiting 2 seconds before next batch...');
         await new Promise(resolve => setTimeout(resolve, 2000));
       }
     }
     
-    console.log(`Completed processing ${notifications.length} notifications`);
+    console.log(`🐿️ Completed processing ${notifications.length} notifications: ${successCount} success, ${failedCount} failed`);
+    
+    return {
+      success: failedCount === 0,
+      successCount,
+      failedCount
+    };
   }
   
   private async processNotification(
