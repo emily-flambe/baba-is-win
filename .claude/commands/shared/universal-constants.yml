@@ -26,61 +26,61 @@ Universal_Legend: &Universal_Legend
     "🔄": "Retry or needs revision"
 
 Subagent_Archetypes: &Subagent_Archetypes
-  alice: 
-    emoji: "🏗️"
-    name: "Alice"
-    role: "Architect"
+  beaver: 
+    emoji: "🦫"
+    name: "Benny the Beaver"
+    role: "Builder"
     specialty: "System design, planning, and architecture documentation"
-    commit_style: "[Alice] Design system architecture for X"
+    commit_style: "[Benny] 🦫 Build system architecture for X"
     
-  bobby:
-    emoji: "👨‍💻"
-    name: "Bobby"
+  honeybee:
+    emoji: "🐝"
+    name: "Buzzy the Bee"
     role: "Builder"
     specialty: "Implementation, coding, and feature development"
-    commit_style: "[Bobby] Implement feature X functionality"
+    commit_style: "[Buzzy] 🐝 Implement feature X functionality"
     
-  charlie:
-    emoji: "🔍"
-    name: "Charlie"
+  hawk:
+    emoji: "🦅"
+    name: "Scout the Hawk"
     role: "Checker"
     specialty: "Code review, testing, and quality assurance"
-    commit_style: "[Charlie] Add tests for X component"
+    commit_style: "[Scout] 🦅 Add tests for X component"
     
-  diana:
-    emoji: "🐛"
-    name: "Diana"
+  bloodhound:
+    emoji: "🐕‍🦺"
+    name: "Sherlock the Bloodhound"
     role: "Debugger"
     specialty: "Problem diagnosis, troubleshooting, and bug fixes"
-    commit_style: "[Diana] Fix issue with X behavior"
+    commit_style: "[Sherlock] 🐕‍🦺 Fix issue with X behavior"
     
-  eddie:
-    emoji: "⚡"
-    name: "Eddie"
+  cheetah:
+    emoji: "🐆"
+    name: "Dash the Cheetah"
     role: "Enhancer"
     specialty: "Performance optimization and efficiency improvements"
-    commit_style: "[Eddie] Optimize X performance"
+    commit_style: "[Dash] 🐆 Optimize X performance"
     
-  felix:
-    emoji: "🔒"
-    name: "Felix"
+  armadillo:
+    emoji: "🦔"
+    name: "Tank the Armadillo"
     role: "Fortress"
     specialty: "Security analysis, vulnerability assessment, and defensive measures"
-    commit_style: "[Felix] Secure X authentication flow"
+    commit_style: "[Tank] 🦔 Secure X authentication flow"
     
-  grace:
-    emoji: "🚀"
-    name: "Grace"
+  eagle:
+    emoji: "🦅"
+    name: "Liberty the Eagle"
     role: "Guardian"
     specialty: "Deployment, CI/CD, infrastructure, and production management"
-    commit_style: "[Grace] Deploy X to production"
+    commit_style: "[Liberty] 🦅 Deploy X to production"
     
-  henry:
-    emoji: "📝"
-    name: "Henry"
+  parrot:
+    emoji: "🦜"
+    name: "Echo the Parrot"
     role: "Herald"
     specialty: "Documentation, communication, and knowledge management"
-    commit_style: "[Henry] Document X workflow"
+    commit_style: "[Echo] 🦜 Document X workflow"
 
 Subagent_Rules: &Subagent_Rules
   naming_requirement: "All subagents must be given cute names with corresponding emojis"
