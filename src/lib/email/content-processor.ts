@@ -112,12 +112,12 @@ export class ContentProcessor {
         tags: content.tags || []
       });
     } else if (existingItem.contentHash !== contentHash) {
-      // Content has changed - update and mark for re-notification
-      console.log(`Content changed for: ${content.slug}`);
+      // Content has changed - update but do NOT re-notify for modifications
+      console.log(`Content modified for: ${content.slug} (no notification will be sent)`);
       
       await this.updateContentItem(existingItem.id, {
         contentHash,
-        notificationSent: false,
+        // notificationSent: false, // Removed - don't reset notification status for modifications
         updatedAt: new Date()
       });
     }
