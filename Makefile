@@ -1,7 +1,7 @@
 .PHONY: astro dev dev-clean dev-restart check-db kill-servers migrate-db
 .PHONY: users count info delete test-user find logout recent active cleanup stats
 .PHONY: users-list-prod sessions-cleanup-prod db-stats-prod
-.PHONY: help help-admin content
+.PHONY: help help-admin content branch-cleanup
 
 # Development Commands
 # ====================
@@ -205,6 +205,50 @@ db-stats-prod:
 	@echo "📊 Production Database Statistics:"
 	npx wrangler d1 execute baba-is-win-db --remote --command="SELECT 'users' as table_name, COUNT(*) as row_count FROM users UNION ALL SELECT 'sessions', COUNT(*) FROM sessions UNION ALL SELECT 'user_profiles', COUNT(*) FROM user_profiles;"
 
+# Git Management
+# ===============
+
+# Clean up branches and worktrees without open pull requests
+branch-cleanup:
+	@echo "🌿 Cleaning up branches, worktrees, and remotes without open pull requests..."
+	@echo "⚠️  This will delete local branches, remote branches, and worktrees that don't have open PRs!"
+	@echo -n "Type 'CLEANUP' to confirm: " && read confirm && [ "$$confirm" = "CLEANUP" ] || (echo "❌ Cancelled" && exit 1)
+	@echo "Fetching latest changes..."
+	@git fetch --all --prune
+	@echo "Getting list of branches with open PRs..."
+	@BRANCHES_WITH_PRS=$$(gh pr list --state open --json headRefName --jq '.[].headRefName' 2>/dev/null | sort | uniq); \
+	ALL_LOCAL_BRANCHES=$$(git for-each-ref --format='%(refname:short)' refs/heads/ | grep -v '^main$$' | grep -v '^master$$'); \
+	ALL_REMOTE_BRANCHES=$$(git for-each-ref --format='%(refname:short)' refs/remotes/origin/ | sed 's|^origin/||' | grep -v '^main$$' | grep -v '^master$$' | grep -v '^HEAD$$'); \
+	ALL_WORKTREES=$$(git worktree list --porcelain | grep '^worktree ' | sed 's/^worktree //' | grep 'worktrees/' | xargs -I {} basename {}); \
+	echo "🔍 Checking worktrees..."; \
+	for worktree in $$ALL_WORKTREES; do \
+		if ! echo "$$BRANCHES_WITH_PRS" | grep -q "^$$worktree$$"; then \
+			echo "  🗑️  Removing worktree: $$worktree"; \
+			git worktree remove "worktrees/$$worktree" --force 2>/dev/null || true; \
+		else \
+			echo "  ✅ Keeping worktree: $$worktree (has open PR)"; \
+		fi; \
+	done; \
+	echo "🔍 Checking local branches..."; \
+	for branch in $$ALL_LOCAL_BRANCHES; do \
+		if ! echo "$$BRANCHES_WITH_PRS" | grep -q "^$$branch$$"; then \
+			echo "  🗑️  Deleting local branch: $$branch"; \
+			git branch -D "$$branch" 2>/dev/null || true; \
+		else \
+			echo "  ✅ Keeping local branch: $$branch (has open PR)"; \
+		fi; \
+	done; \
+	echo "🔍 Checking remote branches..."; \
+	for branch in $$ALL_REMOTE_BRANCHES; do \
+		if ! echo "$$BRANCHES_WITH_PRS" | grep -q "^$$branch$$"; then \
+			echo "  🗑️  Deleting remote branch: $$branch"; \
+			git push origin --delete "$$branch" 2>/dev/null || true; \
+		else \
+			echo "  ✅ Keeping remote branch: $$branch (has open PR)"; \
+		fi; \
+	done; \
+	echo "✅ Branch and worktree cleanup completed!"
+
 # Help & Documentation
 # =====================
 
@@ -235,6 +279,7 @@ help:
 	@echo "🧹 Maintenance:"
 	@echo "  make cleanup            - Remove expired sessions"
 	@echo "  make dev-clean          - Restart with fresh database"
+	@echo "  make branch-cleanup     - Delete branches & worktrees without open PRs"
 	@echo
 	@echo "💡 Examples:"
 	@echo "  make find Q=test"
@@ -265,6 +310,9 @@ help-admin:
 	@echo "  make active             - Active sessions"
 	@echo "  make stats              - Quick stats"
 	@echo "  make cleanup            - Clean expired sessions"
+	@echo
+	@echo "🌿 Git Management:"
+	@echo "  make branch-cleanup     - Delete branches & worktrees without open PRs"
 	@echo
 	@echo "🌐 Production (requires PROD=true):"
 	@echo "  make users-list-prod PROD=true"
