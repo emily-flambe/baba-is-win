@@ -5,6 +5,7 @@ import { EmailTemplateEngine, type BlogPost, type Thought } from './template-eng
 import { UnsubscribeService } from './unsubscribe-service';
 import { EmailErrorHandler } from './error-handler';
 import { EmailMonitor } from '../monitoring/email-monitor';
+import { EmailEventLogger } from '../monitoring/email-event-logger';
 
 export interface EmailNotification {
   id: string;
@@ -30,6 +31,7 @@ export class EmailNotificationService {
   private unsubscribeService: UnsubscribeService;
   private errorHandler: EmailErrorHandler;
   private monitor: EmailMonitor;
+  private eventLogger: EmailEventLogger;
   
   constructor(
     private env: Env,
@@ -40,6 +42,7 @@ export class EmailNotificationService {
     this.unsubscribeService = new UnsubscribeService(env, authDB);
     this.errorHandler = new EmailErrorHandler(authDB);
     this.monitor = new EmailMonitor(env, authDB);
+    this.eventLogger = new EmailEventLogger(env, authDB);
   }
   
   async sendBlogNotification(post: BlogPost): Promise<void> {
@@ -161,31 +164,62 @@ export class EmailNotificationService {
   ): Promise<void> {
     const startTime = Date.now();
     
+    console.log(`[Notification Service] Processing notification ${notification.id} for user ${notification.userId}`);
+    console.log(`[Notification Service] Content type: ${notification.contentType}, title: ${notification.contentTitle}`);
+    console.log(`[Notification Service] Notification details:`, {
+      id: notification.id,
+      userId: notification.userId,
+      contentType: notification.contentType,
+      contentId: notification.contentId,
+      retryCount: notification.retryCount,
+      createdAt: notification.createdAt
+    });
+    
     try {
-      console.log(`Processing notification ${notification.id} for user ${notification.userId}`);
-      
       // Check circuit breaker
+      console.log(`[Notification Service] Checking circuit breaker status...`);
       if (this.monitor.isCircuitBreakerOpen()) {
+        console.error(`[Notification Service] Circuit breaker is open, failing notification ${notification.id}`);
         throw new Error('Email service circuit breaker is open');
       }
+      console.log(`[Notification Service] Circuit breaker is closed, proceeding with notification`);
       
       // Get user details
+      console.log(`[Notification Service] Fetching user details for userId: ${notification.userId}`);
       const user = await this.authDB.getUserById(notification.userId);
       if (!user) {
+        console.error(`[Notification Service] User not found: ${notification.userId}`);
         throw new Error(`User not found: ${notification.userId}`);
       }
       
-      console.log(`Sending ${notification.contentType} notification to ${user.email}`);
+      console.log(`[Notification Service] User found:`, {
+        id: user.id,
+        email: user.email,
+        emailSubscription: user.emailSubscription,
+        subscriptionPreferences: user.subscriptionPreferences
+      });
+      
+      console.log(`[Notification Service] Sending ${notification.contentType} notification to ${user.email}`);
       
       // Generate unsubscribe URL
+      console.log(`[Notification Service] Generating unsubscribe URL for user ${user.id}`);
       const unsubscribeUrl = await this.unsubscribeService.generateUnsubscribeUrl(user.id);
+      console.log(`[Notification Service] Unsubscribe URL generated: ${unsubscribeUrl}`);
       
       // Render email template
+      console.log(`[Notification Service] Rendering ${notification.contentType} email template...`);
       const emailContent = notification.contentType === 'blog' 
         ? await this.templateEngine.renderBlogNotification(user, content as BlogPost, unsubscribeUrl)
         : await this.templateEngine.renderThoughtNotification(user, content as Thought, unsubscribeUrl);
       
+      console.log(`[Notification Service] Email template rendered:`, {
+        subject: emailContent.subject,
+        htmlLength: emailContent.html?.length || 0,
+        textLength: emailContent.text?.length || 0
+      });
+      
       // Send email
+      console.log(`[Notification Service] Initiating Gmail API send for notification ${notification.id}`);
       const emailMessageId = await this.gmailAuth.sendEmail(
         user.email,
         emailContent.subject,
@@ -193,7 +227,10 @@ export class EmailNotificationService {
         emailContent.text
       );
       
+      console.log(`[Notification Service] Gmail API send successful, message ID: ${emailMessageId}`);
+      
       // Update notification status in database
+      console.log(`[Notification Service] Updating notification ${notification.id} status to 'sent'`);
       await this.authDB.updateNotificationStatus(
         notification.id,
         'sent',
@@ -207,6 +244,7 @@ export class EmailNotificationService {
       
       // Track success metrics
       const duration = Date.now() - startTime;
+      console.log(`[Notification Service] Recording success metrics for notification ${notification.id}, duration: ${duration}ms`);
       await this.monitor.logPerformanceMetric('send_notification', duration, true, {
         notification_id: notification.id,
         content_type: notification.contentType,
@@ -216,23 +254,47 @@ export class EmailNotificationService {
       await this.monitor.trackEmailEvent('sent', notification.id, notification.userId);
       this.monitor.recordSuccess();
       
-      console.log(`Successfully sent notification ${notification.id} to ${user.email}`);
+      console.log(`[Notification Service] Successfully sent notification ${notification.id} to ${user.email}`);
       
     } catch (error) {
-      console.error(`Failed to send notification ${notification.id}:`, error);
+      console.error(`[Notification Service] Failed to send notification ${notification.id}:`, error);
+      console.error(`[Notification Service] Error details:`, {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+        notificationId: notification.id,
+        userId: notification.userId,
+        contentType: notification.contentType,
+        retryCount: notification.retryCount
+      });
+      
+      // Additional error context logging
+      if (error.message?.includes('Gmail API')) {
+        console.error(`[Notification Service] Gmail API specific error detected for notification ${notification.id}`);
+      }
+      if (error.message?.includes('token')) {
+        console.error(`[Notification Service] Token-related error detected for notification ${notification.id}`);
+      }
+      if (error.message?.includes('quota') || error.message?.includes('rate')) {
+        console.error(`[Notification Service] Rate limit/quota error detected for notification ${notification.id}`);
+      }
       
       // Track failure metrics
       const duration = Date.now() - startTime;
+      console.log(`[Notification Service] Recording failure metrics for notification ${notification.id}, duration: ${duration}ms`);
       await this.monitor.logPerformanceMetric('send_notification', duration, false, {
         notification_id: notification.id,
         content_type: notification.contentType,
         user_id: notification.userId,
-        error: error.message
+        error: error.message,
+        error_name: error.name,
+        error_stack: error.stack
       });
       
       this.monitor.recordFailure();
       
       // Handle error using error handler
+      console.log(`[Notification Service] Passing error to error handler for notification ${notification.id}`);
       const emailError = await this.errorHandler.handleEmailError(
         notification.id,
         error as Error,
@@ -243,7 +305,15 @@ export class EmailNotificationService {
         }
       );
       
+      console.log(`[Notification Service] Error handler returned:`, {
+        code: emailError.code,
+        message: emailError.message,
+        retriable: emailError.retriable,
+        retryAfter: emailError.retryAfter
+      });
+      
       // Update notification status in database
+      console.log(`[Notification Service] Updating notification ${notification.id} status to 'failed'`);
       await this.authDB.updateNotificationStatus(
         notification.id,
         'failed',
@@ -259,9 +329,9 @@ export class EmailNotificationService {
       if (EmailErrorHandler.isRetriable(emailError)) {
         const retryDelay = EmailErrorHandler.getRetryDelay(notification.retryCount);
         notification.retryAfter = Math.floor(Date.now() / 1000) + retryDelay;
-        console.log(`Notification ${notification.id} will be retried at ${new Date(notification.retryAfter * 1000)}`);
+        console.log(`[Notification Service] Notification ${notification.id} will be retried at ${new Date(notification.retryAfter * 1000)} (delay: ${retryDelay}s)`);
       } else {
-        console.log(`Notification ${notification.id} marked as permanently failed`);
+        console.log(`[Notification Service] Notification ${notification.id} marked as permanently failed - not retriable`);
       }
     }
   }
