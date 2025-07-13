@@ -101,7 +101,6 @@
 ### Subagent Workflow
 - All subagents must be given cute animal names with corresponding emojis
 - Commits should start with just the subagent emoji: 🐝 Brief description
-- **Task names must start with the archetype emoji when worked on by subagents**
 - Make frequent, small commits with concise, descriptive messages
 - Each subagent should maintain consistent personality and expertise area
 - Hand off work between subagents based on task requirements
