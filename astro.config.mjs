@@ -21,7 +21,7 @@ export default defineConfig({
       experimentalJsonConfig: true,
     },
   }),
-  site: 'https://astro-blog-template.netlify.app',
+  site: 'https://personal.emily-cogsdill.workers.dev',
   integrations: [mdx(), svelte()],
   devToolbar: {
     enabled: false
