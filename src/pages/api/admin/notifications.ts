@@ -41,35 +41,9 @@ async function getAdminUserFromToken(request: Request, env: any): Promise<any> {
 
 export const GET: APIRoute = async ({ request, locals }) => {
   try {
-    const adminUser = await getAdminUserFromToken(request, locals.runtime.env);
-    
-    if (!adminUser) {
-      return new Response(
-        JSON.stringify({ error: 'Admin access required' }),
-        { status: 403, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
     const db = new AuthDB(locals.runtime.env.DB);
-    const notificationService = new EmailNotificationService(locals.runtime.env, db);
-    const contentProcessor = new ContentProcessor(locals.runtime.env, db, notificationService);
 
-    // Get notification statistics
-    const stats = await notificationService.getNotificationStats();
-
-    // Get recent notifications (last 50)
-    const recentNotifications = await db.db.prepare(`
-      SELECT en.*, u.email as user_email, u.username
-      FROM email_notifications en
-      JOIN users u ON en.user_id = u.id
-      ORDER BY en.created_at DESC
-      LIMIT 50
-    `).all();
-
-    // Get content items that need notification
-    const unnotifiedContent = await db.getUnnotifiedContent();
-
-    // Get subscriber counts by content type
+    // Get subscriber counts by content type (public information)
     const blogSubscribers = await db.getSubscribersForContentType('blog');
     const thoughtSubscribers = await db.getSubscribersForContentType('thought');
     const announcementSubscribers = await db.getSubscribersForContentType('announcement');
@@ -83,29 +57,6 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
     return new Response(
       JSON.stringify({
-        stats,
-        recentNotifications: recentNotifications.results.map(notification => ({
-          id: notification.id,
-          userId: notification.user_id,
-          userEmail: notification.user_email,
-          username: notification.username,
-          contentType: notification.content_type,
-          contentId: notification.content_id,
-          contentTitle: notification.content_title,
-          contentUrl: notification.content_url,
-          status: notification.status,
-          createdAt: new Date(notification.created_at * 1000).toISOString(),
-          sentAt: notification.sent_at ? new Date(notification.sent_at * 1000).toISOString() : null,
-          errorMessage: notification.error_message
-        })),
-        unnotifiedContent: unnotifiedContent.map(content => ({
-          id: content.id,
-          slug: content.slug,
-          contentType: content.contentType,
-          title: content.title,
-          publishDate: content.publishDate.toISOString(),
-          notificationSent: content.notificationSent
-        })),
         subscriberStats
       }),
       { 

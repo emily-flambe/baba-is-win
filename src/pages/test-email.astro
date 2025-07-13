@@ -78,6 +78,30 @@
       <button type="button" onclick="checkSubscribers()">Check Subscribers</button>
     </form>
     
+    <hr style="margin: 2rem 0; border: 1px solid #ddd;">
+    
+    <h3>🔧 Admin Tools</h3>
+    <form id="subscribeForm" style="border: 1px solid #e0e0e0; padding: 1rem; border-radius: 4px; background: #fafafa;">
+      <div class="form-group">
+        <label for="userEmail">Subscribe User to Emails:</label>
+        <input type="email" id="userEmail" name="userEmail" placeholder="user@example.com" required>
+      </div>
+      
+      <div class="form-group">
+        <label style="font-weight: normal;">
+          <input type="checkbox" id="blogSub" checked> Blog Posts
+        </label>
+        <label style="font-weight: normal;">
+          <input type="checkbox" id="thoughtSub" checked> Thoughts  
+        </label>
+        <label style="font-weight: normal;">
+          <input type="checkbox" id="announceSub" checked> Announcements
+        </label>
+      </div>
+      
+      <button type="submit" style="background: #28a745;">Subscribe User</button>
+    </form>
+    
     <div id="result" class="result"></div>
   </div>
 
@@ -94,20 +118,20 @@
       return await response.json();
     }
     
-    async function checkSubscribers() {
+    window.checkSubscribers = async function() {
       showResult('Checking subscribers...', 'info');
       
       try {
         const response = await fetch('/api/admin/notifications');
         const data = await response.json();
         
-        if (data.success) {
+        if (response.ok && data.subscriberStats) {
           showResult(`📊 Subscriber Status:
           
-• Total users: ${data.stats?.totalUsers || 0}
-• Blog subscribers: ${data.stats?.blogSubscribers || 0}  
-• Thought subscribers: ${data.stats?.thoughtSubscribers || 0}
-• Recent notifications: ${data.stats?.recentNotifications || 0}`, 'success');
+• Total unique subscribers: ${data.subscriberStats.total || 0}
+• Blog subscribers: ${data.subscriberStats.blog || 0}  
+• Thought subscribers: ${data.subscriberStats.thought || 0}
+• Announcement subscribers: ${data.subscriberStats.announcement || 0}`, 'success');
         } else {
           showResult('❌ Failed to check subscribers: ' + (data.error || 'Unknown error'), 'error');
         }
@@ -122,6 +146,46 @@
       resultDiv.innerHTML = `<pre>${message}</pre>`;
       resultDiv.style.display = 'block';
     }
+    
+    document.getElementById('subscribeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const email = formData.get('userEmail');
+      const blogUpdates = document.getElementById('blogSub').checked;
+      const thoughtUpdates = document.getElementById('thoughtSub').checked;
+      const announcements = document.getElementById('announceSub').checked;
+      
+      showResult(`Subscribing ${email}...`, 'info');
+      
+      try {
+        const response = await fetch('/api/admin/subscribe-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            email, 
+            blogUpdates, 
+            thoughtUpdates, 
+            announcements 
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          showResult(`✅ Successfully subscribed ${email}!
+          
+📧 Subscriptions:
+• Blog posts: ${result.preferences.blogUpdates ? '✅' : '❌'}
+• Thoughts: ${result.preferences.thoughtUpdates ? '✅' : '❌'}  
+• Announcements: ${result.preferences.announcements ? '✅' : '❌'}`, 'success');
+        } else {
+          showResult(`❌ Failed to subscribe user: ${result.error}`, 'error');
+        }
+      } catch (error) {
+        showResult(`❌ Error: ${error.message}`, 'error');
+      }
+    });
     
     document.getElementById('testForm').addEventListener('submit', async (e) => {
       e.preventDefault();
