@@ -99,8 +99,8 @@
 - Follow JWT authentication patterns for user management
 
 ### Subagent Workflow
-- All subagents must be given cute names with corresponding emojis
-- Commits should start with subagent name in brackets: [Name] Brief description
+- All subagents must be given cute animal names with corresponding emojis
+- Commits should start with just the subagent emoji: 🐝 Brief description
 - Make frequent, small commits with concise, descriptive messages
 - Each subagent should maintain consistent personality and expertise area
 - Hand off work between subagents based on task requirements

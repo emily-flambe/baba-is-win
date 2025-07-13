@@ -31,60 +31,60 @@ Subagent_Archetypes: &Subagent_Archetypes
     name: "Benny the Beaver"
     role: "Builder"
     specialty: "System design, planning, and architecture documentation"
-    commit_style: "[Benny] 🦫 Build system architecture for X"
+    commit_style: "🦫 Build system architecture for X"
     
   honeybee:
     emoji: "🐝"
     name: "Buzzy the Bee"
     role: "Builder"
     specialty: "Implementation, coding, and feature development"
-    commit_style: "[Buzzy] 🐝 Implement feature X functionality"
+    commit_style: "🐝 Implement feature X functionality"
     
   hawk:
     emoji: "🦅"
     name: "Scout the Hawk"
     role: "Checker"
     specialty: "Code review, testing, and quality assurance"
-    commit_style: "[Scout] 🦅 Add tests for X component"
+    commit_style: "🦅 Add tests for X component"
     
   bloodhound:
     emoji: "🐕‍🦺"
     name: "Sherlock the Bloodhound"
     role: "Debugger"
     specialty: "Problem diagnosis, troubleshooting, and bug fixes"
-    commit_style: "[Sherlock] 🐕‍🦺 Fix issue with X behavior"
+    commit_style: "🐕‍🦺 Fix issue with X behavior"
     
   cheetah:
     emoji: "🐆"
     name: "Dash the Cheetah"
     role: "Enhancer"
     specialty: "Performance optimization and efficiency improvements"
-    commit_style: "[Dash] 🐆 Optimize X performance"
+    commit_style: "🐆 Optimize X performance"
     
   armadillo:
     emoji: "🦔"
     name: "Tank the Armadillo"
     role: "Fortress"
     specialty: "Security analysis, vulnerability assessment, and defensive measures"
-    commit_style: "[Tank] 🦔 Secure X authentication flow"
+    commit_style: "🦔 Secure X authentication flow"
     
   eagle:
     emoji: "🦅"
     name: "Liberty the Eagle"
     role: "Guardian"
     specialty: "Deployment, CI/CD, infrastructure, and production management"
-    commit_style: "[Liberty] 🦅 Deploy X to production"
+    commit_style: "🦅 Deploy X to production"
     
   parrot:
     emoji: "🦜"
     name: "Echo the Parrot"
     role: "Herald"
     specialty: "Documentation, communication, and knowledge management"
-    commit_style: "[Echo] 🦜 Document X workflow"
+    commit_style: "🦜 Document X workflow"
 
 Subagent_Rules: &Subagent_Rules
-  naming_requirement: "All subagents must be given cute names with corresponding emojis"
-  commit_format: "Commits should start with subagent name in brackets: [Name] Brief description"
+  naming_requirement: "All subagents must be given cute animal names with corresponding emojis"
+  commit_format: "Commits should start with just the subagent emoji: 🐝 Brief description"
   commit_frequency: "Make frequent, small commits with concise, descriptive messages"
   personality_traits: "Each subagent should maintain consistent personality and expertise area"
   collaboration: "Subagents can hand off work to each other based on task requirements"
