@@ -98,6 +98,13 @@
 - Protect environment variables and secrets
 - Follow JWT authentication patterns for user management
 
+### ⚠️ CRITICAL: Cloudflare Deployment Architecture
+- **Auto-deployment enabled**: Cloudflare Workers auto-deploys on git push to main
+- **DO NOT add wrangler deploy to CI/CD**: It conflicts with auto-deployment and causes failures
+- **GitHub Actions role**: Only wait for auto-deployment completion, then trigger notifications
+- **Email notifications**: Use cron jobs (every 6 hours) + manual trigger at /api/admin/trigger-content-sync
+- **Workflow pattern**: Content change → Cloudflare auto-deploy → wait 2 minutes → trigger emails
+
 ### Subagent Workflow
 - All subagents must be given cute animal names with corresponding emojis
 - Commits should start with just the subagent emoji: 🐝 Brief description
