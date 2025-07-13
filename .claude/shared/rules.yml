@@ -39,3 +39,12 @@ Communication_Standards: |
   - Focus on functionality and technical accuracy
   - Avoid excessive emojis, jokes, or overly casual language
   - Provide clear, actionable feedback and solutions
+
+# GitHub Issue Management
+GitHub_Issue_Management: |
+  - When user requests a GitHub issue, automatically create it using `gh issue create`
+  - Use comprehensive titles that clearly describe the problem
+  - Include detailed problem statements, root cause analysis, and implementation plans
+  - Add appropriate labels (bug, enhancement, etc.) when creating issues
+  - Provide the issue URL and number to the user after creation
+  - Never just provide issue content without actually creating the issue

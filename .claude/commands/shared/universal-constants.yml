@@ -1,0 +1,26 @@
+Universal_Legend: &Universal_Legend
+  symbols:
+    "🎯": "Primary objective or main goal"
+    "⚡": "High priority or urgent action"
+    "🔧": "Tool or utility command"
+    "📋": "Documentation or reference"
+    "🚀": "Deployment or production action"
+    "🧪": "Testing or experimental feature"
+    "🔒": "Security-related operation"
+    "📊": "Monitoring or analytics"
+    "🔄": "Process or workflow"
+    "💡": "Insight or optimization opportunity"
+  
+  severity_levels:
+    CRITICAL: "System-breaking issues requiring immediate attention"
+    HIGH: "Significant impact on functionality or performance"
+    MEDIUM: "Moderate impact, should be addressed in current iteration"
+    LOW: "Minor improvements or optimizations"
+    INFO: "Informational items for awareness"
+
+  status_indicators:
+    "✅": "Completed successfully"
+    "🟡": "In progress"
+    "❌": "Failed or blocked"
+    "⏸️": "Paused or waiting"
+    "🔄": "Retry or needs revision"

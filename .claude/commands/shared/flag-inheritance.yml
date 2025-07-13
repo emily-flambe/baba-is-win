@@ -1,0 +1,26 @@
+Universal Flags (All Commands): &Universal_Flags
+  global_flags:
+    "--ultra-compressed": "Maximum efficiency mode with minimal output"
+    "--evidence-based": "Require verification and testing for all changes"
+    "--security-first": "Prioritize security considerations in all operations"
+    "--batch-optimize": "Use parallel tool execution whenever possible"
+    "--no-comments": "Generate code without comments unless explicitly requested"
+    "--follow-conventions": "Strictly adhere to existing codebase patterns"
+  
+  inheritance_rules:
+    command_level: "Commands inherit all universal flags unless explicitly overridden"
+    session_level: "Flags persist across related operations within session"
+    project_level: "Project-specific overrides take precedence over universal settings"
+    user_level: "User preferences override all other flag settings"
+
+  activation_patterns:
+    auto_detection: "Automatically activate appropriate flags based on context"
+    explicit_override: "Allow user to explicitly set flag values"
+    intelligent_defaults: "Choose optimal flag combinations for task type"
+    performance_optimization: "Prioritize flags that improve efficiency"
+
+Servers: &Servers
+  mcp_integration: "Full Model Context Protocol server support"
+  tool_discovery: "Automatic detection and integration of available MCP tools"
+  protocol_compliance: "Strict adherence to MCP specifications"
+  fallback_handling: "Graceful degradation when MCP servers unavailable"
