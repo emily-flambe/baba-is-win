@@ -16,13 +16,37 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          
+      - name: Check for actual published content additions/modifications
+        id: check_changes
+        run: |
+          echo "Checking if any files were actually added or modified in published directories..."
+          
+          # Get list of added/modified files in published directories
+          ADDED_MODIFIED=$(git diff --name-status HEAD~1 HEAD | grep -E '^[AM]\s+src/data/(blog-posts|thoughts)/published/' || true)
+          
+          if [ -n "$ADDED_MODIFIED" ]; then
+            echo "📝 Published content was added or modified:"
+            echo "$ADDED_MODIFIED"
+            echo "should_notify=true" >> $GITHUB_OUTPUT
+          else
+            echo "ℹ️  No published content was added or modified (likely just moved to draft)"
+            echo "should_notify=false" >> $GITHUB_OUTPUT
+          fi
+        
       - name: Wait for Cloudflare auto-deployment
+        if: steps.check_changes.outputs.should_notify == 'true'
         run: |
           echo "🚀 Content changes detected - waiting for Cloudflare to auto-deploy..."
           echo "⏱️  Waiting 2 minutes for deployment to complete..."
           sleep 120
         
       - name: Trigger email notifications
+        if: steps.check_changes.outputs.should_notify == 'true'
         run: |
           echo "📧 Triggering email notifications..."
           curl -X POST "${{ secrets.SITE_URL }}/api/admin/trigger-content-sync" \
