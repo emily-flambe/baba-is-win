@@ -3,7 +3,7 @@ title: I love Cloudflare
 publishDate: 12 Jul 2025
 description: Guess I am a TECH BLOGGER now and maybe even a THOUGHT LEADER so buckle up chucklefucks it’s time to get aggressively ranted at about cloud platforms and my big feelings about them
 thumbnail: /assets/blog/20250712-i-love-cloudflare/degenerate_coding_setup.jpg
-tags: ["claude", "tech", "ai", "cloudflare"]
+tags: ["claude", "tech", "ai", "cloudflare", "testing"]
 ---
 
 ## TLDR
