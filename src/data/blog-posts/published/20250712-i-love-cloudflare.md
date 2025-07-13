@@ -6,7 +6,7 @@ thumbnail: /assets/blog/20250712-i-love-cloudflare/degenerate_coding_setup.jpg
 tags: ["claude", "tech", "ai", "cloudflare"]
 ---
 
-## TLDR
+## TLDR:
 
 I love Cloudflare Workers and use them to deploy all of my personal projects. AWS and GCP have wasted my money and time and I regard them with haughty disdain.
 
