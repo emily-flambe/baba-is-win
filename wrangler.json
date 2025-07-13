@@ -1,8 +1,4 @@
 {
-  "// DEPLOYMENT CONFIGURATION": "Cloudflare Workers auto-deploys on git push to main.",
-  "// DO NOT add wrangler deploy to CI/CD - it conflicts with auto-deployment.",
-  "// GitHub Actions should only wait for auto-deployment, then trigger notifications.",
-  
   "name": "personal",
   "compatibility_date": "2024-11-01",
   "compatibility_flags": ["nodejs_compat"],
@@ -29,9 +25,5 @@
   },
   "triggers": {
     "crons": ["0 */6 * * *"]
-  },
-  
-  "// EMAIL NOTIFICATION SYSTEM": "Cron runs every 6 hours to process notifications.",
-  "// Manual trigger available at /api/admin/trigger-content-sync for immediate processing.",
-  "// GitHub Actions calls this endpoint after content changes are auto-deployed."
+  }
 }
