@@ -1,3 +1,5 @@
+# Project Identity & Configuration
+
 ProjectIdentity: &ProjectIdentity
   name: "baba-is-win"
   repository: "baba-is-win"
@@ -11,6 +13,31 @@ ProjectIdentity: &ProjectIdentity
     styling: "CSS"
   naming_conventions:
     github_repository: "baba-is-win"
+
+ProjectStructure:
+  content_directories:
+    - "src/data/blog-posts/published/"
+    - "src/data/thoughts/published/"
+    - "public/assets/ (with proper subdirectories)"
+  key_files:
+    - "Content interface for easy content creation"
+    - "Migration scripts for Cloudflare D1"
+
+DevelopmentCommands:
+  local_dev: "npm run dev"
+  build: "npm run build"
+  test: "npm test"
+  deploy: "Cloudflare Pages with automatic deployments"
+
+WorktreeManagement:
+  location: "worktrees/ folder"
+  naming: "worktrees/[feature-name]"
+  purpose: "Keep repository organized with isolated feature development"
+
+PullRequestGuidelines:
+  workflow: "Share PR URLs immediately after creation"
+  testing: "Test builds locally before deployment"
+  asset_organization: "Maintain clean asset organization"
     cloudflare_resources: "baba-*"
     database: "baba-db"
 
@@ -41,3 +68,4 @@ DevelopmentCommands: &DevelopmentCommands
   deployment:
     build_check: "npm run build"
     deploy: "Deploy via Cloudflare Pages integration"
+>>>>>>> origin/main

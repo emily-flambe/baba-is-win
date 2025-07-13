@@ -1,0 +1,48 @@
+# Development Commands & Workflows
+
+DevelopmentWorkflow:
+  local_development: "npm run dev"
+  build_validation: "npm run build"
+  testing_suite: "npm test"
+  
+DevelopmentServerRules:
+  background_execution: "NEVER start development servers with & (background execution)"
+  rationale: "Background servers can cause port conflicts, zombie processes, and debugging difficulties"
+  correct_approach: "Always run development servers in foreground for proper control and monitoring"
+  
+AstroFrameworkIssues:
+  common_problems:
+    - "Build failures due to import path issues"
+    - "Static asset handling complications"
+    - "TypeScript configuration conflicts"
+  
+AuthenticationComplexity:
+  oauth_integration: "Requires careful secret management"
+  security_considerations: "JWT token handling and validation"
+  
+DatabaseMigrationIssues:
+  cloudflare_d1: "Migration scripts must be tested thoroughly"
+  data_consistency: "Ensure proper backup procedures"
+  
+ContentManagementLessons:
+  file_based_content: "Frontmatter metadata must be consistent"
+  asset_organization: "Maintain proper directory structure"
+  content_interface: "Provide easy content creation tools"
+
+DeploymentStrategy:
+  development: "Local development with npm run dev"
+  testing: "Comprehensive test suite with Vitest/Jest"
+  production: "Cloudflare Pages with automatic deployments"
+  database: "Cloudflare D1 with migration scripts"
+
+ContentGuidelines:
+  blog_posts: "src/data/blog-posts/published/"
+  thoughts: "src/data/thoughts/published/"
+  assets: "public/assets/ with proper subdirectories"
+  interface: "Content interface available for easy content creation"
+
+WorkflowStandards:
+  feature_development: "Use worktrees for all feature development"
+  pull_requests: "Share PR URLs immediately after creation"
+  quality_assurance: "Test builds locally before deployment"
+  organization: "Maintain clean asset organization"

@@ -1,10 +1,9 @@
 import type { APIRoute } from 'astro';
 import { OAuthRateLimiter } from '../../../../lib/oauth/rate-limiter';
 
-const rateLimiter = new OAuthRateLimiter();
-
 export const GET: APIRoute = async ({ request, locals }) => {
   try {
+    const rateLimiter = new OAuthRateLimiter(locals.runtime?.env);
     // Check authentication
     if (!locals.user) {
       return new Response(JSON.stringify({ 

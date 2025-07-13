@@ -1,0 +1,40 @@
+name: Deploy and Notify Subscribers
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/data/blog-posts/published/**'
+      - 'src/data/thoughts/published/**'
+
+jobs:
+  deploy-and-notify:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - run: npm ci
+      
+      - name: Check build
+        run: npm run check
+        
+      - name: Deploy to Cloudflare
+        run: npm run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          
+      - name: Wait for deployment
+        run: sleep 30
+        
+      - name: Trigger email notifications
+        run: |
+          curl -X POST "${{ secrets.SITE_URL }}/api/admin/trigger-content-sync" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            --fail --silent --show-error

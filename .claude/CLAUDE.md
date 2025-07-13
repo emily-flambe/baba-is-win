@@ -14,7 +14,39 @@ Enhanced Claude configuration for the baba-is-win project.
 @include shared/rules.yml#Code_Generation
 @include shared/rules.yml#Security_Standards
 @include shared/rules.yml#Project_Quality
+
+## Project Configuration
+@include project-config.yml#ProjectIdentity
+@include project-config.yml#ProjectStructure
+@include project-config.yml#DevelopmentCommands
+
+## OAuth Security Guidelines
+@include oauth-config.yml#OAuthSecretManagement
+@include oauth-config.yml#OAuthFailurePatterns
+@include oauth-config.yml#OAuthSecretCommands
+@include oauth-config.yml#OAuthRedirectURI
+@include oauth-config.yml#OAuthTroubleshootingWorkflow
+
+## Development Workflows
+@include development-commands.yml#DevelopmentWorkflow
+@include development-commands.yml#DevelopmentServerRules
+@include development-commands.yml#DeploymentStrategy
+@include development-commands.yml#ContentGuidelines
+@include development-commands.yml#WorkflowStandards
+
+## Debugging Lessons Learned
+@include development-commands.yml#AstroFrameworkIssues
+@include development-commands.yml#AuthenticationComplexity
+@include development-commands.yml#DatabaseMigrationIssues
+@include development-commands.yml#ContentManagementLessons
+
+## Worktree Management
+@include project-config.yml#WorktreeManagement
+
+## Pull Request Guidelines
+@include project-config.yml#PullRequestGuidelines
 @include shared/rules.yml#Communication_Standards
+>>>>>>> origin/main
 
 ## Project-Specific Configuration
 
@@ -23,6 +55,13 @@ Enhanced Claude configuration for the baba-is-win project.
 @include configs/worktree-rules.yml#Worktree_Structure
 @include configs/worktree-rules.yml#Worktree_Best_Practices
 
+<<<<<<< HEAD
+### Key Principles
+- **Worktree Workflow**: Always create git worktrees in the `worktrees/` folder to keep the repository organized
+- **Content First**: Blog posts and thoughts are the primary content, with clean presentation being essential
+- **Authentication Security**: OAuth integration must be secure and reliable
+- **Asset Management**: Proper organization and optimization of images and static assets
+=======
 ### Technology Stack
 This project uses:
 - Astro for static site generation
@@ -42,3 +81,4 @@ This project uses:
 
 ---
 *Baba Is Win Project Configuration v1.0*
+>>>>>>> origin/main

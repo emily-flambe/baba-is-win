@@ -1,0 +1,227 @@
+---
+// Test Email Interface - Admin only page for testing email sends
+---
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Email System - Emily's Blog</title>
+  <style>
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+      max-width: 600px; 
+      margin: 40px auto; 
+      padding: 20px; 
+      line-height: 1.6;
+    }
+    .container { background: #f8f9fa; padding: 30px; border-radius: 8px; }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; margin-bottom: 5px; font-weight: 600; }
+    input, select, textarea { 
+      width: 100%; 
+      padding: 10px; 
+      border: 1px solid #ddd; 
+      border-radius: 4px; 
+      font-size: 16px;
+    }
+    button { 
+      background: #007bff; 
+      color: white; 
+      padding: 12px 24px; 
+      border: none; 
+      border-radius: 4px; 
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+    }
+    button:hover { background: #0056b3; }
+    .result { 
+      margin-top: 20px; 
+      padding: 15px; 
+      border-radius: 4px; 
+      display: none;
+    }
+    .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    pre { white-space: pre-wrap; word-wrap: break-word; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📧 Email System Test</h1>
+    <p>Use this form to manually test email notifications. This will send test emails to all subscribed users.</p>
+    
+    <form id="testForm">
+      <div class="form-group">
+        <label for="type">Email Type:</label>
+        <select id="type" name="type">
+          <option value="blog">Blog Post Notification</option>
+          <option value="thought">Thought Notification</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="title">Test Email Title:</label>
+        <input type="text" id="title" name="title" value="Manual Test Email" placeholder="Enter custom title">
+      </div>
+      
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="force" name="force" checked> 
+          Force send (ignore rate limits and duplicate checks)
+        </label>
+      </div>
+      
+      <button type="submit">Send Test Email</button>
+      <button type="button" onclick="checkSubscribers()">Check Subscribers</button>
+    </form>
+    
+    <hr style="margin: 2rem 0; border: 1px solid #ddd;">
+    
+    <h3>🔧 Admin Tools</h3>
+    <form id="subscribeForm" style="border: 1px solid #e0e0e0; padding: 1rem; border-radius: 4px; background: #fafafa;">
+      <div class="form-group">
+        <label for="userEmail">Subscribe User to Emails:</label>
+        <input type="email" id="userEmail" name="userEmail" placeholder="user@example.com" required>
+      </div>
+      
+      <div class="form-group">
+        <label style="font-weight: normal;">
+          <input type="checkbox" id="blogSub" checked> Blog Posts
+        </label>
+        <label style="font-weight: normal;">
+          <input type="checkbox" id="thoughtSub" checked> Thoughts  
+        </label>
+        <label style="font-weight: normal;">
+          <input type="checkbox" id="announceSub" checked> Announcements
+        </label>
+      </div>
+      
+      <button type="submit" style="background: #28a745;">Subscribe User</button>
+    </form>
+    
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    async function sendTestEmail(type, title, force) {
+      const response = await fetch('/api/admin/test-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ type, title, force })
+      });
+      
+      return await response.json();
+    }
+    
+    window.checkSubscribers = async function() {
+      showResult('Checking subscribers...', 'info');
+      
+      try {
+        const response = await fetch('/api/admin/notifications');
+        const data = await response.json();
+        
+        if (response.ok && data.subscriberStats) {
+          showResult(`📊 Subscriber Status:
+          
+• Total unique subscribers: ${data.subscriberStats.total || 0}
+• Blog subscribers: ${data.subscriberStats.blog || 0}  
+• Thought subscribers: ${data.subscriberStats.thought || 0}
+• Announcement subscribers: ${data.subscriberStats.announcement || 0}`, 'success');
+        } else {
+          showResult('❌ Failed to check subscribers: ' + (data.error || 'Unknown error'), 'error');
+        }
+      } catch (error) {
+        showResult('❌ Error checking subscribers: ' + error.message, 'error');
+      }
+    }
+    
+    function showResult(message, type) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.className = `result ${type}`;
+      resultDiv.innerHTML = `<pre>${message}</pre>`;
+      resultDiv.style.display = 'block';
+    }
+    
+    document.getElementById('subscribeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const email = formData.get('userEmail');
+      const blogUpdates = document.getElementById('blogSub').checked;
+      const thoughtUpdates = document.getElementById('thoughtSub').checked;
+      const announcements = document.getElementById('announceSub').checked;
+      
+      showResult(`Subscribing ${email}...`, 'info');
+      
+      try {
+        const response = await fetch('/api/admin/subscribe-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            email, 
+            blogUpdates, 
+            thoughtUpdates, 
+            announcements 
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          showResult(`✅ Successfully subscribed ${email}!
+          
+📧 Subscriptions:
+• Blog posts: ${result.preferences.blogUpdates ? '✅' : '❌'}
+• Thoughts: ${result.preferences.thoughtUpdates ? '✅' : '❌'}  
+• Announcements: ${result.preferences.announcements ? '✅' : '❌'}`, 'success');
+        } else {
+          showResult(`❌ Failed to subscribe user: ${result.error}`, 'error');
+        }
+      } catch (error) {
+        showResult(`❌ Error: ${error.message}`, 'error');
+      }
+    });
+    
+    document.getElementById('testForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const type = formData.get('type');
+      const title = formData.get('title') || 'Manual Test Email';
+      const force = formData.get('force') === 'on';
+      
+      showResult('Sending test email...', 'info');
+      
+      try {
+        const result = await sendTestEmail(type, title, force);
+        
+        if (result.success) {
+          showResult(`✅ Test email sent successfully!
+          
+📧 Email Details:
+• Type: ${result.testContent?.type}
+• Title: "${result.testContent?.title}"
+• Recipients: ${result.testContent?.recipients}
+
+📊 Processing Results:
+${JSON.stringify(result.details, null, 2)}`, 'success');
+        } else {
+          showResult(`❌ Failed to send test email:
+
+${result.error}
+
+Details:
+${result.details || 'No additional details'}`, 'error');
+        }
+      } catch (error) {
+        showResult('❌ Error sending test email: ' + error.message, 'error');
+      }
+    });
+  </script>
+</body>
+</html>
