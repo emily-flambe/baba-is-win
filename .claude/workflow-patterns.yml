@@ -1,0 +1,32 @@
+WorktreeManagement: &WorktreeManagement
+  philosophy: "Always create git worktrees in the worktrees/ folder to keep repository organized"
+  standard_commands:
+    new_feature: "git worktree add worktrees/feature-branch -b feature-branch"
+    existing_branch: "git worktree add worktrees/existing-branch existing-branch"
+    cleanup: "git worktree remove worktrees/branch-name"
+  best_practices:
+    - "Use worktrees for creating new branches instead of switching branches in main directory"
+    - "Keep worktrees organized in the worktrees/ folder"
+    - "Remove worktrees when features are merged"
+  current_worktrees:
+    - "feature-email-signup - Email notification system"
+    - "feature-google-oauth - Google OAuth integration"
+
+PullRequestGuidelines: &PullRequestGuidelines
+  workflow: "Always share PR URL immediately after creation"
+  requirements:
+    - "Include clear description of changes"
+    - "Reference related issues or documentation"
+    - "Ensure all tests pass before creating PR"
+    - "Share PR URL with user for easy access"
+  pr_creation_pattern: "Create PR and immediately provide clickable URL"
+
+ContentManagement: &ContentManagement
+  blog_posts: "Located in src/data/blog-posts/published/"
+  thoughts: "Located in src/data/thoughts/published/"
+  assets: "Organized in public/assets/ with subdirectories"
+  content_interface: "Available at content-interface/ for content creation"
+  markdown_standards:
+    - "Use frontmatter for metadata"
+    - "Include proper image references"
+    - "Tag posts appropriately"
