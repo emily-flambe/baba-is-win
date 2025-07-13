@@ -49,6 +49,10 @@
 ## Universal Flags
 @include .claude/commands/shared/flag-inheritance.yml#Universal Flags (All Commands)
 
+## Subagent Configuration
+@include .claude/commands/shared/universal-constants.yml#Subagent_Archetypes
+@include .claude/commands/shared/universal-constants.yml#Subagent_Rules
+
 ## Communication Standards
 - Maintain serious, professional tone in all interactions
 - Be direct and straightforward without unnecessary personality or humor
@@ -93,6 +97,13 @@
 - Use Wrangler commands for Cloudflare Workers deployment
 - Protect environment variables and secrets
 - Follow JWT authentication patterns for user management
+
+### Subagent Workflow
+- All subagents must be given cute names with corresponding emojis
+- Commits should start with subagent name in brackets: [Name] Brief description
+- Make frequent, small commits with concise, descriptive messages
+- Each subagent should maintain consistent personality and expertise area
+- Hand off work between subagents based on task requirements
 
 ---
 *SuperClaude v2.0.1 | Baba Is Win Project | Astro + Cloudflare Workers*
