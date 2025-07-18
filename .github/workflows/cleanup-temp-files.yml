@@ -39,7 +39,7 @@ jobs:
           find . -name "*_backup.sql" -type f | grep -v node_modules | grep -v worktrees >> cleanup-report.md || true
           find . -name "*.bak" -type f | grep -v node_modules | grep -v worktrees >> cleanup-report.md || true
           
-          # Find markdown files to clean (excluding .claude/, README.md, and planning/)
+          # Find markdown files to clean (excluding .claude/, README.md, planning/, and src/data/)
           echo "" >> cleanup-report.md
           echo "### Documentation to Clean:" >> cleanup-report.md
           find . -name "*.md" -type f \
@@ -48,6 +48,7 @@ jobs:
             | grep -v "\.claude/" \
             | grep -v "README\.md" \
             | grep -v "planning/" \
+            | grep -v "src/data/" \
             | grep -E "(TESTING_PLAN|TEST_RESULTS|PHASE[0-9]_FINDINGS|ISSUE_DIAGNOSIS|QC_INSTRUCTIONS|TROUBLESHOOTING_PLAN|debug-|test-)" >> cleanup-report.md || true
           
           # Count files to remove
@@ -100,6 +101,7 @@ jobs:
             - All files in .claude/
             - All README.md files
             - All files in planning/
+            - All files in src/data/ (content)
             - Legitimate test directories
           branch: automated-cleanup-${{ github.run_number }}
           delete-branch: true
@@ -127,6 +129,7 @@ jobs:
             - ✅ All files in `.claude/` directory
             - ✅ All `README.md` files
             - ✅ All files in `planning/` directory
+            - ✅ All files in `src/data/` directory (blog posts, thoughts, content)
             - ✅ Legitimate test directories (`tests/`, `__tests__/`)
             
             ### Cleanup Rules Applied
