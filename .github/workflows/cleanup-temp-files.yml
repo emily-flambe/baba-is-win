@@ -1,0 +1,139 @@
+name: Cleanup Temporary Files
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Find temporary files to clean
+        id: find-files
+        run: |
+          # Create a list of files to remove
+          echo "## Files to be cleaned up:" > cleanup-report.md
+          echo "" >> cleanup-report.md
+          
+          # Find debug and test files (excluding legitimate test directories)
+          echo "### Debug/Test Scripts:" >> cleanup-report.md
+          find . -name "debug-*.js" -type f | grep -v node_modules | grep -v worktrees >> cleanup-report.md || true
+          find . -name "test-*.js" -type f | grep -v node_modules | grep -v worktrees | grep -v tests/ | grep -v __tests__ >> cleanup-report.md || true
+          find . -name "quick-*.js" -type f | grep -v node_modules | grep -v worktrees >> cleanup-report.md || true
+          
+          # Find backup files
+          echo "" >> cleanup-report.md
+          echo "### Backup Files:" >> cleanup-report.md
+          find . -name "*_backup.sql" -type f | grep -v node_modules | grep -v worktrees >> cleanup-report.md || true
+          find . -name "*.bak" -type f | grep -v node_modules | grep -v worktrees >> cleanup-report.md || true
+          
+          # Find markdown files to clean (excluding .claude/, README.md, and planning/)
+          echo "" >> cleanup-report.md
+          echo "### Documentation to Clean:" >> cleanup-report.md
+          find . -name "*.md" -type f \
+            | grep -v node_modules \
+            | grep -v worktrees \
+            | grep -v "\.claude/" \
+            | grep -v "README\.md" \
+            | grep -v "planning/" \
+            | grep -E "(TESTING_PLAN|TEST_RESULTS|PHASE[0-9]_FINDINGS|ISSUE_DIAGNOSIS|QC_INSTRUCTIONS|TROUBLESHOOTING_PLAN|debug-|test-)" >> cleanup-report.md || true
+          
+          # Count files to remove
+          TOTAL_FILES=$(cat cleanup-report.md | grep -E "^\./|^[^#]" | wc -l)
+          echo "total_files=$TOTAL_FILES" >> $GITHUB_OUTPUT
+          
+          # Create file list for deletion
+          cat cleanup-report.md | grep -E "^\./|^[^#]" > files-to-delete.txt || true
+      
+      - name: Remove temporary files
+        if: steps.find-files.outputs.total_files > 0
+        run: |
+          # Remove files listed
+          if [ -s files-to-delete.txt ]; then
+            while IFS= read -r file; do
+              if [ -f "$file" ]; then
+                rm -f "$file"
+                echo "Removed: $file"
+              fi
+            done < files-to-delete.txt
+          fi
+      
+      - name: Check for changes
+        id: check-changes
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create Pull Request
+        if: steps.check-changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: |
+            🧹 Automated cleanup of temporary files
+            
+            Removed ${{ steps.find-files.outputs.total_files }} temporary files
+            
+            Types of files cleaned:
+            - Debug scripts (debug-*.js)
+            - Test scripts (test-*.js, quick-*.js)
+            - Backup files (*_backup.sql, *.bak)
+            - Test documentation
+            
+            Preserved:
+            - All files in .claude/
+            - All README.md files
+            - All files in planning/
+            - Legitimate test directories
+          branch: automated-cleanup-${{ github.run_number }}
+          delete-branch: true
+          title: "🧹 Automated cleanup of temporary files"
+          body: |
+            ## Automated Cleanup
+            
+            This PR was automatically generated to clean up temporary files after a push to main.
+            
+            **Files removed:** ${{ steps.find-files.outputs.total_files }}
+            
+            ### Cleanup Report
+            See the full list of removed files below:
+            
+            <details>
+            <summary>Files removed</summary>
+            
+            ```
+            ${{ steps.find-files.outputs.cleanup_report }}
+            ```
+            
+            </details>
+            
+            ### Preserved Files
+            - ✅ All files in `.claude/` directory
+            - ✅ All `README.md` files
+            - ✅ All files in `planning/` directory
+            - ✅ Legitimate test directories (`tests/`, `__tests__/`)
+            
+            ### Cleanup Rules Applied
+            - Debug scripts: `debug-*.js`
+            - Test scripts: `test-*.js`, `quick-*.js` (excluding test directories)
+            - Backup files: `*_backup.sql`, `*.bak`
+            - Test documentation matching specific patterns
+            
+            ---
+            *This cleanup was performed automatically by the cleanup workflow.*
