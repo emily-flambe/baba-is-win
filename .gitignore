@@ -42,3 +42,12 @@ coverage/
 worker-configuration.d.ts
 
 # Claude Code project-specific configuration
+
+# Test and debug files
+debug-*.js
+test-*.js
+!tests/**/*
+!src/**/__tests__/**/*
+quick-*.js
+*_backup.sql
+*.bak
