@@ -1,0 +1,112 @@
+name: Cleanup Temporary Files (Direct)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Find and remove temporary files
+        id: cleanup
+        run: |
+          # Initialize counters
+          REMOVED_COUNT=0
+          
+          # Find and remove debug and test files (excluding legitimate test directories)
+          echo "=== Removing debug/test scripts ==="
+          find . -name "debug-*.js" -type f | grep -v node_modules | grep -v worktrees | while read file; do
+            echo "Removing: $file"
+            rm -f "$file"
+            ((REMOVED_COUNT++))
+          done || true
+          
+          find . -name "test-*.js" -type f | grep -v node_modules | grep -v worktrees | grep -v tests/ | grep -v __tests__ | while read file; do
+            echo "Removing: $file"
+            rm -f "$file"
+            ((REMOVED_COUNT++))
+          done || true
+          
+          find . -name "quick-*.js" -type f | grep -v node_modules | grep -v worktrees | while read file; do
+            echo "Removing: $file"
+            rm -f "$file"
+            ((REMOVED_COUNT++))
+          done || true
+          
+          # Find and remove backup files
+          echo "=== Removing backup files ==="
+          find . -name "*_backup.sql" -type f | grep -v node_modules | grep -v worktrees | while read file; do
+            echo "Removing: $file"
+            rm -f "$file"
+            ((REMOVED_COUNT++))
+          done || true
+          
+          find . -name "*.bak" -type f | grep -v node_modules | grep -v worktrees | while read file; do
+            echo "Removing: $file"
+            rm -f "$file"
+            ((REMOVED_COUNT++))
+          done || true
+          
+          # Find and remove specific test documentation (excluding .claude/, README.md, planning/, and src/data/)
+          echo "=== Removing test documentation ==="
+          find . -name "*.md" -type f \
+            | grep -v node_modules \
+            | grep -v worktrees \
+            | grep -v "\.claude/" \
+            | grep -v "README\.md" \
+            | grep -v "planning/" \
+            | grep -v "src/data/" \
+            | grep -E "(TESTING_PLAN|TEST_RESULTS|PHASE[0-9]_FINDINGS|ISSUE_DIAGNOSIS|QC_INSTRUCTIONS|TROUBLESHOOTING_PLAN|debug-|test-)" | while read file; do
+            echo "Removing: $file"
+            rm -f "$file"
+            ((REMOVED_COUNT++))
+          done || true
+          
+          echo "removed_count=$REMOVED_COUNT" >> $GITHUB_OUTPUT
+      
+      - name: Check for changes
+        id: check-changes
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No temporary files found to clean up."
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Found files to clean up."
+          fi
+      
+      - name: Commit and push changes
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          git commit -m "🧹 Automated cleanup of temporary files
+
+          Removed temporary files:
+          - Debug scripts (debug-*.js)
+          - Test scripts (test-*.js, quick-*.js)
+          - Backup files (*_backup.sql, *.bak)
+          - Test documentation
+          
+          Preserved:
+          - All files in .claude/
+          - All README.md files
+          - All files in planning/
+          - All files in src/data/ (content)
+          - Legitimate test directories"
+          
+          git push
