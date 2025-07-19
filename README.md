@@ -13,7 +13,6 @@ Features blog posts, thoughts, and a Baba Is You-inspired aesthetic.
 - **[Astro](https://astro.build)** - Static site generator
 - **[Cloudflare Workers](https://workers.cloudflare.com)** - Serverless deployment with auto-deployment
 - **[Cloudflare D1](https://developers.cloudflare.com/d1/)** - SQLite database
-- **AI Agents** - Because why struggle when you can delegate?
 
 ## 🧞 Commands
 
