@@ -3,6 +3,7 @@ import { AuthDB } from '../auth/db';
 import { ResendEmailService } from './resend-service';
 import { EmailTemplateEngine, type BlogPost, type Thought } from './template-engine';
 import { UnsubscribeService } from './unsubscribe-service';
+import type { User } from '../auth/types';
 
 /**
  * Simplified email notification service
@@ -31,8 +32,11 @@ export class SimpleEmailNotificationService {
   }
   
   async sendThoughtNotification(thought: Thought): Promise<{ success: boolean; successCount: number; failedCount: number }> {
-    console.log(`📧 Sending thought notification: ${thought.title}`);
-    return await this.sendNotifications('thought', thought);
+    console.log(`📧 [SimpleEmailNotificationService] Starting thought notification for: ${thought.title}`);
+    console.log(`📧 [SimpleEmailNotificationService] Thought details:`, JSON.stringify(thought));
+    const result = await this.sendNotifications('thought', thought);
+    console.log(`📧 [SimpleEmailNotificationService] Thought notification result:`, result);
+    return result;
   }
   
   private async sendNotifications(
@@ -56,7 +60,7 @@ export class SimpleEmailNotificationService {
   }
   
   private async createNotifications(
-    subscribers: any[],
+    subscribers: User[],
     contentType: 'blog' | 'thought',
     content: BlogPost | Thought
   ): Promise<string[]> {
@@ -68,7 +72,7 @@ export class SimpleEmailNotificationService {
         contentType,
         contentId: content.slug,
         contentTitle: content.title,
-        contentUrl: `${this.env.SITE_URL}/${contentType === 'blog' ? 'blog' : 'thoughts'}/${content.slug}`,
+        contentUrl: `${this.env.SITE_URL || 'https://personal.emily-cogsdill.workers.dev'}/${contentType === 'blog' ? 'blog' : 'thoughts'}/${content.slug}`,
         contentExcerpt: content.description,
         notificationType: 'new_content'
       });
@@ -183,47 +187,13 @@ export class SimpleEmailNotificationService {
         return false;
       }
     } catch (error) {
-      console.error(`Error processing notification ${notificationId}:`, error);
-      await this.authDB.updateNotificationStatus(notificationId, 'failed', error.message);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error(`[SimpleEmailNotificationService] Error processing notification ${notificationId}:`, error);
+      await this.authDB.updateNotificationStatus(notificationId, 'failed', errorMessage);
       return false;
     }
   }
   
-  /**
-   * Process any pending notifications (called by cron job)
-   */
-  async processPendingNotifications(): Promise<void> {
-    const pending = await this.authDB.getPendingNotifications(100);
-    console.log(`Found ${pending.length} pending notifications`);
-    
-    if (pending.length === 0) return;
-    
-    // Group by content to avoid re-fetching
-    const grouped = new Map<string, any[]>();
-    for (const notification of pending) {
-      const key = `${notification.contentType}:${notification.contentId}`;
-      if (!grouped.has(key)) {
-        grouped.set(key, []);
-      }
-      grouped.get(key)!.push(notification);
-    }
-    
-    // Process each group
-    for (const [key, notifications] of grouped) {
-      const [contentType, contentId] = key.split(':');
-      
-      // For simplicity, just retry sending without re-fetching content
-      const notificationIds = notifications.map(n => n.id);
-      
-      // Create minimal content object
-      const content = {
-        slug: contentId,
-        title: notifications[0].contentTitle,
-        description: notifications[0].contentExcerpt || '',
-        publishDate: new Date()
-      } as BlogPost | Thought;
-      
-      await this.processNotifications(notificationIds, content);
-    }
-  }
+  // Note: processPendingNotifications method removed as it used non-existent getPendingNotifications
+  // Pending notifications are handled by the cron job retry logic instead
 }
