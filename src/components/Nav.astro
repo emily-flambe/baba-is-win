@@ -67,6 +67,7 @@ const user = Astro.locals.user;
   <a class={current === "blog" ? "selected" : ""} href='/blog'>blog</a>
   <a class={current === "thoughts" ? "selected" : ""} href='/thoughts'>thoughts</a>
   <a class={current === "museum" ? "selected" : ""} href='/museum'>museum</a>
+  <a class={current === "bio" ? "selected" : ""} href='/bio'>bio</a>
   {user && (
     <a class={current === "profile" ? "selected" : ""} href='/profile'>profile</a>
   )}
