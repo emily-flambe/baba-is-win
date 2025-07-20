@@ -23,8 +23,11 @@ export class SimpleEmailNotificationService {
   }
   
   async sendBlogNotification(post: BlogPost): Promise<{ success: boolean; successCount: number; failedCount: number }> {
-    console.log(`📧 Sending blog notification: ${post.title}`);
-    return await this.sendNotifications('blog', post);
+    console.log(`📧 [SimpleEmailNotificationService] Starting blog notification for: ${post.title}`);
+    console.log(`📧 [SimpleEmailNotificationService] Blog post details:`, JSON.stringify(post));
+    const result = await this.sendNotifications('blog', post);
+    console.log(`📧 [SimpleEmailNotificationService] Blog notification result:`, result);
+    return result;
   }
   
   async sendThoughtNotification(thought: Thought): Promise<{ success: boolean; successCount: number; failedCount: number }> {
@@ -155,6 +158,9 @@ export class SimpleEmailNotificationService {
       };
       
       // Send email
+      console.log(`📧 [SimpleEmailNotificationService] Calling Resend API for ${user.email}`);
+      console.log(`📧 [SimpleEmailNotificationService] Email subject: ${emailContent.subject}`);
+      
       const result = await this.emailService.sendEmail({
         to: user.email,
         subject: emailContent.subject,
@@ -162,6 +168,8 @@ export class SimpleEmailNotificationService {
         text: emailContent.text,
         headers: emailContent.headers
       });
+      
+      console.log(`📧 [SimpleEmailNotificationService] Resend API response:`, result);
       
       // Update status
       if (result.success) {

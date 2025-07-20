@@ -25,9 +25,14 @@ export class ContentProcessor {
       
       for (const contentItem of unnotifiedContent) {
         try {
+          console.log(`[ContentProcessor] Processing content item: ${contentItem.slug} (${contentItem.contentType})`);
+          
           if (contentItem.contentType === 'blog') {
+            console.log(`[ContentProcessor] Loading blog post: ${contentItem.slug}`);
             const blogPost = await this.loadBlogPost(contentItem.slug);
+            
             if (blogPost) {
+              console.log(`[ContentProcessor] Blog post loaded, sending notifications...`);
               const results = await this.notificationService.sendBlogNotification(blogPost);
               
               // Only mark as notified if ALL emails were successful

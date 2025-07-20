@@ -25,6 +25,13 @@ export class ResendEmailService {
     text: string;
     headers?: Record<string, string>;
   }): Promise<{ success: boolean; messageId?: string; error?: string }> {
+    console.log(`[Resend] ===== RESEND API CALL START =====`);
+    console.log(`[Resend] To: ${params.to}`);
+    console.log(`[Resend] Subject: ${params.subject}`);
+    console.log(`[Resend] API Endpoint: ${this.apiEndpoint}`);
+    console.log(`[Resend] Has API Key: ${!!this.env.RESEND_API_KEY}`);
+    console.log(`[Resend] API Key prefix: ${this.env.RESEND_API_KEY?.substring(0, 10)}...`);
+    
     try {
       const response = await fetch(this.apiEndpoint, {
         method: 'POST',
@@ -41,10 +48,22 @@ export class ResendEmailService {
           headers: params.headers
         })
       });
+      
+      console.log(`[Resend] Fetch completed, status: ${response.status}`);
 
       if (!response.ok) {
-        const error = await response.json() as ResendErrorResponse;
-        console.error('[Resend] Email send failed:', error);
+        const errorText = await response.text();
+        console.error('[Resend] Email send failed with status:', response.status);
+        console.error('[Resend] Error response body:', errorText);
+        
+        let error: ResendErrorResponse;
+        try {
+          error = JSON.parse(errorText) as ResendErrorResponse;
+        } catch {
+          error = { message: errorText, statusCode: response.status };
+        }
+        
+        console.log(`[Resend] ===== RESEND API CALL END (FAILED) =====`);
         return {
           success: false,
           error: `Resend API error: ${error.message} (${error.statusCode})`
@@ -53,6 +72,7 @@ export class ResendEmailService {
 
       const result = await response.json() as ResendEmailResponse;
       console.log('[Resend] Email sent successfully:', result.id);
+      console.log(`[Resend] ===== RESEND API CALL END (SUCCESS) =====`);
       
       return {
         success: true,
@@ -60,6 +80,8 @@ export class ResendEmailService {
       };
     } catch (error) {
       console.error('[Resend] Email send error:', error);
+      console.error('[Resend] Error stack:', error instanceof Error ? error.stack : 'No stack');
+      console.log(`[Resend] ===== RESEND API CALL END (EXCEPTION) =====`);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error'
