@@ -39,7 +39,19 @@ export const POST: APIRoute = async ({ request, locals }) => {
         expiredTokens: 0,
         oldNotifications: 0
       },
-      totalProcessingTime: 0
+      totalProcessingTime: 0,
+      debug: {
+        logs: [],
+        unnotifiedContent: [],
+        notificationDetails: []
+      }
+    };
+    
+    // Helper to capture debug logs
+    const debugLog = (message: string, data?: any) => {
+      const logEntry = `[${new Date().toISOString()}] ${message}`;
+      console.log(logEntry, data || '');
+      processingResults.debug.logs.push({ message: logEntry, data });
     };
 
     const startTime = Date.now();
@@ -56,15 +68,51 @@ export const POST: APIRoute = async ({ request, locals }) => {
       };
 
       // 2. Process new content notifications
-      console.log('Processing new content notifications...');
+      debugLog('Processing new content notifications...');
       const unnotifiedContent = await db.getUnnotifiedContent();
+      debugLog(`Found ${unnotifiedContent.length} unnotified content items`);
+      processingResults.debug.unnotifiedContent = unnotifiedContent.map(c => ({
+        slug: c.slug,
+        type: c.contentType,
+        title: c.title
+      }));
+      
+      // Get subscriber count
+      const blogSubscribers = await db.getSubscribersForContentType('blog');
+      const thoughtSubscribers = await db.getSubscribersForContentType('thought');
+      debugLog(`Subscribers - Blog: ${blogSubscribers.length}, Thoughts: ${thoughtSubscribers.length}`);
       
       // Process new content notifications
+      debugLog('Calling contentProcessor.processNewContent()...');
       await contentProcessor.processNewContent();
-      processingResults.notifications.sent = unnotifiedContent.length;
+      
+      // Check how many notifications were actually created
+      const createdNotifications = await db.db.prepare(`
+        SELECT COUNT(*) as count FROM email_notifications 
+        WHERE created_at >= ?
+      `).bind(Math.floor(startTime / 1000)).first();
+      
+      debugLog(`Notifications created in this run: ${createdNotifications?.count || 0}`);
+      processingResults.notifications.sent = createdNotifications?.count || 0;
 
+      // Get notification details for debugging
+      const recentNotifications = await db.db.prepare(`
+        SELECT id, user_id, content_type, content_id, status, error_message, email_message_id
+        FROM email_notifications 
+        WHERE created_at >= ?
+        ORDER BY created_at DESC
+        LIMIT 10
+      `).bind(Math.floor(startTime / 1000)).all();
+      
+      debugLog(`Recent notifications:`, recentNotifications.results.map(n => ({
+        id: n.id,
+        status: n.status,
+        has_message_id: !!n.email_message_id,
+        error: n.error_message
+      })));
+      
       // 3. Process failed notifications for retry
-      console.log('Processing failed notifications for retry...');
+      debugLog('Processing failed notifications for retry...');
       const now = Math.floor(Date.now() / 1000);
       
       const failedNotifications = await db.db.prepare(`

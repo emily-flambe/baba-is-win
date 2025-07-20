@@ -1,0 +1,90 @@
+name: Process Email Notifications (Debug)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  send-notifications-debug:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check initial state
+        run: |
+          echo "=== CHECKING INITIAL STATE ==="
+          response=$(curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -s)
+          
+          echo "$response" | jq '{
+            unnotifiedContent: .unnotifiedContent | length,
+            pendingNotifications: .summary.pending,
+            subscribers: .summary.subscribers
+          }'
+          
+          # Show first few unnotified items
+          echo ""
+          echo "Unnotified content:"
+          echo "$response" | jq -r '.unnotifiedContent[] | "- \(.slug) (\(.type))"' | head -5
+      
+      - name: Trigger email notifications with detailed output
+        run: |
+          echo ""
+          echo "=== TRIGGERING EMAIL NOTIFICATIONS ==="
+          
+          # Use curl with verbose output and capture everything
+          response=$(curl -X POST https://personal.emily-cogsdill.workers.dev/api/cron/process-notifications \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -w "\n\nHTTP_STATUS:%{http_code}\nTIME_TOTAL:%{time_total}s\n" \
+            -s 2>&1)
+          
+          # Extract the JSON response
+          json_response=$(echo "$response" | head -n -3)
+          http_status=$(echo "$response" | grep "HTTP_STATUS:" | cut -d: -f2)
+          time_total=$(echo "$response" | grep "TIME_TOTAL:" | cut -d: -f2)
+          
+          echo "Response:"
+          echo "$json_response" | jq . || echo "$json_response"
+          echo ""
+          echo "HTTP Status: $http_status"
+          echo "Processing Time: $time_total"
+      
+      - name: Check final state
+        run: |
+          echo ""
+          echo "=== CHECKING FINAL STATE ==="
+          
+          sleep 2  # Wait a moment for any async operations
+          
+          response=$(curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -s)
+          
+          echo "$response" | jq '{
+            unnotifiedContent: .unnotifiedContent | length,
+            sentNotifications: .summary.sent,
+            pendingNotifications: .summary.pending,
+            failedNotifications: .summary.failed
+          }'
+          
+          # Show any recent notifications with errors
+          echo ""
+          echo "Recent notifications with errors:"
+          echo "$response" | jq -r '.recentNotifications[] | select(.error != null) | "- \(.contentId): \(.error)"' | head -5
+      
+      - name: Create log capture endpoint call
+        run: |
+          echo ""
+          echo "=== IMPORTANT: CHECK LOGS ==="
+          echo "Since we can't see Cloudflare logs here, please check:"
+          echo "1. Cloudflare Dashboard > Workers & Pages > personal > Logs"
+          echo "2. Or run locally: wrangler tail --env production"
+          echo ""
+          echo "Look for these log patterns:"
+          echo "- [ContentProcessor] Processing content item:"
+          echo "- [SimpleEmailNotificationService] Starting blog notification"
+          echo "- [Resend] ===== RESEND API CALL START ====="
+          echo ""
+          echo "If you don't see [Resend] logs, the email service isn't being called."
