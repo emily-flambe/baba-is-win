@@ -41,7 +41,8 @@ blog-ideas.md
 coverage/
 worker-configuration.d.ts
 
-# Claude Code project-specific configuration
+# Project documentation and AI context
+# Keep .project/ directory in version control for AI agents and team collaboration
 
 # Test and debug files
 debug-*.js
