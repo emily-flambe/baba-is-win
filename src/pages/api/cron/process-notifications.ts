@@ -1,15 +1,17 @@
 import type { APIRoute } from 'astro';
 import { AuthDB } from '../../../lib/auth/db';
-import { EmailNotificationService } from '../../../lib/email/notification-service';
+import { SimpleEmailNotificationService } from '../../../lib/email/simple-notification-service';
 import { ContentProcessor } from '../../../lib/email/content-processor';
 
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
-    // Verify this is a legitimate cron request
+    // Verify this is a legitimate cron request from GitHub Actions
     const cronSecret = request.headers.get('x-cron-secret');
+    
     if (cronSecret !== locals.runtime.env.CRON_SECRET) {
+      console.log('Unauthorized cron attempt - invalid secret');
       return new Response(
         JSON.stringify({ error: 'Unauthorized cron request' }),
         { status: 401, headers: { 'Content-Type': 'application/json' } }
@@ -17,7 +19,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     const db = new AuthDB(locals.runtime.env.DB);
-    const notificationService = new EmailNotificationService(locals.runtime.env, db);
+    const notificationService = new SimpleEmailNotificationService(locals.runtime.env, db);
     const contentProcessor = new ContentProcessor(locals.runtime.env, db, notificationService);
 
     const processingResults = {

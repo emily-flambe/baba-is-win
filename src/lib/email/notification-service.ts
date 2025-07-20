@@ -1,6 +1,6 @@
 import type { Env } from '../../types/env';
 import { AuthDB } from '../auth/db';
-import { GmailAuth } from './gmail-auth';
+import { ResendEmailService } from './resend-service';
 import { EmailTemplateEngine, type BlogPost, type Thought } from './template-engine';
 import { UnsubscribeService } from './unsubscribe-service';
 import { EmailErrorHandler } from './error-handler';
@@ -26,7 +26,7 @@ export interface EmailNotification {
 }
 
 export class EmailNotificationService {
-  private gmailAuth: GmailAuth;
+  private emailService: ResendEmailService;
   private templateEngine: EmailTemplateEngine;
   private unsubscribeService: UnsubscribeService;
   private errorHandler: EmailErrorHandler;
@@ -37,7 +37,7 @@ export class EmailNotificationService {
     private env: Env,
     private authDB: AuthDB
   ) {
-    this.gmailAuth = new GmailAuth(env);
+    this.emailService = new ResendEmailService(env);
     this.templateEngine = new EmailTemplateEngine(env, authDB);
     this.unsubscribeService = new UnsubscribeService(env, authDB);
     this.errorHandler = new EmailErrorHandler(authDB);
@@ -243,15 +243,21 @@ export class EmailNotificationService {
       });
       
       // Send email
-      console.log(`[Notification Service] Initiating Gmail API send for notification ${notification.id}`);
-      const emailMessageId = await this.gmailAuth.sendEmail(
-        user.email,
-        emailContent.subject,
-        emailContent.html,
-        emailContent.text
-      );
+      console.log(`[Notification Service] Initiating Resend API send for notification ${notification.id}`);
+      const sendResult = await this.emailService.sendEmail({
+        to: user.email,
+        subject: emailContent.subject,
+        html: emailContent.html,
+        text: emailContent.text,
+        headers: emailContent.headers
+      });
       
-      console.log(`[Notification Service] Gmail API send successful, message ID: ${emailMessageId}`);
+      if (!sendResult.success) {
+        throw new Error(sendResult.error || 'Failed to send email');
+      }
+      
+      const emailMessageId = sendResult.messageId;
+      console.log(`[Notification Service] Resend API send successful, message ID: ${emailMessageId}`);
       
       // Update notification status in database
       console.log(`[Notification Service] Updating notification ${notification.id} status to 'sent'`);

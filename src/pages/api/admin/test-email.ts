@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { AuthDB } from '../../../lib/auth/db';
-import { EmailNotificationService } from '../../../lib/email/notification-service';
+import { SimpleEmailNotificationService } from '../../../lib/email/simple-notification-service';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
@@ -8,7 +8,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     
     const env = locals.runtime.env;
     const authDB = new AuthDB(env.DB);
-    const notificationService = new EmailNotificationService(env, authDB);
+    const notificationService = new SimpleEmailNotificationService(env, authDB);
 
     // Create a test blog post or thought
     const testContent = {
