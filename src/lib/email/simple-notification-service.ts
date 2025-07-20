@@ -22,31 +22,34 @@ export class SimpleEmailNotificationService {
     this.unsubscribeService = new UnsubscribeService(env, authDB);
   }
   
-  async sendBlogNotification(post: BlogPost): Promise<void> {
+  async sendBlogNotification(post: BlogPost): Promise<{ success: boolean; successCount: number; failedCount: number }> {
     console.log(`📧 Sending blog notification: ${post.title}`);
-    await this.sendNotifications('blog', post);
+    return await this.sendNotifications('blog', post);
   }
   
-  async sendThoughtNotification(thought: Thought): Promise<void> {
+  async sendThoughtNotification(thought: Thought): Promise<{ success: boolean; successCount: number; failedCount: number }> {
     console.log(`📧 Sending thought notification: ${thought.title}`);
-    await this.sendNotifications('thought', thought);
+    return await this.sendNotifications('thought', thought);
   }
   
   private async sendNotifications(
     contentType: 'blog' | 'thought',
     content: BlogPost | Thought
-  ): Promise<void> {
+  ): Promise<{ success: boolean; successCount: number; failedCount: number }> {
     // Get subscribers
     const subscribers = await this.authDB.getSubscribersForContentType(contentType);
     console.log(`Found ${subscribers.length} ${contentType} subscribers`);
     
-    if (subscribers.length === 0) return;
+    if (subscribers.length === 0) {
+      return { success: true, successCount: 0, failedCount: 0 };
+    }
     
     // Create notifications in database
     const notificationIds = await this.createNotifications(subscribers, contentType, content);
     
-    // Process notifications
-    await this.processNotifications(notificationIds, content);
+    // Process notifications and track results
+    const results = await this.processNotifications(notificationIds, content);
+    return results;
   }
   
   private async createNotifications(
@@ -75,7 +78,10 @@ export class SimpleEmailNotificationService {
   private async processNotifications(
     notificationIds: string[],
     content: BlogPost | Thought
-  ): Promise<void> {
+  ): Promise<{ success: boolean; successCount: number; failedCount: number }> {
+    let successCount = 0;
+    let failedCount = 0;
+    
     // Process in batches of 10
     const batchSize = 10;
     
@@ -83,30 +89,44 @@ export class SimpleEmailNotificationService {
       const batch = notificationIds.slice(i, i + batchSize);
       console.log(`Processing batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(notificationIds.length/batchSize)}`);
       
-      // Process batch in parallel
-      await Promise.all(batch.map(id => this.sendSingleNotification(id, content)));
+      // Process batch in parallel and collect results
+      const results = await Promise.all(
+        batch.map(id => this.sendSingleNotification(id, content))
+      );
+      
+      // Count successes and failures
+      results.forEach(success => {
+        if (success) successCount++;
+        else failedCount++;
+      });
       
       // Small delay between batches to avoid rate limits
       if (i + batchSize < notificationIds.length) {
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
+    
+    return {
+      success: failedCount === 0,
+      successCount,
+      failedCount
+    };
   }
   
   private async sendSingleNotification(
     notificationId: string,
     content: BlogPost | Thought
-  ): Promise<void> {
+  ): Promise<boolean> {
     try {
       // Get notification details
       const notification = await this.authDB.getNotificationById(notificationId);
-      if (!notification || notification.status !== 'pending') return;
+      if (!notification || notification.status !== 'pending') return false;
       
       // Get user
       const user = await this.authDB.getUserById(notification.userId);
       if (!user || !user.email) {
         await this.authDB.updateNotificationStatus(notificationId, 'failed', 'User not found or no email');
-        return;
+        return false;
       }
       
       // Generate unsubscribe URL
@@ -147,13 +167,16 @@ export class SimpleEmailNotificationService {
       if (result.success) {
         await this.authDB.updateNotificationStatus(notificationId, 'sent', null, result.messageId);
         console.log(`✅ Sent to ${user.email}`);
+        return true;
       } else {
         await this.authDB.updateNotificationStatus(notificationId, 'failed', result.error);
         console.log(`❌ Failed to send to ${user.email}: ${result.error}`);
+        return false;
       }
     } catch (error) {
       console.error(`Error processing notification ${notificationId}:`, error);
       await this.authDB.updateNotificationStatus(notificationId, 'failed', error.message);
+      return false;
     }
   }
   
