@@ -29,8 +29,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       try {
         const contentResetResult = await locals.runtime.env.DB.prepare(`
           UPDATE content_items 
-          SET is_notified = 0, notification_count = 0
-          WHERE is_notified = 1
+          SET notification_sent = 0, notification_count = 0
+          WHERE notification_sent = 1
         `).run();
         
         results.contentReset = contentResetResult.changes || 0;

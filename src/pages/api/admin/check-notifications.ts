@@ -60,7 +60,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
         slug: c.slug,
         type: c.contentType,
         title: c.title,
-        isNotified: c.isNotified
+        notificationSent: c.notificationSent
       })),
       recentNotifications: recentNotifications.results.map(n => ({
         id: n.id,
