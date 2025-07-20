@@ -1,0 +1,35 @@
+{
+  "name": "baba-is-win",
+  "description": "Claude-specific configuration that extends .project/ structure",
+  "version": "2.0.1",
+  "project_config_source": ".project/config.md",
+  "claude_extensions": {
+    "primary_config": ".claude/CLAUDE.md",
+    "personas": ".claude/shared/superclaude-personas.yml",
+    "mcp_integration": ".claude/shared/superclaude-mcp.yml", 
+    "core_philosophy": ".claude/shared/superclaude-core.yml",
+    "rules": ".claude/shared/superclaude-rules.yml"
+  },
+  "project_structure": {
+    "source_of_truth": ".project/",
+    "claude_layer": ".claude/",
+    "relationship": "claude_extends_project"
+  },
+  "integration_pattern": {
+    "base_configuration": ".project/config.md",
+    "claude_optimizations": ".claude/CLAUDE.md",
+    "context_modules": [
+      ".project/contexts/context-astro.md",
+      ".project/contexts/context-cloudflare.md", 
+      ".project/contexts/context-auth.md",
+      ".project/contexts/context-email.md",
+      ".project/contexts/context-content.md"
+    ]
+  },
+  "settings": {
+    "auto_include_project_config": true,
+    "preserve_claude_features": true,
+    "enable_persona_system": true,
+    "enable_mcp_integration": true
+  }
+}

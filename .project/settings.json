@@ -1,0 +1,22 @@
+{
+  "_comment": "Placeholder settings file - awaiting content population by specialized agents",
+  "project": {
+    "name": "baba-is-win",
+    "type": "web-application",
+    "framework": "astro",
+    "status": "placeholder"
+  },
+  "structure": {
+    "created_by": "Penguin (Structure Builder)",
+    "created_at": "placeholder",
+    "framework_version": "unified-documentation-v1"
+  },
+  "agents": {
+    "pending_population": [
+      "architect",
+      "configurator", 
+      "documenter",
+      "optimizer"
+    ]
+  }
+}

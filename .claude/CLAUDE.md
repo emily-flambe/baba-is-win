@@ -1,7 +1,10 @@
-# CLAUDE.md - Baba Is Win Project Configuration
+# CLAUDE.md - SuperClaude Configuration for Baba Is Win
 
-## Project Identity
-@include .claude/project/identity.yml#ProjectIdentity
+This file extends the primary project configuration with Claude-specific optimizations and personas.
+
+## Primary Project Configuration
+**Source of Truth:** `.project/config.md`
+@include .project/config.md#*
 
 ## Quick Navigation
 - [Development Workflow](#development-workflow) | [Production Deployment](#production-workflow)
@@ -22,22 +25,8 @@
 @include .claude/shared/superclaude-core.yml#Task_Management
 @include .claude/shared/superclaude-core.yml#Performance_Standards
 
-## Project Commands
-@include .claude/project/identity.yml#BuildCommands
-@include .claude/project/identity.yml#WranglerCommands
-@include .claude/project/identity.yml#DatabaseCommands
-
-## Development Workflow
-@include .claude/project/workflows.yml#DevelopmentWorkflow
-
-## Production Workflow  
-@include .claude/project/workflows.yml#ProductionWorkflow
-
-## Content Management
-@include .claude/project/workflows.yml#ContentManagement
-
-## Security Workflow
-@include .claude/project/workflows.yml#SecurityWorkflow
+## Project Commands & Workflows
+*Refer to .project/config.md for standard development commands and workflows*
 
 ## Standards & Rules
 @include .claude/shared/superclaude-core.yml#Evidence_Based_Standards
@@ -71,32 +60,16 @@
 @include .claude/shared/superclaude-personas.yml#Intelligent_Activation_Patterns
 @include .claude/shared/superclaude-personas.yml#Command_Specialization
 
-## Key Project Rules
+## Claude-Specific Project Rules
 
-### File Operations
-- ALWAYS prefer editing existing files over creating new ones
-- NEVER proactively create documentation files unless explicitly requested
+### Claude File Operations 
+*Core file operation standards defined in .project/config.md - Claude-specific additions:*
 - NEVER create markdown files (.md) when creating issues, bug reports, or documentation - use direct communication instead
-- Use absolute paths for all file operations
-- Quote file paths containing spaces with double quotes
 
-### Code Standards
-- Follow existing Astro and TypeScript conventions
-- Use existing component patterns and styling approaches
-- Verify library availability before use (check package.json)
+### Claude Development Standards
+*Base development standards defined in .project/config.md - Claude-specific additions:*
 - Never add comments unless explicitly requested
-
-### Testing & Validation
-- Run `npm run test` for Vitest test suite
-- Run `npm run lint` for ESLint validation
-- Run `npm run typecheck` for TypeScript validation
-- Run `npm run build` to verify production build
-
-### Deployment & Security
-- Never commit changes unless explicitly requested
-- Use Wrangler commands for Cloudflare Workers deployment
-- Protect environment variables and secrets
-- Follow JWT authentication patterns for user management
+- Maintain serious, professional tone in all interactions
 
 ### ⚠️ CRITICAL: Cloudflare Deployment Architecture
 - **Auto-deployment enabled**: Cloudflare Workers auto-deploys on git push to main

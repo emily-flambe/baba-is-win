@@ -1,0 +1,22 @@
+# Development Environment Variables Template
+# CRITICAL: Copy this file to .dev.vars and fill with your values
+# The development server will NOT function without these variables
+
+# Required for JWT authentication
+JWT_SECRET=generate-a-secure-random-string-here
+API_KEY_SALT=generate-another-secure-random-string-here
+
+# Google OAuth (optional for development)
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REDIRECT_URI=http://localhost:8787/api/auth/google/callback
+
+# Gmail API (optional for email features)
+GMAIL_CLIENT_ID=
+GMAIL_CLIENT_SECRET=
+GMAIL_REFRESH_TOKEN=
+
+# Site settings
+SITE_URL=http://localhost:8787
+SITE_NAME=Emily's Blog (Dev)
+ENVIRONMENT=development
