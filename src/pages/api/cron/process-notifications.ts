@@ -71,7 +71,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         SELECT * FROM email_notifications 
         WHERE status = 'failed' 
         AND retry_count < 3 
-        AND (retry_after IS NULL OR retry_after <= ?)
+        AND (next_retry_at IS NULL OR next_retry_at <= ?)
         ORDER BY created_at ASC
         LIMIT 100
       `).bind(now).all();
