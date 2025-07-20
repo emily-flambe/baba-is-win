@@ -232,6 +232,32 @@ export class AuthDB {
     ).run();
   }
 
+  async getNotificationById(notificationId: string): Promise<EmailNotification | null> {
+    const result = await this.db.prepare(`
+      SELECT * FROM email_notifications WHERE id = ?
+    `).bind(notificationId).first();
+    
+    if (!result) return null;
+    
+    return {
+      id: result.id,
+      userId: result.user_id,
+      contentType: result.content_type,
+      contentId: result.content_id,
+      contentTitle: result.content_title,
+      contentUrl: result.content_url,
+      contentExcerpt: result.content_excerpt,
+      notificationType: result.notification_type,
+      status: result.status,
+      createdAt: new Date(result.created_at * 1000),
+      scheduledFor: result.scheduled_for ? new Date(result.scheduled_for * 1000) : undefined,
+      sentAt: result.sent_at ? new Date(result.sent_at * 1000) : undefined,
+      errorMessage: result.error_message,
+      retryCount: result.retry_count,
+      emailMessageId: result.email_message_id
+    };
+  }
+
   // createNotificationHistory method removed - email_notification_history table deleted in migration 0013
 
   // === CONTENT TRACKING METHODS ===
