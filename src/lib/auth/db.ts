@@ -7,8 +7,6 @@ import type {
   EmailNotificationHistory,
   ContentItem,
   CreateContentItemParams,
-  EmailTemplate,
-  CreateEmailTemplateParams,
   UnsubscribeToken,
   CreateUnsubscribeTokenParams,
   EmailPreferences,
@@ -358,37 +356,9 @@ export class AuthDB {
 
   // === EMAIL TEMPLATE METHODS ===
   
-  async getEmailTemplate(templateName: string): Promise<EmailTemplate | null> {
-    const result = await this.db.prepare(`
-      SELECT * FROM email_templates 
-      WHERE template_name = ? AND is_active = TRUE
-    `).bind(templateName).first();
-    
-    return result ? this.mapDbEmailTemplateToEmailTemplate(result) : null;
-  }
+  // getEmailTemplate method removed - email_templates table deleted in migration 0013
 
-  async createEmailTemplate(params: CreateEmailTemplateParams): Promise<string> {
-    const id = nanoid();
-    const now = Math.floor(Date.now() / 1000);
-    
-    await this.db.prepare(`
-      INSERT INTO email_templates (
-        id, template_name, template_type, subject_template, 
-        html_template, text_template, variables, created_by
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `).bind(
-      id,
-      params.templateName,
-      params.templateType,
-      params.subjectTemplate,
-      params.htmlTemplate,
-      params.textTemplate,
-      JSON.stringify(params.variables || []),
-      params.createdBy || null
-    ).run();
-    
-    return id;
-  }
+  // createEmailTemplate method removed - email_templates table deleted in migration 0013
 
   // === UNSUBSCRIBE TOKEN METHODS ===
   
@@ -505,21 +475,7 @@ export class AuthDB {
     };
   }
 
-  private mapDbEmailTemplateToEmailTemplate(dbTemplate: any): EmailTemplate {
-    return {
-      id: dbTemplate.id,
-      templateName: dbTemplate.template_name,
-      templateType: dbTemplate.template_type,
-      subjectTemplate: dbTemplate.subject_template,
-      htmlTemplate: dbTemplate.html_template,
-      textTemplate: dbTemplate.text_template,
-      isActive: !!dbTemplate.is_active,
-      version: dbTemplate.version,
-      variables: JSON.parse(dbTemplate.variables || '[]'),
-      createdAt: new Date(dbTemplate.created_at * 1000),
-      updatedAt: new Date(dbTemplate.updated_at * 1000)
-    };
-  }
+  // mapDbEmailTemplateToEmailTemplate removed - email_templates table deleted in migration 0013
 
   private mapDbUnsubscribeTokenToUnsubscribeToken(dbToken: any): UnsubscribeToken {
     return {
