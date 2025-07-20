@@ -444,36 +444,7 @@ export class AuthDB {
     `).bind(now, userId).run();
   }
 
-  // === STATISTICS METHODS ===
-  
-  async updateEmailStatistics(dateKey: string, contentType: string, stats: EmailStatisticsUpdate): Promise<void> {
-    const now = Math.floor(Date.now() / 1000);
-    
-    await this.db.prepare(`
-      INSERT INTO email_statistics (
-        id, date_key, content_type, total_sent, total_delivered, 
-        total_bounced, total_failed, total_opened, total_clicked, 
-        total_unsubscribed, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      ON CONFLICT(date_key, content_type) DO UPDATE SET
-        total_sent = total_sent + ?,
-        total_delivered = total_delivered + ?,
-        total_bounced = total_bounced + ?,
-        total_failed = total_failed + ?,
-        total_opened = total_opened + ?,
-        total_clicked = total_clicked + ?,
-        total_unsubscribed = total_unsubscribed + ?,
-        updated_at = ?
-    `).bind(
-      nanoid(), dateKey, contentType,
-      stats.sent || 0, stats.delivered || 0, stats.bounced || 0,
-      stats.failed || 0, stats.opened || 0, stats.clicked || 0,
-      stats.unsubscribed || 0, now, now,
-      stats.sent || 0, stats.delivered || 0, stats.bounced || 0,
-      stats.failed || 0, stats.opened || 0, stats.clicked || 0,
-      stats.unsubscribed || 0, now
-    ).run();
-  }
+  // updateEmailStatistics method removed - email_statistics table deleted in migration 0013
 
   // === HELPER METHODS ===
   

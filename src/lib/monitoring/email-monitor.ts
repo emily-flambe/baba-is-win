@@ -362,15 +362,7 @@ export class EmailMonitor {
       timestamp
     });
 
-    // Update email statistics
-    const dateKey = timestamp.split('T')[0]; // YYYY-MM-DD
-    const stats = { [event]: 1 };
-    
-    try {
-      await this.authDB.updateEmailStatistics(dateKey, 'all', stats);
-    } catch (error) {
-      console.error('Failed to update email statistics:', error);
-    }
+    // Note: Email statistics tracking disabled - email_statistics table removed in migration 0013
   }
 
   // Circuit breaker pattern for email sending

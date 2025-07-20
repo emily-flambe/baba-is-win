@@ -132,15 +132,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       // Note: email_notification_history table was removed in migration 0013
       processingResults.cleanup.oldNotifications = 0;
 
-      // 5. Update statistics
-      console.log('Updating email statistics...');
-      const dateKey = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-      
-      await db.updateEmailStatistics(dateKey, 'system', {
-        sent: processingResults.notifications.sent,
-        failed: processingResults.notifications.failed,
-        delivered: processingResults.notifications.sent // Assuming sent = delivered for now
-      });
+      // Note: Email statistics tracking disabled - email_statistics table removed in migration 0013
 
     } catch (error) {
       console.error('Error during cron processing:', error);
