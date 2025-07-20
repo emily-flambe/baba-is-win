@@ -44,7 +44,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
     const subscribers = await locals.runtime.env.DB.prepare(`
       SELECT COUNT(*) as count FROM users 
       WHERE email_verified = 1 
-      AND (email_notifications = 1 OR thought_notifications = 1)
+      AND (email_blog_updates = 1 OR email_thought_updates = 1)
     `).first();
     
     const response = {
