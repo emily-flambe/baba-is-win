@@ -1,0 +1,66 @@
+name: Sync Content to Database
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_update:
+        description: 'Force update all content (even if unchanged)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  sync-content:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Trigger content sync
+        run: |
+          echo "Starting content sync..."
+          echo "Force update: ${{ github.event.inputs.force_update }}"
+          
+          response=$(curl -X POST https://personal.emily-cogsdill.workers.dev/api/admin/trigger-content-sync \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "forceUpdate": ${{ github.event.inputs.force_update || false }}
+            }' \
+            -w "\n\nHTTP_STATUS:%{http_code}\n" \
+            -v 2>&1)
+          
+          # Extract response body and status
+          body=$(echo "$response" | sed -n '/^{/,/^}/p' | tail -1)
+          http_status=$(echo "$response" | grep -o "HTTP_STATUS:[0-9]*" | cut -d: -f2)
+          
+          echo "Response:"
+          echo "$body" | jq . || echo "$body"
+          
+          if [ "$http_status" != "200" ]; then
+            echo "❌ Content sync failed with HTTP status: $http_status"
+            exit 1
+          else
+            echo "✅ Content sync completed successfully"
+          fi
+      
+      - name: Check content status after sync
+        run: |
+          echo ""
+          echo "Checking content and notification status after sync..."
+          
+          curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            | jq '{
+              summary,
+              unnotifiedContent: .unnotifiedContent | map({slug, type, title, isNotified}),
+              totalUnnotified: .unnotifiedContent | length
+            }'
+      
+      - name: Show sync summary
+        run: |
+          echo ""
+          echo "=== SYNC SUMMARY ==="
+          echo "1. Content has been synced from markdown files to database"
+          echo "2. Check the unnotifiedContent above to see what needs notification"
+          echo "3. To send notifications, use the 'Process Email Notifications' workflow"
+          echo "4. To force re-notification of content, use the 'Reset Notifications' workflow first"

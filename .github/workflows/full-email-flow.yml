@@ -1,0 +1,105 @@
+name: Full Email Notification Flow
+
+on:
+  workflow_dispatch:
+    inputs:
+      reset_first:
+        description: 'Reset notifications before processing'
+        required: false
+        type: boolean
+        default: false
+      test_email:
+        description: 'Email to send test to (optional)'
+        required: false
+        type: string
+
+jobs:
+  full-flow:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Step 1 - Check initial status
+        run: |
+          echo "=== INITIAL STATUS CHECK ==="
+          curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            | jq '{
+              notifications: .summary,
+              unnotifiedContent: .unnotifiedContent | length,
+              recentErrors: [.recentNotifications[] | select(.error != null) | {contentId: .contentId, error: .error}]
+            }'
+      
+      - name: Step 2 - Reset if requested
+        if: ${{ github.event.inputs.reset_first == 'true' }}
+        run: |
+          echo ""
+          echo "=== RESETTING NOTIFICATIONS ==="
+          curl -X POST https://personal.emily-cogsdill.workers.dev/api/admin/reset-notifications \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d '{"resetContent": true, "resetNotifications": true}' \
+            | jq .
+      
+      - name: Step 3 - Sync content from files
+        run: |
+          echo ""
+          echo "=== SYNCING CONTENT FROM FILES ==="
+          curl -X POST https://personal.emily-cogsdill.workers.dev/api/admin/trigger-content-sync \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d '{}' \
+            | jq .
+      
+      - name: Step 4 - Process notifications
+        run: |
+          echo ""
+          echo "=== PROCESSING EMAIL NOTIFICATIONS ==="
+          curl -X POST https://personal.emily-cogsdill.workers.dev/api/cron/process-notifications \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            | jq .
+      
+      - name: Step 5 - Check final status
+        run: |
+          echo ""
+          echo "=== FINAL STATUS CHECK ==="
+          curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            | jq '{
+              notifications: .summary,
+              unnotifiedContent: .unnotifiedContent | length,
+              recentlySent: [.recentNotifications[] | select(.status == "sent" and .sentAt != null) | {contentId: .contentId, sentAt: .sentAt}] | .[0:5]
+            }'
+      
+      - name: Step 6 - Send test email if requested
+        if: ${{ github.event.inputs.test_email != '' }}
+        run: |
+          echo ""
+          echo "=== SENDING TEST EMAIL ==="
+          curl -X POST https://personal.emily-cogsdill.workers.dev/api/admin/test-email-debug \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "to": "${{ github.event.inputs.test_email }}",
+              "subject": "Test Email - Full Flow Complete",
+              "debug": true
+            }' \
+            | jq .
+      
+      - name: Summary
+        run: |
+          echo ""
+          echo "========================================="
+          echo "WORKFLOW COMPLETE"
+          echo "========================================="
+          echo "1. ✅ Content synced from markdown files"
+          echo "2. ✅ Notifications processed"
+          echo "3. ✅ Status checked"
+          echo ""
+          echo "Check the Resend dashboard to verify emails were sent:"
+          echo "https://resend.com/emails"
+          echo ""
+          echo "Check Cloudflare logs for any errors:"
+          echo "https://dash.cloudflare.com/ > Workers & Pages > personal > Logs"
