@@ -91,16 +91,7 @@ export interface EmailNotificationHistory {
   retryAttempt: number;
 }
 
-export interface CreateNotificationHistoryParams {
-  userId: string;
-  notificationId: string;
-  action: string;
-  details?: any;
-  ipAddress?: string;
-  userAgent?: string;
-  errorCode?: string;
-  retryAttempt?: number;
-}
+// CreateNotificationHistoryParams interface removed - email_notification_history table deleted in migration 0013
 
 export interface ContentItem {
   id: string;

@@ -129,14 +129,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       
       processingResults.cleanup.expiredTokens = expiredTokensResult.changes || 0;
 
-      // Clean up old notification history (older than 30 days)
-      const thirtyDaysAgo = now - (30 * 24 * 60 * 60);
-      const oldNotificationsResult = await db.db.prepare(`
-        DELETE FROM email_notification_history 
-        WHERE timestamp < ?
-      `).bind(thirtyDaysAgo).run();
-      
-      processingResults.cleanup.oldNotifications = oldNotificationsResult.changes || 0;
+      // Note: email_notification_history table was removed in migration 0013
+      processingResults.cleanup.oldNotifications = 0;
 
       // 5. Update statistics
       console.log('Updating email statistics...');

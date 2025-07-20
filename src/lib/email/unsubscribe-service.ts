@@ -145,19 +145,7 @@ export class UnsubscribeService {
     
     console.log(`User ${userId} performed ${action} via ${tokenType}`, logData);
     
-    // Store in database for audit trail
-    try {
-      await this.authDB.createNotificationHistory({
-        userId,
-        notificationId: `unsubscribe_${Date.now()}`,
-        action,
-        details: logData,
-        ipAddress,
-        userAgent
-      });
-    } catch (error) {
-      console.error('Failed to log unsubscribe action to database:', error);
-    }
+    // Note: Database audit trail disabled - email_notification_history table removed in migration 0013
   }
   
   // Helper method to generate List-Unsubscribe header

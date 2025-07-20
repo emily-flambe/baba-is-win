@@ -5,7 +5,6 @@ import type {
   EmailNotification,
   CreateEmailNotificationParams,
   EmailNotificationHistory,
-  CreateNotificationHistoryParams,
   ContentItem,
   CreateContentItemParams,
   EmailTemplate,
@@ -233,28 +232,7 @@ export class AuthDB {
     ).run();
   }
 
-  async createNotificationHistory(params: CreateNotificationHistoryParams): Promise<void> {
-    const id = nanoid();
-    const now = Math.floor(Date.now() / 1000);
-    
-    await this.db.prepare(`
-      INSERT INTO email_notification_history (
-        id, user_id, notification_id, action, timestamp, details, 
-        ip_address, user_agent, error_code, retry_attempt
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).bind(
-      id,
-      params.userId,
-      params.notificationId,
-      params.action,
-      now,
-      JSON.stringify(params.details || {}),
-      params.ipAddress || null,
-      params.userAgent || null,
-      params.errorCode || null,
-      params.retryAttempt || 0
-    ).run();
-  }
+  // createNotificationHistory method removed - email_notification_history table deleted in migration 0013
 
   // === CONTENT TRACKING METHODS ===
   
