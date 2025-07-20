@@ -87,14 +87,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
           }
 
           // Retry sending the notification
+          // Note: triggerNotificationForContent doesn't return success/failure
+          // so we can't mark as sent here. The notification service will update status.
           if (notification.content_type === 'blog') {
-            const blogPost = await contentProcessor.triggerNotificationForContent(content.slug, 'blog');
+            await contentProcessor.triggerNotificationForContent(content.slug, 'blog');
           } else if (notification.content_type === 'thought') {
-            const thought = await contentProcessor.triggerNotificationForContent(content.slug, 'thought');
+            await contentProcessor.triggerNotificationForContent(content.slug, 'thought');
           }
-
-          // Update status to sent
-          await db.updateNotificationStatus(notification.id, 'sent');
+          
           processingResults.notifications.retried++;
         } catch (error) {
           console.error(`Failed to retry notification ${notification.id}:`, error);

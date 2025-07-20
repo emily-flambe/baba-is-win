@@ -1,0 +1,64 @@
+name: Reset Notifications
+
+on:
+  workflow_dispatch:
+    inputs:
+      reset_content:
+        description: 'Reset content notification status'
+        required: true
+        type: boolean
+        default: true
+      reset_notifications:
+        description: 'Delete fake "sent" notifications'
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Reset notification state
+        run: |
+          echo "Resetting notifications..."
+          echo "Reset content: ${{ github.event.inputs.reset_content }}"
+          echo "Reset notifications: ${{ github.event.inputs.reset_notifications }}"
+          
+          response=$(curl -X POST https://personal.emily-cogsdill.workers.dev/api/admin/reset-notifications \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "resetContent": ${{ github.event.inputs.reset_content }},
+              "resetNotifications": ${{ github.event.inputs.reset_notifications }}
+            }' \
+            -w "\n\nHTTP_STATUS:%{http_code}\n")
+          
+          echo "$response" | head -n -2
+          
+          http_status=$(echo "$response" | tail -n 1 | cut -d: -f2)
+          
+          if [ "$http_status" != "200" ]; then
+            echo "❌ Reset failed with HTTP status: $http_status"
+            exit 1
+          fi
+      
+      - name: Check status after reset
+        run: |
+          echo ""
+          echo "Checking notification status after reset..."
+          
+          curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            | jq .
+      
+      - name: Trigger notification processing
+        run: |
+          echo ""
+          echo "Triggering notification processing..."
+          
+          curl -X POST https://personal.emily-cogsdill.workers.dev/api/cron/process-notifications \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            | jq .
