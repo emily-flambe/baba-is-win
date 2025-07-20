@@ -136,8 +136,9 @@ export class SimpleEmailNotificationService {
       const unsubscribeUrl = await this.unsubscribeService.generateUnsubscribeUrl(user.id, user.email);
       
       // Render email
+      const templateName = `${notification.contentType}_notification`;
       const emailContent = await this.templateEngine.renderTemplate(
-        notification.contentType,
+        templateName,
         {
           recipientName: user.username || 'Subscriber',
           recipientEmail: user.email,
