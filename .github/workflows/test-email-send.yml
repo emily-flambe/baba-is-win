@@ -1,0 +1,70 @@
+name: Test Email Send Debug
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_email:
+        description: 'Email address to send test to'
+        required: true
+        type: string
+
+jobs:
+  test-email:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check notification status first
+        run: |
+          echo "Checking current notification status..."
+          
+          curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            | jq .
+          
+          echo ""
+          echo "---"
+          echo ""
+      
+      - name: Test email send with detailed logging
+        run: |
+          echo "Testing email send to: ${{ github.event.inputs.test_email }}"
+          
+          # Call the test email endpoint with verbose output
+          response=$(curl -X POST https://personal.emily-cogsdill.workers.dev/api/admin/test-email-debug \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "to": "${{ github.event.inputs.test_email }}",
+              "subject": "Test Email from GitHub Actions",
+              "debug": true
+            }' \
+            -w "\n\nHTTP_STATUS:%{http_code}\nTIME_TOTAL:%{time_total}\n" \
+            -v \
+            2>&1)
+          
+          echo "Full response:"
+          echo "$response"
+          
+          # Extract HTTP status
+          http_status=$(echo "$response" | grep -o "HTTP_STATUS:[0-9]*" | cut -d: -f2)
+          
+          if [ "$http_status" != "200" ]; then
+            echo "❌ Email send failed with HTTP status: $http_status"
+            exit 1
+          else
+            echo "✅ Email send request completed with status 200"
+          fi
+      
+      - name: Check Cloudflare Workers logs
+        run: |
+          echo "To view detailed logs:"
+          echo "1. Go to Cloudflare Dashboard > Workers & Pages > personal"
+          echo "2. Click on 'Logs' tab"
+          echo "3. Look for recent entries with [Resend] prefix"
+          echo ""
+          echo "Common issues to check:"
+          echo "- RESEND_API_KEY not set or invalid"
+          echo "- RESEND_FROM_EMAIL domain not verified in Resend"
+          echo "- Rate limiting from Resend API"
+          echo "- Invalid recipient email address"
