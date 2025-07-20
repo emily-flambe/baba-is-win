@@ -18,7 +18,7 @@ jobs:
           echo "Checking current notification status..."
           
           curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             | jq .
           
@@ -32,7 +32,7 @@ jobs:
           
           # Call the test email endpoint with verbose output
           response=$(curl -X POST https://personal.emily-cogsdill.workers.dev/api/admin/test-email-debug \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             -d '{
               "to": "${{ github.event.inputs.test_email }}",

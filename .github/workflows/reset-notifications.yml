@@ -26,7 +26,7 @@ jobs:
           echo "Reset notifications: ${{ github.event.inputs.reset_notifications }}"
           
           response=$(curl -X POST https://personal.emily-cogsdill.workers.dev/api/admin/reset-notifications \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             -d '{
               "resetContent": ${{ github.event.inputs.reset_content }},
@@ -49,7 +49,7 @@ jobs:
           echo "Checking notification status after reset..."
           
           curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             | jq .
       

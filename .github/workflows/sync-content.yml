@@ -20,7 +20,7 @@ jobs:
           echo "Force update: ${{ github.event.inputs.force_update }}"
           
           response=$(curl -X POST https://personal.emily-cogsdill.workers.dev/api/admin/trigger-content-sync \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             -d '{
               "forceUpdate": ${{ github.event.inputs.force_update || false }}
@@ -48,7 +48,7 @@ jobs:
           echo "Checking content and notification status after sync..."
           
           curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             | jq '{
               summary,

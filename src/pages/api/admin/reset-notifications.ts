@@ -2,11 +2,12 @@ import type { APIRoute } from 'astro';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
-    // Check authorization
+    // Check authorization - support both x-cron-secret header and Bearer token
+    const cronSecret = request.headers.get('x-cron-secret');
     const authHeader = request.headers.get('authorization');
     const token = authHeader?.replace('Bearer ', '');
     
-    if (token !== locals.runtime.env.CRON_SECRET) {
+    if (cronSecret !== locals.runtime.env.CRON_SECRET && token !== locals.runtime.env.CRON_SECRET) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { 'Content-Type': 'application/json' } }
