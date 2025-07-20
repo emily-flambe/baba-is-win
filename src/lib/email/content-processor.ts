@@ -170,9 +170,14 @@ export class ContentProcessor {
       const thoughtData = await this.loadMarkdownFile(filePath);
       if (!thoughtData) return null;
       
+      // Create a description from the content if not provided in frontmatter
+      const description = thoughtData.frontmatter.description || 
+        thoughtData.content.replace(/[#*_`]/g, '').trim().substring(0, 150) + '...';
+      
       return {
         slug,
         title: thoughtData.frontmatter.title,
+        description,
         content: thoughtData.content,
         publishDate: new Date(thoughtData.frontmatter.publishDate),
         tags: thoughtData.frontmatter.tags || [],

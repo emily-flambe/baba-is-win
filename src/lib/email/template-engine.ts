@@ -13,6 +13,7 @@ export interface TemplateVariables {
   site_name: string;
   site_url: string;
   user_name?: string;
+  [key: string]: any; // Allow additional properties for flexibility
 }
 
 export interface BlogPost {
@@ -28,6 +29,7 @@ export interface BlogPost {
 export interface Thought {
   slug: string;
   title?: string;
+  description?: string;
   content: string;
   publishDate: Date;
   tags: string[];

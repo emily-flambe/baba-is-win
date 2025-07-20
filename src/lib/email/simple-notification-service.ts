@@ -144,15 +144,20 @@ export class SimpleEmailNotificationService {
       const emailContent = await this.templateEngine.renderTemplate(
         templateName,
         {
-          recipientName: user.username || 'Subscriber',
-          recipientEmail: user.email,
-          contentTitle: content.title,
-          contentUrl: notification.contentUrl,
-          contentExcerpt: content.description,
-          contentType: notification.contentType,
-          publishDate: content.publishDate,
-          authorName: 'Emily',
-          unsubscribeUrl
+          title: notification.contentType === 'thought' && !(content as Thought).title 
+            ? 'New Thought' 
+            : content.title || 'Untitled',
+          description: content.description || (notification.contentType === 'thought' 
+            ? (content as Thought).content.substring(0, 150) + '...'
+            : ''),
+          url: notification.contentUrl,
+          unsubscribe_url: unsubscribeUrl,
+          publish_date: content.publishDate.toLocaleDateString(),
+          tags: content.tags || [],
+          site_name: this.env.SITE_NAME || 'Emily Cogsdill',
+          site_url: this.env.SITE_URL || 'https://personal.emily-cogsdill.workers.dev',
+          user_name: user.username || 'Subscriber',
+          content: notification.contentType === 'thought' ? (content as Thought).content : undefined
         }
       );
       
