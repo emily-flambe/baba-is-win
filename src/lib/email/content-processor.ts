@@ -1,6 +1,6 @@
 import type { Env } from '../../types/env';
 import { AuthDB } from '../auth/db';
-import { EmailNotificationService } from './notification-service';
+import { SimpleEmailNotificationService } from './simple-notification-service';
 import { type BlogPost, type Thought } from './template-engine';
 import type { ContentItem } from '../auth/types';
 
@@ -8,7 +8,7 @@ export class ContentProcessor {
   constructor(
     private env: Env,
     private authDB: AuthDB,
-    private notificationService: EmailNotificationService
+    private notificationService: SimpleEmailNotificationService
   ) {}
   
   async processNewContent(): Promise<void> {

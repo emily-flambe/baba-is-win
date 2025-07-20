@@ -1,6 +1,6 @@
 import type { Env } from '../../types/env';
 import { AuthDB } from '../auth/db';
-import { GmailAuthEnhanced } from './gmail-auth-enhanced';
+import { ResendEmailService } from './resend-service';
 import { EmailTemplateEngine, type BlogPost, type Thought } from './template-engine';
 import { UnsubscribeService } from './unsubscribe-service';
 import { EmailErrorHandler } from './error-handler';
@@ -26,7 +26,7 @@ export interface EmailNotification {
 }
 
 export class EmailNotificationServiceEnhanced {
-  private gmailAuth: GmailAuthEnhanced;
+  private emailService: ResendEmailService;
   private templateEngine: EmailTemplateEngine;
   private unsubscribeService: UnsubscribeService;
   private errorHandler: EmailErrorHandler;
@@ -38,7 +38,7 @@ export class EmailNotificationServiceEnhanced {
     private authDB: AuthDB
   ) {
     this.eventLogger = new EmailEventLogger(env, authDB);
-    this.gmailAuth = new GmailAuthEnhanced(env, authDB, this.eventLogger.getCorrelationId());
+    this.emailService = new ResendEmailService(env);
     this.templateEngine = new EmailTemplateEngine(env, authDB);
     this.unsubscribeService = new UnsubscribeService(env, authDB);
     this.errorHandler = new EmailErrorHandler(authDB);
@@ -419,15 +419,20 @@ export class EmailNotificationServiceEnhanced {
         notification.contentType, user, content, unsubscribeUrl, notificationLogger
       );
       
-      // Send email with enhanced Gmail auth
-      const gmailAuth = new GmailAuthEnhanced(this.env, this.authDB, notificationCorrelationId);
-      const emailMessageId = await gmailAuth.sendEmail(
-        user.email,
-        emailContent.subject,
-        emailContent.html,
-        emailContent.text,
-        notificationCorrelationId
-      );
+      // Send email with Resend
+      const sendResult = await this.emailService.sendEmail({
+        to: user.email,
+        subject: emailContent.subject,
+        html: emailContent.html,
+        text: emailContent.text,
+        headers: emailContent.headers
+      });
+      
+      if (!sendResult.success) {
+        throw new Error(sendResult.error || 'Failed to send email');
+      }
+      
+      const emailMessageId = sendResult.messageId;
       
       // Update notification status in database
       await this.authDB.updateNotificationStatus(

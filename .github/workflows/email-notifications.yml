@@ -1,0 +1,27 @@
+name: Process Email Notifications
+
+on:
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Allow manual trigger from GitHub UI
+
+jobs:
+  send-notifications:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Trigger email notifications
+        run: |
+          curl -X POST https://personal.emily-cogsdill.workers.dev/api/cron/process-notifications \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -f \
+            --retry 3 \
+            --retry-delay 10
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+      
+      - name: Check response
+        if: failure()
+        run: echo "Email notification processing failed"

@@ -17,6 +17,11 @@ const { title, description, permalink, current } = Astro.props;
   <BaseHead title={title} description={description} permalink={permalink} />
 </head>
 <body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NHPXWGM7"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  
   <div class="layout">
     <Header current={current} />
     <SuccessMessage />
