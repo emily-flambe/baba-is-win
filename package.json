@@ -65,7 +65,10 @@
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
     "test:ui": "vitest --ui",
-    "test:types": "tsc --project tsconfig.test.json --noEmit"
+    "test:types": "tsc --project tsconfig.test.json --noEmit",
+    "museum:screenshots": "node scripts/update-museum-screenshots.js",
+    "museum:screenshots:force": "node scripts/update-museum-screenshots.js --force",
+    "museum:screenshot": "node scripts/capture-museum-screenshot.js"
   },
   "type": "module"
 }

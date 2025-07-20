@@ -1,0 +1,70 @@
+name: Process Notifications (Sequential)
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_items:
+        description: 'Maximum number of content items to process'
+        required: false
+        type: number
+        default: 5
+
+jobs:
+  process-sequentially:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Process notifications one by one
+        run: |
+          echo "=== SEQUENTIAL NOTIFICATION PROCESSING ==="
+          echo "Processing up to ${{ github.event.inputs.max_items }} content items"
+          echo ""
+          
+          processed=0
+          max_items=${{ github.event.inputs.max_items }}
+          
+          while [ $processed -lt $max_items ]; do
+            echo "--- Processing item $((processed + 1)) ---"
+            
+            response=$(curl -X POST https://personal.emily-cogsdill.workers.dev/api/cron/process-single-notification \
+              -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+              -H "Content-Type: application/json" \
+              -s)
+            
+            echo "$response" | jq '.' || echo "$response"
+            
+            # Check if there's more content to process
+            remaining=$(echo "$response" | jq -r '.remainingContent // 0')
+            
+            if [ "$remaining" = "0" ] || [ "$remaining" = "null" ]; then
+              echo ""
+              echo "No more content to process"
+              break
+            fi
+            
+            processed=$((processed + 1))
+            
+            # Wait between requests to avoid rate limits
+            if [ $processed -lt $max_items ] && [ "$remaining" != "0" ]; then
+              echo ""
+              echo "Waiting 5 seconds before next item..."
+              sleep 5
+            fi
+          done
+          
+          echo ""
+          echo "=== PROCESSING COMPLETE ==="
+          echo "Processed $processed content items"
+      
+      - name: Check final status
+        run: |
+          echo ""
+          echo "=== FINAL STATUS ==="
+          curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -s | jq '{
+              unnotifiedContent: .unnotifiedContent | length,
+              sentNotifications: .summary.sent,
+              subscribers: .summary.subscribers
+            }'

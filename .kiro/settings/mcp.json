@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "screenshot-website": {
+      "command": "uvx",
+      "args": ["@just-every/mcp-screenshot-website-fast@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": ["screenshot_website"]
+    }
+  }
+}

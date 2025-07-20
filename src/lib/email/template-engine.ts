@@ -190,15 +190,8 @@ export class EmailTemplateEngine {
   }
   
   private async getTemplate(templateName: string): Promise<EmailTemplate | null> {
-    // First try to get from database if authDB is available
-    if (this.authDB) {
-      const dbTemplate = await this.authDB.getEmailTemplate(templateName);
-      if (dbTemplate) {
-        return dbTemplate;
-      }
-    }
-    
-    // Fall back to default templates
+    // Note: email_templates table was removed in migration 0013
+    // Always use default templates
     return this.getDefaultTemplate(templateName);
   }
   
@@ -540,16 +533,8 @@ Best regards,
       'unsubscribe_confirmation'
     ];
     
-    for (const templateName of defaultTemplates) {
-      const existingTemplate = await this.authDB.getEmailTemplate(templateName);
-      if (!existingTemplate) {
-        const defaultTemplate = await this.getDefaultTemplate(templateName);
-        if (defaultTemplate) {
-          await this.saveTemplate(defaultTemplate);
-          console.log(`Initialized default template: ${templateName}`);
-        }
-      }
-    }
+    // Note: email_templates table was removed in migration 0013
+    // Template initialization no longer needed
   }
   
   // Test method to validate template rendering
