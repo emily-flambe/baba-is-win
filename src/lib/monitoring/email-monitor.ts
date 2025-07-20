@@ -281,6 +281,13 @@ export class EmailMonitor {
     metrics: EmailMetrics;
     health_checks: HealthCheck[];
     alerts: Alert[];
+    circuit_breaker: {
+      is_open: boolean;
+      failure_count: number;
+      max_failures: number;
+      last_failure_time: number | null;
+      reset_timeout: number;
+    };
     last_updated: string;
   }> {
     const [metrics, healthChecks, alerts] = await Promise.all([
@@ -303,11 +310,21 @@ export class EmailMonitor {
       overallStatus = 'degraded';
     }
 
+    // Include circuit breaker status
+    const circuitBreakerStatus = {
+      is_open: this.isCircuitBreakerOpen(),
+      failure_count: this.failureCount,
+      max_failures: this.maxFailures,
+      last_failure_time: this.lastFailureTime || null,
+      reset_timeout: this.resetTimeout
+    };
+
     return {
       overall_status: overallStatus,
       metrics,
       health_checks: healthChecks,
       alerts,
+      circuit_breaker: circuitBreakerStatus,
       last_updated: new Date().toISOString()
     };
   }

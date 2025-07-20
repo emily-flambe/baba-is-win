@@ -57,6 +57,9 @@ export class EmailTemplateEngine {
     templateName: string, 
     variables: TemplateVariables
   ): Promise<{ subject: string; html: string; text: string }> {
+    console.log(`[TemplateEngine] Rendering template: ${templateName}`);
+    console.log('[TemplateEngine] Variables:', JSON.stringify(variables, null, 2));
+    
     const template = await this.getTemplate(templateName);
     
     if (!template) {
@@ -66,16 +69,28 @@ export class EmailTemplateEngine {
     // Validate template variables
     this.validateTemplateVariables(template, variables);
     
-    return {
+    const result = {
       subject: this.interpolateTemplate(template.subjectTemplate, variables),
       html: this.interpolateTemplate(template.htmlTemplate, variables),
       text: this.interpolateTemplate(template.textTemplate, variables)
     };
+    
+    console.log('[TemplateEngine] Rendered subject:', result.subject);
+    console.log('[TemplateEngine] HTML preview (first 300 chars):', result.html.substring(0, 300));
+    
+    return result;
   }
   
   private interpolateTemplate(template: string, variables: TemplateVariables): string {
-    return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
+    console.log('[TemplateEngine] Starting interpolation');
+    console.log('[TemplateEngine] Template length:', template.length);
+    console.log('[TemplateEngine] Variables keys:', Object.keys(variables));
+    console.log('[TemplateEngine] First 200 chars of template:', template.substring(0, 200));
+    
+    const result = template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
       const value = variables[key as keyof TemplateVariables];
+      console.log(`[TemplateEngine] Processing ${match}: key="${key}", value="${value}", type=${typeof value}`);
+      
       if (value === undefined) {
         console.warn(`Template variable not found: ${key}`);
         return match;
@@ -90,6 +105,9 @@ export class EmailTemplateEngine {
       // Sanitize potentially dangerous content
       return this.sanitizeHtml(stringValue);
     });
+    
+    console.log('[TemplateEngine] Result first 200 chars:', result.substring(0, 200));
+    return result;
   }
 
   private sanitizeHtml(input: string): string {
@@ -198,6 +216,8 @@ export class EmailTemplateEngine {
   }
   
   private async getDefaultTemplate(templateName: string): Promise<EmailTemplate | null> {
+    console.log(`[TemplateEngine] Getting default template: ${templateName}`);
+    
     // For now, return hardcoded templates. In production, these would be stored in the database
     const templates = {
       blog_notification: {
@@ -503,7 +523,16 @@ Best regards,
       }
     };
     
-    return templates[templateName as keyof typeof templates] || null;
+    const template = templates[templateName as keyof typeof templates] || null;
+    if (template) {
+      console.log(`[TemplateEngine] Found template ${templateName}`);
+      console.log(`[TemplateEngine] Subject template: ${template.subjectTemplate}`);
+      console.log(`[TemplateEngine] HTML template first 100 chars: ${template.htmlTemplate.substring(0, 100)}`);
+    } else {
+      console.log(`[TemplateEngine] Template ${templateName} not found`);
+    }
+    
+    return template;
   }
   
   // Template management methods

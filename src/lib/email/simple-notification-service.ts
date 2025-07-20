@@ -141,24 +141,30 @@ export class SimpleEmailNotificationService {
       
       // Render email
       const templateName = `${notification.contentType}_notification`;
+      
+      // Debug: Log the variables being passed
+      const templateVariables = {
+        title: notification.contentType === 'thought' && !(content as Thought).title 
+          ? 'New Thought' 
+          : content.title || 'Untitled',
+        description: content.description || (notification.contentType === 'thought' 
+          ? (content as Thought).content.substring(0, 150) + '...'
+          : ''),
+        url: notification.contentUrl,
+        unsubscribe_url: unsubscribeUrl,
+        publish_date: content.publishDate.toLocaleDateString(),
+        tags: content.tags || [],
+        site_name: this.env.SITE_NAME || 'Emily Cogsdill',
+        site_url: this.env.SITE_URL || 'https://personal.emily-cogsdill.workers.dev',
+        user_name: user.username || 'Subscriber',
+        content: notification.contentType === 'thought' ? (content as Thought).content : undefined
+      };
+      
+      console.log(`📧 [SimpleEmailNotificationService] Template variables:`, JSON.stringify(templateVariables, null, 2));
+      
       const emailContent = await this.templateEngine.renderTemplate(
         templateName,
-        {
-          title: notification.contentType === 'thought' && !(content as Thought).title 
-            ? 'New Thought' 
-            : content.title || 'Untitled',
-          description: content.description || (notification.contentType === 'thought' 
-            ? (content as Thought).content.substring(0, 150) + '...'
-            : ''),
-          url: notification.contentUrl,
-          unsubscribe_url: unsubscribeUrl,
-          publish_date: content.publishDate.toLocaleDateString(),
-          tags: content.tags || [],
-          site_name: this.env.SITE_NAME || 'Emily Cogsdill',
-          site_url: this.env.SITE_URL || 'https://personal.emily-cogsdill.workers.dev',
-          user_name: user.username || 'Subscriber',
-          content: notification.contentType === 'thought' ? (content as Thought).content : undefined
-        }
+        templateVariables
       );
       
       // Add unsubscribe headers
@@ -170,6 +176,8 @@ export class SimpleEmailNotificationService {
       // Send email
       console.log(`📧 [SimpleEmailNotificationService] Calling Resend API for ${user.email}`);
       console.log(`📧 [SimpleEmailNotificationService] Email subject: ${emailContent.subject}`);
+      console.log(`📧 [SimpleEmailNotificationService] HTML preview (first 500 chars):`, emailContent.html.substring(0, 500));
+      console.log(`📧 [SimpleEmailNotificationService] Text preview (first 300 chars):`, emailContent.text.substring(0, 300));
       
       const result = await this.emailService.sendEmail({
         to: user.email,
