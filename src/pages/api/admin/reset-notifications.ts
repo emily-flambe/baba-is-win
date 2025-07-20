@@ -27,11 +27,25 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // Reset content notification status
     if (resetContent) {
       try {
+        // First, let's see what we're dealing with
+        const beforeCount = await locals.runtime.env.DB.prepare(`
+          SELECT COUNT(*) as count FROM content_items WHERE notification_sent = 1
+        `).first();
+        
+        console.log(`[Reset Notifications] Found ${beforeCount?.count || 0} items with notification_sent = 1`);
+        
+        // Reset ALL content items, not just those with notification_sent = 1
         const contentResetResult = await locals.runtime.env.DB.prepare(`
           UPDATE content_items 
           SET notification_sent = 0, notification_count = 0
-          WHERE notification_sent = 1
         `).run();
+        
+        // Verify the reset
+        const afterCount = await locals.runtime.env.DB.prepare(`
+          SELECT COUNT(*) as count FROM content_items WHERE notification_sent = 1
+        `).first();
+        
+        console.log(`[Reset Notifications] After reset: ${afterCount?.count || 0} items still have notification_sent = 1`);
         
         results.contentReset = contentResetResult.changes || 0;
         console.log(`[Reset Notifications] Reset ${results.contentReset} content items`);
