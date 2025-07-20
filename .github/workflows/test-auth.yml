@@ -1,0 +1,39 @@
+name: Test Authentication
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-auth:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Test with x-cron-secret header
+        run: |
+          echo "Testing with x-cron-secret header..."
+          curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -v \
+            -w "\nHTTP_STATUS:%{http_code}\n"
+      
+      - name: Test process-notifications endpoint
+        run: |
+          echo ""
+          echo "Testing process-notifications endpoint (original working endpoint)..."
+          curl -X POST https://personal.emily-cogsdill.workers.dev/api/cron/process-notifications \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -w "\nHTTP_STATUS:%{http_code}\n" \
+            | head -20
+      
+      - name: Debug secret availability
+        run: |
+          echo ""
+          echo "Checking if CRON_SECRET is set..."
+          if [ -z "${{ secrets.CRON_SECRET }}" ]; then
+            echo "❌ CRON_SECRET is not set in GitHub secrets!"
+          else
+            echo "✅ CRON_SECRET is available (length: ${#SECRET})"
+            SECRET="${{ secrets.CRON_SECRET }}"
+          fi

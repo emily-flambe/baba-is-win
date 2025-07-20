@@ -21,14 +21,29 @@ jobs:
       - name: Step 1 - Check initial status
         run: |
           echo "=== INITIAL STATUS CHECK ==="
-          curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
+          response=$(curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
-            | jq '{
+            -w "\nHTTP_STATUS:%{http_code}" \
+            -s)
+          
+          http_status=$(echo "$response" | tail -n 1 | cut -d: -f2)
+          body=$(echo "$response" | head -n -1)
+          
+          echo "HTTP Status: $http_status"
+          echo "Response body:"
+          echo "$body"
+          
+          if [ "$http_status" = "200" ]; then
+            echo "$body" | jq '{
               notifications: .summary,
               unnotifiedContent: .unnotifiedContent | length,
               recentErrors: [.recentNotifications[] | select(.error != null) | {contentId: .contentId, error: .error}]
             }'
+          else
+            echo "❌ Request failed with status $http_status"
+            exit 1
+          fi
       
       - name: Step 2 - Reset if requested
         if: ${{ github.event.inputs.reset_first == 'true' }}
