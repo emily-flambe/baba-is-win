@@ -148,34 +148,34 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       
       - name: Check content status after sync
+        continue-on-error: true
         run: |
           echo ""
           echo "Checking content and notification status after sync..."
           
-          curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
+          response=$(curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             -w "\nHTTP_STATUS:%{http_code}\n" \
-            -s | {
-              # Extract HTTP status
-              response=$(cat)
-              http_status=$(echo "$response" | grep -o "HTTP_STATUS:[0-9]*" | cut -d: -f2)
-              body=$(echo "$response" | sed '/HTTP_STATUS:/d')
-              
-              if [ "$http_status" = "401" ]; then
-                echo "⚠️ Skipping notification check - CRON_SECRET not configured"
-                echo "To enable this check, add CRON_SECRET to GitHub secrets"
-              elif [ "$http_status" = "200" ]; then
-                echo "$body" | jq '{
-                  summary,
-                  unnotifiedContent: .unnotifiedContent | map({slug, type, title, isNotified}),
-                  totalUnnotified: .unnotifiedContent | length
-                }'
-              else
-                echo "❌ Failed to check notifications - HTTP status: $http_status"
-                echo "$body"
-              fi
-            }
+            -s 2>&1) || true
+          
+          # Extract HTTP status
+          http_status=$(echo "$response" | grep -o "HTTP_STATUS:[0-9]*" | cut -d: -f2 || echo "000")
+          body=$(echo "$response" | sed '/HTTP_STATUS:/d')
+          
+          if [ "$http_status" = "401" ]; then
+            echo "⚠️ Skipping notification check - CRON_SECRET may be incorrect"
+            echo "To enable this check, verify CRON_SECRET in GitHub secrets matches your Cloudflare secret"
+          elif [ "$http_status" = "200" ]; then
+            echo "$body" | jq '{
+              summary,
+              unnotifiedContent: .unnotifiedContent | map({slug, type, title, isNotified}),
+              totalUnnotified: .unnotifiedContent | length
+            }' || echo "$body"
+          else
+            echo "⚠️ Could not check notifications - HTTP status: $http_status"
+            echo "Response: $body"
+          fi
       
       - name: Show sync summary
         run: |
