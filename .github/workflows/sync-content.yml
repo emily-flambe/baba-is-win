@@ -41,18 +41,36 @@ jobs:
           
           # Get existing slugs from database
           echo "📊 Getting existing slugs from database..."
+          
+          # First, let's verify we can connect and the table exists
+          echo "Checking table structure..."
+          wrangler d1 execute baba-is-win-db --command "SELECT COUNT(*) as count FROM content_items;" --json || {
+            echo "❌ Failed to query content_items table"
+            exit 1
+          }
+          
+          # Now get the slugs
           raw_response=$(wrangler d1 execute baba-is-win-db --command "SELECT slug FROM content_items;" --json)
           echo "Raw response from D1:"
           echo "$raw_response" | jq . || echo "$raw_response"
           
-          # Try different response formats - D1 might return results in different structures
-          existing_slugs=$(echo "$raw_response" | jq -r 'try .results[].slug // try .[].slug // empty' 2>/dev/null | sort | uniq)
+          # Parse response - wrangler d1 returns results in a specific format
+          # Based on Cloudflare docs, the format should be: [{"slug": "value"}, ...]
+          existing_slugs=$(echo "$raw_response" | jq -r '.[] | select(.slug != null) | .slug' 2>/dev/null | sort | uniq)
+          
+          # If that didn't work, try alternative formats
+          if [ -z "$existing_slugs" ]; then
+            echo "First parsing attempt failed, trying alternative formats..."
+            existing_slugs=$(echo "$raw_response" | jq -r 'try .results[].slug // try .[].slug // empty' 2>/dev/null | sort | uniq)
+          fi
           
           if [ -z "$existing_slugs" ]; then
-            echo "No existing content found in database (or unable to parse response)"
+            echo "⚠️ Warning: Could not parse existing slugs from database response"
+            echo "Will treat all content as new"
             existing_slugs=""
           else
-            echo "Existing slugs found:"
+            slug_count=$(echo "$existing_slugs" | wc -l | tr -d ' ')
+            echo "✅ Found $slug_count existing slugs in database"
             echo "$existing_slugs"
           fi
           
