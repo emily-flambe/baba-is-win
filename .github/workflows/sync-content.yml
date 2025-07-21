@@ -56,22 +56,24 @@ jobs:
           echo "$raw_response" | jq . || echo "$raw_response"
           
           # Parse response - wrangler d1 returns: [{"results": [...], "success": true, "meta": {...}}]
-          existing_slugs=$(echo "$raw_response" | jq -r '.[0].results[].slug' 2>/dev/null | sort | uniq)
+          # Check if results array is empty first
+          has_results=$(echo "$raw_response" | jq -r '.[0].results | length' 2>/dev/null || echo "0")
           
-          # If that didn't work, try alternative formats
-          if [ -z "$existing_slugs" ]; then
-            echo "First parsing attempt failed, trying alternative formats..."
-            existing_slugs=$(echo "$raw_response" | jq -r 'try .results[].slug // try .[].results[].slug // empty' 2>/dev/null | sort | uniq)
-          fi
-          
-          if [ -z "$existing_slugs" ]; then
-            echo "⚠️ Warning: Could not parse existing slugs from database response"
-            echo "Will treat all content as new"
+          if [ "$has_results" = "0" ]; then
+            echo "📭 No existing content in database - all content will be added"
             existing_slugs=""
           else
-            slug_count=$(echo "$existing_slugs" | wc -l | tr -d ' ')
-            echo "✅ Found $slug_count existing slugs in database"
-            echo "$existing_slugs"
+            existing_slugs=$(echo "$raw_response" | jq -r '.[0].results[].slug' 2>/dev/null | sort | uniq)
+            
+            if [ -z "$existing_slugs" ]; then
+              echo "⚠️ Warning: Could not parse existing slugs from database response"
+              echo "Will treat all content as new"
+              existing_slugs=""
+            else
+              slug_count=$(echo "$existing_slugs" | wc -l | tr -d ' ')
+              echo "✅ Found $slug_count existing slugs in database"
+              echo "$existing_slugs"
+            fi
           fi
           
           # Collect all filesystem content first
