@@ -31,7 +31,7 @@ jobs:
         run: |
           echo "🗄️ Ensuring content_items table exists..."
           # Create table if it doesn't exist (idempotent)
-          wrangler d1 execute baba-is-win-db --file migrations/0006_add_content_tracking.sql || true
+          wrangler d1 execute baba-is-win-db --remote --file migrations/0006_add_content_tracking.sql || true
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       
@@ -44,24 +44,23 @@ jobs:
           
           # First, let's verify we can connect and the table exists
           echo "Checking table structure..."
-          wrangler d1 execute baba-is-win-db --command "SELECT COUNT(*) as count FROM content_items;" --json || {
+          wrangler d1 execute baba-is-win-db --remote --command "SELECT COUNT(*) as count FROM content_items;" --json || {
             echo "❌ Failed to query content_items table"
             exit 1
           }
           
           # Now get the slugs
-          raw_response=$(wrangler d1 execute baba-is-win-db --command "SELECT slug FROM content_items;" --json)
+          raw_response=$(wrangler d1 execute baba-is-win-db --remote --command "SELECT slug FROM content_items;" --json)
           echo "Raw response from D1:"
           echo "$raw_response" | jq . || echo "$raw_response"
           
-          # Parse response - wrangler d1 returns results in a specific format
-          # Based on Cloudflare docs, the format should be: [{"slug": "value"}, ...]
-          existing_slugs=$(echo "$raw_response" | jq -r '.[] | select(.slug != null) | .slug' 2>/dev/null | sort | uniq)
+          # Parse response - wrangler d1 returns: [{"results": [...], "success": true, "meta": {...}}]
+          existing_slugs=$(echo "$raw_response" | jq -r '.[0].results[].slug' 2>/dev/null | sort | uniq)
           
           # If that didn't work, try alternative formats
           if [ -z "$existing_slugs" ]; then
             echo "First parsing attempt failed, trying alternative formats..."
-            existing_slugs=$(echo "$raw_response" | jq -r 'try .results[].slug // try .[].slug // empty' 2>/dev/null | sort | uniq)
+            existing_slugs=$(echo "$raw_response" | jq -r 'try .results[].slug // try .[].results[].slug // empty' 2>/dev/null | sort | uniq)
           fi
           
           if [ -z "$existing_slugs" ]; then
@@ -100,7 +99,7 @@ jobs:
                 publish_timestamp=$(date -d "$publish_date" +%s 2>/dev/null || date -j -f "%d %b %Y" "$publish_date" +%s 2>/dev/null || echo "0")
                 
                 # Insert into database with properly escaped values
-                wrangler d1 execute baba-is-win-db --command "
+                wrangler d1 execute baba-is-win-db --remote --command "
                   INSERT INTO content_items (slug, content_type, title, description, publish_date, file_path, notification_sent, created_at)
                   VALUES ('$slug', 'blog', '$title', '$description', $publish_timestamp, '$blog_file', 0, datetime('now'));
                 "
@@ -129,7 +128,7 @@ jobs:
                 publish_timestamp=$(date -d "$publish_date" +%s 2>/dev/null || date -j -f "%d %b %Y" "$publish_date" +%s 2>/dev/null || echo "0")
                 
                 # Insert into database with properly escaped values
-                wrangler d1 execute baba-is-win-db --command "
+                wrangler d1 execute baba-is-win-db --remote --command "
                   INSERT INTO content_items (slug, content_type, title, publish_date, file_path, notification_sent, created_at)
                   VALUES ('$slug', 'thought', '$title', $publish_timestamp, '$thought_file', 0, datetime('now'));
                 "

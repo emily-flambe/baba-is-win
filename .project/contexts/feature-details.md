@@ -1,4 +1,9 @@
-# Feature Architecture
+# Feature Implementation Details
+
+This document contains detailed technical specifications for all features.
+For high-level project overview, see [PROJECT.md](./PROJECT.md).
+
+## Feature Architecture
 
 ## Content Management
 

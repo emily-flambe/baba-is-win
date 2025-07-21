@@ -133,4 +133,4 @@ This configuration works with specialized context files in `/contexts/` for:
 
 ---
 
-*This configuration serves as the foundation for all AI assistant interactions with the Baba Is Win project. It provides tool-agnostic guidance while maintaining compatibility with the existing Astro + Cloudflare Workers architecture.*
+*These guidelines ensure AI assistants maintain consistency, quality, and best practices when working with the Baba Is Win codebase.*
