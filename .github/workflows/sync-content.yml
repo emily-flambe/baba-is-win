@@ -39,22 +39,27 @@ jobs:
         run: |
           echo "🔍 Scanning filesystem for content..."
           
-          # Get existing content from database
-          echo "📊 Getting existing content from database..."
-          existing_content=$(wrangler d1 execute baba-is-win-db --command "SELECT slug, content_type FROM content_items;" --json)
-          echo "Existing content: $existing_content"
-          echo "Existing content structure:"
-          echo "$existing_content" | jq .
+          # Get existing slugs from database
+          echo "📊 Getting existing slugs from database..."
+          existing_slugs=$(wrangler d1 execute baba-is-win-db --command "SELECT slug FROM content_items;" --json | jq -r '.[].slug' 2>/dev/null || echo "")
+          echo "Existing slugs:"
+          echo "$existing_slugs"
           
-          # Scan for blog posts
-          echo "📝 Scanning for blog posts..."
-          for blog_file in src/data/blog-posts/published/*.md; do
+          # Collect all filesystem content first
+          echo "📝 Scanning filesystem for all content..."
+          blog_files=(src/data/blog-posts/published/*.md)
+          thought_files=(src/data/thoughts/published/*.md)
+          
+          new_content_count=0
+          
+          # Process blog posts
+          echo "📝 Processing blog posts..."
+          for blog_file in "${blog_files[@]}"; do
             if [ -f "$blog_file" ]; then
               slug=$(basename "$blog_file" .md)
-              echo "Found blog post: $slug"
               
-              # Check if already in database (handle different possible response formats)
-              if ! echo "$existing_content" | jq -e "(.results // .)[] | select(.slug == \"$slug\" and (.content_type // .content_type) == \"blog\")" > /dev/null 2>&1; then
+              # Check if slug already exists
+              if ! echo "$existing_slugs" | grep -q "^$slug$"; then
                 echo "➕ Adding new blog post: $slug"
                 
                 # Extract metadata from file and escape single quotes
@@ -70,21 +75,21 @@ jobs:
                   INSERT INTO content_items (slug, content_type, title, description, publish_date, file_path, notification_sent, created_at)
                   VALUES ('$slug', 'blog', '$title', '$description', $publish_timestamp, '$blog_file', 0, datetime('now'));
                 "
+                ((new_content_count++))
               else
                 echo "✅ Blog post already exists: $slug"
               fi
             fi
           done
           
-          # Scan for thoughts
-          echo "💭 Scanning for thoughts..."
-          for thought_file in src/data/thoughts/published/*.md; do
+          # Process thoughts
+          echo "💭 Processing thoughts..."
+          for thought_file in "${thought_files[@]}"; do
             if [ -f "$thought_file" ]; then
               slug=$(basename "$thought_file" .md)
-              echo "Found thought: $slug"
               
-              # Check if already in database (handle different possible response formats)
-              if ! echo "$existing_content" | jq -e "(.results // .)[] | select(.slug == \"$slug\" and (.content_type // .content_type) == \"thought\")" > /dev/null 2>&1; then
+              # Check if slug already exists
+              if ! echo "$existing_slugs" | grep -q "^$slug$"; then
                 echo "➕ Adding new thought: $slug"
                 
                 # Extract metadata from file and escape single quotes
@@ -99,11 +104,14 @@ jobs:
                   INSERT INTO content_items (slug, content_type, title, publish_date, file_path, notification_sent, created_at)
                   VALUES ('$slug', 'thought', '$title', $publish_timestamp, '$thought_file', 0, datetime('now'));
                 "
+                ((new_content_count++))
               else
                 echo "✅ Thought already exists: $slug"
               fi
             fi
           done
+          
+          echo "📊 Summary: Added $new_content_count new content items"
           
           echo "✅ Content sync completed successfully"
         env:
