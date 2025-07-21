@@ -22,24 +22,23 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: 'cloudflare/workers/package-lock.json'
+          cache-dependency-path: 'package-lock.json'
       
       - name: Install wrangler
         run: npm install -g wrangler
       
       - name: Sync content to database
-        working-directory: cloudflare/workers
         run: |
           echo "🔍 Scanning filesystem for content..."
           
           # Get existing content from database
           echo "📊 Getting existing content from database..."
-          existing_content=$(wrangler d1 execute baba-is-win-prod --command "SELECT slug, content_type FROM content_items;" --json)
+          existing_content=$(wrangler d1 execute baba-is-win-db --command "SELECT slug, content_type FROM content_items;" --json)
           echo "Existing content: $existing_content"
           
           # Scan for blog posts
           echo "📝 Scanning for blog posts..."
-          for blog_file in ../../src/data/blog-posts/published/*.md; do
+          for blog_file in src/data/blog-posts/published/*.md; do
             if [ -f "$blog_file" ]; then
               slug=$(basename "$blog_file" .md)
               echo "Found blog post: $slug"
@@ -57,7 +56,7 @@ jobs:
                 publish_timestamp=$(date -d "$publish_date" +%s 2>/dev/null || date -j -f "%d %b %Y" "$publish_date" +%s 2>/dev/null || echo "0")
                 
                 # Insert into database
-                wrangler d1 execute baba-is-win-prod --command "
+                wrangler d1 execute baba-is-win-db --command "
                   INSERT INTO content_items (slug, content_type, title, description, publish_date, file_path, notification_sent, created_at)
                   VALUES ('$slug', 'blog', '$title', '$description', $publish_timestamp, '$blog_file', 0, datetime('now'));
                 "
@@ -69,7 +68,7 @@ jobs:
           
           # Scan for thoughts
           echo "💭 Scanning for thoughts..."
-          for thought_file in ../../src/data/thoughts/published/*.md; do
+          for thought_file in src/data/thoughts/published/*.md; do
             if [ -f "$thought_file" ]; then
               slug=$(basename "$thought_file" .md)
               echo "Found thought: $slug"
@@ -86,7 +85,7 @@ jobs:
                 publish_timestamp=$(date -d "$publish_date" +%s 2>/dev/null || date -j -f "%d %b %Y" "$publish_date" +%s 2>/dev/null || echo "0")
                 
                 # Insert into database
-                wrangler d1 execute baba-is-win-prod --command "
+                wrangler d1 execute baba-is-win-db --command "
                   INSERT INTO content_items (slug, content_type, title, publish_date, file_path, notification_sent, created_at)
                   VALUES ('$slug', 'thought', '$title', $publish_timestamp, '$thought_file', 0, datetime('now'));
                 "
