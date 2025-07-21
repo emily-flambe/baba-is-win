@@ -26,36 +26,27 @@ jobs:
             echo "Test email: ${{ github.event.inputs.test_email }}"
             echo "📧 Sending test email to specific address..."
             
-            response=$(curl -X POST https://personal.emily-cogsdill.workers.dev/api/admin/test-blog-notification \
+            curl -X POST https://personal.emily-cogsdill.workers.dev/api/admin/test-blog-notification \
               -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
               -H "Content-Type: application/json" \
               -d '{"slug": "${{ github.event.inputs.blog_slug }}", "testEmail": "${{ github.event.inputs.test_email }}"}' \
-              -w "\n\nHTTP_STATUS:%{http_code}\n" \
-              -v 2>&1)
+              -f \
+              --retry 3 \
+              --retry-delay 10
           else
             echo "📧 Sending to all blog subscribers..."
             
-            response=$(curl -X POST https://personal.emily-cogsdill.workers.dev/api/admin/test-blog-notification \
+            curl -X POST https://personal.emily-cogsdill.workers.dev/api/admin/test-blog-notification \
               -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
               -H "Content-Type: application/json" \
               -d '{"slug": "${{ github.event.inputs.blog_slug }}"}' \
-              -w "\n\nHTTP_STATUS:%{http_code}\n" \
-              -v 2>&1)
+              -f \
+              --retry 3 \
+              --retry-delay 10
           fi
-          
-          # Extract response body and status
-          body=$(echo "$response" | sed -n '/^{/,/^}/p' | tail -1)
-          http_status=$(echo "$response" | grep -o "HTTP_STATUS:[0-9]*" | cut -d: -f2)
-          
-          echo ""
-          echo "=== RESPONSE ==="
-          echo "$body" | jq . || echo "$body"
-          
-          if [ "$http_status" != "200" ]; then
-            echo ""
-            echo "❌ Test failed with HTTP status: $http_status"
-            exit 1
-          else
-            echo ""
-            echo "✅ Test email sent successfully!"
-          fi
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+      
+      - name: Check response
+        if: failure()
+        run: echo "Test blog notification failed"
