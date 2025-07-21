@@ -155,11 +155,27 @@ jobs:
           curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
-            | jq '{
-              summary,
-              unnotifiedContent: .unnotifiedContent | map({slug, type, title, isNotified}),
-              totalUnnotified: .unnotifiedContent | length
-            }'
+            -w "\nHTTP_STATUS:%{http_code}\n" \
+            -s | {
+              # Extract HTTP status
+              response=$(cat)
+              http_status=$(echo "$response" | grep -o "HTTP_STATUS:[0-9]*" | cut -d: -f2)
+              body=$(echo "$response" | sed '/HTTP_STATUS:/d')
+              
+              if [ "$http_status" = "401" ]; then
+                echo "⚠️ Skipping notification check - CRON_SECRET not configured"
+                echo "To enable this check, add CRON_SECRET to GitHub secrets"
+              elif [ "$http_status" = "200" ]; then
+                echo "$body" | jq '{
+                  summary,
+                  unnotifiedContent: .unnotifiedContent | map({slug, type, title, isNotified}),
+                  totalUnnotified: .unnotifiedContent | length
+                }'
+              else
+                echo "❌ Failed to check notifications - HTTP status: $http_status"
+                echo "$body"
+              fi
+            }
       
       - name: Show sync summary
         run: |
