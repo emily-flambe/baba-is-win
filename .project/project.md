@@ -1,6 +1,6 @@
 # Baba Is Win - Personal Website & Blog
 
-Emily's personal blog and portfolio website built with Astro and deployed on Cloudflare Workers.
+Emily's personal blog and portfolio website built with Astro and deployed on a single Cloudflare Worker named 'personal' with one D1 database named 'baba-is-win-db'.
 
 ## Project Overview
 
@@ -9,8 +9,8 @@ A modern personal website featuring blog posts, quick thoughts, and a Baba Is Yo
 ## Architecture
 
 - **Frontend**: Astro static site generator with Svelte components
-- **Backend**: Cloudflare Workers for serverless functions
-- **Database**: Cloudflare D1 (SQLite)
+- **Backend**: Single Cloudflare Worker ('personal') for serverless functions
+- **Database**: Single Cloudflare D1 database ('baba-is-win-db')
 - **Authentication**: JWT-based with Google OAuth integration
 - **Deployment**: Cloudflare Workers with automatic deployment
 
@@ -55,8 +55,8 @@ baba-is-win/
 ## Tech Stack
 
 - **Framework**: Astro 5.11.0
-- **Runtime**: Cloudflare Workers
-- **Database**: Cloudflare D1 (SQLite)
+- **Runtime**: Single Cloudflare Worker ('personal')
+- **Database**: Single Cloudflare D1 database ('baba-is-win-db')
 - **UI**: Svelte components
 - **Styling**: Custom CSS with Baba Is You theme
 - **Authentication**: JWT with bcrypt

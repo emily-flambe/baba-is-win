@@ -5,7 +5,7 @@
 ### Prerequisites
 - Node.js 18 or higher
 - npm (comes with Node.js)
-- Cloudflare account with Workers access
+- Cloudflare account with access to Worker 'personal' and D1 database 'baba-is-win-db'
 - Git for version control
 
 ### Initial Setup
@@ -20,7 +20,7 @@
 ### Critical: .dev.vars File
 **The development server will not function without proper environment variables.**
 
-Create `/cloudflare/workers/.dev.vars` with:
+Create `.dev.vars` file in project root for the 'personal' worker with:
 ```env
 JWT_SECRET=dev-secret-key-for-local-testing-only-never-use-in-production
 API_KEY_SALT=dev-salt-for-api-keys-local-testing-only
@@ -52,7 +52,7 @@ npm run test:ui       # Open test UI
 npm run test:types    # Type checking only
 ```
 
-### Database Commands
+### Database Commands (for 'baba-is-win-db')
 ```bash
 wrangler d1 migrations list baba-is-win-db
 wrangler d1 migrations apply baba-is-win-db --local
@@ -91,7 +91,7 @@ npm run museum:screenshot        # Capture single screenshot
 
 ### Adding New Features
 1. **Plan**: Create documentation in `/docs/planning/`
-2. **Database**: Add migrations if schema changes needed
+2. **Database**: Add migrations to 'baba-is-win-db' if schema changes needed
 3. **Backend**: Implement services in `/src/lib/`
 4. **API**: Create endpoints in `/src/pages/api/`
 5. **Frontend**: Build components and pages
@@ -253,9 +253,9 @@ describe('Feature Name', () => {
 - Restart development server
 
 **Database Connection Issues**
-- Verify D1 database configuration
-- Check migration status
-- Validate local database setup
+- Verify 'baba-is-win-db' D1 database configuration
+- Check migration status for 'baba-is-win-db'
+- Validate local database setup for 'baba-is-win-db'
 
 **Email Functionality**
 - Confirm Gmail API credentials
@@ -269,7 +269,7 @@ describe('Feature Name', () => {
 
 ### Debug Tools
 - Browser developer tools
-- Cloudflare Workers logs
+- Cloudflare Worker 'personal' logs
 - Local debugging with VS Code
 - Network request inspection
 

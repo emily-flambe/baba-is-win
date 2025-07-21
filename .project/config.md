@@ -6,7 +6,7 @@
 **Type:** Personal Blog & Portfolio Website  
 **Repository:** [github.com/emilycogsdill/baba-is-win](https://github.com/emilycogsdill/baba-is-win)  
 
-**Description:** A modern personal website and blog built with Astro, featuring blog posts, thoughts, museum portfolio, and authentication system. The site combines static content with dynamic authentication features deployed on Cloudflare Workers.
+**Description:** A modern personal website and blog built with Astro, featuring blog posts, thoughts, museum portfolio, and authentication system. The site combines static content with dynamic authentication features deployed on a single Cloudflare Worker named 'personal' with one D1 database named 'baba-is-win-db'.
 
 **Key Features:**
 - JWT-based authentication with HTTP-only cookies
@@ -21,16 +21,16 @@
 ### Core Technologies
 - **Framework:** Astro v5.11.0
 - **Language:** TypeScript
-- **Runtime:** Cloudflare Workers  
-- **Database:** Cloudflare D1 (SQLite)
+- **Runtime:** Single Cloudflare Worker (named 'personal')  
+- **Database:** Single Cloudflare D1 database (named 'baba-is-win-db')
 - **Styling:** CSS (custom)
 - **Testing:** Vitest/Jest
 - **Build Tool:** Astro + Wrangler
 
 ### Deployment Architecture
 - **Production:** Cloudflare Pages with auto-deployment
-- **Database:** Cloudflare D1 
-- **Workers:** Cloudflare Workers for API endpoints
+- **Database:** Single D1 database ('baba-is-win-db') 
+- **Worker:** Single Cloudflare Worker ('personal') for all API endpoints
 - **Domain:** baba-is-win.com
 - **Development:** localhost:4321
 
@@ -59,7 +59,7 @@ src/
 ```
 
 ### Database Schema
-The application uses Cloudflare D1 with automated migrations located in `/migrations/`. Key tables include:
+The application uses a single Cloudflare D1 database named 'baba-is-win-db' with automated migrations located in `/migrations/`. Key tables include:
 - User authentication and profiles
 - Email preferences and notifications
 - Content tracking and statistics

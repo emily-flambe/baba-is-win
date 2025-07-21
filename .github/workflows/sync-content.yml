@@ -27,6 +27,14 @@ jobs:
       - name: Install wrangler
         run: npm install -g wrangler
       
+      - name: Ensure database schema is up to date
+        run: |
+          echo "🗄️ Ensuring content_items table exists..."
+          # Create table if it doesn't exist (idempotent)
+          wrangler d1 execute baba-is-win-db --file migrations/0006_add_content_tracking.sql || true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      
       - name: Sync content to database
         run: |
           echo "🔍 Scanning filesystem for content..."
