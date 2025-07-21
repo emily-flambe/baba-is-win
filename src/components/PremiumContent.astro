@@ -1,0 +1,192 @@
+---
+import PremiumContentIndicator from './PremiumContentIndicator.astro';
+import { processContentForDisplay } from '../utils/contentProcessing';
+import type { User } from '../lib/auth/types';
+import type { ContentFrontmatter } from '../types/env';
+
+interface Props {
+  content: string;
+  isPremium: boolean;
+  isAuthenticated: boolean;
+  contentType?: 'blog' | 'thought';
+  customTruncateLimit?: number;
+  frontmatter?: ContentFrontmatter;
+  ContentComponent?: any;
+  showIndicator?: boolean;
+}
+
+const { 
+  content, 
+  isPremium, 
+  isAuthenticated,
+  contentType = 'blog',
+  customTruncateLimit,
+  frontmatter = { premium: isPremium, publishDate: '' },
+  ContentComponent,
+  showIndicator = true
+} = Astro.props;
+
+// Create a mock user object based on authentication status
+const user: User | null = isAuthenticated ? { id: 'authenticated', email: '', username: 'user', createdAt: new Date() } : null;
+
+// Process content using the utilities from contentProcessing.ts
+const contentData = processContentForDisplay(
+  content, 
+  frontmatter, 
+  user, 
+  contentType
+);
+
+// Apply custom truncate limit if provided
+let finalContent = contentData.content;
+if (customTruncateLimit && contentData.isTruncated) {
+  const words = content.trim().split(/\s+/);
+  if (words.length > customTruncateLimit) {
+    finalContent = words.slice(0, customTruncateLimit).join(' ') + '...';
+  }
+}
+
+const shouldShowFade = contentData.isTruncated && contentData.requiresAuth;
+---
+
+<div class="premium-content-wrapper">
+  <!-- Content Display Area -->
+  <div class={`content-display ${shouldShowFade ? 'has-fade' : ''}`}>
+    {ContentComponent ? (
+      <!-- If a component is provided, render it (for full Astro markdown components) -->
+      {contentData.isTruncated ? (
+        <div class="truncated-markdown" set:html={finalContent}></div>
+      ) : (
+        <ContentComponent />
+      )}
+    ) : (
+      <!-- Otherwise render as HTML -->
+      <div class="content-html" set:html={finalContent}></div>
+    )}
+    
+    <!-- Fade overlay for truncated premium content -->
+    {shouldShowFade && (
+      <div class="fade-overlay">
+        <div class="fade-gradient"></div>
+        <div class="unlock-prompt">
+          <p class="unlock-text">Continue reading with a free account</p>
+          <a href="/login" class="unlock-button">Sign In</a>
+          <span class="unlock-separator">or</span>
+          <a href="/signup" class="unlock-button secondary">Sign Up</a>
+        </div>
+      </div>
+    )}
+  </div>
+  
+  <!-- Premium Content Indicator -->
+  {showIndicator && (
+    <PremiumContentIndicator 
+      isPremium={contentData.isPremium}
+      requiresAuth={contentData.requiresAuth}
+      isTruncated={contentData.isTruncated}
+    />
+  )}
+</div>
+
+<style>
+  .premium-content-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .content-display {
+    position: relative;
+    width: 100%;
+  }
+
+  .content-display.has-fade {
+    max-height: 300px;
+    overflow: hidden;
+  }
+
+  .fade-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 150px;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .fade-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      var(--background-body) 100%
+    );
+  }
+
+  .unlock-prompt {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--background-body);
+    padding: 1.5rem;
+    text-align: center;
+    border-top: 1px solid #444;
+    pointer-events: all;
+  }
+
+  .unlock-text {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    color: var(--text-main);
+  }
+
+  .unlock-button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    margin: 0 0.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    background: #548e9b;
+    color: white;
+    border: none;
+  }
+
+  .unlock-button:hover {
+    background: #4a7d8a;
+  }
+
+  .unlock-button.secondary {
+    background: transparent;
+    color: #548e9b;
+    border: 1px solid #548e9b;
+  }
+
+  .unlock-button.secondary:hover {
+    background: #548e9b;
+    color: white;
+  }
+
+  .unlock-separator {
+    margin: 0 0.5rem;
+    color: var(--text-secondary);
+  }
+
+  @media (max-width: 768px) {
+    .unlock-button {
+      display: block;
+      margin: 0.5rem auto;
+      width: 80%;
+    }
+    
+    .unlock-separator {
+      display: block;
+      margin: 0.5rem 0;
+    }
+  }
+</style>

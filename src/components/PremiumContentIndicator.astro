@@ -1,0 +1,58 @@
+---
+interface Props {
+  isPremium: boolean;
+  requiresAuth: boolean;
+  isTruncated: boolean;
+}
+
+const { isPremium, requiresAuth, isTruncated } = Astro.props;
+---
+
+{isPremium && (
+  <div class="premium-indicator">
+    <span class="premium-badge">PREMIUM</span>
+    {requiresAuth && (
+      <p class="auth-notice">
+        <a href="/login">Sign in</a> to read the full content.
+      </p>
+    )}
+  </div>
+)}
+
+<style>
+  .premium-indicator {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #2a2a2a;
+    border: 1px solid #548e9b;
+    border-radius: 4px;
+    text-align: center;
+  }
+
+  .premium-badge {
+    display: inline-block;
+    background: #548e9b;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+  }
+
+  .auth-notice {
+    margin: 0.5rem 0 0 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .auth-notice a {
+    color: #548e9b;
+    text-decoration: none;
+  }
+
+  .auth-notice a:hover {
+    text-decoration: underline;
+  }
+</style>

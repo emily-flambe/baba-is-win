@@ -26,3 +26,35 @@ export interface Env {
   // Cron Security
   CRON_SECRET: string;
 }
+
+// Content processing types
+export interface ContentFrontmatter {
+  title?: string;
+  content?: string;
+  publishDate: string;
+  publishTime?: string;
+  description?: string;
+  thumbnail?: string;
+  tags?: string[];
+  premium?: boolean;
+  images?: string[];
+}
+
+export interface ProcessedContent {
+  content: string;
+  isPremium: boolean;
+  isTruncated: boolean;
+  requiresAuth: boolean;
+}
+
+export interface BlogPost {
+  file: string;
+  frontmatter: ContentFrontmatter;
+  rawContent: () => string;
+  Content: any;
+}
+
+export interface Thought {
+  file: string;
+  frontmatter: ContentFrontmatter;
+}

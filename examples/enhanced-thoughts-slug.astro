@@ -1,8 +1,13 @@
 ---
+// Example integration of content processing utilities into thoughts page
+// This file shows how to modify src/pages/thoughts/[slug].astro to support premium content
+
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Carousel from '../../components/Carousel.astro';
-import PremiumContent from '../../components/PremiumContent.astro';
+import PremiumContentIndicator from '../../components/PremiumContentIndicator.astro';
 import { processSimpleMarkdown } from '../../utils/simpleMarkdown.js';
+import { processContentForDisplay } from '../../utils/contentProcessing';
+import type { User } from '../../lib/auth/types';
 
 const { slug } = Astro.params;
 
@@ -23,34 +28,33 @@ if (!thought) {
 }
 
 const { frontmatter } = thought;
-const { content, publishDate, publishTime, tags, images, premium } = frontmatter;
+const { content, publishDate, publishTime, tags, images } = frontmatter;
 const permalink = `${Astro.site.href}thoughts/${slug}`;
 
-// Get current user for premium content handling
-const user = Astro.locals?.user || null;
-const isAuthenticated = !!user;
-const isPremium = premium === true;
+// Get user from middleware (available in context.locals.user)
+const user: User | null = Astro.locals.user || null;
+
+// Process content for display based on user authentication and premium status
+const contentData = processContentForDisplay(content, frontmatter, user, 'thought');
+
+// Apply markdown processing to the final content
+const processedMarkdown = processSimpleMarkdown(contentData.content);
 ---
 
-<BaseLayout title="Thought" description={content.substring(0, 100) + '...'} permalink={permalink} current="thoughts">
+<BaseLayout title="Thought" description={contentData.content.substring(0, 100) + '...'} permalink={permalink} current="thoughts">
   <div class="container">
     <article class="thought-single">
       <div class="thought-header">
         <time>{publishDate} at {publishTime}</time>
       </div>
+      
       <div class="thought-body">
-        <PremiumContent
-          content={processSimpleMarkdown(content)}
-          isPremium={isPremium}
-          isAuthenticated={isAuthenticated}
-          contentType="thought"
-          frontmatter={frontmatter}
-          showIndicator={isPremium}
-        />
+        <p set:html={processedMarkdown}></p>
         {images && images.length > 0 && (
           <Carousel images={images} alt="Thought image" size="large" />
         )}
       </div>
+      
       {tags && tags.length > 0 && (
         <div class="thought-tags">
           {tags.map((tag) => (
@@ -59,6 +63,14 @@ const isPremium = premium === true;
         </div>
       )}
     </article>
+    
+    <!-- Show premium indicator if applicable -->
+    <PremiumContentIndicator 
+      isPremium={contentData.isPremium}
+      requiresAuth={contentData.requiresAuth}
+      isTruncated={contentData.isTruncated}
+    />
+    
     <div class="back-link">
       <a href="/thoughts">← Back to all thoughts</a>
     </div>
@@ -73,6 +85,12 @@ const isPremium = premium === true;
     border: 1px solid var(--text-secondary);
     border-radius: 12px;
     padding: 2rem;
+    position: relative;
+  }
+
+  .thought-single.truncated {
+    border: 2px dashed #667eea;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
   }
 
   .thought-header {

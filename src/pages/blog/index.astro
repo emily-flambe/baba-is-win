@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PremiumContentIndicator from '../../components/PremiumContentIndicator.astro';
+import { processContentForDisplay } from '../../utils/contentProcessing';
 
 // Import the tags from the tags index page
 const allPostsForTags = Object.values(import.meta.glob('../../data/blog-posts/published/*.md', { eager: true }));
@@ -13,6 +15,9 @@ const permalink = `${Astro.site.href}blog`;
 
 let allPosts = await Astro.glob('../../data/blog-posts/published/*.md');
 allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf() - new Date(a.frontmatter.publishDate).valueOf());
+
+// Get current user for premium content handling
+const user = Astro.locals?.user || null;
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="blog">
@@ -36,6 +41,17 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
       const imageUrl = post.frontmatter.thumbnail; // Use the thumbnail field from frontmatter
       const isEven = index % 2 === 0;
       const postTags = post.frontmatter.tags || []; // Get tags from frontmatter
+      const isPremium = post.frontmatter.premium === true;
+      
+      // Process content for display in listing (use description first, fallback to content)
+      const contentForProcessing = post.frontmatter.description || post.frontmatter.content || '';
+      const contentData = processContentForDisplay(
+        contentForProcessing,
+        post.frontmatter,
+        user,
+        'blog'
+      );
+      
       return (
         <div>
           { index !== 0 && <hr /> }
@@ -45,11 +61,23 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
 
               <div class="post-item-footer">
                 <span class="post-item-date">{post.frontmatter.publishDate}</span>
+                {isPremium && (
+                  <PremiumContentIndicator 
+                    isPremium={true}
+                    requiresAuth={contentData.requiresAuth}
+                    isTruncated={contentData.isTruncated}
+                  />
+                )}
               </div>
               <h2>
                 <a href={href}>{post.frontmatter.title}</a>
               </h2>
               <p>{post.frontmatter.description}</p>
+              {contentData.isTruncated && (
+                <div class="read-more-indicator">
+                  <span>Continue reading with free account →</span>
+                </div>
+              )}
 
               <p style="font-size: 0.85em;">Tags:
               <br><i>
@@ -123,5 +151,25 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
   .post-content p i {
     font-size: 0.875em; /* Smaller font size for tags */
     font-style: italic; /* Italicize the tags */
+  }
+
+  .read-more-indicator {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .read-more-indicator span {
+    color: var(--primary-color);
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-style: italic;
+  }
+
+  .post-item-footer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
 </style>

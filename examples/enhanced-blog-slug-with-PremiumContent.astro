@@ -1,13 +1,17 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Bio from '../../components/Bio.astro';
-import PremiumContent from '../../components/PremiumContent.astro';
-import getPostData from '../../utils/getPostData';
+// Enhanced blog post page that uses the new PremiumContent component
+// This replaces the example in enhanced-blog-slug.astro with the new component approach
+
+import BaseLayout from '../../src/layouts/BaseLayout.astro';
+import Bio from '../../src/components/Bio.astro';
+import PremiumContent from '../../src/components/PremiumContent.astro';
+import getPostData from '../../src/utils/getPostData';
+import type { User } from '../../src/lib/auth/types';
 
 const { slug } = Astro.params;
 
 // Load all posts and find the matching one
-const postModules = import.meta.glob('../../data/blog-posts/published/*.md', { eager: true });
+const postModules = import.meta.glob('../../src/data/blog-posts/published/*.md', { eager: true });
 const posts = Object.entries(postModules).map(([path, module]) => ({
   ...module,
   file: path
@@ -23,14 +27,16 @@ if (!post) {
 }
 
 const { Content, frontmatter } = post;
-const { title, description, publishDate, premium } = frontmatter;
+const { title, description, publishDate } = frontmatter;
 const { slug: postSlug, readingTime } = getPostData(post);
 const permalink = `${Astro.site.href}blog/${postSlug}`;
 
-// Get current user for premium content handling
-const user = Astro.locals?.user || null;
+// Get user from middleware (available in context.locals.user)
+const user: User | null = Astro.locals.user || null;
 const isAuthenticated = !!user;
-const isPremium = premium === true;
+
+// Get raw content for processing
+const rawContent = post.rawContent();
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="blog">
@@ -39,18 +45,20 @@ const isPremium = premium === true;
     <h1>{title}</h1>
     <hr />
   </header>
+  
   <div class="container">
     <article class="content">
-      <PremiumContent
-        content=""
-        isPremium={isPremium}
+      <!-- New PremiumContent component handles all the logic -->
+      <PremiumContent 
+        content={rawContent}
+        isPremium={frontmatter.premium || false}
         isAuthenticated={isAuthenticated}
         contentType="blog"
         frontmatter={frontmatter}
         ContentComponent={Content}
-        showIndicator={isPremium}
       />
     </article>
+    
     <hr />
     <div class="back-to-blog">
       <a href="/blog">← Back to Blog</a>

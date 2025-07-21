@@ -89,6 +89,9 @@ npm run museum:screenshot        # Capture single screenshot
 
 ## Development Workflow
 
+### GitHub Actions Workflow Analysis
+**CRITICAL**: When provided with a GitHub Actions workflow URL, you MUST fetch the content of the URL to understand its output and current state before making any changes or recommendations.
+
 ### Adding New Features
 1. **Plan**: Create documentation in `/docs/planning/`
 2. **Database**: Add migrations to 'baba-is-win-db' if schema changes needed
