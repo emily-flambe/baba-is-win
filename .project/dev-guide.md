@@ -276,5 +276,5 @@ describe('Feature Name', () => {
 ### Getting Help
 - Check existing documentation
 - Review test files for examples
-- Consult Cloudflare Workers documentation
+- Consult Cloudflare Workers documentation for 'personal' worker and 'baba-is-win-db' database
 - Review Astro framework documentation

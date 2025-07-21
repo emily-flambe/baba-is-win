@@ -1,17 +1,19 @@
 # System Architecture
 
-> **Status**: Placeholder - awaiting content population by specialized agents
-
 ## Overview
-This file will document the system architecture and design patterns for the baba-is-win project.
+The baba-is-win project is built on a simple, unified architecture using a single Cloudflare Worker named 'personal' and one D1 database named 'baba-is-win-db'.
 
-## Planned Content
-- System overview and high-level architecture
-- Component relationships and data flow
-- Technology stack and infrastructure
-- Design patterns and architectural decisions
-- Service integrations and API design
-- Database schema and data modeling
+## Architecture Components
+
+### Cloudflare Worker: 'personal'
+- Single worker handling all API endpoints and serverless functions
+- Handles authentication, content delivery, and all backend operations
+- Auto-deploys on git push to main branch
+
+### Database: 'baba-is-win-db'
+- Single Cloudflare D1 (SQLite) database
+- Contains all user data, content tracking, and application state
+- Managed through sequential migrations in `/migrations/`
 
 ## Framework Integration
 Following the unified documentation framework pattern for consistent architecture documentation.
