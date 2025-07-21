@@ -1,8 +1,13 @@
-# Baba Is Win - Personal Website & Blog
+# Baba Is Win - Project Overview
+
+This is the primary project overview document. For implementation details, see:
+- [Feature Details](./feature-details.md) - Detailed feature specifications
+- [AI Assistant Config](./ai-assistant-config.md) - Development guidelines for AI assistants
+- [Utilities](./../README.md) - Development utility scripts
+
+## About
 
 Emily's personal blog and portfolio website built with Astro and deployed on a single Cloudflare Worker named 'personal' with one D1 database named 'baba-is-win-db'.
-
-## Project Overview
 
 A modern personal website featuring blog posts, quick thoughts, and a Baba Is You-inspired aesthetic. Built with heavy AI assistance and deployed on Cloudflare's edge infrastructure.
 

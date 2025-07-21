@@ -46,7 +46,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         <p>Description: {{description}}</p>
         <p>If you see actual values below, the templates ARE being processed correctly:</p>
         <p>Site Name: ${locals.runtime.env.SITE_NAME || 'Emily\'s Blog'}</p>
-        <p>Site URL: ${locals.runtime.env.SITE_URL || 'https://personal.emily-cogsdill.workers.dev'}</p>
+        <p>Site URL: ${locals.runtime.env.SITE_URL || 'https://emilycogsdill.com'}</p>
       `,
       text: `Test Email
 
@@ -58,7 +58,7 @@ Description: {{description}}
 
 If you see actual values below, the templates ARE being processed correctly:
 Site Name: ${locals.runtime.env.SITE_NAME || 'Emily\'s Blog'}
-Site URL: ${locals.runtime.env.SITE_URL || 'https://personal.emily-cogsdill.workers.dev'}`
+Site URL: ${locals.runtime.env.SITE_URL || 'https://emilycogsdill.com'}`
     }
     
     console.log('Sending simple test email with payload:', JSON.stringify(payload, null, 2))
@@ -86,7 +86,7 @@ Site URL: ${locals.runtime.env.SITE_URL || 'https://personal.emily-cogsdill.work
           fromEmail,
           hasTemplateVariables: payload.html.includes('{{'),
           siteNameValue: locals.runtime.env.SITE_NAME || 'Emily\'s Blog',
-          siteUrlValue: locals.runtime.env.SITE_URL || 'https://personal.emily-cogsdill.workers.dev'
+          siteUrlValue: locals.runtime.env.SITE_URL || 'https://emilycogsdill.com'
         }
       }), {
         status: response.ok ? 200 : response.status,

@@ -27,99 +27,162 @@ jobs:
       - name: Install wrangler
         run: npm install -g wrangler
       
-      - name: Ensure database schema is up to date
-        run: |
-          echo "🗄️ Ensuring content_items table exists..."
-          # Create table if it doesn't exist (idempotent)
-          wrangler d1 execute baba-is-win-db --file migrations/0006_add_content_tracking.sql || true
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      
       - name: Sync content to database
         run: |
           echo "🔍 Scanning filesystem for content..."
           
-          # Get existing content from database
-          echo "📊 Getting existing content from database..."
-          existing_content=$(wrangler d1 execute baba-is-win-db --command "SELECT slug, content_type FROM content_items;" --json)
-          echo "Existing content: $existing_content"
+          # Debug: Check if token is set
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "❌ CLOUDFLARE_API_TOKEN is not set!"
+            exit 1
+          else
+            echo "✅ CLOUDFLARE_API_TOKEN is set (length: ${#CLOUDFLARE_API_TOKEN})"
+          fi
           
-          # Scan for blog posts
-          echo "📝 Scanning for blog posts..."
-          for blog_file in src/data/blog-posts/published/*.md; do
+          # Get existing slugs from database
+          echo "📊 Getting existing slugs from database..."
+          
+          # First, let's verify we can connect and the table exists
+          echo "Checking table structure..."
+          wrangler d1 execute baba-is-win-db --remote --command "SELECT COUNT(*) as count FROM content_items;" --json || {
+            echo "❌ Failed to query content_items table"
+            echo "Make sure CLOUDFLARE_API_TOKEN secret is set in GitHub with D1:Edit permissions"
+            exit 1
+          }
+          
+          # Now get the slugs
+          raw_response=$(wrangler d1 execute baba-is-win-db --remote --command "SELECT slug FROM content_items;" --json)
+          echo "Raw response from D1:"
+          echo "$raw_response" | jq . || echo "$raw_response"
+          
+          # Parse response - wrangler d1 returns: [{"results": [...], "success": true, "meta": {...}}]
+          # Check if results array is empty first
+          has_results=$(echo "$raw_response" | jq -r '.[0].results | length' 2>/dev/null || echo "0")
+          
+          if [ "$has_results" = "0" ]; then
+            echo "📭 No existing content in database - all content will be added"
+            existing_slugs=""
+          else
+            existing_slugs=$(echo "$raw_response" | jq -r '.[0].results[].slug' 2>/dev/null | sort | uniq)
+            
+            if [ -z "$existing_slugs" ]; then
+              echo "⚠️ Warning: Could not parse existing slugs from database response"
+              echo "Will treat all content as new"
+              existing_slugs=""
+            else
+              slug_count=$(echo "$existing_slugs" | wc -l | tr -d ' ')
+              echo "✅ Found $slug_count existing slugs in database"
+              echo "$existing_slugs"
+            fi
+          fi
+          
+          # Collect all filesystem content first
+          echo "📝 Scanning filesystem for all content..."
+          blog_files=(src/data/blog-posts/published/*.md)
+          thought_files=(src/data/thoughts/published/*.md)
+          
+          new_content_count=0
+          
+          # Process blog posts
+          echo "📝 Processing blog posts..."
+          for blog_file in "${blog_files[@]}"; do
             if [ -f "$blog_file" ]; then
               slug=$(basename "$blog_file" .md)
-              echo "Found blog post: $slug"
               
-              # Check if already in database
-              if ! echo "$existing_content" | jq -e ".results[] | select(.slug == \"$slug\" and .content_type == \"blog\")" > /dev/null; then
+              # Check if slug already exists (handle empty existing_slugs)
+              if [ -z "$existing_slugs" ] || ! echo "$existing_slugs" | grep -q "^$slug$"; then
                 echo "➕ Adding new blog post: $slug"
                 
-                # Extract metadata from file
-                title=$(grep "^title:" "$blog_file" | sed 's/title: *//' | sed 's/^"//' | sed 's/"$//')
-                description=$(grep "^description:" "$blog_file" | sed 's/description: *//' | sed 's/^"//' | sed 's/"$//')
+                # Extract metadata from file and escape single quotes
+                title=$(grep "^title:" "$blog_file" | sed 's/title: *//' | sed 's/^"//' | sed 's/"$//' | sed "s/'/''/g")
+                description=$(grep "^description:" "$blog_file" | sed 's/description: *//' | sed 's/^"//' | sed 's/"$//' | sed "s/'/''/g")
                 publish_date=$(grep "^publishDate:" "$blog_file" | sed 's/publishDate: *//')
                 
                 # Convert date to Unix timestamp
                 publish_timestamp=$(date -d "$publish_date" +%s 2>/dev/null || date -j -f "%d %b %Y" "$publish_date" +%s 2>/dev/null || echo "0")
                 
-                # Insert into database
-                wrangler d1 execute baba-is-win-db --command "
+                # Insert into database with properly escaped values
+                echo "Executing INSERT for $slug..."
+                wrangler d1 execute baba-is-win-db --remote --command "
                   INSERT INTO content_items (slug, content_type, title, description, publish_date, file_path, notification_sent, created_at)
                   VALUES ('$slug', 'blog', '$title', '$description', $publish_timestamp, '$blog_file', 0, datetime('now'));
-                "
+                " || {
+                  echo "❌ Failed to insert $slug"
+                  exit 1
+                }
+                echo "✅ Successfully inserted $slug"
+                new_content_count=$((new_content_count + 1))
               else
                 echo "✅ Blog post already exists: $slug"
               fi
             fi
           done
           
-          # Scan for thoughts
-          echo "💭 Scanning for thoughts..."
-          for thought_file in src/data/thoughts/published/*.md; do
+          # Process thoughts
+          echo "💭 Processing thoughts..."
+          for thought_file in "${thought_files[@]}"; do
             if [ -f "$thought_file" ]; then
               slug=$(basename "$thought_file" .md)
-              echo "Found thought: $slug"
               
-              # Check if already in database
-              if ! echo "$existing_content" | jq -e ".results[] | select(.slug == \"$slug\" and .content_type == \"thought\")" > /dev/null; then
+              # Check if slug already exists (handle empty existing_slugs)
+              if [ -z "$existing_slugs" ] || ! echo "$existing_slugs" | grep -q "^$slug$"; then
                 echo "➕ Adding new thought: $slug"
                 
-                # Extract metadata from file
-                title=$(grep "^title:" "$thought_file" | sed 's/title: *//' | sed 's/^"//' | sed 's/"$//')
+                # Extract metadata from file and escape single quotes
+                title=$(grep "^title:" "$thought_file" | sed 's/title: *//' | sed 's/^"//' | sed 's/"$//' | sed "s/'/''/g")
                 publish_date=$(grep "^publishDate:" "$thought_file" | sed 's/publishDate: *//')
                 
                 # Convert date to Unix timestamp
                 publish_timestamp=$(date -d "$publish_date" +%s 2>/dev/null || date -j -f "%d %b %Y" "$publish_date" +%s 2>/dev/null || echo "0")
                 
-                # Insert into database
-                wrangler d1 execute baba-is-win-db --command "
+                # Insert into database with properly escaped values
+                wrangler d1 execute baba-is-win-db --remote --command "
                   INSERT INTO content_items (slug, content_type, title, publish_date, file_path, notification_sent, created_at)
                   VALUES ('$slug', 'thought', '$title', $publish_timestamp, '$thought_file', 0, datetime('now'));
                 "
+                new_content_count=$((new_content_count + 1))
               else
                 echo "✅ Thought already exists: $slug"
               fi
             fi
           done
           
+          echo "📊 Summary: Added $new_content_count new content items"
+          
           echo "✅ Content sync completed successfully"
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       
       - name: Check content status after sync
+        continue-on-error: true
         run: |
           echo ""
           echo "Checking content and notification status after sync..."
           
-          curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
+          response=$(curl -X GET https://personal.emily-cogsdill.workers.dev/api/admin/check-notifications \
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
-            | jq '{
+            -w "\nHTTP_STATUS:%{http_code}\n" \
+            -s 2>&1) || true
+          
+          # Extract HTTP status
+          http_status=$(echo "$response" | grep -o "HTTP_STATUS:[0-9]*" | cut -d: -f2 || echo "000")
+          body=$(echo "$response" | sed '/HTTP_STATUS:/d')
+          
+          if [ "$http_status" = "401" ]; then
+            echo "⚠️ Skipping notification check - CRON_SECRET may be incorrect"
+            echo "To enable this check, verify CRON_SECRET in GitHub secrets matches your Cloudflare secret"
+          elif [ "$http_status" = "200" ]; then
+            echo "$body" | jq '{
               summary,
               unnotifiedContent: .unnotifiedContent | map({slug, type, title, isNotified}),
               totalUnnotified: .unnotifiedContent | length
-            }'
+            }' || echo "$body"
+          else
+            echo "⚠️ Could not check notifications - HTTP status: $http_status"
+            echo "Response: $body"
+          fi
       
       - name: Show sync summary
         run: |

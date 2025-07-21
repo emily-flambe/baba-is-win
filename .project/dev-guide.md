@@ -3,7 +3,7 @@
 ## Getting Started
 
 ### Prerequisites
-- Node.js 18 or higher
+- Node.js 20 or higher
 - npm (comes with Node.js)
 - Cloudflare account with access to Worker 'personal' and D1 database 'baba-is-win-db'
 - Git for version control

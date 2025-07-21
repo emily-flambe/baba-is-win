@@ -21,7 +21,7 @@ export default defineConfig({
       experimentalJsonConfig: true,
     },
   }),
-  site: 'https://personal.emily-cogsdill.workers.dev',
+  site: 'https://emilycogsdill.com',
   integrations: [mdx(), svelte()],
   devToolbar: {
     enabled: false

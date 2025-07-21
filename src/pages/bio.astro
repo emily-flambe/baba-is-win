@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Bio from '../components/Bio.astro';
 import getPostData from '../utils/getPostData';
 
 const title = 'Bio';
@@ -37,6 +38,12 @@ const { readingTime } = getPostData(bioPost);
       <Content />
     </article>
     <hr />
+    <div class="back-to-blog">
+      <a href="/blog">→ View blog posts</a>
+      <a href="/thoughts">→ View thoughts</a>
+      <a href="/museum">→ Visit the MUSEUM???</a>
+    </div>
+    <Bio />
   </div>
 </BaseLayout>
 
@@ -71,6 +78,8 @@ const { readingTime } = getPostData(bioPost);
     text-decoration: none;
     font-family: var(--font-family-sans);
     font-weight: 600;
+    display: block;
+    margin: 0.5em 0;
   }
 
   .back-to-blog a:hover {
