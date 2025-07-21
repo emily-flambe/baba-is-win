@@ -31,6 +31,14 @@ jobs:
         run: |
           echo "🔍 Scanning filesystem for content..."
           
+          # Debug: Check if token is set
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "❌ CLOUDFLARE_API_TOKEN is not set!"
+            exit 1
+          else
+            echo "✅ CLOUDFLARE_API_TOKEN is set (length: ${#CLOUDFLARE_API_TOKEN})"
+          fi
+          
           # Get existing slugs from database
           echo "📊 Getting existing slugs from database..."
           
@@ -38,6 +46,7 @@ jobs:
           echo "Checking table structure..."
           wrangler d1 execute baba-is-win-db --remote --command "SELECT COUNT(*) as count FROM content_items;" --json || {
             echo "❌ Failed to query content_items table"
+            echo "Make sure CLOUDFLARE_API_TOKEN secret is set in GitHub with D1:Edit permissions"
             exit 1
           }
           
@@ -136,6 +145,7 @@ jobs:
           echo "✅ Content sync completed successfully"
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       
       - name: Check content status after sync
         run: |
