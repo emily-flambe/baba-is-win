@@ -41,9 +41,20 @@ jobs:
           
           # Get existing slugs from database
           echo "📊 Getting existing slugs from database..."
-          existing_slugs=$(wrangler d1 execute baba-is-win-db --command "SELECT slug FROM content_items;" --json | jq -r '.[].slug' 2>/dev/null || echo "")
-          echo "Existing slugs:"
-          echo "$existing_slugs"
+          raw_response=$(wrangler d1 execute baba-is-win-db --command "SELECT slug FROM content_items;" --json)
+          echo "Raw response from D1:"
+          echo "$raw_response" | jq . || echo "$raw_response"
+          
+          # Try different response formats - D1 might return results in different structures
+          existing_slugs=$(echo "$raw_response" | jq -r 'try .results[].slug // try .[].slug // empty' 2>/dev/null | sort | uniq)
+          
+          if [ -z "$existing_slugs" ]; then
+            echo "No existing content found in database (or unable to parse response)"
+            existing_slugs=""
+          else
+            echo "Existing slugs found:"
+            echo "$existing_slugs"
+          fi
           
           # Collect all filesystem content first
           echo "📝 Scanning filesystem for all content..."
@@ -58,8 +69,8 @@ jobs:
             if [ -f "$blog_file" ]; then
               slug=$(basename "$blog_file" .md)
               
-              # Check if slug already exists
-              if ! echo "$existing_slugs" | grep -q "^$slug$"; then
+              # Check if slug already exists (handle empty existing_slugs)
+              if [ -z "$existing_slugs" ] || ! echo "$existing_slugs" | grep -q "^$slug$"; then
                 echo "➕ Adding new blog post: $slug"
                 
                 # Extract metadata from file and escape single quotes
@@ -88,8 +99,8 @@ jobs:
             if [ -f "$thought_file" ]; then
               slug=$(basename "$thought_file" .md)
               
-              # Check if slug already exists
-              if ! echo "$existing_slugs" | grep -q "^$slug$"; then
+              # Check if slug already exists (handle empty existing_slugs)
+              if [ -z "$existing_slugs" ] || ! echo "$existing_slugs" | grep -q "^$slug$"; then
                 echo "➕ Adding new thought: $slug"
                 
                 # Extract metadata from file and escape single quotes
