@@ -29,10 +29,7 @@ jobs:
             response=$(curl -X POST https://personal.emily-cogsdill.workers.dev/api/admin/test-blog-notification \
               -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
               -H "Content-Type: application/json" \
-              -d '{
-                "slug": "${{ github.event.inputs.blog_slug }}",
-                "testEmail": "${{ github.event.inputs.test_email }}"
-              }' \
+              -d '{"slug": "${{ github.event.inputs.blog_slug }}", "testEmail": "${{ github.event.inputs.test_email }}"}' \
               -w "\n\nHTTP_STATUS:%{http_code}\n" \
               -v 2>&1)
           else
@@ -41,9 +38,7 @@ jobs:
             response=$(curl -X POST https://personal.emily-cogsdill.workers.dev/api/admin/test-blog-notification \
               -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
               -H "Content-Type: application/json" \
-              -d '{
-                "slug": "${{ github.event.inputs.blog_slug }}"
-              }' \
+              -d '{"slug": "${{ github.event.inputs.blog_slug }}"}' \
               -w "\n\nHTTP_STATUS:%{http_code}\n" \
               -v 2>&1)
           fi
