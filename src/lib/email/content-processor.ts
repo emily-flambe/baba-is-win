@@ -86,26 +86,15 @@ export class ContentProcessor {
   }
   
   async syncContentFromFiles(): Promise<void> {
-    console.log('Syncing content from files...');
+    console.log('Content sync is now handled by GitHub Actions workflow that scans the filesystem.');
+    console.log('This method is deprecated but kept for backward compatibility.');
     
-    try {
-      // Sync blog posts
-      const blogPosts = await this.loadAllBlogPosts();
-      for (const post of blogPosts) {
-        await this.syncContentItem(post, 'blog');
-      }
-      
-      // Sync thoughts
-      const thoughts = await this.loadAllThoughts();
-      for (const thought of thoughts) {
-        await this.syncContentItem(thought, 'thought');
-      }
-      
-      console.log('Content sync completed');
-      
-    } catch (error) {
-      console.error('Error during content sync:', error);
-    }
+    // GitHub Actions workflow now handles:
+    // 1. Scanning filesystem for all .md files in src/data/blog-posts/published/ and src/data/thoughts/published/
+    // 2. Comparing with existing database content using wrangler d1 execute
+    // 3. Inserting new content items directly via wrangler d1 execute
+    
+    console.log('✅ Content sync delegated to GitHub Actions filesystem scanner');
   }
   
   private async syncContentItem(
@@ -203,43 +192,8 @@ export class ContentProcessor {
     }
   }
   
-  private async loadAllBlogPosts(): Promise<BlogPost[]> {
-    try {
-      const blogPosts: BlogPost[] = [];
-      const blogPostSlugs = await this.scanDirectory('src/data/blog-posts/published');
-      
-      for (const slug of blogPostSlugs) {
-        const post = await this.loadBlogPost(slug);
-        if (post) {
-          blogPosts.push(post);
-        }
-      }
-      
-      return blogPosts;
-    } catch (error) {
-      console.error('Failed to load blog posts:', error);
-      return [];
-    }
-  }
-  
-  private async loadAllThoughts(): Promise<Thought[]> {
-    try {
-      const thoughts: Thought[] = [];
-      const thoughtSlugs = await this.scanDirectory('src/data/thoughts/published');
-      
-      for (const slug of thoughtSlugs) {
-        const thought = await this.loadThought(slug);
-        if (thought) {
-          thoughts.push(thought);
-        }
-      }
-      
-      return thoughts;
-    } catch (error) {
-      console.error('Failed to load thoughts:', error);
-      return [];
-    }
-  }
+  // loadAllBlogPosts and loadAllThoughts removed - content discovery now handled by GitHub Actions
+  // Individual content loading (loadBlogPost, loadThought) still available for notification processing
   
   // Database methods (simplified implementations)
   
@@ -313,63 +267,8 @@ export class ContentProcessor {
     }
   }
 
-  // Filesystem utility methods
-  private async scanDirectory(directoryPath: string): Promise<string[]> {
-    try {
-      // For Cloudflare Workers, we need to use a different approach
-      // Since we can't directly access the filesystem at runtime,
-      // we'll need to either:
-      // 1. Use a build-time generated index of files
-      // 2. Use the KV storage to store file listings
-      // 3. Use a different approach like importing modules at build time
-      
-      // For now, let's use a hardcoded list but log that we need to implement proper scanning
-      console.log(`Scanning directory: ${directoryPath}`);
-      
-      if (directoryPath.includes('blog-posts')) {
-        // Return known blog post slugs - updated to include recent content
-        return [
-          '20250301-hello-world',
-          '20250302-fountain-is-defeat',
-          '20250315-vail',
-          '20250427-baba-make-keke',
-          '20250504-cringe-ai-image-dump',
-          '20250509-lucien-and-caleb',
-          '20250622-cursed-first-dates',
-          '20250627-based-and-claude-pilled',
-          '20250705-useful-valued',
-          '20250712-ai-slop-applicants',
-          '20250712-i-love-cloudflare'
-        ];
-      } else if (directoryPath.includes('thoughts')) {
-        // Return known thought slugs - updated to include recent content
-        return [
-          '20250117-ai-musings',
-          '20250118-test',
-          '20250121-image-test',
-          '20250425-deodorant',
-          '20250505-ai-smut',
-          '20250621-summer',
-          '20250622-first-dates',
-          '20250623-esquie-launch',
-          '20250625-legacy-romance',
-          '20250627-new-claude-guide',
-          '20250627-toenails',
-          '20250629-claude-maxed-out',
-          '20250704-claude-reviewing-itself',
-          '20250705-many-claudes',
-          '20250710-i-added-google-oauth-login-to-this-website-because',
-          '20250711-cute-subagents',
-          '20250711-i-posted-a-swe-job-posting-recently-and-have-been'
-        ];
-      }
-      
-      return [];
-    } catch (error) {
-      console.error(`Failed to scan directory ${directoryPath}:`, error);
-      return [];
-    }
-  }
+  // Filesystem scanning is now handled by GitHub Actions workflow
+  // Content discovery is done at build/deploy time, not runtime
 
   private async loadMarkdownFile(filePath: string): Promise<{ frontmatter: any; content: string } | null> {
     try {
@@ -451,6 +350,16 @@ export class ContentProcessor {
           tags: ['ai', 'hiring', 'tech']
         },
         content: 'Content about AI-generated job applications and their impact on hiring processes...'
+      },
+      '20250720-bio': {
+        frontmatter: {
+          title: 'A Bio, kind of',
+          publishDate: '20 Jul 2025',
+          description: 'I tried to write a "Bio" for this site and this is what came out. lmao',
+          thumbnail: '/assets/portrait.png',
+          tags: ['personal']
+        },
+        content: 'I was born in Michigan in a February many years ago in the midst of a raging winter storm...'
       }
     };
     

@@ -14,33 +14,91 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Trigger content sync
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'cloudflare/workers/package-lock.json'
+      
+      - name: Install wrangler
+        run: npm install -g wrangler
+      
+      - name: Sync content to database
+        working-directory: cloudflare/workers
         run: |
-          echo "Starting content sync..."
-          echo "Force update: ${{ github.event.inputs.force_update }}"
+          echo "🔍 Scanning filesystem for content..."
           
-          response=$(curl -X POST https://personal.emily-cogsdill.workers.dev/api/admin/trigger-content-sync \
-            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "forceUpdate": ${{ github.event.inputs.force_update || false }}
-            }' \
-            -w "\n\nHTTP_STATUS:%{http_code}\n" \
-            -v 2>&1)
+          # Get existing content from database
+          echo "📊 Getting existing content from database..."
+          existing_content=$(wrangler d1 execute baba-is-win-prod --command "SELECT slug, content_type FROM content_items;" --json)
+          echo "Existing content: $existing_content"
           
-          # Extract response body and status
-          body=$(echo "$response" | sed -n '/^{/,/^}/p' | tail -1)
-          http_status=$(echo "$response" | grep -o "HTTP_STATUS:[0-9]*" | cut -d: -f2)
+          # Scan for blog posts
+          echo "📝 Scanning for blog posts..."
+          for blog_file in ../../src/data/blog-posts/published/*.md; do
+            if [ -f "$blog_file" ]; then
+              slug=$(basename "$blog_file" .md)
+              echo "Found blog post: $slug"
+              
+              # Check if already in database
+              if ! echo "$existing_content" | jq -e ".results[] | select(.slug == \"$slug\" and .content_type == \"blog\")" > /dev/null; then
+                echo "➕ Adding new blog post: $slug"
+                
+                # Extract metadata from file
+                title=$(grep "^title:" "$blog_file" | sed 's/title: *//' | sed 's/^"//' | sed 's/"$//')
+                description=$(grep "^description:" "$blog_file" | sed 's/description: *//' | sed 's/^"//' | sed 's/"$//')
+                publish_date=$(grep "^publishDate:" "$blog_file" | sed 's/publishDate: *//')
+                
+                # Convert date to Unix timestamp
+                publish_timestamp=$(date -d "$publish_date" +%s 2>/dev/null || date -j -f "%d %b %Y" "$publish_date" +%s 2>/dev/null || echo "0")
+                
+                # Insert into database
+                wrangler d1 execute baba-is-win-prod --command "
+                  INSERT INTO content_items (slug, content_type, title, description, publish_date, file_path, notification_sent, created_at)
+                  VALUES ('$slug', 'blog', '$title', '$description', $publish_timestamp, '$blog_file', 0, datetime('now'));
+                "
+              else
+                echo "✅ Blog post already exists: $slug"
+              fi
+            fi
+          done
           
-          echo "Response:"
-          echo "$body" | jq . || echo "$body"
+          # Scan for thoughts
+          echo "💭 Scanning for thoughts..."
+          for thought_file in ../../src/data/thoughts/published/*.md; do
+            if [ -f "$thought_file" ]; then
+              slug=$(basename "$thought_file" .md)
+              echo "Found thought: $slug"
+              
+              # Check if already in database
+              if ! echo "$existing_content" | jq -e ".results[] | select(.slug == \"$slug\" and .content_type == \"thought\")" > /dev/null; then
+                echo "➕ Adding new thought: $slug"
+                
+                # Extract metadata from file
+                title=$(grep "^title:" "$thought_file" | sed 's/title: *//' | sed 's/^"//' | sed 's/"$//')
+                publish_date=$(grep "^publishDate:" "$thought_file" | sed 's/publishDate: *//')
+                
+                # Convert date to Unix timestamp
+                publish_timestamp=$(date -d "$publish_date" +%s 2>/dev/null || date -j -f "%d %b %Y" "$publish_date" +%s 2>/dev/null || echo "0")
+                
+                # Insert into database
+                wrangler d1 execute baba-is-win-prod --command "
+                  INSERT INTO content_items (slug, content_type, title, publish_date, file_path, notification_sent, created_at)
+                  VALUES ('$slug', 'thought', '$title', $publish_timestamp, '$thought_file', 0, datetime('now'));
+                "
+              else
+                echo "✅ Thought already exists: $slug"
+              fi
+            fi
+          done
           
-          if [ "$http_status" != "200" ]; then
-            echo "❌ Content sync failed with HTTP status: $http_status"
-            exit 1
-          else
-            echo "✅ Content sync completed successfully"
-          fi
+          echo "✅ Content sync completed successfully"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       
       - name: Check content status after sync
         run: |
