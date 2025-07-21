@@ -1,69 +1,47 @@
-# Baba Is Win - Project Configuration
+# Project Configuration
 
-## Project Overview
+## Architecture Overview
 
-**Name:** baba-is-win  
-**Type:** Personal Blog & Portfolio Website  
-**Repository:** [github.com/emilycogsdill/baba-is-win](https://github.com/emilycogsdill/baba-is-win)  
+**Type:** Personal website with blog and portfolio functionality  
+**Pattern:** JAMstack with edge computing and hybrid rendering  
+**Authentication:** JWT-based session management  
+**Content:** Markdown-based with static generation  
+**Deployment:** Edge computing platform with distributed database
 
-**Description:** A modern personal website and blog built with Astro, featuring blog posts, thoughts, museum portfolio, and authentication system. The site combines static content with dynamic authentication features deployed on a single Cloudflare Worker named 'personal' with one D1 database named 'baba-is-win-db'.
-
-**Key Features:**
-- JWT-based authentication with HTTP-only cookies
-- Markdown-based content management system
-- Gmail API email notification system
-- Museum portfolio with project showcases
-- Automated deployment pipeline
-- D1 database with migrations
-
-## Architecture & Technology Stack
+## Technology Stack
 
 ### Core Technologies
-- **Framework:** Astro v5.11.0
+- **Framework:** Static site generator with hybrid rendering
 - **Language:** TypeScript
-- **Runtime:** Single Cloudflare Worker (named 'personal')  
-- **Database:** Single Cloudflare D1 database (named 'baba-is-win-db')
-- **Styling:** CSS (custom)
-- **Testing:** Vitest/Jest
-- **Build Tool:** Astro + Wrangler
-
-### Deployment Architecture
-- **Production:** Cloudflare Pages with auto-deployment
-- **Database:** Single D1 database ('baba-is-win-db') 
-- **Worker:** Single Cloudflare Worker ('personal') for all API endpoints
-- **Domain:** baba-is-win.com
-- **Development:** localhost:4321
+- **Runtime:** Edge computing platform
+- **Database:** Distributed SQLite
+- **Styling:** CSS with custom properties
+- **Testing:** Modern testing framework
+- **Build Tool:** Vite-based build system
 
 ### Project Structure
 ```
 src/
-├── components/          # Astro and Svelte components
+├── components/          # Reusable UI components
 │   ├── auth/           # Authentication components
 │   ├── admin/          # Admin dashboard components
-│   └── museum/         # Portfolio components
-├── pages/              # Astro pages and API routes
-│   ├── api/            # API endpoints (auth, admin, cron)
-│   ├── blog/           # Blog pages
-│   ├── thoughts/       # Thoughts pages
-│   └── museum/         # Portfolio pages
-├── lib/                # Core libraries
+│   └── content/        # Content display components
+├── pages/              # Routes and API endpoints
+│   ├── api/            # Backend API routes
+│   └── content/        # Content pages
+├── lib/                # Core business logic
 │   ├── auth/           # Authentication services
-│   ├── email/          # Email notification system
-│   ├── oauth/          # OAuth integration
-│   └── monitoring/     # System monitoring
+│   ├── content/        # Content management
+│   └── integrations/   # External service integrations
 ├── data/               # Content and configuration
-│   ├── blog-posts/     # Blog content (published/draft)
-│   ├── thoughts/       # Thoughts content
-│   └── museum-config.json
-└── styles/             # Global and component styles
+└── styles/             # Styling and themes
 ```
 
-### Database Schema
-The application uses a single Cloudflare D1 database named 'baba-is-win-db' with automated migrations located in `/migrations/`. Key tables include:
-- User authentication and profiles
-- Email preferences and notifications
-- Content tracking and statistics
-- OAuth integration data
+### Database Design
+- User authentication and authorization
+- Content management and metadata
+- System preferences and configuration
+- Integration and webhook data
 
 ## Development Standards
 
@@ -80,37 +58,14 @@ The application uses a single Cloudflare D1 database named 'baba-is-win-db' with
 - Never add comments unless explicitly requested
 - Maintain professional, technical tone in all code
 
-### Testing & Validation
-Essential commands for quality assurance:
-```bash
-npm run test          # Vitest test suite
-npm run test:coverage # Test coverage reports
-npm run test:types    # TypeScript validation
-npm run build         # Production build verification
-```
+### Essential Commands
+- **Development:** Standard dev server commands
+- **Testing:** Test suite with coverage reporting
+- **Build:** Production build with validation
+- **Database:** Migration and backup utilities
+- **Quality:** Type checking and linting
 
-### Build Commands
-```bash
-# Development
-npm run dev           # Local development server
-npm run dev:pages     # Cloudflare Pages development
-npm run preview       # Preview production build
-
-# Database
-make migrate          # Run database migrations
-make reset-db         # Reset database
-make backup-db        # Backup database
-make restore-db       # Restore database
-
-# Testing & Quality
-npm run test          # Run test suite
-npm run test:coverage # Coverage reports
-npm run test:ui       # Interactive test UI
-
-# Deployment
-npm run build         # Build for production
-npm run check         # Full validation check
-```
+*Check package.json and project scripts for current command implementations*
 
 ### Security Standards
 - Protect environment variables and secrets
@@ -135,52 +90,46 @@ npm run check         # Full validation check
 4. **Commits:** Never commit changes unless explicitly requested
 5. **Security:** Protect sensitive data and follow authentication patterns
 
-### Deployment Considerations
-- **Auto-deployment enabled:** Cloudflare Workers auto-deploys on git push to main
-- **DO NOT add wrangler deploy to CI/CD:** Conflicts with auto-deployment
-- **Email notifications:** Use cron jobs (every 6 hours) + manual trigger
-- **Workflow pattern:** Content change → Auto-deploy → Wait 2 minutes → Trigger emails
+### Deployment Patterns
+- **Continuous Deployment:** Automated deployment on main branch
+- **Environment Isolation:** Separate dev/staging/production configs
+- **Asset Optimization:** Automatic build-time optimizations
+- **Edge Distribution:** Global content delivery
 
-### Critical Environment Setup
-For Cloudflare Workers development, ensure `/cloudflare/workers/.dev.vars` exists with:
-```
-JWT_SECRET=dev-secret-key-for-local-testing-only-never-use-in-production
-API_KEY_SALT=dev-salt-for-api-keys-local-testing-only
-```
+### Environment Setup
+- Use `.env.example` as template for local environment variables
+- Keep sensitive configuration in environment-specific files
+- Never commit secrets or API keys to version control
 
 ### Content Management
-- Blog posts: `/src/data/blog-posts/published/`
-- Thoughts: `/src/data/thoughts/published/`
-- Assets: `/public/assets/` with proper subdirectories
-- Use markdown format for all content
-- Follow existing naming conventions (YYYYMMDD-title.md)
+- Markdown-based content with frontmatter metadata
+- Structured content organization by type
+- Asset management with optimization
+- Version-controlled content workflows
 
 ## Context Integration
 
-This unified configuration works with modular context files:
-- `.project/context-astro.md` - Astro-specific patterns and conventions
-- `.project/context-cloudflare.md` - Cloudflare Workers deployment and D1 database
-- `.project/context-auth.md` - Authentication and OAuth implementation
-- `.project/context-email.md` - Email notification system
-- `.project/context-content.md` - Content management and markdown processing
+This configuration works with specialized context files in `/contexts/` for:
+- Framework-specific patterns and conventions
+- Platform deployment and database considerations
+- Authentication and security implementations
+- External service integrations
+- Content management workflows
 
 ## Quick Reference
 
-### Essential File Locations
-- **Project config:** `.project/config.md` (this file)
-- **Package config:** `package.json`
-- **Astro config:** `astro.config.mjs`  
-- **Wrangler config:** `wrangler.json`
-- **Database migrations:** `/migrations/`
-- **Content:** `/src/data/`
-- **Components:** `/src/components/`
-- **API routes:** `/src/pages/api/`
+### Configuration Files
+- **Project:** `.project/config.md` (this file)
+- **Package:** `package.json` for dependencies and scripts
+- **Framework:** Check framework-specific config files
+- **Platform:** Deployment platform configuration
+- **Database:** Migration and schema files
 
-### Development URLs
-- **Local:** http://localhost:4321
-- **Production:** https://baba-is-win.com
-- **Admin:** `/admin/notifications`
-- **Auth:** `/login`, `/signup`, `/profile`
+### Development Patterns
+- **Local Development:** Standard localhost development server
+- **Authentication:** Login/signup/profile management routes
+- **Content Management:** Admin interfaces for content
+- **API Structure:** RESTful endpoint organization
 
 ---
 

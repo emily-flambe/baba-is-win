@@ -55,15 +55,15 @@ jobs:
               if ! echo "$existing_content" | jq -e ".results[] | select(.slug == \"$slug\" and .content_type == \"blog\")" > /dev/null; then
                 echo "➕ Adding new blog post: $slug"
                 
-                # Extract metadata from file
-                title=$(grep "^title:" "$blog_file" | sed 's/title: *//' | sed 's/^"//' | sed 's/"$//')
-                description=$(grep "^description:" "$blog_file" | sed 's/description: *//' | sed 's/^"//' | sed 's/"$//')
+                # Extract metadata from file and escape single quotes
+                title=$(grep "^title:" "$blog_file" | sed 's/title: *//' | sed 's/^"//' | sed 's/"$//' | sed "s/'/''/g")
+                description=$(grep "^description:" "$blog_file" | sed 's/description: *//' | sed 's/^"//' | sed 's/"$//' | sed "s/'/''/g")
                 publish_date=$(grep "^publishDate:" "$blog_file" | sed 's/publishDate: *//')
                 
                 # Convert date to Unix timestamp
                 publish_timestamp=$(date -d "$publish_date" +%s 2>/dev/null || date -j -f "%d %b %Y" "$publish_date" +%s 2>/dev/null || echo "0")
                 
-                # Insert into database
+                # Insert into database with properly escaped values
                 wrangler d1 execute baba-is-win-db --command "
                   INSERT INTO content_items (slug, content_type, title, description, publish_date, file_path, notification_sent, created_at)
                   VALUES ('$slug', 'blog', '$title', '$description', $publish_timestamp, '$blog_file', 0, datetime('now'));
@@ -85,14 +85,14 @@ jobs:
               if ! echo "$existing_content" | jq -e ".results[] | select(.slug == \"$slug\" and .content_type == \"thought\")" > /dev/null; then
                 echo "➕ Adding new thought: $slug"
                 
-                # Extract metadata from file
-                title=$(grep "^title:" "$thought_file" | sed 's/title: *//' | sed 's/^"//' | sed 's/"$//')
+                # Extract metadata from file and escape single quotes
+                title=$(grep "^title:" "$thought_file" | sed 's/title: *//' | sed 's/^"//' | sed 's/"$//' | sed "s/'/''/g")
                 publish_date=$(grep "^publishDate:" "$thought_file" | sed 's/publishDate: *//')
                 
                 # Convert date to Unix timestamp
                 publish_timestamp=$(date -d "$publish_date" +%s 2>/dev/null || date -j -f "%d %b %Y" "$publish_date" +%s 2>/dev/null || echo "0")
                 
-                # Insert into database
+                # Insert into database with properly escaped values
                 wrangler d1 execute baba-is-win-db --command "
                   INSERT INTO content_items (slug, content_type, title, publish_date, file_path, notification_sent, created_at)
                   VALUES ('$slug', 'thought', '$title', $publish_timestamp, '$thought_file', 0, datetime('now'));
