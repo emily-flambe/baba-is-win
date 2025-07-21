@@ -89,27 +89,27 @@ export class SimpleEmailNotificationService {
     let successCount = 0;
     let failedCount = 0;
     
-    // Process in batches of 10
-    const batchSize = 10;
+    // Smaller batch size to reduce subrequests per batch
+    const batchSize = 3;
     
     for (let i = 0; i < notificationIds.length; i += batchSize) {
       const batch = notificationIds.slice(i, i + batchSize);
-      console.log(`Processing batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(notificationIds.length/batchSize)}`);
+      console.log(`Processing batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(notificationIds.length/batchSize)} (${batch.length} notifications)`);
       
-      // Process batch in parallel and collect results
-      const results = await Promise.all(
-        batch.map(id => this.sendSingleNotification(id, content))
-      );
-      
-      // Count successes and failures
-      results.forEach(success => {
+      // Process batch sequentially to avoid overwhelming subrequest limits
+      for (const id of batch) {
+        const success = await this.sendSingleNotification(id, content);
         if (success) successCount++;
         else failedCount++;
-      });
+        
+        // Small delay between individual requests
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
       
-      // Small delay between batches to avoid rate limits
+      // Longer delay between batches
       if (i + batchSize < notificationIds.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log('Waiting between batches to avoid rate limits...');
+        await new Promise(resolve => setTimeout(resolve, 2000));
       }
     }
     

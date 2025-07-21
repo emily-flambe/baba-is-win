@@ -23,7 +23,15 @@ export class ContentProcessor {
       
       console.log(`Found ${unnotifiedContent.length} items needing notification`);
       
-      for (const contentItem of unnotifiedContent) {
+      // Process content items with rate limiting to avoid subrequest exhaustion
+      const maxContentPerRun = 5; // Limit to 5 content items per cron run
+      const contentToProcess = unnotifiedContent.slice(0, maxContentPerRun);
+      
+      if (unnotifiedContent.length > maxContentPerRun) {
+        console.log(`⚠️ Rate limiting: Processing ${maxContentPerRun} of ${unnotifiedContent.length} content items to avoid subrequest limits`);
+      }
+      
+      for (const contentItem of contentToProcess) {
         try {
           console.log(`[ContentProcessor] Processing content item: ${contentItem.slug} (${contentItem.contentType})`);
           
@@ -58,6 +66,12 @@ export class ContentProcessor {
                 console.log(`🐿️ Content ${contentItem.slug} will remain as unnotified for retry`);
               }
             }
+          }
+          
+          // Add delay between content items to spread out subrequests
+          if (contentToProcess.indexOf(contentItem) < contentToProcess.length - 1) {
+            console.log('Waiting between content items...');
+            await new Promise(resolve => setTimeout(resolve, 1000));
           }
         } catch (error) {
           console.error(`Failed to process content ${contentItem.slug}:`, error);
