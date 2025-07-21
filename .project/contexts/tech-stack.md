@@ -1,79 +1,79 @@
-# Technology Stack
+# Technology Architecture
 
-## Frontend Framework
-- **Astro 5.11.0**: Static site generator with hybrid rendering
-- **Svelte**: Component framework for interactive elements
-- **MDX**: Enhanced markdown with component embedding
+## Frontend Architecture
+- **Framework**: Static site generator with hybrid rendering capabilities
+- **Component System**: Reactive component framework for interactive elements
+- **Content Processing**: Enhanced markdown with component embedding
+- **Styling**: CSS with custom properties and modern features
 
-## Runtime & Deployment
-- **Cloudflare Workers**: Serverless edge computing platform
-- **Cloudflare D1**: Distributed SQLite database
-- **Cloudflare Assets**: Static asset hosting and optimization
-- **Wrangler**: CLI for Cloudflare Workers deployment
+## Runtime Architecture
+- **Computing Platform**: Serverless edge computing
+- **Database**: Distributed SQLite with edge replication
+- **Asset Management**: Static asset hosting with optimization
+- **Build Tools**: Modern build system with hot reloading
 
-## Languages & Tools
-- **TypeScript 5.7.2**: Primary development language
-- **JavaScript**: Build scripts and utilities
-- **CSS**: Custom styling with CSS variables
-- **SQL**: Database queries and migrations
+## Development Languages
+- **Primary Language**: TypeScript for type safety and developer experience
+- **Scripting**: JavaScript for build and utility scripts
+- **Styling**: CSS with modern features and methodologies
+- **Data**: SQL for database queries and schema management
 
-## Development Tools
-- **Vite**: Build tool and development server
-- **Vitest**: Testing framework with coverage
-- **Sharp**: Image processing and optimization
-- **ESLint/Prettier**: Code formatting and linting
+## Development Toolchain
+- **Build System**: Modern build tool with fast development server
+- **Testing Framework**: Comprehensive testing with coverage reporting
+- **Asset Processing**: Image optimization and processing pipeline
+- **Code Quality**: Automated formatting and linting tools
 
 ## Authentication & Security
-- **JWT (JOSE)**: JSON Web Tokens for session management
-- **bcrypt**: Password hashing
-- **Google OAuth**: Social authentication integration
-- **Rate Limiting**: API protection
+- **Session Management**: Secure token-based authentication
+- **Password Security**: Industry-standard password hashing
+- **Social Authentication**: OAuth integration for external providers
+- **API Protection**: Rate limiting and abuse prevention
+- **Security Headers**: Content security and protection measures
 
-## External Services
-- **Google APIs**: Gmail integration for notifications
-- **GitHub API**: Repository data for museum section
+## External Integrations
+- **Email Services**: Transactional email and notification systems
+- **Version Control**: Repository data and project information
+- **Analytics**: Performance and usage monitoring services
 
-## Database Schema
-- **Users**: Authentication and profiles
-- **Email Preferences**: Notification settings
-- **Email History**: Delivery tracking
-- **Content Tracking**: Blog/thought management
+## Database Design
+- **User Management**: Authentication, profiles, and authorization
+- **Content Management**: Blog posts, metadata, and publishing status
+- **System Configuration**: Application settings and preferences
+- **Integration Data**: External service connections and webhooks
 
-## Build & CI/CD
-- **npm**: Package management
-- **GitHub Actions**: Automated testing and deployment
-- **Cloudflare**: Automatic deployment on push
+## Build & Deployment
+- **Package Management**: Node.js package ecosystem
+- **CI/CD Pipeline**: Automated testing and deployment
+- **Platform Deployment**: Edge platform with auto-deployment
+- **Environment Management**: Multi-environment configuration
 
 ## Performance & Monitoring
-- **Cloudflare Analytics**: Traffic and performance metrics
-- **Core Web Vitals**: Performance monitoring
-- **Error Tracking**: Built-in error handling
-- **Observability**: Cloudflare Workers observability
+- **Analytics**: Traffic analysis and performance metrics
+- **Performance Monitoring**: Core Web Vitals and user experience metrics
+- **Error Tracking**: Comprehensive error logging and reporting
+- **Observability**: Application performance and health monitoring
 
 ## Development Environment
-- **Node.js**: Runtime for development
-- **npm**: Package manager
-- **Git**: Version control
-- **VS Code**: Recommended editor with extensions
+- **Runtime**: Node.js for development and build processes
+- **Package Manager**: npm for dependency management
+- **Version Control**: Git with standard branching workflows
+- **Editor**: Code editor with TypeScript and framework extensions
 
-## Key Dependencies
-```json
-{
-  "@astrojs/cloudflare": "^12.6.0",
-  "@astrojs/mdx": "^4.3.0",
-  "@astrojs/svelte": "*",
-  "astro": "^5.11.0",
-  "bcrypt": "^6.0.0",
-  "better-sqlite3": "^11.10.0",
-  "googleapis": "^140.0.1",
-  "jose": "^5.10.0",
-  "typescript": "5.7.2"
-}
-```
+## Dependency Categories
+- **Framework**: Core framework and platform integrations
+- **Content**: Markdown processing and content management
+- **Security**: Authentication, encryption, and security libraries
+- **Database**: Database drivers and query builders
+- **Utilities**: Image processing, email, and utility libraries
+
+*Check package.json for current dependency versions and specific packages*
 
 ## Architecture Patterns
-- **JAMstack**: JavaScript, APIs, and Markup
-- **Server-Side Rendering**: Hybrid static/dynamic rendering
-- **Edge Computing**: Global distribution via Cloudflare
-- **Component-Based**: Reusable UI components
-- **API-First**: RESTful endpoints for data access
+- **JAMstack**: JavaScript, APIs, and pre-built markup
+- **Hybrid Rendering**: Static generation with dynamic capabilities
+- **Edge Computing**: Global distribution and edge processing
+- **Component Architecture**: Reusable, composable UI components
+- **API-First Design**: RESTful endpoints with clear data contracts
+- **Security by Design**: Built-in security at every layer
+- **Performance First**: Optimization as a core architectural principle

@@ -43,6 +43,8 @@ jobs:
           echo "📊 Getting existing content from database..."
           existing_content=$(wrangler d1 execute baba-is-win-db --command "SELECT slug, content_type FROM content_items;" --json)
           echo "Existing content: $existing_content"
+          echo "Existing content structure:"
+          echo "$existing_content" | jq .
           
           # Scan for blog posts
           echo "📝 Scanning for blog posts..."
@@ -51,8 +53,8 @@ jobs:
               slug=$(basename "$blog_file" .md)
               echo "Found blog post: $slug"
               
-              # Check if already in database
-              if ! echo "$existing_content" | jq -e ".results[] | select(.slug == \"$slug\" and .content_type == \"blog\")" > /dev/null; then
+              # Check if already in database (handle different possible response formats)
+              if ! echo "$existing_content" | jq -e "(.results // .)[] | select(.slug == \"$slug\" and (.content_type // .content_type) == \"blog\")" > /dev/null 2>&1; then
                 echo "➕ Adding new blog post: $slug"
                 
                 # Extract metadata from file and escape single quotes
@@ -81,8 +83,8 @@ jobs:
               slug=$(basename "$thought_file" .md)
               echo "Found thought: $slug"
               
-              # Check if already in database
-              if ! echo "$existing_content" | jq -e ".results[] | select(.slug == \"$slug\" and .content_type == \"thought\")" > /dev/null; then
+              # Check if already in database (handle different possible response formats)
+              if ! echo "$existing_content" | jq -e "(.results // .)[] | select(.slug == \"$slug\" and (.content_type // .content_type) == \"thought\")" > /dev/null 2>&1; then
                 echo "➕ Adding new thought: $slug"
                 
                 # Extract metadata from file and escape single quotes
