@@ -102,11 +102,16 @@ jobs:
                 publish_timestamp=$(date -d "$publish_date" +%s 2>/dev/null || date -j -f "%d %b %Y" "$publish_date" +%s 2>/dev/null || echo "0")
                 
                 # Insert into database with properly escaped values
+                echo "Executing INSERT for $slug..."
                 wrangler d1 execute baba-is-win-db --remote --command "
                   INSERT INTO content_items (slug, content_type, title, description, publish_date, file_path, notification_sent, created_at)
                   VALUES ('$slug', 'blog', '$title', '$description', $publish_timestamp, '$blog_file', 0, datetime('now'));
-                "
-                ((new_content_count++))
+                " || {
+                  echo "❌ Failed to insert $slug"
+                  exit 1
+                }
+                echo "✅ Successfully inserted $slug"
+                new_content_count=$((new_content_count + 1))
               else
                 echo "✅ Blog post already exists: $slug"
               fi
@@ -135,7 +140,7 @@ jobs:
                   INSERT INTO content_items (slug, content_type, title, publish_date, file_path, notification_sent, created_at)
                   VALUES ('$slug', 'thought', '$title', $publish_timestamp, '$thought_file', 0, datetime('now'));
                 "
-                ((new_content_count++))
+                new_content_count=$((new_content_count + 1))
               else
                 echo "✅ Thought already exists: $slug"
               fi
