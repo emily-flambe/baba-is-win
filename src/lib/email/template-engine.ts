@@ -316,10 +316,6 @@ To unsubscribe from these notifications, visit: {{unsubscribe_url}}
             <div class="content">
               <p>Uh oh, looks like someone is being a THOUGHT LEADER AGAIN.</p>
               
-              <div class="thought-content">
-                {{content}}
-              </div>
-              
               <a href="{{url}}" class="button">go to site (for some reason)</a>
               
               <br><br>
@@ -337,8 +333,6 @@ To unsubscribe from these notifications, visit: {{unsubscribe_url}}
         `,
         textTemplate: `
 Uh oh, looks like someone is being a THOUGHT LEADER AGAIN.
-
-{{content}}
 
 go to site (for some reason): {{url}}
 
