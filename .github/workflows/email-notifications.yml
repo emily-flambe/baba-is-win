@@ -8,17 +8,67 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Trigger email notifications
+      - name: Check for pending notifications
+        id: get-pending
         run: |
-          curl -X POST https://personal.emily-cogsdill.workers.dev/api/cron/process-notifications \
+          response=$(curl -X GET https://personal.emily-cogsdill.workers.dev/api/cron/get-pending-notifications \
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
-            -f \
-            --retry 3 \
-            --retry-delay 10
+            -f)
+          
+          echo "Response: $response"
+          count=$(echo "$response" | jq -r '.count // 0')
+          echo "Pending notifications: $count"
+          echo "response=$response" >> $GITHUB_OUTPUT
+          echo "count=$count" >> $GITHUB_OUTPUT
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
       
-      - name: Check response
-        if: failure()
-        run: echo "Email notification processing failed"
+      - name: Process individual notifications
+        if: steps.get-pending.outputs.count != '0'
+        run: |
+          response='${{ steps.get-pending.outputs.response }}'
+          notifications=$(echo "$response" | jq -c '.notifications[]')
+          
+          processed=0
+          failed=0
+          
+          while IFS= read -r notification; do
+            slug=$(echo "$notification" | jq -r '.slug')
+            type=$(echo "$notification" | jq -r '.type')
+            
+            echo "Processing notification for $type: $slug"
+            
+            if curl -X POST https://personal.emily-cogsdill.workers.dev/api/cron/process-single-notification \
+              -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+              -H "Content-Type: application/json" \
+              -f \
+              --retry 2 \
+              --retry-delay 5; then
+              echo "✓ Successfully processed notification for $slug"
+              ((processed++))
+            else
+              echo "✗ Failed to process notification for $slug"
+              ((failed++))
+            fi
+            
+            # Small delay between requests to avoid overwhelming the server
+            sleep 1
+          done <<< "$notifications"
+          
+          echo "Summary: Processed $processed notifications, $failed failed"
+          
+          if [ $failed -gt 0 ]; then
+            exit 1
+          fi
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+      
+      - name: Summary
+        if: always()
+        run: |
+          if [ "${{ steps.get-pending.outputs.count }}" == "0" ]; then
+            echo "No pending notifications to process"
+          else
+            echo "Completed processing ${{ steps.get-pending.outputs.count }} notifications"
+          fi
