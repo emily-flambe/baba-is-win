@@ -1,4 +1,5 @@
 ---
+title: "Legacy Romance"
 content: |
     I don't have ex-boyfriends. I have <em>legacy romance</em> ❤️
 publishDate: 24 Jun 2025

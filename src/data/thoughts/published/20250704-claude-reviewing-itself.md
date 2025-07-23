@@ -1,4 +1,5 @@
 ---
+title: "Claude Self-Review"
 content: |
     Claude Code reviewing its own pull requests be like
 publishDate: 4 Jul 2025

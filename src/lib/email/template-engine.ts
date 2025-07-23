@@ -229,7 +229,7 @@ export class EmailTemplateEngine {
         id: 'blog_notification',
         templateName: 'blog_notification',
         templateType: 'blog',
-        subjectTemplate: 'New Blog Post: {{title}}',
+        subjectTemplate: '{{title}}',
         htmlTemplate: `
           <!DOCTYPE html>
           <html lang="en">
@@ -295,7 +295,7 @@ To unsubscribe from these notifications, visit: {{unsubscribe_url}}
         id: 'thought_notification',
         templateName: 'thought_notification',
         templateType: 'thought',
-        subjectTemplate: 'New Thought: {{title}}',
+        subjectTemplate: '{{title}}',
         htmlTemplate: `
           <!DOCTYPE html>
           <html lang="en">
@@ -305,40 +305,29 @@ To unsubscribe from these notifications, visit: {{unsubscribe_url}}
             <title>{{title}}</title>
             <style>
               body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
               .content { margin-bottom: 30px; }
-              .meta { color: #666; font-size: 14px; margin-bottom: 20px; }
-              .tags { margin-top: 10px; }
-              .tag { background: #e9ecef; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; }
               .footer { border-top: 1px solid #eee; padding-top: 20px; font-size: 12px; color: #666; }
-              .button { background: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin: 20px 0; }
+              .button { background: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin: 20px 0; }
               .unsubscribe { font-size: 11px; color: #999; }
               .thought-content { background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0; font-style: italic; }
             </style>
           </head>
           <body>
-            <div class="header">
-              <h1>{{title}}</h1>
-              <div class="meta">Published on {{publish_date}}</div>
-            </div>
-            
             <div class="content">
-              <p>Hi {{user_name}},</p>
-              <p>I've shared a new thought:</p>
+              <p>Uh oh, looks like someone is being a THOUGHT LEADER AGAIN.</p>
               
               <div class="thought-content">
                 {{content}}
               </div>
               
-              <div class="tags">
-                <strong>Tags:</strong> {{tags}}
-              </div>
+              <a href="{{url}}" class="button">go to site (for some reason)</a>
               
-              <a href="{{url}}" class="button">Read Full Thought</a>
+              <br><br>
+              
+              <p style="font-style: italic;">Let's make today the best day it can be!</p>
             </div>
             
             <div class="footer">
-              <p>Best regards,<br>{{site_name}}</p>
               <p class="unsubscribe">
                 <a href="{{unsubscribe_url}}">Unsubscribe</a> from these notifications
               </p>
@@ -347,19 +336,14 @@ To unsubscribe from these notifications, visit: {{unsubscribe_url}}
           </html>
         `,
         textTemplate: `
-Hi {{user_name}},
-
-I've shared a new thought: {{title}}
+Uh oh, looks like someone is being a THOUGHT LEADER AGAIN.
 
 {{content}}
 
-Published on: {{publish_date}}
-Tags: {{tags}}
+go to site (for some reason): {{url}}
 
-Read the full thought: {{url}}
 
-Best regards,
-{{site_name}}
+Let's make today the best day it can be!
 
 ---
 To unsubscribe from these notifications, visit: {{unsubscribe_url}}

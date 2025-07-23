@@ -1,4 +1,5 @@
 ---
+title: "Google OAuth Isn't Hard"
 content: |
     People told me "Google Oauth is hard" but they just weren't vibing hard enough. And to think I trusted them!
 

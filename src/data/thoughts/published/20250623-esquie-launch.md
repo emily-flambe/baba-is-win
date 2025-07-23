@@ -1,4 +1,5 @@
 ---
+title: "Mon Ami!"
 content: |
     Just launched <u><strong><a href="https://esquie.org">esquie.org</a></strong></u> because I have lost control of my life. (<a href="https://github.com/emily-flambe/esquie">Github</a>).
 

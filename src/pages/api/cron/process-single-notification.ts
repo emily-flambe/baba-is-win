@@ -54,9 +54,23 @@ export const POST: APIRoute = async ({ request, locals }) => {
     } else if (contentItem.contentType === 'thought') {
       const thought = await contentProcessor['loadThought'](contentItem.slug);
       if (thought) {
-        // Ensure we use the title and description from the database, not from file loading
-        thought.title = contentItem.title;
+        console.log(`Processing thought ${contentItem.slug}:`);
+        console.log(`- Database title: "${contentItem.title}"`);
+        console.log(`- Loaded thought title: "${thought.title}"`);
+        
+        // Ensure we use the title, description, and content from the database, not from file loading
+        // Only override if database has a title
+        if (contentItem.title) {
+          thought.title = contentItem.title;
+        }
         thought.description = contentItem.description || thought.description;
+        // Use contentPreview as the actual content for thoughts
+        if (contentItem.contentPreview) {
+          thought.content = contentItem.contentPreview;
+        }
+        
+        console.log(`- Final thought title: "${thought.title}"`);
+        
         result = await notificationService.sendThoughtNotification(thought);
         if (result.success && result.failedCount === 0) {
           await db.markContentNotified(contentItem.id);

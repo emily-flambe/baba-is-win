@@ -1,4 +1,5 @@
 ---
+title: "AI job apps wildin"
 content: |
     I posted a SWE job posting recently and have been utterly inundated with AI-generated applications. Y'all WILDIN. So I'm vibecoding a tool using the Recruitee API and AI to root out the AI candidates. Game recognize game... I hope.
 
