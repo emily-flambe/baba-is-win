@@ -1,4 +1,5 @@
 ---
+title: "A Biography"
 content: |
     ✅ Finally wrote a <a href="https://www.emilycogsdill.com/bio">BIOGRAPHY</a> lmao
 publishDate: 20 Jul 2025

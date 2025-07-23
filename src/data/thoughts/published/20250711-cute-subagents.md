@@ -1,4 +1,5 @@
 ---
+title: "Cute Subagents"
 content: |
     I started asking Claude to "spawn cute subagents" and prefix all commit messages with their names.
     
