@@ -43,6 +43,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     if (contentItem.contentType === 'blog') {
       const blogPost = await contentProcessor['loadBlogPost'](contentItem.slug);
       if (blogPost) {
+        // Ensure we use the title and description from the database, not from file loading
+        blogPost.title = contentItem.title;
+        blogPost.description = contentItem.description || blogPost.description;
         result = await notificationService.sendBlogNotification(blogPost);
         if (result.success && result.failedCount === 0) {
           await db.markContentNotified(contentItem.id);
@@ -51,6 +54,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     } else if (contentItem.contentType === 'thought') {
       const thought = await contentProcessor['loadThought'](contentItem.slug);
       if (thought) {
+        // Ensure we use the title and description from the database, not from file loading
+        thought.title = contentItem.title;
+        thought.description = contentItem.description || thought.description;
         result = await notificationService.sendThoughtNotification(thought);
         if (result.success && result.failedCount === 0) {
           await db.markContentNotified(contentItem.id);
