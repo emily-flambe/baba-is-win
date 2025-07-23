@@ -250,6 +250,7 @@ export class EmailTemplateEngine {
           <body>
             <div class="content">
               <p>Hello! A new blog post has occurred somehow. Submitted for your consideration:</p>
+              <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
               
               <h2>{{title}}</h2>
               <p>{{description}}</p>
@@ -262,7 +263,6 @@ export class EmailTemplateEngine {
             </div>
             
             <div class="footer">
-              <p>Best regards,<br>{{site_name}}</p>
               <p class="unsubscribe">
                 <a href="{{unsubscribe_url}}">Unsubscribe</a> from these notifications
               </p>
@@ -273,6 +273,8 @@ export class EmailTemplateEngine {
         textTemplate: `
 Hello! A new blog post has occurred somehow. Submitted for your consideration:
 
+---
+
 {{title}}
 
 {{description}}
@@ -280,9 +282,6 @@ Hello! A new blog post has occurred somehow. Submitted for your consideration:
 Tags: {{tags}}
 
 Read It: {{url}}
-
-Best regards,
-{{site_name}}
 
 ---
 To unsubscribe from these notifications, visit: {{unsubscribe_url}}
