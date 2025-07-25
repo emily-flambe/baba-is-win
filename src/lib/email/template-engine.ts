@@ -239,7 +239,7 @@ export class EmailTemplateEngine {
         id: 'blog_notification',
         templateName: 'blog_notification',
         templateType: 'blog',
-        subjectTemplate: 'new blog post has occurred somehow',
+        subjectTemplate: '{{title}}',
         htmlTemplate: `
           <!DOCTYPE html>
           <html lang="en">
@@ -250,7 +250,7 @@ export class EmailTemplateEngine {
           </head>
           <body style="font-family: Georgia, serif; line-height: 1.7; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="margin-bottom: 30px;">
-              <p>Hello {{user_name}}! A new blog post has occurred somehow. Submitted for your consideration:</p>
+              <p>Hello! A new blog post has occurred somehow. Submitted for your consideration:</p>
               
               <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
               
@@ -260,7 +260,9 @@ export class EmailTemplateEngine {
               
               <p style="margin-top: 20px;">Tags: {{tags}}</p>
               
-              <p><a href="{{url}}" style="color: #0066cc;">Read It</a></p>
+              <p style="text-align: center; margin: 30px 0;">
+                <a href="{{url}}" style="display: inline-block; background: #333; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-size: 14px;">Read It</a>
+              </p>
               
               <br>
               
@@ -275,7 +277,7 @@ export class EmailTemplateEngine {
           </html>
         `,
         textTemplate: `
-Hello {{user_name}}! A new blog post has occurred somehow. Submitted for your consideration:
+Hello! A new blog post has occurred somehow. Submitted for your consideration:
 
 ---
 
@@ -313,7 +315,7 @@ you subscribed to this, but if you changed your mind that's cool too → unsubsc
           </head>
           <body style="font-family: Georgia, serif; line-height: 1.7; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="margin-bottom: 30px;">
-              <p>Uh oh {{user_name}}, looks like someone is being a THOUGHT LEADER AGAIN.</p>
+              <p>Uh oh, looks like someone is being a THOUGHT LEADER AGAIN.</p>
               
               <p style="text-align: center; margin: 30px 0;">
                 <a href="{{url}}" style="display: inline-block; background: #333; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-size: 14px;">check out my new THOUGHT if you want I guess</a>
@@ -333,7 +335,7 @@ you subscribed to this, but if you changed your mind that's cool too → unsubsc
           </html>
         `,
         textTemplate: `
-Uh oh {{user_name}}, looks like someone is being a THOUGHT LEADER AGAIN.
+Uh oh, looks like someone is being a THOUGHT LEADER AGAIN.
 
 check out my new THOUGHT if you want I guess: {{url}}
 
@@ -365,7 +367,7 @@ if you're over my thought leadership, unsubscribe here: {{unsubscribe_url}}
           </head>
           <body style="font-family: Georgia, serif; line-height: 1.7; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="margin-bottom: 30px;">
-              <p>Hi {{user_name}}!</p>
+              <p>Hi!</p>
               
               <p>You've subscribed to my blog, which is a thing that exists. Sometimes I write words and put them on the internet. Now you'll know when that happens!</p>
               
@@ -387,7 +389,7 @@ if you're over my thought leadership, unsubscribe here: {{unsubscribe_url}}
           </html>
         `,
         textTemplate: `
-Hi {{user_name}}!
+Hi!
 
 You've subscribed to my blog, which is a thing that exists. Sometimes I write words and put them on the internet. Now you'll know when that happens!
 
