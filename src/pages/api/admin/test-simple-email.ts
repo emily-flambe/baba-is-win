@@ -31,7 +31,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
     
     const resendApiKey = locals.runtime.env.RESEND_API_KEY
-    const fromEmail = locals.runtime.env.RESEND_FROM_EMAIL || 'Emily\'s Blog <noreply@emilycogsdill.com>'
+    const fromEmail = locals.runtime.env.RESEND_FROM_EMAIL || 'Emily Cogsdill <emily@emilycogsdill.com>'
     
     // Send a very simple test email
     const payload = {
