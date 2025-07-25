@@ -401,7 +401,7 @@ export class ContentProcessor {
         publishDate: new Date().toISOString(),
         tags: ['thought']
       },
-      content: `Content for thought ${slug}`
+      content: ''
     };
   }
 }

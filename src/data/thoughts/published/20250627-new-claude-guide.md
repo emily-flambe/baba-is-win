@@ -1,4 +1,5 @@
 ---
+title: "Claude Code Degeneracy"
 content: |
     I have been descending rapidly into madness and degeneracy with Claude Code.
     

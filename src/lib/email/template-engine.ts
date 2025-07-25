@@ -70,9 +70,9 @@ export class EmailTemplateEngine {
     this.validateTemplateVariables(template, variables);
     
     const result = {
-      subject: this.interpolateTemplate(template.subjectTemplate, variables),
-      html: this.interpolateTemplate(template.htmlTemplate, variables),
-      text: this.interpolateTemplate(template.textTemplate, variables)
+      subject: this.interpolateTemplate(template.subjectTemplate, variables, false),
+      html: this.interpolateTemplate(template.htmlTemplate, variables, true),
+      text: this.interpolateTemplate(template.textTemplate, variables, false)
     };
     
     console.log('[TemplateEngine] Rendered subject:', result.subject);
@@ -81,7 +81,7 @@ export class EmailTemplateEngine {
     return result;
   }
   
-  private interpolateTemplate(template: string, variables: TemplateVariables): string {
+  private interpolateTemplate(template: string, variables: TemplateVariables, shouldSanitize: boolean = true): string {
     console.log('[TemplateEngine] Starting interpolation');
     console.log('[TemplateEngine] Template length:', template.length);
     console.log('[TemplateEngine] Variables keys:', Object.keys(variables));
@@ -96,6 +96,11 @@ export class EmailTemplateEngine {
         return match;
       }
       const stringValue = Array.isArray(value) ? value.join(', ') : String(value);
+      
+      // Skip sanitization if disabled (for subjects and plain text)
+      if (!shouldSanitize) {
+        return stringValue;
+      }
       
       // Don't sanitize URLs or safe content
       if (key.includes('url') || key === 'site_name' || key === 'user_name') {
@@ -224,7 +229,7 @@ export class EmailTemplateEngine {
         id: 'blog_notification',
         templateName: 'blog_notification',
         templateType: 'blog',
-        subjectTemplate: 'New Blog Post: {{title}}',
+        subjectTemplate: '{{title}}',
         htmlTemplate: `
           <!DOCTYPE html>
           <html lang="en">
@@ -234,9 +239,7 @@ export class EmailTemplateEngine {
             <title>{{title}}</title>
             <style>
               body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
               .content { margin-bottom: 30px; }
-              .meta { color: #666; font-size: 14px; margin-bottom: 20px; }
               .tags { margin-top: 10px; }
               .tag { background: #e9ecef; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; }
               .footer { border-top: 1px solid #eee; padding-top: 20px; font-size: 12px; color: #666; }
@@ -245,14 +248,9 @@ export class EmailTemplateEngine {
             </style>
           </head>
           <body>
-            <div class="header">
-              <h1>{{title}}</h1>
-              <div class="meta">Published on {{publish_date}}</div>
-            </div>
-            
             <div class="content">
-              <p>Hi {{user_name}},</p>
-              <p>I've published a new blog post that you might find interesting:</p>
+              <p>Hello! A new blog post has occurred somehow. Submitted for your consideration:</p>
+              <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
               
               <h2>{{title}}</h2>
               <p>{{description}}</p>
@@ -261,11 +259,10 @@ export class EmailTemplateEngine {
                 <strong>Tags:</strong> {{tags}}
               </div>
               
-              <a href="{{url}}" class="button">Read Full Post</a>
+              <a href="{{url}}" class="button">Read It</a>
             </div>
             
             <div class="footer">
-              <p>Best regards,<br>{{site_name}}</p>
               <p class="unsubscribe">
                 <a href="{{unsubscribe_url}}">Unsubscribe</a> from these notifications
               </p>
@@ -274,19 +271,17 @@ export class EmailTemplateEngine {
           </html>
         `,
         textTemplate: `
-Hi {{user_name}},
+Hello! A new blog post has occurred somehow. Submitted for your consideration:
 
-I've published a new blog post: {{title}}
+---
+
+{{title}}
 
 {{description}}
 
-Published on: {{publish_date}}
 Tags: {{tags}}
 
-Read the full post: {{url}}
-
-Best regards,
-{{site_name}}
+Read It: {{url}}
 
 ---
 To unsubscribe from these notifications, visit: {{unsubscribe_url}}
@@ -300,7 +295,7 @@ To unsubscribe from these notifications, visit: {{unsubscribe_url}}
         id: 'thought_notification',
         templateName: 'thought_notification',
         templateType: 'thought',
-        subjectTemplate: 'New Thought: {{title}}',
+        subjectTemplate: '{{title}}',
         htmlTemplate: `
           <!DOCTYPE html>
           <html lang="en">
@@ -310,40 +305,25 @@ To unsubscribe from these notifications, visit: {{unsubscribe_url}}
             <title>{{title}}</title>
             <style>
               body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
               .content { margin-bottom: 30px; }
-              .meta { color: #666; font-size: 14px; margin-bottom: 20px; }
-              .tags { margin-top: 10px; }
-              .tag { background: #e9ecef; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; }
               .footer { border-top: 1px solid #eee; padding-top: 20px; font-size: 12px; color: #666; }
-              .button { background: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin: 20px 0; }
+              .button { background: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin: 20px 0; }
               .unsubscribe { font-size: 11px; color: #999; }
               .thought-content { background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0; font-style: italic; }
             </style>
           </head>
           <body>
-            <div class="header">
-              <h1>{{title}}</h1>
-              <div class="meta">Published on {{publish_date}}</div>
-            </div>
-            
             <div class="content">
-              <p>Hi {{user_name}},</p>
-              <p>I've shared a new thought:</p>
+              <p>Uh oh, looks like someone is being a THOUGHT LEADER AGAIN.</p>
               
-              <div class="thought-content">
-                {{content}}
-              </div>
+              <a href="{{url}}" class="button">go to site (for some reason)</a>
               
-              <div class="tags">
-                <strong>Tags:</strong> {{tags}}
-              </div>
+              <br><br>
               
-              <a href="{{url}}" class="button">Read Full Thought</a>
+              <p style="font-style: italic;">Let's make today the best day it can be!</p>
             </div>
             
             <div class="footer">
-              <p>Best regards,<br>{{site_name}}</p>
               <p class="unsubscribe">
                 <a href="{{unsubscribe_url}}">Unsubscribe</a> from these notifications
               </p>
@@ -352,19 +332,12 @@ To unsubscribe from these notifications, visit: {{unsubscribe_url}}
           </html>
         `,
         textTemplate: `
-Hi {{user_name}},
+Uh oh, looks like someone is being a THOUGHT LEADER AGAIN.
 
-I've shared a new thought: {{title}}
+go to site (for some reason): {{url}}
 
-{{content}}
 
-Published on: {{publish_date}}
-Tags: {{tags}}
-
-Read the full thought: {{url}}
-
-Best regards,
-{{site_name}}
+Let's make today the best day it can be!
 
 ---
 To unsubscribe from these notifications, visit: {{unsubscribe_url}}

@@ -1,4 +1,5 @@
 ---
+title: "Fly My Pretties"
 content: |
     FLY MY PRETTIES
 publishDate: 5 Jul 2025

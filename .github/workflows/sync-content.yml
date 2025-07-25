@@ -128,21 +128,66 @@ jobs:
               if [ -z "$existing_slugs" ] || ! echo "$existing_slugs" | grep -q "^$slug$"; then
                 echo "➕ Adding new thought: $slug"
                 
+                # Debug: Show first few lines of file
+                echo "📄 First 10 lines of $thought_file:"
+                head -10 "$thought_file"
+                
                 # Extract metadata from file and escape single quotes
-                title=$(grep "^title:" "$thought_file" | sed 's/title: *//' | sed 's/^"//' | sed 's/"$//' | sed "s/'/''/g")
+                # Use awk for more reliable extraction
+                title=$(awk -F': ' '/^title:/ {gsub(/^"|"$/, "", $2); gsub(/'\''/, "'\'''\''", $2); print $2; exit}' "$thought_file")
+                
+                # Debug: Show extracted title
+                echo "🔍 Extracted title: '$title'"
+                
+                # If no title found, use "New Thought" as default
+                if [ -z "$title" ]; then
+                  echo "⚠️ No title found for $slug, using default"
+                  title="New Thought"
+                fi
+                
+                echo "✅ Final title for $slug: '$title'"
+                
                 publish_date=$(grep "^publishDate:" "$thought_file" | sed 's/publishDate: *//')
                 
                 # Convert date to Unix timestamp
                 publish_timestamp=$(date -d "$publish_date" +%s 2>/dev/null || date -j -f "%d %b %Y" "$publish_date" +%s 2>/dev/null || echo "0")
                 
+                # Extract content for thoughts (from the content field in frontmatter)
+                # Thoughts have content in frontmatter, not in the body
+                content_preview=$(awk '/^content: \|/{flag=1; next} /^[a-zA-Z]+:/{flag=0} flag{print}' "$thought_file" | head -5 | tr '\n' ' ' | sed 's/^ *//' | cut -c1-200 | sed "s/'/''/g")
+                
+                echo "📝 Content preview: '$content_preview'"
+                
                 # Insert into database with properly escaped values
                 wrangler d1 execute baba-is-win-db --remote --command "
-                  INSERT INTO content_items (slug, content_type, title, publish_date, file_path, notification_sent, created_at)
-                  VALUES ('$slug', 'thought', '$title', $publish_timestamp, '$thought_file', 0, datetime('now'));
+                  INSERT INTO content_items (slug, content_type, title, content_preview, publish_date, file_path, notification_sent, created_at)
+                  VALUES ('$slug', 'thought', '$title', '$content_preview', $publish_timestamp, '$thought_file', 0, datetime('now'));
                 "
                 new_content_count=$((new_content_count + 1))
               else
-                echo "✅ Thought already exists: $slug"
+                echo "🔄 Thought already exists: $slug - checking for updates"
+                
+                # Extract current title from file
+                # Use awk for more reliable extraction
+                title=$(awk -F': ' '/^title:/ {gsub(/^"|"$/, "", $2); gsub(/'\''/, "'\'''\''", $2); print $2; exit}' "$thought_file")
+                
+                # If no title found, use "New Thought" as default
+                if [ -z "$title" ]; then
+                  echo "⚠️ No title found for $slug, using default"
+                  title="New Thought"
+                fi
+                
+                # Update the title in the database if force_update is true or if it might have changed
+                if [ "${{ inputs.force_update }}" = "true" ]; then
+                  echo "🔄 Force updating thought: $slug with title: $title"
+                  wrangler d1 execute baba-is-win-db --remote --command "
+                    UPDATE content_items 
+                    SET title = '$title', 
+                        updated_at = datetime('now')
+                    WHERE slug = '$slug' AND content_type = 'thought';
+                  "
+                  echo "✅ Updated thought: $slug"
+                fi
               fi
             fi
           done
