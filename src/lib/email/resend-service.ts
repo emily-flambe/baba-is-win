@@ -40,7 +40,7 @@ export class ResendEmailService {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          from: this.env.RESEND_FROM_EMAIL || 'Emily <emily@emilycogsdill.com>',
+          from: this.env.RESEND_FROM_EMAIL || 'Emily Cogsdill <emily@emilycogsdill.com>',
           to: params.to,
           subject: params.subject,
           html: params.html,
