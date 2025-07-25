@@ -27,7 +27,8 @@ jobs:
       - name: Process individual notifications
         if: steps.get-pending.outputs.count != '0'
         run: |
-          response='${{ steps.get-pending.outputs.response }}'
+          # Use printf to safely handle the response with special characters
+          response=$(printf '%s' '${{ steps.get-pending.outputs.response }}')
           notifications=$(echo "$response" | jq -c '.notifications[]')
           
           processed=0
