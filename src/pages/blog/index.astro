@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { processContentForDisplay } from '../../utils/contentProcessing';
 
 // Import the tags from the tags index page
 const allPostsForTags = Object.values(import.meta.glob('../../data/blog-posts/published/*.md', { eager: true }));
@@ -13,6 +14,9 @@ const permalink = `${Astro.site.href}blog`;
 
 let allPosts = await Astro.glob('../../data/blog-posts/published/*.md');
 allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf() - new Date(a.frontmatter.publishDate).valueOf());
+
+// Get current user for premium content handling
+const user = Astro.locals?.user || null;
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="blog">
@@ -36,6 +40,17 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
       const imageUrl = post.frontmatter.thumbnail; // Use the thumbnail field from frontmatter
       const isEven = index % 2 === 0;
       const postTags = post.frontmatter.tags || []; // Get tags from frontmatter
+      const isPremium = post.frontmatter.premium === true;
+      
+      // Process content for display in listing (use description first, fallback to content)
+      const contentForProcessing = post.frontmatter.description || post.frontmatter.content || '';
+      const contentData = processContentForDisplay(
+        contentForProcessing,
+        post.frontmatter,
+        user,
+        'blog'
+      );
+      
       return (
         <div>
           { index !== 0 && <hr /> }
@@ -48,6 +63,12 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
               </div>
               <h2>
                 <a href={href}>{post.frontmatter.title}</a>
+                {isPremium && (
+                  <a href="/login" class="premium-badge-inline">
+                    ULTRA PREMIUM
+                    <span class="premium-tooltip">You must be logged in to view this ULTRA PREMIUM content. Sorry pal</span>
+                  </a>
+                )}
               </h2>
               <p>{post.frontmatter.description}</p>
 
@@ -123,5 +144,82 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
   .post-content p i {
     font-size: 0.875em; /* Smaller font size for tags */
     font-style: italic; /* Italicize the tags */
+  }
+
+  .read-more-indicator {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .read-more-indicator span {
+    color: var(--primary-color);
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-style: italic;
+  }
+
+  .post-item-footer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .premium-badge-inline {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    font-size: 0.6rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    margin-left: 1rem;
+    vertical-align: middle;
+    cursor: pointer;
+    position: relative;
+    text-decoration: none;
+  }
+
+  .premium-badge-inline:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+  }
+
+  .premium-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background: #2a2a2a;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: normal;
+    white-space: nowrap;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  .premium-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #2a2a2a;
+  }
+
+  .premium-badge-inline:hover .premium-tooltip {
+    opacity: 1;
+    visibility: visible;
   }
 </style>

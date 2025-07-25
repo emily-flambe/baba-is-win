@@ -4,6 +4,7 @@ publishDate: 27 Apr 2025
 description: Baba makes a new friend.
 thumbnail: /assets/blog/20250427-baba-make-keke/4.jpg
 tags: ["keke", "friends", "amigurumi"]
+premium: true
 ---
 
 ## <img src="/assets/baba/baba.webp" style="width: 100px;"> <img src="/assets/baba/make.webp" style="width: 100px;"> <img src="/assets/baba/keke.webp" style="width: 100px;">

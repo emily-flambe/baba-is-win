@@ -1,8 +1,13 @@
 ---
+// Example integration of content processing utilities into blog post page
+// This file shows how to modify src/pages/blog/[slug].astro to support premium content
+
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Bio from '../../components/Bio.astro';
-import PremiumContent from '../../components/PremiumContent.astro';
+import PremiumContentIndicator from '../../components/PremiumContentIndicator.astro';
 import getPostData from '../../utils/getPostData';
+import { processContentForDisplay } from '../../utils/contentProcessing';
+import type { User } from '../../lib/auth/types';
 
 const { slug } = Astro.params;
 
@@ -23,17 +28,16 @@ if (!post) {
 }
 
 const { Content, frontmatter } = post;
-const { title, description, publishDate, premium } = frontmatter;
+const { title, description, publishDate } = frontmatter;
 const { slug: postSlug, readingTime } = getPostData(post);
 const permalink = `${Astro.site.href}blog/${postSlug}`;
 
-// Get current user for premium content handling
-const user = Astro.locals?.user || null;
-const isAuthenticated = !!user;
-const isPremium = premium === true;
+// Get user from middleware (available in context.locals.user)
+const user: User | null = Astro.locals.user || null;
 
-// Get raw content for premium content processing
-const rawContent = post.rawContent ? post.rawContent() : '';
+// Process content for display based on user authentication and premium status
+const rawContent = post.rawContent();
+const contentData = processContentForDisplay(rawContent, frontmatter, user, 'blog');
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="blog">
@@ -42,18 +46,27 @@ const rawContent = post.rawContent ? post.rawContent() : '';
     <h1>{title}</h1>
     <hr />
   </header>
+  
   <div class="container">
     <article class="content">
-      <PremiumContent
-        content={rawContent}
-        isPremium={isPremium}
-        isAuthenticated={isAuthenticated}
-        contentType="blog"
-        frontmatter={frontmatter}
-        ContentComponent={Content}
-        showIndicator={false}
-      />
+      {contentData.isTruncated ? (
+        <!-- Show truncated content for anonymous users viewing premium content -->
+        <div class="truncated-content">
+          <p set:html={contentData.content}></p>
+        </div>
+      ) : (
+        <!-- Show full content for non-premium or authenticated users -->
+        <Content />
+      )}
     </article>
+    
+    <!-- Show premium indicator if applicable -->
+    <PremiumContentIndicator 
+      isPremium={contentData.isPremium}
+      requiresAuth={contentData.requiresAuth}
+      isTruncated={contentData.isTruncated}
+    />
+    
     <hr />
     <div class="back-to-blog">
       <a href="/blog">← Back to Blog</a>
@@ -81,6 +94,24 @@ const rawContent = post.rawContent ? post.rawContent() : '';
   header hr {
     min-width: 100px;
     width: 30%;
+  }
+
+  .truncated-content {
+    padding: 1rem;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.02);
+    position: relative;
+  }
+
+  .truncated-content::after {
+    content: "Content preview - sign in to read more";
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-style: italic;
   }
 
   .back-to-blog {

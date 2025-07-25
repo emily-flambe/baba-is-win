@@ -1,0 +1,91 @@
+---
+interface Props {
+  message?: string;
+  redirectUrl?: string;
+  contentType?: 'blog' | 'thought';
+}
+
+const { 
+  message = "Sign up for a free account to access this content", 
+  redirectUrl = "",
+  contentType = 'blog'
+} = Astro.props;
+
+const returnParam = redirectUrl ? `?returnUrl=${encodeURIComponent(redirectUrl)}` : '';
+---
+
+<div class="auth-prompt">
+  <p class="auth-message">{message}</p>
+  <div class="auth-buttons">
+    <a href={`/login${returnParam}`} class="auth-button">Sign In</a>
+    <span class="auth-separator">or</span>
+    <a href={`/signup${returnParam}`} class="auth-button secondary">Sign Up</a>
+  </div>
+</div>
+
+<style>
+  .auth-prompt {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--background-body);
+    border: 1px solid #444;
+    border-radius: 4px;
+    margin: 1rem 0;
+  }
+
+  .auth-message {
+    margin: 0 0 1rem 0;
+    color: var(--text-main);
+  }
+
+  .auth-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .auth-button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    background: #548e9b;
+    color: white;
+    border: 1px solid #548e9b;
+  }
+
+  .auth-button:hover {
+    background: #4a7d8a;
+  }
+
+  .auth-button.secondary {
+    background: transparent;
+    color: #548e9b;
+  }
+
+  .auth-button.secondary:hover {
+    background: #548e9b;
+    color: white;
+  }
+
+  .auth-separator {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 768px) {
+    .auth-buttons {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .auth-button {
+      width: 100%;
+    }
+    
+    .auth-separator {
+      order: -1;
+    }
+  }
+</style>

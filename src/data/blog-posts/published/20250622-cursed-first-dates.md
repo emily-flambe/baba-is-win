@@ -4,6 +4,7 @@ publishDate: 22 Jun 2025
 description: Someday my prince will come
 thumbnail: /assets/blog/20250622-cursed-first-dates/mia.jpg
 tags: ["dating", "romance", "advice", "stories", "bossbitch"]
+premium: true
 ---
 
 # Screw You, REDACTED

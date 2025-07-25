@@ -1,0 +1,253 @@
+---
+// Example usage patterns for the PremiumContent.astro component
+// This file demonstrates different ways to integrate premium content functionality
+
+import BaseLayout from '../src/layouts/BaseLayout.astro';
+import PremiumContent from '../src/components/PremiumContent.astro';
+import Bio from '../src/components/Bio.astro';
+import getPostData from '../src/utils/getPostData';
+import type { User } from '../src/lib/auth/types';
+
+// Example 1: Blog Post Integration
+// In your blog/[slug].astro file:
+
+const { slug } = Astro.params;
+
+// Load post data (existing pattern)
+const postModules = import.meta.glob('../src/data/blog-posts/published/*.md', { eager: true });
+const posts = Object.entries(postModules).map(([path, module]) => ({
+  ...module,
+  file: path
+}));
+
+const post = posts.find(p => {
+  const postSlug = p.file.split('/').pop().split('.').shift();
+  return postSlug === slug;
+});
+
+if (!post) {
+  throw new Error(`Post not found: ${slug}`);
+}
+
+const { Content, frontmatter } = post;
+const { title, description, publishDate } = frontmatter;
+const { slug: postSlug, readingTime } = getPostData(post);
+const permalink = `${Astro.site.href}blog/${postSlug}`;
+
+// Get user from middleware
+const user: User | null = Astro.locals.user || null;
+const isAuthenticated = !!user;
+
+// Get raw content for processing
+const rawContent = post.rawContent();
+---
+
+<BaseLayout title={title} description={description} permalink={permalink} current="blog">
+  <header>
+    <p>{publishDate} ~ {readingTime}</p>
+    <h1>{title}</h1>
+    <hr />
+  </header>
+  
+  <div class="container">
+    <article class="content">
+      <!-- Method 1: Using with Astro Content Component -->
+      <PremiumContent 
+        content={rawContent}
+        isPremium={frontmatter.premium || false}
+        isAuthenticated={isAuthenticated}
+        contentType="blog"
+        frontmatter={frontmatter}
+        ContentComponent={Content}
+      />
+      
+      <!-- Method 2: Using with raw HTML content only -->
+      <!-- 
+      <PremiumContent 
+        content={rawContent}
+        isPremium={frontmatter.premium || false}
+        isAuthenticated={isAuthenticated}
+        contentType="blog"
+        frontmatter={frontmatter}
+      />
+      -->
+      
+      <!-- Method 3: Custom truncate limit -->
+      <!-- 
+      <PremiumContent 
+        content={rawContent}
+        isPremium={frontmatter.premium || false}
+        isAuthenticated={isAuthenticated}
+        contentType="blog"
+        customTruncateLimit={75}
+        frontmatter={frontmatter}
+        ContentComponent={Content}
+      />
+      -->
+      
+      <!-- Method 4: Without indicator (if you want to place it elsewhere) -->
+      <!-- 
+      <PremiumContent 
+        content={rawContent}
+        isPremium={frontmatter.premium || false}
+        isAuthenticated={isAuthenticated}
+        contentType="blog"
+        frontmatter={frontmatter}
+        ContentComponent={Content}
+        showIndicator={false}
+      />
+      -->
+    </article>
+    
+    <hr />
+    <div class="back-to-blog">
+      <a href="/blog">← Back to Blog</a>
+    </div>
+    <Bio />
+  </div>
+</BaseLayout>
+
+<!-- 
+Example 2: Thought Post Integration
+In your thoughts/[slug].astro file:
+
+---
+import PremiumContent from '../../components/PremiumContent.astro';
+// ... other imports
+
+const { slug } = Astro.params;
+const thoughtModules = import.meta.glob('../../data/thoughts/published/*.md', { eager: true });
+// ... find thought logic
+
+const user: User | null = Astro.locals.user || null;
+const isAuthenticated = !!user;
+const rawContent = thought.rawContent();
+---
+
+<BaseLayout>
+  <article>
+    <PremiumContent 
+      content={rawContent}
+      isPremium={frontmatter.premium || false}
+      isAuthenticated={isAuthenticated}
+      contentType="thought"
+      frontmatter={frontmatter}
+      ContentComponent={Content}
+    />
+  </article>
+</BaseLayout>
+
+Example 3: Preview/Listing Integration
+In your blog/index.astro or thoughts/index.astro:
+
+---
+// For showing previews in listing pages
+import PremiumContent from '../components/PremiumContent.astro';
+
+// ... load posts
+---
+
+{posts.map(post => (
+  <div class="post-preview">
+    <h2><a href={`/blog/${getSlug(post)}`}>{post.frontmatter.title}</a></h2>
+    <PremiumContent 
+      content={post.rawContent()}
+      isPremium={post.frontmatter.premium || false}
+      isAuthenticated={isAuthenticated}
+      contentType="blog"
+      customTruncateLimit={30}
+      frontmatter={post.frontmatter}
+      showIndicator={false}
+    />
+    <a href={`/blog/${getSlug(post)}`}>Read more →</a>
+  </div>
+))}
+
+Example 4: API Integration
+For dynamic content loading:
+
+// In an API endpoint or dynamic component
+const contentData = {
+  content: "Your markdown or HTML content...",
+  isPremium: true,
+  frontmatter: {
+    title: "Dynamic Content",
+    premium: true,
+    publishDate: new Date().toISOString()
+  }
+};
+
+// Pass to component
+<PremiumContent 
+  content={contentData.content}
+  isPremium={contentData.isPremium}
+  isAuthenticated={userIsLoggedIn}
+  contentType="blog"
+  frontmatter={contentData.frontmatter}
+/>
+
+Key Features Demonstrated:
+
+1. **Flexible Content Rendering**: 
+   - Support for both Astro Content components and raw HTML
+   - Automatic content processing using utilities
+
+2. **Authentication Integration**: 
+   - Works with existing middleware authentication
+   - Graceful handling of anonymous users
+
+3. **Customizable Behavior**:
+   - Custom truncate limits per use case
+   - Optional premium indicator display
+   - Different content types (blog vs thought)
+
+4. **Responsive Design**: 
+   - Mobile-optimized fade overlays
+   - Accessible unlock prompts
+   - High contrast mode support
+
+5. **SEO Friendly**: 
+   - Server-side content processing
+   - Search engines see preview content
+   - Progressive enhancement approach
+
+6. **Security Focused**: 
+   - No client-side content exposure
+   - Server-side authentication checks
+   - Safe HTML rendering
+-->
+
+<style>
+  /* Example styles showing integration patterns */
+  .post-preview {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .post-preview h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .post-preview h2 a {
+    color: var(--text-main);
+    text-decoration: none;
+  }
+
+  .post-preview h2 a:hover {
+    color: var(--primary-color);
+  }
+
+  /* Custom styling for premium content in listings */
+  .post-preview .premium-content-wrapper {
+    margin: 1rem 0;
+  }
+
+  .post-preview .premium-content-wrapper .fade-overlay {
+    height: 100px; /* Shorter for previews */
+  }
+
+  .post-preview .premium-content-wrapper .unlock-prompt {
+    padding: 1rem;
+  }
+</style>

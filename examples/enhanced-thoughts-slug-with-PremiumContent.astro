@@ -1,0 +1,115 @@
+---
+// Enhanced thought post page that uses the new PremiumContent component
+// This shows how to integrate premium content functionality into the thoughts section
+
+import BaseLayout from '../../src/layouts/BaseLayout.astro';
+import Bio from '../../src/components/Bio.astro';
+import PremiumContent from '../../src/components/PremiumContent.astro';
+import getPostData from '../../src/utils/getPostData';
+import type { User } from '../../src/lib/auth/types';
+
+const { slug } = Astro.params;
+
+// Load all thoughts and find the matching one
+const thoughtModules = import.meta.glob('../../src/data/thoughts/published/*.md', { eager: true });
+const thoughts = Object.entries(thoughtModules).map(([path, module]) => ({
+  ...module,
+  file: path
+}));
+
+const thought = thoughts.find(t => {
+  const thoughtSlug = t.file.split('/').pop().split('.').shift();
+  return thoughtSlug === slug;
+});
+
+if (!thought) {
+  throw new Error(`Thought not found: ${slug}`);
+}
+
+const { Content, frontmatter } = thought;
+const { title, description, publishDate } = frontmatter;
+const { slug: thoughtSlug, readingTime } = getPostData(thought);
+const permalink = `${Astro.site.href}thoughts/${thoughtSlug}`;
+
+// Get user from middleware
+const user: User | null = Astro.locals.user || null;
+const isAuthenticated = !!user;
+
+// Get raw content for processing
+const rawContent = thought.rawContent();
+---
+
+<BaseLayout title={title} description={description} permalink={permalink} current="thoughts">
+  <header>
+    <p>{publishDate} ~ {readingTime}</p>
+    <h1>{title}</h1>
+    <hr />
+  </header>
+  
+  <div class="container">
+    <article class="content">
+      <!-- PremiumContent component with thought-specific settings -->
+      <PremiumContent 
+        content={rawContent}
+        isPremium={frontmatter.premium || false}
+        isAuthenticated={isAuthenticated}
+        contentType="thought"
+        frontmatter={frontmatter}
+        ContentComponent={Content}
+      />
+    </article>
+    
+    <hr />
+    <div class="back-to-thoughts">
+      <a href="/thoughts">← Back to Thoughts</a>
+    </div>
+    <Bio />
+  </div>
+</BaseLayout>
+
+<style>
+  header {
+    text-align: center;
+  }
+
+  header h1 {
+    margin-bottom: 0.7em;
+  }
+
+  header p {
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-family: var(--font-family-sans);
+    font-weight: 600;
+  }
+
+  header hr {
+    min-width: 100px;
+    width: 30%;
+  }
+
+  .back-to-thoughts {
+    text-align: center;
+    margin: 2em 0;
+  }
+
+  .back-to-thoughts a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-family: var(--font-family-sans);
+    font-weight: 600;
+  }
+
+  .back-to-thoughts a:hover {
+    text-decoration: underline;
+  }
+
+  /* Thoughts-specific styling */
+  .content .premium-content-wrapper .content-display.has-fade {
+    max-height: 200px; /* Shorter for thoughts */
+  }
+
+  .content .premium-content-wrapper .fade-overlay {
+    height: 120px; /* Adjusted for shorter content */
+  }
+</style>
