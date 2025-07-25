@@ -260,7 +260,7 @@ export class EmailTemplateEngine {
               
               <p style="margin-top: 20px;">Tags: {{tags}}</p>
               
-              <p style="text-align: center; margin: 30px 0;">
+              <p style="margin: 30px 0;">
                 <a href="{{url}}" style="display: inline-block; background: #333; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-size: 14px;">Read It</a>
               </p>
               
@@ -317,7 +317,7 @@ you subscribed to this, but if you changed your mind that's cool too → unsubsc
             <div style="margin-bottom: 30px;">
               <p>Uh oh, looks like someone is being a THOUGHT LEADER AGAIN.</p>
               
-              <p style="text-align: center; margin: 30px 0;">
+              <p style="margin: 30px 0;">
                 <a href="{{url}}" style="display: inline-block; background: #333; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-size: 14px;">check out my new THOUGHT if you want I guess</a>
               </p>
               
