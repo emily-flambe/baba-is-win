@@ -40,12 +40,19 @@ export class ResendEmailService {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          from: this.env.RESEND_FROM_EMAIL || 'Emily\'s Blog <noreply@emilycogsdill.com>',
+          from: this.env.RESEND_FROM_EMAIL || 'Emily Cogsdill <emily@emilycogsdill.com>',
           to: params.to,
           subject: params.subject,
           html: params.html,
           text: params.text,
-          headers: params.headers
+          headers: {
+            ...params.headers,
+            'List-Unsubscribe': `<${this.env.SITE_URL}/unsubscribe>`,
+            'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+            'Precedence': 'bulk',
+            'X-Entity-Ref-ID': `${Date.now()}-${params.to}`,
+            'Reply-To': 'emily@emilycogsdill.com'
+          }
         })
       });
       

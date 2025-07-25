@@ -49,7 +49,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     console.log('[Test Email Debug] API Key prefix:', locals.runtime.env.RESEND_API_KEY.substring(0, 7) + '...');
     
     // Debug: Check from email
-    const fromEmail = locals.runtime.env.RESEND_FROM_EMAIL || 'Emily\'s Blog <noreply@emilycogsdill.com>';
+    const fromEmail = locals.runtime.env.RESEND_FROM_EMAIL || 'Emily Cogsdill <emily@emilycogsdill.com>';
     console.log('[Test Email Debug] From email:', fromEmail);
     
     // Prepare test email
