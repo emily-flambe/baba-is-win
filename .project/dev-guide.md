@@ -87,6 +87,13 @@ npm run museum:screenshot        # Capture single screenshot
 - **Dependency injection**: Use TypeScript interfaces for testability
 - **Error handling**: Consistent error patterns across the application
 
+### Screenshot Management
+- **Storage location**: All screenshots must be saved to `.screenshots/` directory
+- **Directory structure**: Organize screenshots by feature or date within `.screenshots/`
+- **Git policy**: The `.screenshots/` directory is gitignored to prevent repository bloat
+- **Naming convention**: Use descriptive names with timestamps (e.g., `feature-name_2025-07-25_123456.png`)
+- **Cleanup**: Periodically clean up old screenshots to save local disk space
+
 ## Development Workflow
 
 ### GitHub Actions Workflow Analysis
