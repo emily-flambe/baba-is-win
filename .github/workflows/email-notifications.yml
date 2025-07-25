@@ -33,6 +33,7 @@ jobs:
           processed=0
           failed=0
           
+          # Use process substitution instead of here-string to avoid subshell
           while IFS= read -r notification; do
             slug=$(echo "$notification" | jq -r '.slug')
             type=$(echo "$notification" | jq -r '.type')
@@ -46,15 +47,15 @@ jobs:
               --retry 2 \
               --retry-delay 5; then
               echo "✓ Successfully processed notification for $slug"
-              ((processed++))
+              processed=$((processed + 1))
             else
               echo "✗ Failed to process notification for $slug"
-              ((failed++))
+              failed=$((failed + 1))
             fi
             
             # Small delay between requests to avoid overwhelming the server
             sleep 1
-          done <<< "$notifications"
+          done < <(echo "$notifications")
           
           echo "Summary: Processed $processed notifications, $failed failed"
           
