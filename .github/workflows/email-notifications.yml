@@ -19,7 +19,8 @@ jobs:
           echo "Response: $response"
           count=$(echo "$response" | jq -r '.count // 0')
           echo "Pending notifications: $count"
-          echo "response=$response" >> $GITHUB_OUTPUT
+          # Save response to file to avoid shell escaping issues
+          echo "$response" > /tmp/response.json
           echo "count=$count" >> $GITHUB_OUTPUT
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
@@ -27,8 +28,8 @@ jobs:
       - name: Process individual notifications
         if: steps.get-pending.outputs.count != '0'
         run: |
-          # Use printf to safely handle the response with special characters
-          response=$(printf '%s' '${{ steps.get-pending.outputs.response }}')
+          # Read response from file to avoid shell escaping issues
+          response=$(cat /tmp/response.json)
           notifications=$(echo "$response" | jq -c '.notifications[]')
           
           processed=0
