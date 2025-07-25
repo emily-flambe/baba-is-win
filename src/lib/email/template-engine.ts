@@ -292,7 +292,7 @@ you subscribed to this, but if you changed your mind that's cool too → unsubsc
         id: 'thought_notification',
         templateName: 'thought_notification',
         templateType: 'thought',
-        subjectTemplate: 'Uh oh, someone is being a THOUGHT LEADER again',
+        subjectTemplate: '{{title}}',
         htmlTemplate: `
           <!DOCTYPE html>
           <html lang="en">
