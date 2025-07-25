@@ -229,7 +229,7 @@ export class EmailTemplateEngine {
         id: 'blog_notification',
         templateName: 'blog_notification',
         templateType: 'blog',
-        subjectTemplate: 'Hey {{user_name}}, I wrote about {{title}}',
+        subjectTemplate: 'new blog post has occurred somehow',
         htmlTemplate: `
           <!DOCTYPE html>
           <html lang="en">
@@ -240,44 +240,48 @@ export class EmailTemplateEngine {
           </head>
           <body style="font-family: Georgia, serif; line-height: 1.7; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="margin-bottom: 30px;">
-              <p>Hey {{user_name}},</p>
+              <p>Hello {{user_name}}! A new blog post has occurred somehow. Submitted for your consideration:</p>
               
-              <p>I just published a new blog post and thought you might enjoy it.</p>
+              <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
               
-              <p style="margin: 20px 0;"><strong>{{title}}</strong></p>
+              <p style="margin: 20px 0; font-size: 18px;"><strong>{{title}}</strong></p>
               
-              <p style="margin: 15px 0;">{{description}}</p>
+              <p style="margin: 15px 0; color: #555;">{{description}}</p>
               
-              <p>If you're interested, you can read the full post here:<br>
-              <a href="{{url}}" style="color: #0066cc;">{{url}}</a></p>
+              <p style="margin-top: 20px;">Tags: {{tags}}</p>
               
-              <p>Thanks for being a reader,<br>
-              Emily</p>
+              <p><a href="{{url}}" style="color: #0066cc;">Read It</a></p>
+              
+              <br>
+              
+              <p>okay bye!<br>
+              -Emily</p>
             </div>
             
             <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #666;">
-              <p>You're receiving this because you subscribed to updates from {{site_name}}. If you'd prefer not to get these emails, you can <a href="{{unsubscribe_url}}" style="color: #666;">unsubscribe here</a>.</p>
+              <p>you subscribed to this, but if you changed your mind that's cool too → <a href="{{unsubscribe_url}}" style="color: #666;">unsubscribe</a></p>
             </div>
           </body>
           </html>
         `,
         textTemplate: `
-Hey {{user_name}},
+Hello {{user_name}}! A new blog post has occurred somehow. Submitted for your consideration:
 
-I just published a new blog post and thought you might enjoy it.
+---
 
 {{title}}
 
 {{description}}
 
-If you're interested, you can read the full post here:
-{{url}}
+Tags: {{tags}}
 
-Thanks for being a reader,
-Emily
+Read It: {{url}}
+
+okay bye!
+-Emily
 
 ---
-You're receiving this because you subscribed to updates from {{site_name}}. If you'd prefer not to get these emails, you can unsubscribe here: {{unsubscribe_url}}
+you subscribed to this, but if you changed your mind that's cool too → unsubscribe: {{unsubscribe_url}}
         `,
         variables: ['title', 'description', 'url', 'unsubscribe_url', 'publish_date', 'tags', 'site_name', 'site_url', 'user_name'],
         isActive: true,
@@ -288,7 +292,7 @@ You're receiving this because you subscribed to updates from {{site_name}}. If y
         id: 'thought_notification',
         templateName: 'thought_notification',
         templateType: 'thought',
-        subjectTemplate: 'Quick thought from Emily',
+        subjectTemplate: 'Uh oh, someone is being a THOUGHT LEADER again',
         htmlTemplate: `
           <!DOCTYPE html>
           <html lang="en">
@@ -299,42 +303,35 @@ You're receiving this because you subscribed to updates from {{site_name}}. If y
           </head>
           <body style="font-family: Georgia, serif; line-height: 1.7; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="margin-bottom: 30px;">
-              <p>Hi {{user_name}},</p>
+              <p>Uh oh {{user_name}}, looks like someone is being a THOUGHT LEADER AGAIN.</p>
               
-              <p>Just sharing a quick thought with you:</p>
+              <p><a href="{{url}}" style="color: #0066cc;">go to site (for some reason)</a></p>
               
-              <blockquote style="margin: 20px 0; padding-left: 20px; border-left: 3px solid #ddd; font-style: italic; color: #555;">
-                {{content}}
-              </blockquote>
+              <br><br>
               
-              <p>You can see the full context on my site if you'd like:<br>
-              <a href="{{url}}" style="color: #0066cc;">{{url}}</a></p>
+              <p style="font-style: italic;">Let's make today the best day it can be!</p>
               
-              <p>Hope you're having a good day,<br>
-              Emily</p>
+              <p>-Emily</p>
             </div>
             
             <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #666;">
-              <p>You're getting this because you subscribed to my thoughts. If you'd rather not receive these, you can <a href="{{unsubscribe_url}}" style="color: #666;">unsubscribe here</a>.</p>
+              <p>if you're over my thought leadership, <a href="{{unsubscribe_url}}" style="color: #666;">unsubscribe here</a></p>
             </div>
           </body>
           </html>
         `,
         textTemplate: `
-Hi {{user_name}},
+Uh oh {{user_name}}, looks like someone is being a THOUGHT LEADER AGAIN.
 
-Just sharing a quick thought with you:
+go to site (for some reason): {{url}}
 
-"{{content}}"
 
-You can see the full context on my site if you'd like:
-{{url}}
+Let's make today the best day it can be!
 
-Hope you're having a good day,
-Emily
+-Emily
 
 ---
-You're getting this because you subscribed to my thoughts. If you'd rather not receive these, you can unsubscribe here: {{unsubscribe_url}}
+if you're over my thought leadership, unsubscribe here: {{unsubscribe_url}}
         `,
         variables: ['title', 'content', 'url', 'unsubscribe_url', 'publish_date', 'tags', 'site_name', 'site_url', 'user_name'],
         isActive: true,
@@ -345,7 +342,7 @@ You're getting this because you subscribed to my thoughts. If you'd rather not r
         id: 'welcome_email',
         templateName: 'welcome_email',
         templateType: 'system',
-        subjectTemplate: 'Thanks for subscribing, {{user_name}}',
+        subjectTemplate: 'welcome to whatever this is',
         htmlTemplate: `
           <!DOCTYPE html>
           <html lang="en">
@@ -356,42 +353,44 @@ You're getting this because you subscribed to my thoughts. If you'd rather not r
           </head>
           <body style="font-family: Georgia, serif; line-height: 1.7; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="margin-bottom: 30px;">
-              <p>Hi {{user_name}},</p>
+              <p>Hi {{user_name}}!</p>
               
-              <p>Thanks for subscribing to my blog updates! I really appreciate your interest.</p>
+              <p>You've subscribed to my blog, which is a thing that exists. Sometimes I write words and put them on the internet. Now you'll know when that happens!</p>
               
-              <p>I'll send you a note when I publish new blog posts or share quick thoughts. I try to keep the emails minimal and only send them when I have something worth sharing.</p>
+              <p>I promise to only email you when I actually have something to say (which is... occasionally).</p>
               
-              <p>If you ever want to change your preferences or unsubscribe, just click the link at the bottom of any email I send.</p>
+              <p>If at any point you're like "why am I getting these emails from Emily" just click the unsubscribe link and we'll pretend this never happened.</p>
               
-              <p>Looking forward to sharing my writing with you!</p>
+              <p>Welcome aboard this... whatever this is!</p>
               
-              <p>Best,<br>
-              Emily</p>
+              <p>-Emily</p>
+              
+              <p style="font-size: 14px; color: #666; margin-top: 20px;">P.S. Let's make today the best day it can be! (I had to put that somewhere)</p>
             </div>
             
             <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #666;">
-              <p>If you change your mind, you can <a href="{{unsubscribe_url}}" style="color: #666;">unsubscribe anytime</a>.</p>
+              <p>regrets? <a href="{{unsubscribe_url}}" style="color: #666;">unsubscribe here</a></p>
             </div>
           </body>
           </html>
         `,
         textTemplate: `
-Hi {{user_name}},
+Hi {{user_name}}!
 
-Thanks for subscribing to my blog updates! I really appreciate your interest.
+You've subscribed to my blog, which is a thing that exists. Sometimes I write words and put them on the internet. Now you'll know when that happens!
 
-I'll send you a note when I publish new blog posts or share quick thoughts. I try to keep the emails minimal and only send them when I have something worth sharing.
+I promise to only email you when I actually have something to say (which is... occasionally).
 
-If you ever want to change your preferences or unsubscribe, just click the link at the bottom of any email I send.
+If at any point you're like "why am I getting these emails from Emily" just click the unsubscribe link and we'll pretend this never happened.
 
-Looking forward to sharing my writing with you!
+Welcome aboard this... whatever this is!
 
-Best,
-Emily
+-Emily
+
+P.S. Let's make today the best day it can be! (I had to put that somewhere)
 
 ---
-If you change your mind, you can unsubscribe anytime: {{unsubscribe_url}}
+regrets? unsubscribe here: {{unsubscribe_url}}
         `,
         variables: ['site_name', 'user_name', 'site_url', 'unsubscribe_url'],
         isActive: true,
