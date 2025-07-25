@@ -305,7 +305,9 @@ you subscribed to this, but if you changed your mind that's cool too → unsubsc
             <div style="margin-bottom: 30px;">
               <p>Uh oh {{user_name}}, looks like someone is being a THOUGHT LEADER AGAIN.</p>
               
-              <p><a href="{{url}}" style="color: #0066cc;">go to site (for some reason)</a></p>
+              <p style="text-align: center; margin: 30px 0;">
+                <a href="{{url}}" style="display: inline-block; background: #333; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-size: 14px;">check out my new THOUGHT if you want I guess</a>
+              </p>
               
               <br><br>
               
@@ -323,7 +325,7 @@ you subscribed to this, but if you changed your mind that's cool too → unsubsc
         textTemplate: `
 Uh oh {{user_name}}, looks like someone is being a THOUGHT LEADER AGAIN.
 
-go to site (for some reason): {{url}}
+check out my new THOUGHT if you want I guess: {{url}}
 
 
 Let's make today the best day it can be!
