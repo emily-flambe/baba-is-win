@@ -1,6 +1,7 @@
 import type { User } from '../auth/types';
 import type { Env } from '../../types/env';
 import { AuthDB } from '../auth/db';
+import signatures from './signatures.json';
 
 export interface TemplateVariables {
   title: string;
@@ -53,12 +54,21 @@ export interface EmailTemplate {
 export class EmailTemplateEngine {
   constructor(private env: Env, private authDB?: AuthDB) {}
   
+  private getRandomSignature(): string {
+    const signatureList = signatures.signatures;
+    return signatureList[Math.floor(Math.random() * signatureList.length)];
+  }
+  
   async renderTemplate(
     templateName: string, 
     variables: TemplateVariables
   ): Promise<{ subject: string; html: string; text: string }> {
     console.log(`[TemplateEngine] Rendering template: ${templateName}`);
     console.log('[TemplateEngine] Variables:', JSON.stringify(variables, null, 2));
+    
+    // Add random signature to variables
+    const signature = this.getRandomSignature();
+    const enhancedVariables = { ...variables, signature };
     
     const template = await this.getTemplate(templateName);
     
@@ -67,12 +77,12 @@ export class EmailTemplateEngine {
     }
     
     // Validate template variables
-    this.validateTemplateVariables(template, variables);
+    this.validateTemplateVariables(template, enhancedVariables);
     
     const result = {
-      subject: this.interpolateTemplate(template.subjectTemplate, variables, false),
-      html: this.interpolateTemplate(template.htmlTemplate, variables, true),
-      text: this.interpolateTemplate(template.textTemplate, variables, false)
+      subject: this.interpolateTemplate(template.subjectTemplate, enhancedVariables, false),
+      html: this.interpolateTemplate(template.htmlTemplate, enhancedVariables, true),
+      text: this.interpolateTemplate(template.textTemplate, enhancedVariables, false)
     };
     
     console.log('[TemplateEngine] Rendered subject:', result.subject);
@@ -254,7 +264,7 @@ export class EmailTemplateEngine {
               
               <br>
               
-              <p>okay bye!<br>
+              <p>{{signature}}<br>
               -Emily</p>
             </div>
             
@@ -277,13 +287,13 @@ Tags: {{tags}}
 
 Read It: {{url}}
 
-okay bye!
+{{signature}}
 -Emily
 
 ---
 you subscribed to this, but if you changed your mind that's cool too → unsubscribe: {{unsubscribe_url}}
         `,
-        variables: ['title', 'description', 'url', 'unsubscribe_url', 'publish_date', 'tags', 'site_name', 'site_url', 'user_name'],
+        variables: ['title', 'description', 'url', 'unsubscribe_url', 'publish_date', 'tags', 'site_name', 'site_url', 'user_name', 'signature'],
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date()
@@ -311,7 +321,7 @@ you subscribed to this, but if you changed your mind that's cool too → unsubsc
               
               <br><br>
               
-              <p style="font-style: italic;">Let's make today the best day it can be!</p>
+              <p style="font-style: italic;">{{signature}}</p>
               
               <p>-Emily</p>
             </div>
@@ -328,14 +338,14 @@ Uh oh {{user_name}}, looks like someone is being a THOUGHT LEADER AGAIN.
 check out my new THOUGHT if you want I guess: {{url}}
 
 
-Let's make today the best day it can be!
+{{signature}}
 
 -Emily
 
 ---
 if you're over my thought leadership, unsubscribe here: {{unsubscribe_url}}
         `,
-        variables: ['title', 'content', 'url', 'unsubscribe_url', 'publish_date', 'tags', 'site_name', 'site_url', 'user_name'],
+        variables: ['title', 'content', 'url', 'unsubscribe_url', 'publish_date', 'tags', 'site_name', 'site_url', 'user_name', 'signature'],
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date()
@@ -365,9 +375,9 @@ if you're over my thought leadership, unsubscribe here: {{unsubscribe_url}}
               
               <p>Welcome aboard this... whatever this is!</p>
               
-              <p>-Emily</p>
+              <p>{{signature}}</p>
               
-              <p style="font-size: 14px; color: #666; margin-top: 20px;">P.S. Let's make today the best day it can be! (I had to put that somewhere)</p>
+              <p>-Emily</p>
             </div>
             
             <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #666;">
@@ -387,14 +397,14 @@ If at any point you're like "why am I getting these emails from Emily" just clic
 
 Welcome aboard this... whatever this is!
 
--Emily
+{{signature}}
 
-P.S. Let's make today the best day it can be! (I had to put that somewhere)
+-Emily
 
 ---
 regrets? unsubscribe here: {{unsubscribe_url}}
         `,
-        variables: ['site_name', 'user_name', 'site_url', 'unsubscribe_url'],
+        variables: ['site_name', 'user_name', 'site_url', 'unsubscribe_url', 'signature'],
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date()
