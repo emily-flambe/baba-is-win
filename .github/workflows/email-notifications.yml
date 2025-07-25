@@ -11,7 +11,7 @@ jobs:
       - name: Check for pending notifications
         id: get-pending
         run: |
-          response=$(curl -X GET https://emilycogsdill.com/api/cron/get-pending-notifications \
+          response=$(curl -X GET https://personal.emily-cogsdill.workers.dev/api/cron/get-pending-notifications \
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             -f)
@@ -42,7 +42,7 @@ jobs:
             
             echo "Processing notification for $type: $slug"
             
-            if curl -X POST https://emilycogsdill.com/api/cron/process-single-notification \
+            if curl -X POST https://personal.emily-cogsdill.workers.dev/api/cron/process-single-notification \
               -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
               -H "Content-Type: application/json" \
               -f \
