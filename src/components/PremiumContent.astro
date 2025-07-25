@@ -1,6 +1,8 @@
 ---
 import PremiumContentIndicator from './PremiumContentIndicator.astro';
 import { processContentForDisplay } from '../utils/contentProcessing';
+import { remark } from 'remark';
+import remarkHtml from 'remark-html';
 import type { User } from '../lib/auth/types';
 import type { ContentFrontmatter } from '../types/env';
 
@@ -46,6 +48,15 @@ if (customTruncateLimit && contentData.isTruncated) {
   }
 }
 
+// Convert markdown to HTML for truncated content
+let truncatedHTML = '';
+if (contentData.isTruncated) {
+  const processedContent = await remark()
+    .use(remarkHtml)
+    .process(finalContent);
+  truncatedHTML = processedContent.toString();
+}
+
 const shouldShowFade = contentData.isTruncated && contentData.requiresAuth;
 ---
 
@@ -55,7 +66,9 @@ const shouldShowFade = contentData.isTruncated && contentData.requiresAuth;
     {ContentComponent ? (
       <!-- If a component is provided, render it (for full Astro markdown components) -->
       {contentData.isTruncated ? (
-        <div class="truncated-markdown" set:html={finalContent}></div>
+        <div class="truncated-content-container">
+          <ContentComponent />
+        </div>
       ) : (
         <ContentComponent />
       )}
@@ -100,8 +113,14 @@ const shouldShowFade = contentData.isTruncated && contentData.requiresAuth;
   }
 
   .content-display.has-fade {
-    max-height: 300px;
+    position: relative;
+  }
+  
+  .truncated-content-container {
+    position: relative;
+    max-height: 800px;
     overflow: hidden;
+    z-index: 1;
   }
 
   .fade-overlay {
@@ -109,29 +128,31 @@ const shouldShowFade = contentData.isTruncated && contentData.requiresAuth;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 150px;
     pointer-events: none;
     z-index: 10;
   }
 
   .fade-gradient {
     position: absolute;
-    top: 0;
+    bottom: 70px;
     left: 0;
     right: 0;
-    height: 80px;
+    height: 250px;
     background: linear-gradient(
       to bottom,
       transparent 0%,
-      var(--background-body) 100%
+      rgba(50, 50, 50, 0.3) 10%,
+      rgba(50, 50, 50, 0.6) 25%,
+      rgba(50, 50, 50, 0.85) 40%,
+      rgba(50, 50, 50, 0.95) 55%,
+      #323232 70%,
+      #323232 100%
     );
+    pointer-events: none;
   }
 
   .unlock-prompt {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    position: relative;
     background: var(--background-body);
     padding: 1.5rem;
     text-align: center;

@@ -31,6 +31,9 @@ const permalink = `${Astro.site.href}blog/${postSlug}`;
 const user = Astro.locals?.user || null;
 const isAuthenticated = !!user;
 const isPremium = premium === true;
+
+// Get raw content for premium content processing
+const rawContent = post.rawContent ? post.rawContent() : '';
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="blog">
@@ -42,13 +45,13 @@ const isPremium = premium === true;
   <div class="container">
     <article class="content">
       <PremiumContent
-        content=""
+        content={rawContent}
         isPremium={isPremium}
         isAuthenticated={isAuthenticated}
         contentType="blog"
         frontmatter={frontmatter}
         ContentComponent={Content}
-        showIndicator={isPremium}
+        showIndicator={false}
       />
     </article>
     <hr />

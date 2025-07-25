@@ -10,7 +10,7 @@ const { isPremium, requiresAuth, isTruncated } = Astro.props;
 
 {isPremium && (
   <div class="premium-indicator">
-    <span class="premium-badge">PREMIUM</span>
+    <span class="premium-badge">ULTRA PREMIUM</span>
     {requiresAuth && (
       <p class="auth-notice">
         <a href="/login">Sign in</a> to read the full content.
@@ -31,11 +31,11 @@ const { isPremium, requiresAuth, isTruncated } = Astro.props;
 
   .premium-badge {
     display: inline-block;
-    background: #548e9b;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 0.25rem 0.75rem;
+    padding: 0.2rem 0.6rem;
     border-radius: 3px;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     font-weight: bold;
     letter-spacing: 0.5px;
     margin-bottom: 0.5rem;

@@ -67,7 +67,7 @@ export function processContentForDisplay(
   
   // If user should not see full content, apply truncation
   if (!showFullContent) {
-    const wordLimit = contentType === 'blog' ? 50 : 10;
+    const wordLimit = contentType === 'blog' ? 250 : 10;
     const originalLength = content.trim().split(/\s+/).length;
     
     processedContent = truncateContent(content, wordLimit);
