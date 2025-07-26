@@ -11,7 +11,7 @@
     {
       "name": "list-cutter",
       "displayName": "List Cutter (\"Cutty\")",
-      "customDescription": "Ceci n'est pas un CRM. Now with an a friendly cuttlefish chat agent!",
+      "customDescription": "Ceci n'est pas un CRM. Now with a friendly cuttlefish chat agent!",
       "extendedDescription": "Cutty the cuttlefish (not an octopus) is your BEST FRIEND and he is here to help you do stuff with voter contact data! Not a CRM. Uses a comically unhelpful though slightly agentic chat friend, which is neat.",
       "category": "data-processing",
       "demoUrl": "https://cutty.emilycogsdill.com",
