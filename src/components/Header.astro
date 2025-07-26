@@ -238,6 +238,33 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
 </header>
 
 <script define:vars={{ subtitlesData }}>
+  // Client-side subtitle randomization - runs immediately on every page load
+  function randomizeSubtitle() {
+    const subtitles = JSON.parse(`${JSON.stringify(subtitlesData.subtitles)}`);
+    const randomIndex = Math.floor(Math.random() * subtitles.length);
+    const selectedSubtitle = subtitles[randomIndex];
+    
+    // Use the same renderSubtitleHTML function logic as remote
+    let html = selectedSubtitle.text;
+    selectedSubtitle.links.forEach(link => {
+      const linkHTML = `<a href="${link.url}"${link.target ? ` target="${link.target}"` : ''}>${link.text}</a>`;
+      html = html.replace(link.text, linkHTML);
+    });
+    
+    const subtitleElement = document.getElementById('subtitle');
+    if (subtitleElement) {
+      subtitleElement.innerHTML = html;
+    }
+  }
+
+  // Randomize subtitle immediately and on every page load/refresh
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', randomizeSubtitle);
+  } else {
+    randomizeSubtitle();
+  }
+  
+  // Main functionality - runs after DOM is ready
   document.addEventListener('DOMContentLoaded', async () => {
     // Check authentication status via API
     let currentUser = null;
@@ -249,7 +276,7 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
       // Update UI based on auth status
       updateAuthUI(currentUser);
     } catch (error) {
-      // Silently handle auth check errors
+      console.warn('Auth check failed:', error);
     }
 
     function updateAuthUI(user) {
@@ -277,38 +304,53 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
       if (clientMenu) clientMenu.style.display = 'block';
     }
 
-    // Kebab menu toggle
+    // Kebab menu toggle - with improved event handling
     const kebabToggle = document.getElementById('kebab-toggle');
     const kebabDropdown = document.getElementById('kebab-dropdown');
     
     if (kebabToggle && kebabDropdown) {
-      kebabToggle.addEventListener('click', (e) => {
+      // Remove any existing event listeners to prevent duplicates
+      const newKebabToggle = kebabToggle.cloneNode(true);
+      kebabToggle.parentNode.replaceChild(newKebabToggle, kebabToggle);
+      
+      // Add click event listener to the new element
+      newKebabToggle.addEventListener('click', (e) => {
+        e.preventDefault();
         e.stopPropagation();
         kebabDropdown.classList.toggle('show');
+        console.log('Kebab menu toggled:', kebabDropdown.classList.contains('show'));
       });
 
       // Close menu when clicking outside
       document.addEventListener('click', (e) => {
         if (e.target && e.target instanceof Element) {
-          if (!kebabToggle.contains(e.target) && !kebabDropdown.contains(e.target)) {
+          const isClickInsideToggle = newKebabToggle.contains(e.target);
+          const isClickInsideDropdown = kebabDropdown.contains(e.target);
+          
+          if (!isClickInsideToggle && !isClickInsideDropdown && kebabDropdown.classList.contains('show')) {
             kebabDropdown.classList.remove('show');
+            console.log('Kebab menu closed - clicked outside');
           }
         }
       });
 
       // Close menu on escape key
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
+        if (e.key === 'Escape' && kebabDropdown.classList.contains('show')) {
           kebabDropdown.classList.remove('show');
+          console.log('Kebab menu closed - escape key');
         }
       });
+    } else {
+      console.error('Kebab menu elements not found:', { kebabToggle, kebabDropdown });
     }
 
     // Logout functionality for both server and client buttons
     function setupLogoutButton(buttonId) {
       const logoutBtn = document.getElementById(buttonId);
       if (logoutBtn) {
-        logoutBtn.addEventListener('click', async () => {
+        logoutBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
           const confirmed = confirm('Are you sure you want to logout?');
           if (!confirmed) return;
           
@@ -319,7 +361,7 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
             // Redirect to home
             window.location.href = '/';
           } catch (error) {
-            // Silently handle logout errors
+            console.error('Logout failed:', error);
           }
         });
       }
@@ -329,32 +371,4 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
     setupLogoutButton('client-logout-btn');
 
   });
-</script>
-
-<script define:vars={{ subtitlesData }}>
-  // Client-side subtitle randomization - runs immediately on every page load
-  function randomizeSubtitle() {
-    const subtitles = JSON.parse(`${JSON.stringify(subtitlesData.subtitles)}`);
-    const randomIndex = Math.floor(Math.random() * subtitles.length);
-    const selectedSubtitle = subtitles[randomIndex];
-    
-    // Use the same renderSubtitleHTML function logic as remote
-    let html = selectedSubtitle.text;
-    selectedSubtitle.links.forEach(link => {
-      const linkHTML = `<a href="${link.url}"${link.target ? ` target="${link.target}"` : ''}>${link.text}</a>`;
-      html = html.replace(link.text, linkHTML);
-    });
-    
-    const subtitleElement = document.getElementById('subtitle');
-    if (subtitleElement) {
-      subtitleElement.innerHTML = html;
-    }
-  }
-
-  // Randomize subtitle immediately and on every page load/refresh
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', randomizeSubtitle);
-  } else {
-    randomizeSubtitle();
-  }
 </script>

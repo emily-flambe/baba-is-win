@@ -284,8 +284,14 @@ const indicatorsClass = isMini ? 'mini-carousel-indicators' : 'carousel-indicato
   }
   
   // Initialize both carousel types
-  document.addEventListener('DOMContentLoaded', () => {
+  function initCarousels() {
     initializeCarousel('[data-carousel]', false);
     initializeCarousel('[data-mini-carousel]', true);
-  });
+  }
+  
+  // Initialize on DOMContentLoaded for initial page load
+  document.addEventListener('DOMContentLoaded', initCarousels);
+  
+  // Initialize on astro:page-load for View Transitions navigation
+  document.addEventListener('astro:page-load', initCarousels);
 </script>

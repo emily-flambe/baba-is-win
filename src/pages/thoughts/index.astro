@@ -1,9 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Carousel from '../../components/Carousel.astro';
-import PremiumContentIndicator from '../../components/PremiumContentIndicator.astro';
 import { processSimpleMarkdown } from '../../utils/simpleMarkdown.js';
-import { processContentForDisplay } from '../../utils/contentProcessing';
 
 const title = 'Thoughts';
 const description = 'Quick thoughts and musings - my personal micro-blog.';
@@ -29,9 +27,6 @@ const thoughtsByDate = allThoughts.reduce((acc, thought) => {
   acc[date].push(thought);
   return acc;
 }, {});
-
-// Get current user for premium content handling
-const user = Astro.locals?.user || null;
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="thoughts">
@@ -45,41 +40,22 @@ const user = Astro.locals?.user || null;
           {thoughts.map((thought) => {
             const href = `/thoughts/${thought.file.split('/').pop().split('.').shift()}`;
             const bgColor = thought.frontmatter.color || 'var(--background-body)';
-            const isPremium = thought.frontmatter.premium === true;
-            
-            // Process content for display in listing
-            const contentData = processContentForDisplay(
-              thought.frontmatter.content,
-              thought.frontmatter,
-              user,
-              'thought'
-            );
             
             return (
               <article class="thought-card" style={`background-color: ${bgColor};`}>
-                <a href={href} class="thought-link">
-                  <div class="thought-content">
-                    <p set:html={processSimpleMarkdown(contentData.content)}></p>
-                    {contentData.isTruncated && (
-                      <div class="read-more-indicator">
-                        <span>Continue reading →</span>
-                      </div>
-                    )}
-                    {thought.frontmatter.images && thought.frontmatter.images.length > 0 && (
+                <div class="thought-content">
+                  <div class="thought-text" set:html={processSimpleMarkdown(thought.frontmatter.content)}></div>
+                  {thought.frontmatter.images && thought.frontmatter.images.length > 0 && (
+                    <div class="thought-images">
                       <Carousel images={thought.frontmatter.images} alt="Thought image" size="large" />
-                    )}
-                  </div>
-                </a>
+                    </div>
+                  )}
+                </div>
                 <div class="thought-meta">
                   <div class="thought-meta-left">
-                    <time>{thought.frontmatter.publishTime}</time>
-                    {isPremium && (
-                      <PremiumContentIndicator 
-                        isPremium={true}
-                        requiresAuth={contentData.requiresAuth}
-                        isTruncated={contentData.isTruncated}
-                      />
-                    )}
+                    <a href={href} class="thought-time-link">
+                      <time>{thought.frontmatter.publishTime}</time>
+                    </a>
                   </div>
                   {thought.frontmatter.tags && thought.frontmatter.tags.length > 0 && (
                     <span class="tags">
@@ -140,25 +116,28 @@ const user = Astro.locals?.user || null;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .thought-link {
-    display: block;
-    text-decoration: none;
+  .thought-time-link {
     color: inherit;
-    padding: 1.5rem;
+    text-decoration: none;
   }
 
-  .thought-link:hover {
-    text-decoration: none;
+  .thought-time-link:hover {
+    text-decoration: underline;
   }
 
   .thought-content {
-    margin-bottom: 1rem;
+    padding: 1.5rem;
   }
 
-  .thought-content p {
-    font-size: 0.9rem;
+  .thought-text {
+    font-size: 1rem;
     line-height: 1.6;
-    margin: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .thought-images {
+    margin-top: 1rem;
   }
   
   .thought-content strong {
@@ -176,6 +155,15 @@ const user = Astro.locals?.user || null;
     font-size: 0.85em;
     font-family: monospace;
   }
+  
+  .thought-content a {
+    color: var(--primary-color);
+    text-decoration: underline;
+  }
+  
+  .thought-content a:hover {
+    text-decoration: none;
+  }
 
   .thought-meta {
     display: flex;
@@ -183,25 +171,13 @@ const user = Astro.locals?.user || null;
     align-items: center;
     font-size: 0.875rem;
     color: var(--text-secondary);
+    padding: 0 1.5rem 1.5rem 1.5rem;
   }
 
   .thought-meta-left {
     display: flex;
     align-items: center;
     gap: 1rem;
-  }
-
-  .read-more-indicator {
-    margin-top: 0.5rem;
-    padding-top: 0.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .read-more-indicator span {
-    color: var(--primary-color);
-    font-size: 0.85rem;
-    font-weight: 500;
-    font-style: italic;
   }
 
   .thought-meta time {
@@ -227,15 +203,12 @@ const user = Astro.locals?.user || null;
   }
 
   @media (max-width: 600px) {
-    .thought-link {
+    .thought-content {
       padding: 1rem;
     }
-
-    .thought-content p {
-      font-size: 1rem;
-    }
-
+    
     .thought-meta {
+      padding: 0 1rem 1rem 1rem;
       flex-direction: column;
       align-items: flex-start;
       gap: 0.5rem;

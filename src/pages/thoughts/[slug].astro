@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Carousel from '../../components/Carousel.astro';
-import PremiumContent from '../../components/PremiumContent.astro';
 import { processSimpleMarkdown } from '../../utils/simpleMarkdown.js';
 
 const { slug } = Astro.params;
@@ -23,13 +22,8 @@ if (!thought) {
 }
 
 const { frontmatter } = thought;
-const { content, publishDate, publishTime, tags, images, premium } = frontmatter;
+const { content, publishDate, publishTime, tags, images } = frontmatter;
 const permalink = `${Astro.site.href}thoughts/${slug}`;
-
-// Get current user for premium content handling
-const user = Astro.locals?.user || null;
-const isAuthenticated = !!user;
-const isPremium = premium === true;
 ---
 
 <BaseLayout title="Thought" description={content.substring(0, 100) + '...'} permalink={permalink} current="thoughts">
@@ -39,14 +33,7 @@ const isPremium = premium === true;
         <time>{publishDate} at {publishTime}</time>
       </div>
       <div class="thought-body">
-        <PremiumContent
-          content={processSimpleMarkdown(content)}
-          isPremium={isPremium}
-          isAuthenticated={isAuthenticated}
-          contentType="thought"
-          frontmatter={frontmatter}
-          showIndicator={isPremium}
-        />
+        <p set:html={processSimpleMarkdown(content)}></p>
         {images && images.length > 0 && (
           <Carousel images={images} alt="Thought image" size="large" />
         )}
