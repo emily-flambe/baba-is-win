@@ -54,6 +54,13 @@
       "customDescription": "An homage to a simpler time.",
       "screenshot": "/assets/museum/zoo.png",
       "demoUrl": "https://zoo.emilycogsdill.com"
+    },
+    {
+      "name": "pong",
+      "displayName": "Paddle Game",
+      "customDescription": "Premium mindless recreation.",
+      "screenshot": "/assets/museum/pong.png",
+      "demoUrl": "https://pong.emilycogsdill.com"
     }
   ],
   "settings": {
