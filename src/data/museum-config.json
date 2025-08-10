@@ -75,6 +75,13 @@
       "section": "Tools"
     },
     {
+      "name": "cloudflare-ai-worker",
+      "displayName": "Cloudflare AI Worker",
+      "customDescription": "Runs open source AI models supported by Cloudflare (currently gpt-oss). Neat!",
+      "screenshot": "/assets/museum/cloudflare-ai-worker.png",
+      "section": "Tools"
+    },
+    {
       "name": "zoo",
       "displayName": "Cyber Zoo",
       "customDescription": "An homage to a simpler time.",
