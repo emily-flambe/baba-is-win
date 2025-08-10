@@ -63,6 +63,7 @@ export interface MuseumProject {
   homepage?: string | null;
   screenshot?: string | null;
   screenshots?: string[] | null;
+  section?: string | null;
 }
 
 export interface GitHubApiResponse {
@@ -102,6 +103,8 @@ export interface MuseumRepositoryConfig {
   order?: number;
   screenshot?: string | null;
   screenshots?: string[] | null;
+  section?: string | null;
+  hidden?: boolean;
 }
 
 export interface MuseumConfig {

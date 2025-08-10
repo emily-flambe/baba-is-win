@@ -6,7 +6,8 @@
       "displayName": "This site lmao",
       "customDescription": "It insists upon itself.",
       "demoUrl": "https://www.emilycogsdill.com",
-      "screenshot": "/assets/museum/personal-site.png"
+      "screenshot": "/assets/museum/personal-site.png",
+      "section": "Applications"
     },
     {
       "name": "list-cutter",
@@ -15,7 +16,26 @@
       "extendedDescription": "Cutty the cuttlefish (not an octopus) is your BEST FRIEND and he is here to help you do stuff with voter contact data! Not a CRM. Uses a comically unhelpful though slightly agentic chat friend, which is neat.",
       "category": "data-processing",
       "demoUrl": "https://cutty.emilycogsdill.com",
-      "screenshot": "/assets/museum/cutty.png"
+      "screenshot": "/assets/museum/cutty.png",
+      "section": "Applications"
+    },
+    {
+      "name": "games",
+      "displayName": "Games",
+      "customDescription": "Games I have made. Kinda shitty, kinda not",
+      "category": "games",
+      "demoUrl": "https://games.emilycogsdill.com",
+      "screenshot": "/assets/museum/games.png",
+      "section": "Applications"
+    },
+    {
+      "name": "chat-bgd",
+      "displayName": "ChatBGD",
+      "customDescription": "My mom insists on calling ChatGPT 'ChatBGD' so I made this using gpt-oss hosted on a Cloudflare AI Worker.",
+      "category": "games",
+      "demoUrl": "https://chat.emilycogsdill.com",
+      "screenshot": "/assets/museum/chatbgd.png",
+      "section": "Applications"
     },
     {
       "name": "chesscom-helper",
@@ -25,7 +45,9 @@
       "category": "api-integration",
       "demoUrl": "https://chesscomhelper.emilycogsdill.com",
       "order": 5,
-      "screenshot": "/assets/museum/chesscomhelper.png"
+      "screenshot": "/assets/museum/chesscomhelper.png",
+      "section": "Applications",
+      "hidden": true
     },
     {
       "name": "esquie",
@@ -33,34 +55,40 @@
       "customDescription": "Mon ami!!!",
       "extendedDescription": "Wheeee, whoooo",
       "demoUrl": "https://esquie.emilycogsdill.com",
-      "screenshot": "/assets/museum/esquie.png"
+      "screenshot": "/assets/museum/esquie.png",
+      "section": "Nonsense"
     },
     {
       "name": "SuperClaude",
       "displayName": "SuperClaude",
       "customDescription": "My fork of the SuperClaude project. Slightly unhinged. --persona-critic is the real MVP",
       "extendedDescription": "",
-      "category": "productivity"
+      "category": "productivity",
+      "screenshot": "/assets/museum/superclaude.jpg",
+      "section": "Tools"
     },
     {
       "name": "dotfiles",
       "displayName": "dotfiles",
       "customDescription": "Custom configurations for Kitty (terminal) and AeroSpace (window management). Extremely advanced. Big-brain users ONLY.",
-      "screenshot": "/assets/museum/kitty.png"
+      "screenshot": "/assets/museum/kitty.png",
+      "section": "Tools"
     },
     {
       "name": "zoo",
       "displayName": "Cyber Zoo",
       "customDescription": "An homage to a simpler time.",
       "screenshot": "/assets/museum/zoo.png",
-      "demoUrl": "https://zoo.emilycogsdill.com"
+      "demoUrl": "https://zoo.emilycogsdill.com",
+      "section": "Nonsense"
     },
     {
       "name": "pong",
       "displayName": "Paddle Game",
       "customDescription": "Premium mindless recreation.",
       "screenshot": "/assets/museum/pong.png",
-      "demoUrl": "https://pong.emilycogsdill.com"
+      "demoUrl": "https://pong.emilycogsdill.com",
+      "section": "Applications"
     }
   ],
   "settings": {
