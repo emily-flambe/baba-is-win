@@ -186,7 +186,8 @@ function transformRepositoryToMuseumProject(repo: GitHubRepository, config?: Mus
     createdAt: repo.created_at,
     homepage: repo.homepage,
     screenshot: config?.screenshot || null,
-    screenshots: config?.screenshots || null
+    screenshots: config?.screenshots || null,
+    section: config?.section || null
   };
 }
 
@@ -204,8 +205,14 @@ export async function generateMuseumData(username: string): Promise<MuseumData> 
       return transformRepositoryToMuseumProject(repo, repoConfig);
     });
     
+    // Filter out hidden projects
+    const visibleProjects = projects.filter(project => {
+      const repoConfig = configMap.get(project.id);
+      return repoConfig?.hidden !== true;
+    });
+    
     // Sort projects based on configuration
-    const sortedProjects = sortProjects(projects, config.settings.sortBy, config.repositories);
+    const sortedProjects = sortProjects(visibleProjects, config.settings.sortBy, config.repositories);
     
     const languages = Array.from(new Set(sortedProjects.map(p => p.language).filter(Boolean)));
     
@@ -307,8 +314,14 @@ function generateFallbackMuseumData(): MuseumData {
       return transformRepositoryToMuseumProject(repo, repoConfig);
     });
     
+    // Filter out hidden projects
+    const visibleProjects = projects.filter(project => {
+      const repoConfig = configMap.get(project.id);
+      return repoConfig?.hidden !== true;
+    });
+    
     // Sort projects based on configuration
-    const sortedProjects = sortProjects(projects, config.settings.sortBy, config.repositories);
+    const sortedProjects = sortProjects(visibleProjects, config.settings.sortBy, config.repositories);
     
     const languages = Array.from(new Set(sortedProjects.map(p => p.language).filter(Boolean)));
     

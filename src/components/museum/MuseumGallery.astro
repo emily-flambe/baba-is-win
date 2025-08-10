@@ -16,7 +16,24 @@ const {
   emptyMessage = 'No projects found matching your criteria.'
 } = Astro.props;
 
-// Projects are already sorted by the API
+// Group projects by section
+const sectionOrder = ['Applications', 'Tools', 'Nonsense'];
+const projectsBySection = new Map<string, MuseumProject[]>();
+
+// Initialize sections
+sectionOrder.forEach(section => {
+  projectsBySection.set(section, []);
+});
+
+// Group projects by their section
+projects.forEach(project => {
+  const section = project.section || 'Nonsense';
+  if (!projectsBySection.has(section)) {
+    projectsBySection.set(section, []);
+  }
+  projectsBySection.get(section)!.push(project);
+});
+
 const allProjects = projects;
 ---
 
@@ -31,13 +48,21 @@ const allProjects = projects;
     </div>
   ) : (
     <div class="gallery-container">
-      <section class="projects-section">
-        <div class={`projects-grid ${layout}`}>
-          {allProjects.map(project => (
-            <ProjectCard project={project} featured={false} />
-          ))}
-        </div>
-      </section>
+      {sectionOrder.map(section => {
+        const sectionProjects = projectsBySection.get(section) || [];
+        if (sectionProjects.length === 0) return null;
+        
+        return (
+          <section class="projects-section">
+            <h2 class="section-title">{section}</h2>
+            <div class={`projects-grid ${layout}`}>
+              {sectionProjects.map(project => (
+                <ProjectCard project={project} featured={false} />
+              ))}
+            </div>
+          </section>
+        );
+      })}
     </div>
   )}
 </div>
@@ -52,7 +77,33 @@ const allProjects = projects;
   .gallery-container {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 3rem;
+  }
+
+  .section-title {
+    font-family: var(--font-family-serif);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #a6d8df;
+    text-align: center;
+    margin: 0 0 2rem 0;
+    padding: 1rem 0;
+    position: relative;
+  }
+
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #a6d8df, transparent);
+  }
+
+  .projects-section {
+    margin-bottom: 2rem;
   }
 
 
@@ -65,9 +116,17 @@ const allProjects = projects;
   .projects-grid.grid,
   .projects-grid.masonry {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
     align-items: stretch;
+  }
+  
+  /* Force 3 columns on larger screens */
+  @media (min-width: 1024px) {
+    .projects-grid.grid,
+    .projects-grid.masonry {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
   .projects-grid.list {
@@ -127,8 +186,8 @@ const allProjects = projects;
   @media (max-width: 768px) {
     .projects-grid.grid,
     .projects-grid.masonry {
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
     }
   }
 
@@ -142,7 +201,12 @@ const allProjects = projects;
 
   @media (max-width: 768px) {
     .gallery-container {
-      gap: 1.5rem;
+      gap: 2rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
     }
 
     .empty-state {
@@ -151,6 +215,13 @@ const allProjects = projects;
 
     .empty-icon {
       font-size: 3rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .section-title {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
     }
   }
 
