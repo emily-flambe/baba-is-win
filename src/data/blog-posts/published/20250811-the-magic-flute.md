@@ -6,7 +6,7 @@ thumbnail: /assets/blog/20250811-the-magic-flute/23.jpg
 tags: ["opera","serious","music"]
 ---
 
-Tonight is my sixth consecutive night of having watched an entire opera. In order they have been: <em>Carmen</em>, <em>La Traviata</em>, <em>La bohème</em>, <em>Turandot</em>, <em>Nixon in China</em>, and tonight: <a href="https://www.youtube.com/watch?v=cE64eIZi9Lw" target="_blank"><em>The Magic Flute</em></a> by Wolfgang Amadeus Mozart.
+Tonight is my sixth consecutive night of having watched an entire opera. In order they have been: <em>Carmen</em>, <em>La Traviata</em>, <em>La bohème</em>, <em>Madama Butterfly</em>, <em>Turandot</em>, <em>Nixon in China</em>, and tonight: <a href="https://www.youtube.com/watch?v=cE64eIZi9Lw" target="_blank"><em>The Magic Flute</em></a> by Wolfgang Amadeus Mozart.
 
 ---
 
