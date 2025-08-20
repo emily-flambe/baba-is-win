@@ -10,6 +10,7 @@ const user = Astro.locals.user;
     flex: 1;
     font-family: var(--font-family-sans);
     font-weight: 700;
+    font-size: 1.3rem;
     justify-content: flex-end;
     text-transform: uppercase;
   }
@@ -64,8 +65,8 @@ const user = Astro.locals.user;
 
 <nav>
   <a class={current === "" ? "selected" : ""} href='/'>home</a>
-  <a class={current === "blog" ? "selected" : ""} href='/blog'>blog</a>
   <a class={current === "thoughts" ? "selected" : ""} href='/thoughts'>thoughts</a>
+  <a class={current === "blog" ? "selected" : ""} href='/blog'>blog</a>
   <a class={current === "museum" ? "selected" : ""} href='/museum'>museum</a>
   <a class={current === "bio" ? "selected" : ""} href='/bio'>bio</a>
   {user && (
