@@ -37,9 +37,15 @@ const thoughtsByDate = allThoughts.reduce((acc, thought) => {
       {Object.entries(thoughtsByDate).map(([date, thoughts]) => (
         <div class="date-group">
           <h2 class="date-header">
-            {date}
-            {thoughts.length === 1 && thoughts[0].frontmatter.title && (
-              <span> - {thoughts[0].frontmatter.title}</span>
+            {thoughts.length === 1 ? (
+              <a href={`/thoughts/${thoughts[0].file.split('/').pop().split('.').shift()}`} class="date-header-link">
+                {date}
+                {thoughts[0].frontmatter.title && (
+                  <span> - {thoughts[0].frontmatter.title}</span>
+                )}
+              </a>
+            ) : (
+              <span>{date}</span>
             )}
           </h2>
           {thoughts.map((thought) => {
@@ -106,6 +112,16 @@ const thoughtsByDate = allThoughts.reduce((acc, thought) => {
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
     border-bottom: 2px solid var(--primary-color);
+  }
+
+  .date-header-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .date-header-link:hover {
+    color: #fff;
   }
 
   .thought-card {
