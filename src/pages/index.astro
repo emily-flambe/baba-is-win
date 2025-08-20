@@ -30,11 +30,6 @@ const recentThoughts = allThoughts.slice(0, 5);
           const bgColor = thought.frontmatter.color || 'var(--background-body)';
           return (
             <article class="thought-item" style={`background-color: ${bgColor};`}>
-              {thought.frontmatter.title && (
-                <h3 class="thought-title">
-                  <a href={href} class="thought-title-link">{thought.frontmatter.title}</a>
-                </h3>
-              )}
               <p class="thought-content" set:html={processSimpleMarkdown(thought.frontmatter.content)}></p>
               {thought.frontmatter.images && thought.frontmatter.images.length > 0 && (
                 <Carousel images={thought.frontmatter.images} alt="Thought image" size="mini" />
@@ -265,20 +260,6 @@ const recentThoughts = allThoughts.slice(0, 5);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
 
-  .thought-title {
-    margin: 0 0 1rem 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-
-  .thought-title-link {
-    color: var(--primary-color);
-    text-decoration: none;
-  }
-
-  .thought-title-link:hover {
-    text-decoration: underline;
-  }
 
   .thought-content {
     font-size: 1rem;
