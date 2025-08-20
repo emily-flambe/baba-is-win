@@ -29,18 +29,31 @@ const recentThoughts = allThoughts.slice(0, 5);
           const href = `/thoughts/${thought.file.split('/').pop().split('.').shift()}`;
           const bgColor = thought.frontmatter.color || 'var(--background-body)';
           return (
-            <a href={href} class="thought-item-link">
-              <article class="thought-item" style={`background-color: ${bgColor};`}>
-                <p class="thought-content" set:html={processSimpleMarkdown(thought.frontmatter.content)}></p>
-                {thought.frontmatter.images && thought.frontmatter.images.length > 0 && (
-                  <Carousel images={thought.frontmatter.images} alt="Thought image" size="mini" />
+            <article class="thought-item" style={`background-color: ${bgColor};`}>
+              {thought.frontmatter.title && (
+                <h3 class="thought-title">
+                  <a href={href} class="thought-title-link">{thought.frontmatter.title}</a>
+                </h3>
+              )}
+              <p class="thought-content" set:html={processSimpleMarkdown(thought.frontmatter.content)}></p>
+              {thought.frontmatter.images && thought.frontmatter.images.length > 0 && (
+                <Carousel images={thought.frontmatter.images} alt="Thought image" size="mini" />
+              )}
+              <div class="thought-meta">
+                <time>{thought.frontmatter.publishDate}</time>
+                <time class="thought-time">{thought.frontmatter.publishTime}</time>
+                {thought.frontmatter.tags && thought.frontmatter.tags.length > 0 && (
+                  <span class="tags">
+                    {thought.frontmatter.tags.map((tag, index) => (
+                      <>
+                        {index > 0 && ' '}
+                        <span class="tag">#{tag}</span>
+                      </>
+                    ))}
+                  </span>
                 )}
-                <div class="thought-meta">
-                  <time>{thought.frontmatter.publishDate}</time>
-                  <time class="thought-time">{thought.frontmatter.publishTime}</time>
-                </div>
-              </article>
-            </a>
+              </div>
+            </article>
           );
         })}
       </div>
@@ -220,12 +233,6 @@ const recentThoughts = allThoughts.slice(0, 5);
     gap: 1.2rem;
   }
 
-  .thought-item-link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-  }
-
   .thought-item {
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 8px;
@@ -248,14 +255,29 @@ const recentThoughts = allThoughts.slice(0, 5);
     transition: transform 0.3s ease;
   }
 
-  .thought-item-link:hover .thought-item::before {
+  .thought-item:hover::before {
     transform: translateX(0);
   }
 
-  .thought-item-link:hover .thought-item {
+  .thought-item:hover {
     border-color: rgba(255, 255, 255, 0.2);
     transform: translateX(4px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .thought-title {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .thought-title-link {
+    color: var(--primary-color);
+    text-decoration: none;
+  }
+
+  .thought-title-link:hover {
+    text-decoration: underline;
   }
 
   .thought-content {
@@ -294,6 +316,16 @@ const recentThoughts = allThoughts.slice(0, 5);
 
   .thought-time {
     opacity: 0.7;
+  }
+
+  .tags {
+    margin-left: 1rem;
+  }
+
+  .tag {
+    color: var(--primary-color);
+    font-size: 0.7rem;
+    opacity: 0.8;
   }
 
   .view-all {
