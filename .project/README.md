@@ -2,9 +2,9 @@
 
 This directory contains utility scripts and configurations to help with development and maintenance of the Baba Is Win project.
 
-## 🐻 Utilities Overview
+## Utilities Overview
 
-The `.project/` directory contains Bear's helpful utility scripts for project management:
+The `.project/` directory contains utility scripts for project management:
 
 ### Environment Configuration
 
@@ -18,7 +18,7 @@ The `.project/` directory contains Bear's helpful utility scripts for project ma
 
 All scripts are located in `.project/scripts/` and can be run with Node.js:
 
-#### 🏥 `health-check.js` - Project Health Monitor
+#### `health-check.js` - Project Health Monitor
 ```bash
 node .project/scripts/health-check.js [options]
 ```
@@ -36,7 +36,7 @@ Performs comprehensive health checks on the project:
 - `--fix` - Attempt automatic fixes where possible
 - `--verbose` - Detailed output
 
-#### 🔧 `setup-dev-env.js` - Development Environment Setup
+#### `setup-dev-env.js` - Development Environment Setup
 ```bash
 node .project/scripts/setup-dev-env.js [options]
 ```
@@ -53,7 +53,7 @@ Automates local development environment setup:
 - `--dry-run` - Show what would be done without making changes
 - `--verbose` - Detailed output
 
-#### 🔍 `env-validator.js` - Environment Variables Validator
+#### `env-validator.js` - Environment Variables Validator
 ```bash
 node .project/scripts/env-validator.js [options]
 ```
@@ -70,7 +70,7 @@ Validates environment configurations:
 - `--strict` - Fail on warnings (useful for CI/CD)
 - `--verbose` - Detailed validation output
 
-#### 📊 `update-context.js` - Context Synchronization
+#### `update-context.js` - Context Synchronization
 ```bash
 node .project/scripts/update-context.js [options]
 ```
@@ -85,7 +85,7 @@ Keeps context files synchronized with project state:
 - `--dry-run` - Show what would be updated without making changes
 - `--verbose` - Detailed scanning output
 
-#### 📦 `package-manager.js` - Package Management
+#### `package-manager.js` - Package Management
 ```bash
 node .project/scripts/package-manager.js [command] [options]
 ```
@@ -109,7 +109,7 @@ Manages dependencies, security updates, and package maintenance:
 - `--force` - Force operations (use with caution)
 - `--verbose` - Detailed output
 
-## 🚀 Quick Start
+## Quick Start
 
 ### For New Development Setup
 
@@ -153,7 +153,7 @@ Manages dependencies, security updates, and package maintenance:
   node .project/scripts/update-context.js
   ```
 
-## 📋 Critical Environment Variables
+## Critical Environment Variables
 
 The following environment variables are **required** for the project to function:
 
@@ -189,7 +189,7 @@ wrangler secret put RESEND_API_KEY
 # ... etc
 ```
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -229,7 +229,7 @@ wrangler secret put RESEND_API_KEY
    node .project/scripts/update-context.js --verbose
    ```
 
-## 🛡️ Security Notes
+## Security Notes
 
 - **Never commit secrets** to version control
 - Use `.dev.vars` for local development only
@@ -239,4 +239,4 @@ wrangler secret put RESEND_API_KEY
 
 ---
 
-*Bear's Project Utilities v1.0.0 - Helping you build with confidence! 🐻*
+*Project Utilities v1.0.0 - Helping you build with confidence!*

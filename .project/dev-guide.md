@@ -5,7 +5,7 @@
 ### Prerequisites
 - Node.js 20 or higher
 - npm (comes with Node.js)
-- Cloudflare account with access to Worker 'personal' and D1 database 'baba-is-win-db'
+- Cloudflare account with access to Worker and D1 database 'baba-is-win-db'
 - Git for version control
 
 ### Initial Setup
@@ -20,7 +20,7 @@
 ### Critical: .dev.vars File
 **The development server will not function without proper environment variables.**
 
-Create `.dev.vars` file in project root for the 'personal' worker with:
+Create `.dev.vars` file in project root with:
 ```env
 JWT_SECRET=dev-secret-key-for-local-testing-only-never-use-in-production
 API_KEY_SALT=dev-salt-for-api-keys-local-testing-only
@@ -268,7 +268,7 @@ describe('Feature Name', () => {
 - Validate local database setup for 'baba-is-win-db'
 
 **Email Functionality**
-- Confirm Gmail API credentials
+- Confirm Resend API credentials
 - Check email service configuration
 - Review notification settings
 
@@ -279,12 +279,12 @@ describe('Feature Name', () => {
 
 ### Debug Tools
 - Browser developer tools
-- Cloudflare Worker 'personal' logs
+- Cloudflare Worker logs
 - Local debugging with VS Code
 - Network request inspection
 
 ### Getting Help
 - Check existing documentation
 - Review test files for examples
-- Consult Cloudflare Workers documentation for 'personal' worker and 'baba-is-win-db' database
+- Consult Cloudflare Workers documentation for worker and 'baba-is-win-db' database
 - Review Astro framework documentation
