@@ -36,13 +36,21 @@ const thoughtsByDate = allThoughts.reduce((acc, thought) => {
     <div class="thoughts-container">
       {Object.entries(thoughtsByDate).map(([date, thoughts]) => (
         <div class="date-group">
-          <h2 class="date-header">{date}</h2>
           {thoughts.map((thought) => {
             const href = `/thoughts/${thought.file.split('/').pop().split('.').shift()}`;
             const bgColor = thought.frontmatter.color || 'var(--background-body)';
             
             return (
-              <article class="thought-card" style={`background-color: ${bgColor};`}>
+              <>
+                <h2 class="date-header">
+                  <a href={href} class="date-header-link">
+                    {thought.frontmatter.publishDate}
+                    {thought.frontmatter.title && (
+                      <span> - {thought.frontmatter.title}</span>
+                    )}
+                  </a>
+                </h2>
+                <article class="thought-card" style={`background-color: ${bgColor};`}>
                 <div class="thought-content">
                   <div class="thought-text" set:html={processSimpleMarkdown(thought.frontmatter.content)}></div>
                   {thought.frontmatter.images && thought.frontmatter.images.length > 0 && (
@@ -69,6 +77,7 @@ const thoughtsByDate = allThoughts.reduce((acc, thought) => {
                   )}
                 </div>
               </article>
+              </>
             );
           })}
         </div>
@@ -101,6 +110,16 @@ const thoughtsByDate = allThoughts.reduce((acc, thought) => {
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
     border-bottom: 2px solid var(--primary-color);
+  }
+
+  .date-header-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .date-header-link:hover {
+    color: #fff;
   }
 
   .thought-card {

@@ -26,9 +26,15 @@ const recentThoughts = allThoughts.slice(0, 5);
       <p class="thoughts-description">I do not have "SOCIAL MEDIA" this is what you get deal with it</p>
       <div class="thoughts-list">
         {recentThoughts.map((thought) => {
+          const href = `/thoughts/${thought.file.split('/').pop().split('.').shift()}`;
           const bgColor = thought.frontmatter.color || 'var(--background-body)';
           return (
             <article class="thought-item" style={`background-color: ${bgColor};`}>
+              {thought.frontmatter.title && (
+                <h3 class="thought-title">
+                  <a href={href} class="thought-title-link">{thought.frontmatter.title}</a>
+                </h3>
+              )}
               <p class="thought-content" set:html={processSimpleMarkdown(thought.frontmatter.content)}></p>
               {thought.frontmatter.images && thought.frontmatter.images.length > 0 && (
                 <Carousel images={thought.frontmatter.images} alt="Thought image" size="mini" />
@@ -36,6 +42,16 @@ const recentThoughts = allThoughts.slice(0, 5);
               <div class="thought-meta">
                 <time>{thought.frontmatter.publishDate}</time>
                 <time class="thought-time">{thought.frontmatter.publishTime}</time>
+                {thought.frontmatter.tags && thought.frontmatter.tags.length > 0 && (
+                  <span class="tags">
+                    {thought.frontmatter.tags.map((tag, index) => (
+                      <>
+                        {index > 0 && ' '}
+                        <span class="tag">#{tag}</span>
+                      </>
+                    ))}
+                  </span>
+                )}
               </div>
             </article>
           );
@@ -249,6 +265,21 @@ const recentThoughts = allThoughts.slice(0, 5);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
 
+  .thought-title {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .thought-title-link {
+    color: var(--primary-color);
+    text-decoration: none;
+  }
+
+  .thought-title-link:hover {
+    text-decoration: underline;
+  }
+
   .thought-content {
     font-size: 1rem;
     line-height: 1.5;
@@ -282,8 +313,19 @@ const recentThoughts = allThoughts.slice(0, 5);
     font-weight: 500;
   }
 
+
   .thought-time {
     opacity: 0.7;
+  }
+
+  .tags {
+    margin-left: 1rem;
+  }
+
+  .tag {
+    color: var(--primary-color);
+    font-size: 0.7rem;
+    opacity: 0.8;
   }
 
   .view-all {

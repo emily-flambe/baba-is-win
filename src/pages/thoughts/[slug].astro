@@ -22,13 +22,14 @@ if (!thought) {
 }
 
 const { frontmatter } = thought;
-const { content, publishDate, publishTime, tags, images } = frontmatter;
+const { content, publishDate, publishTime, tags, images, color } = frontmatter;
+const bgColor = color || 'var(--background-body)';
 const permalink = `${Astro.site.href}thoughts/${slug}`;
 ---
 
 <BaseLayout title="Thought" description={content.substring(0, 100) + '...'} permalink={permalink} current="thoughts">
   <div class="container">
-    <article class="thought-single">
+    <article class="thought-single" style={`background-color: ${bgColor};`}>
       <div class="thought-header">
         <time>{publishDate} at {publishTime}</time>
       </div>
@@ -56,7 +57,6 @@ const permalink = `${Astro.site.href}thoughts/${slug}`;
   .thought-single {
     max-width: 600px;
     margin: 4rem auto;
-    background: var(--background-body);
     border: 1px solid var(--text-secondary);
     border-radius: 12px;
     padding: 2rem;
