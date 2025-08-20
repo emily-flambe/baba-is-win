@@ -26,6 +26,7 @@ const recentThoughts = allThoughts.slice(0, 5);
       <p class="thoughts-description">I do not have "SOCIAL MEDIA" this is what you get deal with it</p>
       <div class="thoughts-list">
         {recentThoughts.map((thought) => {
+          const href = `/thoughts/${thought.file.split('/').pop().split('.').shift()}`;
           const bgColor = thought.frontmatter.color || 'var(--background-body)';
           return (
             <article class="thought-item" style={`background-color: ${bgColor};`}>
@@ -34,8 +35,12 @@ const recentThoughts = allThoughts.slice(0, 5);
                 <Carousel images={thought.frontmatter.images} alt="Thought image" size="mini" />
               )}
               <div class="thought-meta">
-                <time>{thought.frontmatter.publishDate}</time>
-                <time class="thought-time">{thought.frontmatter.publishTime}</time>
+                <a href={href} class="thought-time-link">
+                  <time>{thought.frontmatter.publishDate}</time>
+                </a>
+                <a href={href} class="thought-time-link">
+                  <time class="thought-time">{thought.frontmatter.publishTime}</time>
+                </a>
               </div>
             </article>
           );
@@ -280,6 +285,15 @@ const recentThoughts = allThoughts.slice(0, 5);
     font-size: 0.75rem;
     color: rgba(255, 255, 255, 0.4);
     font-weight: 500;
+  }
+
+  .thought-time-link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .thought-time-link:hover {
+    text-decoration: underline;
   }
 
   .thought-time {
