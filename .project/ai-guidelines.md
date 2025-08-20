@@ -1,14 +1,5 @@
 # 🚨 AI Assistant Guidelines - CRITICAL RULES 🚨
 
-## 🚨 FIRST ACTION - CREATE SESSION LOG IMMEDIATELY 🚨
-
-**BEFORE DOING ANYTHING ELSE:**
-1. Create session log: `.project/logs/prompts/YYYY-MM-DD_session-log.md`
-2. Log EVERY user interaction
-3. Update after EACH prompt
-4. Document ALL actions and decisions
-5. **THIS IS NOT OPTIONAL - DO IT NOW**
-
 ## 🚨 ABSOLUTE PROHIBITIONS 🚨
 
 ### 1. NEVER PUSH SECRETS 🚨
