@@ -22,8 +22,8 @@ const recentThoughts = allThoughts.slice(0, 5);
 <BaseLayout title={title} description={description} permalink={permalink}>
   <div class="home-container">
     <div class="thoughts-sidebar">
-      <h2><a href="/thoughts">Some sort of feed</a></h2>
-      <p class="thoughts-description">I do not have "SOCIAL MEDIA" this is what you get deal with it</p>
+      <h2 class="thoughts-header"><a href="/thoughts">Recent Thoughts</a></h2>
+      <p class="thoughts-description">Quick updates and musings</p>
       <div class="thoughts-list">
         {recentThoughts.map((thought) => {
           const bgColor = thought.frontmatter.color || 'var(--background-body)';
@@ -44,52 +44,54 @@ const recentThoughts = allThoughts.slice(0, 5);
       <a href="/thoughts" class="view-all">View all thoughts →</a>
     </div>
     <div class="home-copy">
-      <div class="baba-scene">
-        <img class="baba-img" src="../assets/baba/BABA_char.webp" style="margin-right: 400px;"> 
-        <img class="baba-img" src="../assets/baba/flag_object.webp">
-      </div>
-      
-      <div class="baba-rules">
-        <div class="rule-line">
-          <img class="baba-img" src="../assets/baba/love.webp" style="margin-left: 30px;"> 
-          <img class="baba-img" src="../assets/baba/is.webp"> 
-          <img class="baba-img" src="../assets/baba/weak.webp">
+      <div class="baba-container">
+        <div class="baba-scene top-scene">
+          <img class="baba-img baba-char" src="../assets/baba/BABA_char.webp"> 
+          <img class="baba-img flag-object" src="../assets/baba/flag_object.webp">
         </div>
-        <div class="rule-line">
-          <img class="baba-img" src="../assets/baba/love.webp" style="margin-left: 80px;"> 
-          <img class="baba-img" src="../assets/baba/has.webp"> 
-          <img class="baba-img" src="../assets/baba/key.webp">
+        
+        <div class="baba-rules">
+          <div class="rule-line" data-delay="1">
+            <img class="baba-img" src="../assets/baba/love.webp"> 
+            <img class="baba-img" src="../assets/baba/is.webp"> 
+            <img class="baba-img" src="../assets/baba/weak.webp">
+          </div>
+          <div class="rule-line" data-delay="2">
+            <img class="baba-img" src="../assets/baba/love.webp"> 
+            <img class="baba-img" src="../assets/baba/has.webp"> 
+            <img class="baba-img" src="../assets/baba/key.webp">
+          </div>
+          <div class="rule-line" data-delay="3">
+            <img class="baba-img" src="../assets/baba/key.webp"> 
+            <img class="baba-img" src="../assets/baba/is.webp"> 
+            <img class="baba-img" src="../assets/baba/open.webp">
+          </div>
+          <div class="rule-line" data-delay="4">
+            <img class="baba-img" src="../assets/baba/door.webp"> 
+            <img class="baba-img" src="../assets/baba/is.webp"> 
+            <img class="baba-img" src="../assets/baba/shut.webp">
+          </div>
+          <div class="rule-line" data-delay="5">
+            <img class="baba-img" src="../assets/baba/flag.webp"> 
+            <img class="baba-img" src="../assets/baba/is.webp"> 
+            <img class="baba-img" src="../assets/baba/win.webp">
+          </div>
+          <div class="rule-line" data-delay="6">
+            <img class="baba-img" src="../assets/baba/baba.webp"> 
+            <img class="baba-img" src="../assets/baba/is.webp"> 
+            <img class="baba-img" src="../assets/baba/move.webp">
+          </div>
+          <div class="rule-line highlight" data-delay="7">
+            <img class="baba-img" src="../assets/baba/baba.webp"> 
+            <img class="baba-img" src="../assets/baba/is.webp"> 
+            <img class="baba-img" src="../assets/baba/win.webp">
+          </div>
         </div>
-        <div class="rule-line">
-          <img class="baba-img" src="../assets/baba/key.webp" style="margin-left: 130px;"> 
-          <img class="baba-img" src="../assets/baba/is.webp"> 
-          <img class="baba-img" src="../assets/baba/open.webp">
+        
+        <div class="baba-scene bottom-scene">
+          <img class="baba-img baba-char-win" src="../assets/baba/BABA_char.webp"> 
+          <img class="baba-img flag-object" src="../assets/baba/flag_object.webp">
         </div>
-        <div class="rule-line">
-          <img class="baba-img" src="../assets/baba/door.webp" style="margin-left: 180px;"> 
-          <img class="baba-img" src="../assets/baba/is.webp"> 
-          <img class="baba-img" src="../assets/baba/shut.webp">
-        </div>
-        <div class="rule-line">
-          <img class="baba-img" src="../assets/baba/flag.webp" style="margin-left: 230px;"> 
-          <img class="baba-img" src="../assets/baba/is.webp"> 
-          <img class="baba-img" src="../assets/baba/win.webp">
-        </div>
-        <div class="rule-line">
-          <img class="baba-img" src="../assets/baba/baba.webp" style="margin-left: 280px;"> 
-          <img class="baba-img" src="../assets/baba/is.webp"> 
-          <img class="baba-img" src="../assets/baba/move.webp">
-        </div>
-        <div class="rule-line">
-          <img class="baba-img" src="../assets/baba/baba.webp" style="margin-left: 330px;"> 
-          <img class="baba-img" src="../assets/baba/is.webp"> 
-          <img class="baba-img" src="../assets/baba/win.webp">
-        </div>
-      </div>
-      
-      <div class="baba-scene">
-        <img class="baba-img" src="../assets/baba/BABA_char.webp" style="margin-left: 400px;"> 
-        <img class="baba-img" src="../assets/baba/flag_object.webp">
       </div>
     </div>
 
@@ -110,79 +112,109 @@ const recentThoughts = allThoughts.slice(0, 5);
   .home-container {
     align-items: flex-start;
     display: flex;
-    gap: 3rem;
+    gap: 4rem;
     justify-content: center;
-    margin: 2em auto;
-    max-width: 1200px;
+    margin: 3em auto;
+    max-width: 1280px;
     min-height: 400px;
+    padding: 0 2rem;
   }
 
   .thoughts-sidebar {
-    flex: 0 0 450px;
-    background: #2a2a2a;
-    border: 1px solid var(--text-secondary);
-    border-radius: 8px;
-    padding: 0.1rem 1.5rem 1.5rem 1.5rem;
-    margin-left: -2rem;
+    flex: 0 0 420px;
+    background: linear-gradient(135deg, #2a2a2a 0%, #222 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
-  .thoughts-sidebar h2 {
-    font-size: 1.6rem;
+  .thoughts-sidebar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .thoughts-header {
+    font-size: 1.8rem;
     margin-bottom: 0.5rem;
     color: var(--primary-color);
+    font-weight: 600;
+    letter-spacing: -0.5px;
   }
 
-  .thoughts-sidebar h2 a {
+  .thoughts-header a {
     text-decoration: none;
     color: inherit;
+    transition: color 0.2s ease;
   }
 
-  .thoughts-sidebar h2 a:hover {
-    text-decoration: underline;
+  .thoughts-header a:hover {
+    color: #fff;
   }
 
   .thoughts-description {
-    font-size: 0.85rem;
-    font-style: italic;
-    color: var(--text-secondary);
-    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 1.5rem;
     margin-top: 0;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--text-secondary);
-    opacity: 0.5;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .thoughts-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.2rem;
   }
 
   .thought-item {
-    border: 1px solid var(--text-secondary);
-    border-radius: 6px;
-    padding: 1rem;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 1.2rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .thought-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-color), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .thought-item:hover::before {
+    transform: translateX(0);
   }
 
   .thought-item:hover {
-    border-color: var(--primary-color);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
 
   .thought-content {
-    font-size: 1.05rem;
-    line-height: 1.4;
-    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0 0 0.75rem 0;
+    color: rgba(255, 255, 255, 0.9);
   }
   
   .thought-content strong {
     font-weight: 600;
+    color: #fff;
   }
   
   .thought-content em {
     font-style: italic;
+    opacity: 0.9;
   }
   
   .thought-content code {
@@ -190,14 +222,15 @@ const recentThoughts = allThoughts.slice(0, 5);
     padding: 0.125rem 0.25rem;
     border-radius: 3px;
     font-size: 0.85em;
-    font-family: monospace;
+    font-family: 'Courier New', monospace;
   }
 
   .thought-meta {
     display: flex;
     gap: 0.5rem;
     font-size: 0.75rem;
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 500;
   }
 
   .thought-time {
@@ -205,32 +238,129 @@ const recentThoughts = allThoughts.slice(0, 5);
   }
 
   .view-all {
-    display: inline-block;
-    margin-top: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 1.5rem;
     color: var(--primary-color);
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .view-all .arrow {
+    transition: transform 0.2s ease;
+    display: inline-block;
   }
 
   .view-all:hover {
-    text-decoration: underline;
+    color: #fff;
+  }
+
+  .view-all:hover .arrow {
+    transform: translateX(4px);
   }
 
   .home-copy {
     flex: 1;
-    padding: 0 1em 0 5em;
-    margin-left: -50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
   }
 
-  .home-copy h1 {
-    font-weight: 700;
-    margin-bottom: 0.5em;
-    line-height: 1.3;
+  .baba-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    animation: fadeIn 1s ease-out;
   }
 
-  .home-copy p {
-    font-size: 1.4em;
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .baba-scene {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .baba-rules {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    position: relative;
+  }
+
+  .rule-line {
+    display: flex;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: slideIn 0.5s ease-out forwards;
+    animation-delay: calc(var(--delay) * 0.1s);
+    transition: transform 0.3s ease;
+  }
+
+  .rule-line[data-delay="1"] { --delay: 1; }
+  .rule-line[data-delay="2"] { --delay: 2; }
+  .rule-line[data-delay="3"] { --delay: 3; }
+  .rule-line[data-delay="4"] { --delay: 4; }
+  .rule-line[data-delay="5"] { --delay: 5; }
+  .rule-line[data-delay="6"] { --delay: 6; }
+  .rule-line[data-delay="7"] { --delay: 7; }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .rule-line:hover {
+    transform: scale(1.05);
+  }
+
+  .rule-line.highlight {
+    position: relative;
+  }
+
+  .rule-line.highlight::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border: 2px solid var(--primary-color);
+    border-radius: 4px;
+    opacity: 0;
+    animation: pulse 2s ease-in-out infinite;
+    animation-delay: 1s;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 0;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.05);
+    }
   }
 
   .hero-image-container {
@@ -286,6 +416,111 @@ const recentThoughts = allThoughts.slice(0, 5);
   }
 
   .baba-img {
-    width: 50px;
+    width: 48px;
+    height: 48px;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    transition: transform 0.2s ease;
+  }
+
+  .baba-img:hover {
+    transform: scale(1.1);
+  }
+
+  .baba-char {
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  .baba-char-win {
+    animation: celebrate 1s ease-in-out infinite;
+    animation-delay: 2s;
+  }
+
+  @keyframes bob {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  @keyframes celebrate {
+    0%, 100% {
+      transform: rotate(0deg) scale(1);
+    }
+    25% {
+      transform: rotate(-5deg) scale(1.05);
+    }
+    75% {
+      transform: rotate(5deg) scale(1.05);
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .home-container {
+      gap: 2rem;
+      padding: 0 1rem;
+    }
+
+    .thoughts-sidebar {
+      flex: 0 0 380px;
+    }
+
+    .baba-container {
+      transform: scale(0.9);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .home-container {
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+    }
+
+    .thoughts-sidebar {
+      width: 100%;
+      max-width: 500px;
+      flex: none;
+    }
+
+    .home-copy {
+      width: 100%;
+      padding: 1rem;
+    }
+
+    .baba-container {
+      transform: scale(0.8);
+    }
+
+    .baba-rules {
+      padding: 1rem;
+    }
+
+    .baba-img {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .thoughts-header {
+      font-size: 1.5rem;
+    }
+
+    .thought-content {
+      font-size: 0.95rem;
+    }
+
+    .baba-container {
+      transform: scale(0.7);
+    }
+
+    .baba-img {
+      width: 36px;
+      height: 36px;
+    }
   }
 </style>
