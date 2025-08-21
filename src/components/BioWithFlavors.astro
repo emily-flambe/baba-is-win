@@ -1,0 +1,296 @@
+---
+import { bioFlavors, defaultFlavorId } from '../data/bio-flavors';
+---
+
+<div class="bio-container">
+  <div class="flavor-selector">
+    <span class="flavor-label">Bio Flavor:</span>
+    <div class="flavor-buttons">
+      {bioFlavors.map((flavor) => (
+        <button 
+          class="flavor-btn" 
+          data-flavor={flavor.id}
+          title={flavor.description}
+          aria-label={`Switch to ${flavor.name} bio flavor`}
+        >
+          <span class="flavor-emoji">{flavor.emoji}</span>
+          <span class="flavor-name">{flavor.name}</span>
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div class="bio-content">
+    <img src="/assets/portrait_square.png" alt="The Authoress" class="bio-image">
+    <div class="bio-text-container">
+      {bioFlavors.map((flavor) => (
+        <p 
+          class="bio-text" 
+          data-flavor-content={flavor.id}
+          set:html={flavor.content}
+        />
+      ))}
+    </div>
+  </div>
+</div>
+
+<script>
+  class BioFlavorManager {
+    private currentFlavor: string;
+    private buttons: NodeListOf<HTMLButtonElement>;
+    private textElements: NodeListOf<HTMLParagraphElement>;
+
+    constructor() {
+      this.currentFlavor = 'casual'; // Default flavor
+      this.buttons = document.querySelectorAll('.flavor-btn');
+      this.textElements = document.querySelectorAll('[data-flavor-content]');
+      
+      this.init();
+    }
+
+    private init() {
+      // Set initial active states
+      this.updateDisplay();
+      
+      // Add click handlers to buttons
+      this.buttons.forEach(button => {
+        button.addEventListener('click', (e) => {
+          const target = e.currentTarget as HTMLButtonElement;
+          const flavorId = target.dataset.flavor;
+          if (flavorId) {
+            this.setFlavor(flavorId);
+          }
+        });
+      });
+
+      // Load saved preference from localStorage
+      const savedFlavor = localStorage.getItem('bio-flavor');
+      if (savedFlavor) {
+        this.setFlavor(savedFlavor);
+      }
+    }
+
+    private setFlavor(flavorId: string) {
+      this.currentFlavor = flavorId;
+      this.updateDisplay();
+      
+      // Save preference
+      localStorage.setItem('bio-flavor', flavorId);
+      
+      // Trigger custom event for analytics/tracking
+      window.dispatchEvent(new CustomEvent('bio-flavor-changed', {
+        detail: { flavor: flavorId }
+      }));
+    }
+
+    private updateDisplay() {
+      // Update button states
+      this.buttons.forEach(button => {
+        const isActive = button.dataset.flavor === this.currentFlavor;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-pressed', isActive.toString());
+      });
+
+      // Update text visibility with fade transition
+      this.textElements.forEach(element => {
+        const isVisible = element.dataset.flavorContent === this.currentFlavor;
+        
+        if (isVisible) {
+          element.style.display = 'block';
+          element.classList.add('fade-in');
+          element.classList.remove('fade-out');
+        } else {
+          element.classList.add('fade-out');
+          element.classList.remove('fade-in');
+          
+          // Hide after transition
+          setTimeout(() => {
+            if (!element.classList.contains('fade-in')) {
+              element.style.display = 'none';
+            }
+          }, 200);
+        }
+      });
+    }
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new BioFlavorManager());
+  } else {
+    new BioFlavorManager();
+  }
+</script>
+
+<style>
+  .bio-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    margin-top: 3rem;
+    gap: 1.5rem;
+  }
+
+  .flavor-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .flavor-label {
+    font-size: 0.875rem;
+    color: #a0a0a0;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .flavor-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .flavor-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    background: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 60px;
+    font-family: inherit;
+  }
+
+  .flavor-btn:hover {
+    background: #333;
+    border-color: #555;
+    transform: translateY(-1px);
+  }
+
+  .flavor-btn.active {
+    background: #3a5a7a;
+    border-color: #66b3ff;
+    box-shadow: 0 0 0 2px rgba(102, 179, 255, 0.2);
+  }
+
+  .flavor-emoji {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .flavor-name {
+    font-size: 0.75rem;
+    color: #e0e0e0;
+    font-weight: 500;
+  }
+
+  .flavor-btn.active .flavor-name {
+    color: #fff;
+  }
+
+  .bio-content {
+    display: flex;
+    align-items: center;
+    width: 600px;
+    max-width: 90vw;
+    background: #1a1a1a;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid #333;
+    position: relative;
+    min-height: 120px;
+  }
+
+  .bio-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: block;
+    margin-right: 20px;
+    flex-shrink: 0;
+  }
+
+  .bio-text-container {
+    flex: 1;
+    position: relative;
+  }
+
+  .bio-text {
+    font-size: 1.125rem;
+    margin: 0;
+    line-height: 1.6;
+    color: #e0e0e0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    display: none;
+  }
+
+  .bio-text.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .bio-text.fade-out {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  .bio-text a {
+    color: #66b3ff;
+    text-decoration: none;
+  }
+
+  .bio-text a:hover {
+    color: #99ccff;
+    text-decoration: underline;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 640px) {
+    .bio-content {
+      flex-direction: column;
+      text-align: center;
+      padding: 1.5rem;
+    }
+
+    .bio-image {
+      margin-right: 0;
+      margin-bottom: 1rem;
+    }
+
+    .flavor-buttons {
+      gap: 0.25rem;
+    }
+
+    .flavor-btn {
+      min-width: 50px;
+      padding: 0.375rem;
+    }
+
+    .flavor-name {
+      font-size: 0.6875rem;
+    }
+  }
+
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .bio-text,
+    .flavor-btn {
+      transition: none;
+    }
+  }
+</style>

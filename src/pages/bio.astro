@@ -1,42 +1,39 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Bio from '../components/Bio.astro';
-import getPostData from '../utils/getPostData';
+import FullBiographyDifficultySelector from '../components/FullBiographyDifficultySelector.astro';
+import FullBiographyContent from '../components/FullBiographyContent.astro';
+import { DEFAULT_DIFFICULTY } from '../data/full-biography-difficulty';
 
 const title = 'Bio';
 const description = 'About Emily - kinda';
 const permalink = `${Astro.site.href}bio`;
 
-// Load the specific bio blog post
-const postModules = import.meta.glob('../data/blog-posts/published/*.md', { eager: true });
-const posts = Object.entries(postModules).map(([path, module]) => ({
-  ...module,
-  file: path
-}));
+// Create fake frontmatter for the difficulty selector version
+const frontmatter = {
+  title: 'A Bio, kind of',
+  publishDate: '20 Jul 2025'
+};
 
-const bioPost = posts.find(p => {
-  const postSlug = p.file.split('/').pop().split('.').shift();
-  return postSlug === '20250720-bio';
-});
-
-if (!bioPost) {
-  throw new Error('Bio post not found');
-}
-
-const { Content, frontmatter } = bioPost;
-const { readingTime } = getPostData(bioPost);
+// Estimate reading times for different difficulty levels
+const estimatedReadingTimes = {
+  tutorial: '< 1 min read',
+  'story-mode': '1 min read',
+  normal: '3 min read',
+  hard: '5 min read',
+  maddening: '8 min read'
+};
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="bio">
   <header>
-    <p>{frontmatter.publishDate} ~ {readingTime}</p>
+    <p id="reading-time-display">{frontmatter.publishDate} ~ 3 min read</p>
     <h1>{frontmatter.title}</h1>
     <hr />
   </header>
   <div class="container">
-    <article class="content">
-      <Content />
-    </article>
+    <FullBiographyDifficultySelector defaultLevel={DEFAULT_DIFFICULTY} />
+    <FullBiographyContent currentLevel={DEFAULT_DIFFICULTY} />
     <hr />
     <div class="back-to-blog">
       <a href="/blog">→ View blog posts</a>
@@ -46,6 +43,220 @@ const { readingTime } = getPostData(bioPost);
     <Bio />
   </div>
 </BaseLayout>
+
+<script define:vars={{ estimatedReadingTimes }}>
+  class FullBiographyDifficultyManager {
+    private currentDifficulty: string;
+    private buttons: NodeListOf<HTMLButtonElement>;
+    private textElements: NodeListOf<HTMLDivElement>;
+    private readingTimeDisplay: HTMLElement | null;
+    private readonly STORAGE_KEY = 'full-biography-difficulty';
+    private readonly readingTimes: Record<string, string>;
+
+    constructor() {
+      this.currentDifficulty = 'normal'; // Default difficulty
+      this.buttons = document.querySelectorAll('.difficulty-btn');
+      this.textElements = document.querySelectorAll('[data-difficulty-content]');
+      this.readingTimeDisplay = document.getElementById('reading-time-display');
+      this.readingTimes = estimatedReadingTimes;
+      
+      this.init();
+    }
+
+    private init() {
+      // Load saved preference from localStorage first
+      const savedDifficulty = this.loadSavedDifficulty();
+      if (savedDifficulty && this.isValidDifficulty(savedDifficulty)) {
+        this.currentDifficulty = savedDifficulty;
+      }
+      
+      // Set initial active states
+      this.updateDisplay();
+      
+      // Add click handlers to buttons
+      this.buttons.forEach(button => {
+        button.addEventListener('click', (e) => {
+          const target = e.currentTarget as HTMLButtonElement;
+          const difficultyId = target.dataset.difficulty;
+          if (difficultyId && this.isValidDifficulty(difficultyId)) {
+            this.setDifficulty(difficultyId);
+          }
+        });
+
+        // Add keyboard support
+        button.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            button.click();
+          }
+        });
+      });
+
+      // Add keyboard navigation between buttons
+      this.addKeyboardNavigation();
+    }
+
+    private addKeyboardNavigation() {
+      this.buttons.forEach((button, index) => {
+        button.addEventListener('keydown', (e) => {
+          let targetIndex = index;
+          
+          switch(e.key) {
+            case 'ArrowLeft':
+            case 'ArrowUp':
+              e.preventDefault();
+              targetIndex = index > 0 ? index - 1 : this.buttons.length - 1;
+              break;
+            case 'ArrowRight':
+            case 'ArrowDown':
+              e.preventDefault();
+              targetIndex = index < this.buttons.length - 1 ? index + 1 : 0;
+              break;
+            case 'Home':
+              e.preventDefault();
+              targetIndex = 0;
+              break;
+            case 'End':
+              e.preventDefault();
+              targetIndex = this.buttons.length - 1;
+              break;
+          }
+          
+          if (targetIndex !== index) {
+            this.buttons[targetIndex].focus();
+          }
+        });
+      });
+    }
+
+    private isValidDifficulty(difficulty: string): boolean {
+      return ['tutorial', 'story-mode', 'normal', 'hard', 'maddening'].includes(difficulty);
+    }
+
+    private loadSavedDifficulty(): string | null {
+      try {
+        return localStorage.getItem(this.STORAGE_KEY);
+      } catch (error) {
+        console.warn('Failed to load difficulty preference from localStorage:', error);
+        return null;
+      }
+    }
+
+    private saveDifficulty(difficulty: string): void {
+      try {
+        localStorage.setItem(this.STORAGE_KEY, difficulty);
+      } catch (error) {
+        console.warn('Failed to save difficulty preference to localStorage:', error);
+      }
+    }
+
+    private setDifficulty(difficultyId: string) {
+      this.currentDifficulty = difficultyId;
+      this.updateDisplay();
+      this.saveDifficulty(difficultyId);
+      
+      // Trigger custom event for potential analytics/tracking
+      window.dispatchEvent(new CustomEvent('full-biography-difficulty-changed', {
+        detail: { difficulty: difficultyId }
+      }));
+    }
+
+    private updateDisplay() {
+      // Update button states
+      this.buttons.forEach(button => {
+        const isActive = button.dataset.difficulty === this.currentDifficulty;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-pressed', isActive.toString());
+      });
+
+      // Update text visibility with smooth transitions
+      this.textElements.forEach(element => {
+        const isVisible = element.dataset.difficultyContent === this.currentDifficulty;
+        
+        if (isVisible) {
+          // Show the active content
+          element.style.display = 'block';
+          element.classList.add('active');
+          element.classList.add('fade-in');
+          element.classList.remove('fade-out');
+        } else {
+          // Hide inactive content
+          element.classList.remove('active', 'fade-in');
+          element.classList.add('fade-out');
+          
+          // Hide after transition
+          setTimeout(() => {
+            if (!element.classList.contains('active')) {
+              element.style.display = 'none';
+            }
+          }, 400);
+        }
+      });
+
+      // Update reading time display
+      if (this.readingTimeDisplay && this.readingTimes[this.currentDifficulty]) {
+        const currentText = this.readingTimeDisplay.textContent || '';
+        const newText = currentText.replace(/\d+\s*min read|<\s*\d+\s*min read/, this.readingTimes[this.currentDifficulty]);
+        this.readingTimeDisplay.textContent = newText;
+      }
+    }
+
+    // Fallback method for when content is missing
+    private getFallbackContent(): string {
+      const fallbackOrder = ['normal', 'story-mode', 'tutorial'];
+      
+      for (const difficulty of fallbackOrder) {
+        const element = document.querySelector(`[data-difficulty-content="${difficulty}"]`);
+        if (element) {
+          return difficulty;
+        }
+      }
+      
+      return 'normal'; // Ultimate fallback
+    }
+  }
+
+  // Initialize when DOM is ready
+  function initializeFullBiographyDifficulty() {
+    if (document.querySelector('.difficulty-btn')) {
+      new FullBiographyDifficultyManager();
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeFullBiographyDifficulty);
+  } else {
+    initializeFullBiographyDifficulty();
+  }
+
+  // Graceful degradation: if JavaScript fails, show normal difficulty
+  window.addEventListener('error', () => {
+    const normalContent = document.querySelector('[data-difficulty-content="normal"]') as HTMLElement;
+    if (normalContent) {
+      normalContent.style.display = 'block';
+      normalContent.style.position = 'relative';
+      normalContent.classList.add('active');
+    }
+  });
+</script>
+
+<!-- Fallback for when JavaScript is disabled -->
+<noscript>
+  <style>
+    [data-difficulty-content]:not([data-difficulty-content="normal"]) {
+      display: none !important;
+    }
+    [data-difficulty-content="normal"] {
+      display: block !important;
+      position: relative !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .biography-difficulty-selector {
+      display: none !important;
+    }
+  </style>
+</noscript>
 
 <style>
   header {

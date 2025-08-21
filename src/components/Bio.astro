@@ -1,57 +1,188 @@
+---
+import BiographyDifficultySelector from './BiographyDifficultySelector.astro';
+import BiographyContent from './BiographyContent.astro';
+import { DEFAULT_DIFFICULTY } from '../data/biography-difficulty';
+---
+
 <div class="bio-container">
-  <div class="bio-content">
-    <img src="/assets/portrait_square.png" alt="The Authoress">
-    <p>
-      Hello! I'm <strong>Emily</strong>, an engineering type just trying to have a good time. GOD FORBID.
-      Check out my <a href="https://www.github.com/emily-flambe" target="_blank">GitHub</a> or
-      <a href="https://www.linkedin.com/in/emilycogsdill" target="_blank">LinkedIn</a>, I guess.
-    </p>
-  </div>
+  <BiographyDifficultySelector defaultLevel={DEFAULT_DIFFICULTY} />
+  <BiographyContent currentLevel={DEFAULT_DIFFICULTY} />
 </div>
+
+<script>
+  class BiographyDifficultyManager {
+    private currentDifficulty: string;
+    private buttons: NodeListOf<HTMLButtonElement>;
+    private textElements: NodeListOf<HTMLParagraphElement>;
+    private readonly STORAGE_KEY = 'biography-difficulty';
+
+    constructor() {
+      this.currentDifficulty = 'normal'; // Default difficulty
+      this.buttons = document.querySelectorAll('.difficulty-btn');
+      this.textElements = document.querySelectorAll('[data-difficulty-content]');
+      
+      this.init();
+    }
+
+    private init() {
+      // Load saved preference from localStorage first
+      const savedDifficulty = this.loadSavedDifficulty();
+      if (savedDifficulty) {
+        this.currentDifficulty = savedDifficulty;
+      }
+      
+      // Set initial active states
+      this.updateDisplay();
+      
+      // Add click handlers to buttons
+      this.buttons.forEach(button => {
+        button.addEventListener('click', (e) => {
+          const target = e.currentTarget as HTMLButtonElement;
+          const difficultyId = target.dataset.difficulty;
+          if (difficultyId) {
+            this.setDifficulty(difficultyId);
+          }
+        });
+
+        // Add keyboard support
+        button.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            button.click();
+          }
+        });
+      });
+    }
+
+    private loadSavedDifficulty(): string | null {
+      try {
+        return localStorage.getItem(this.STORAGE_KEY);
+      } catch (error) {
+        console.warn('Failed to load difficulty preference from localStorage:', error);
+        return null;
+      }
+    }
+
+    private saveDifficulty(difficulty: string): void {
+      try {
+        localStorage.setItem(this.STORAGE_KEY, difficulty);
+      } catch (error) {
+        console.warn('Failed to save difficulty preference to localStorage:', error);
+      }
+    }
+
+    private setDifficulty(difficultyId: string) {
+      this.currentDifficulty = difficultyId;
+      this.updateDisplay();
+      this.saveDifficulty(difficultyId);
+      
+      // Trigger custom event for potential analytics/tracking
+      window.dispatchEvent(new CustomEvent('biography-difficulty-changed', {
+        detail: { difficulty: difficultyId }
+      }));
+    }
+
+    private updateDisplay() {
+      // Update button states
+      this.buttons.forEach(button => {
+        const isActive = button.dataset.difficulty === this.currentDifficulty;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-pressed', isActive.toString());
+      });
+
+      // Update text visibility with smooth transitions
+      this.textElements.forEach(element => {
+        const isVisible = element.dataset.difficultyContent === this.currentDifficulty;
+        
+        if (isVisible) {
+          // Show the active content
+          element.style.display = 'block';
+          element.classList.add('active');
+          element.classList.add('fade-in');
+          element.classList.remove('fade-out');
+          
+          // Remove absolute positioning for active element
+          element.style.position = 'relative';
+        } else {
+          // Hide inactive content
+          element.classList.remove('active', 'fade-in');
+          element.classList.add('fade-out');
+          element.style.position = 'absolute';
+          
+          // Hide after transition
+          setTimeout(() => {
+            if (!element.classList.contains('active')) {
+              element.style.display = 'none';
+            }
+          }, 300);
+        }
+      });
+    }
+
+    // Fallback method for when content is missing
+    private getFallbackContent(): string {
+      const fallbackOrder = ['normal', 'story-mode', 'tutorial'];
+      
+      for (const difficulty of fallbackOrder) {
+        const element = document.querySelector(`[data-difficulty-content="${difficulty}"]`);
+        if (element) {
+          return difficulty;
+        }
+      }
+      
+      return 'normal'; // Ultimate fallback
+    }
+  }
+
+  // Initialize when DOM is ready
+  function initializeBiographyDifficulty() {
+    if (document.querySelector('.difficulty-btn')) {
+      new BiographyDifficultyManager();
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeBiographyDifficulty);
+  } else {
+    initializeBiographyDifficulty();
+  }
+
+  // Graceful degradation: if JavaScript fails, show normal difficulty
+  window.addEventListener('error', () => {
+    const normalContent = document.querySelector('[data-difficulty-content="normal"]') as HTMLElement;
+    if (normalContent) {
+      normalContent.style.display = 'block';
+      normalContent.style.position = 'relative';
+      normalContent.classList.add('active');
+    }
+  });
+</script>
+
+<!-- Fallback for when JavaScript is disabled -->
+<noscript>
+  <style>
+    [data-difficulty-content]:not([data-difficulty-content="normal"]) {
+      display: none !important;
+    }
+    [data-difficulty-content="normal"] {
+      display: block !important;
+      position: relative !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .difficulty-selector {
+      display: none !important;
+    }
+  </style>
+</noscript>
 
 <style>
   .bio-container {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     padding: 2rem 1rem;
     margin-top: 3rem;
-  }
-
-  .bio-content {
-    display: flex;
-    align-items: center;
-    width: 600px;
-    max-width: 90vw;
-    background: #1a1a1a;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-    border: 1px solid #333;
-  }
-
-  img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    display: block;
-    margin-right: 20px;
-    flex-shrink: 0;
-  }
-
-  p {
-    font-size: 1.125rem;
-    margin: 0;
-    line-height: 1.6;
-    color: #e0e0e0;
-  }
-
-  a {
-    color: #66b3ff;
-    text-decoration: none;
-  }
-
-  a:hover {
-    color: #99ccff;
-    text-decoration: underline;
+    gap: 1.5rem;
   }
 </style>
