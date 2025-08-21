@@ -17,7 +17,7 @@ import { DEFAULT_DIFFICULTY } from '../data/biography-difficulty';
     private readonly STORAGE_KEY = 'biography-difficulty';
 
     constructor() {
-      this.currentDifficulty = 'normal'; // Default difficulty
+      this.currentDifficulty = 'tutorial'; // Default difficulty
       this.buttons = document.querySelectorAll('.difficulty-btn');
       this.textElements = document.querySelectorAll('[data-difficulty-content]');
       
@@ -121,7 +121,7 @@ import { DEFAULT_DIFFICULTY } from '../data/biography-difficulty';
 
     // Fallback method for when content is missing
     private getFallbackContent(): string {
-      const fallbackOrder = ['normal', 'story-mode', 'tutorial'];
+      const fallbackOrder = ['tutorial', 'normal', 'story-mode'];
       
       for (const difficulty of fallbackOrder) {
         const element = document.querySelector(`[data-difficulty-content="${difficulty}"]`);
@@ -130,7 +130,7 @@ import { DEFAULT_DIFFICULTY } from '../data/biography-difficulty';
         }
       }
       
-      return 'normal'; // Ultimate fallback
+      return 'tutorial'; // Ultimate fallback
     }
   }
 
@@ -147,13 +147,13 @@ import { DEFAULT_DIFFICULTY } from '../data/biography-difficulty';
     initializeBiographyDifficulty();
   }
 
-  // Graceful degradation: if JavaScript fails, show normal difficulty
+  // Graceful degradation: if JavaScript fails, show tutorial difficulty
   window.addEventListener('error', () => {
-    const normalContent = document.querySelector('[data-difficulty-content="normal"]') as HTMLElement;
-    if (normalContent) {
-      normalContent.style.display = 'block';
-      normalContent.style.position = 'relative';
-      normalContent.classList.add('active');
+    const tutorialContent = document.querySelector('[data-difficulty-content="tutorial"]') as HTMLElement;
+    if (tutorialContent) {
+      tutorialContent.style.display = 'block';
+      tutorialContent.style.position = 'relative';
+      tutorialContent.classList.add('active');
     }
   });
 </script>
@@ -161,10 +161,10 @@ import { DEFAULT_DIFFICULTY } from '../data/biography-difficulty';
 <!-- Fallback for when JavaScript is disabled -->
 <noscript>
   <style>
-    [data-difficulty-content]:not([data-difficulty-content="normal"]) {
+    [data-difficulty-content]:not([data-difficulty-content="tutorial"]) {
       display: none !important;
     }
-    [data-difficulty-content="normal"] {
+    [data-difficulty-content="tutorial"] {
       display: block !important;
       position: relative !important;
       opacity: 1 !important;
