@@ -1,0 +1,1 @@
+Hi! I'm Emily. I'm a single woman in my thirties living with two cats in Colorado, sometimes in my mom's basement. I make weird things on the internet. Get in line, bachelors!!

@@ -1,0 +1,54 @@
+---
+import { fullBiographyContent, type FullBiographyData } from '../data/full-biography-difficulty';
+
+interface Props {
+  currentLevel?: string;
+}
+
+const { currentLevel = 'normal' } = Astro.props;
+---
+
+{Object.entries(fullBiographyContent).map(([level, ContentComponent]) => {
+  const Content = ContentComponent.default || ContentComponent.Content || ContentComponent;
+  return (
+    <article 
+      class="content biography-content" 
+      data-difficulty-content={level}
+      aria-live="polite"
+    >
+      <Content />
+    </article>
+  );
+})}
+
+<style>
+  .biography-content {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    display: none;
+  }
+
+  .biography-content.active {
+    opacity: 1;
+    transform: translateY(0);
+    display: block;
+  }
+
+  .biography-content.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .biography-content.fade-out {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .biography-content {
+      transition: none;
+    }
+  }
+</style>

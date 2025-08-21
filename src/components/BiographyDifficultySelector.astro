@@ -1,0 +1,222 @@
+---
+import { DIFFICULTY_LEVELS } from '../data/biography-difficulty';
+
+interface Props {
+  defaultLevel?: string;
+}
+
+const { defaultLevel = 'normal' } = Astro.props;
+---
+
+<div class="difficulty-selector">
+  <div class="selector-header">
+    <span class="selector-label">Biography Difficulty</span>
+  </div>
+  <div class="difficulty-buttons">
+    {DIFFICULTY_LEVELS.map((level) => (
+      <button 
+        class="difficulty-btn" 
+        data-difficulty={level.id}
+        title={level.description}
+        aria-label={`Switch to ${level.name} difficulty level`}
+        aria-pressed="false"
+        role="button"
+        tabindex="0"
+      >
+        <span class="difficulty-name">{level.name}</span>
+      </button>
+    ))}
+  </div>
+</div>
+
+<style>
+  .difficulty-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .selector-header {
+    text-align: center;
+  }
+
+  .selector-label {
+    font-size: 0.875rem;
+    color: #a0a0a0;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .difficulty-buttons {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .difficulty-btn {
+    padding: 0.75rem 1rem;
+    background: #2a2a2a;
+    border: 2px solid #404040;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    position: relative;
+  }
+
+  /* Progressive visual complexity for difficulty levels */
+  .difficulty-btn[data-difficulty="tutorial"] {
+    background: #2a3a2a;
+    border-color: #4a6a4a;
+    color: #90c090;
+  }
+
+  .difficulty-btn[data-difficulty="story-mode"] {
+    background: #2a2a3a;
+    border-color: #4a4a6a;
+    color: #9090c0;
+  }
+
+  .difficulty-btn[data-difficulty="normal"] {
+    background: #2a2a2a;
+    border-color: #6a6a6a;
+    color: #c0c0c0;
+  }
+
+  .difficulty-btn[data-difficulty="hard"] {
+    background: #3a2a2a;
+    border-color: #6a4a4a;
+    color: #c09090;
+  }
+
+  .difficulty-btn[data-difficulty="maddening"] {
+    background: #3a1a1a;
+    border-color: #6a2a2a;
+    color: #c07070;
+    box-shadow: 0 0 8px rgba(192, 112, 112, 0.2);
+  }
+
+  .difficulty-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .difficulty-btn[data-difficulty="tutorial"]:hover {
+    border-color: #6a8a6a;
+    box-shadow: 0 4px 12px rgba(144, 192, 144, 0.2);
+  }
+
+  .difficulty-btn[data-difficulty="story-mode"]:hover {
+    border-color: #6a6a8a;
+    box-shadow: 0 4px 12px rgba(144, 144, 192, 0.2);
+  }
+
+  .difficulty-btn[data-difficulty="normal"]:hover {
+    border-color: #8a8a8a;
+    box-shadow: 0 4px 12px rgba(192, 192, 192, 0.2);
+  }
+
+  .difficulty-btn[data-difficulty="hard"]:hover {
+    border-color: #8a6a6a;
+    box-shadow: 0 4px 12px rgba(192, 144, 144, 0.2);
+  }
+
+  .difficulty-btn[data-difficulty="maddening"]:hover {
+    border-color: #8a4a4a;
+    box-shadow: 0 4px 12px rgba(192, 112, 112, 0.4);
+  }
+
+  .difficulty-btn.active {
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 3px rgba(102, 179, 255, 0.3);
+  }
+
+  .difficulty-btn[data-difficulty="tutorial"].active {
+    background: #3a5a3a;
+    border-color: #6a9a6a;
+    color: #b0e0b0;
+  }
+
+  .difficulty-btn[data-difficulty="story-mode"].active {
+    background: #3a3a5a;
+    border-color: #6a6a9a;
+    color: #b0b0e0;
+  }
+
+  .difficulty-btn[data-difficulty="normal"].active {
+    background: #3a5a7a;
+    border-color: #66b3ff;
+    color: #ffffff;
+  }
+
+  .difficulty-btn[data-difficulty="hard"].active {
+    background: #5a3a3a;
+    border-color: #9a6a6a;
+    color: #e0b0b0;
+  }
+
+  .difficulty-btn[data-difficulty="maddening"].active {
+    background: #5a2a2a;
+    border-color: #9a4a4a;
+    color: #e09090;
+    box-shadow: 0 0 0 3px rgba(192, 112, 112, 0.4);
+  }
+
+  .difficulty-name {
+    display: block;
+  }
+
+  /* Tooltip styles */
+  .difficulty-btn::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    color: #e0e0e0;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    margin-bottom: 0.25rem;
+    border: 1px solid #333;
+    z-index: 1000;
+  }
+
+  .difficulty-btn:hover::after {
+    opacity: 1;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 640px) {
+    .difficulty-buttons {
+      gap: 0.5rem;
+    }
+
+    .difficulty-btn {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+    }
+
+    .difficulty-btn::after {
+      display: none; /* Hide tooltips on mobile */
+    }
+  }
+
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .difficulty-btn {
+      transition: none;
+    }
+  }
+</style>

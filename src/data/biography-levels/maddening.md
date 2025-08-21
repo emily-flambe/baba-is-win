@@ -1,0 +1,41 @@
+I was born in Ann Arbor, Michigan on a Wednesday in February many years ago in the midst of a raging winter storm. I've been told I was giggling shortly after I was born. I've also been told that I telepathically communicated my arrival as my Mom was going into labor. Epistemic status: questionable.
+
+---
+
+My Dad, a devout Mormon (and crypto-fascist conservative Republican), once declared without a shred of irony that I had clairvoyant powers. I was six years old, and as Mormon as a 6-year-old can be, which is to say not very Mormon at all. There was a seagull performance involved - a story for another time.
+
+Isn't it odd that some children readily shape themselves into the molds created by their parents, while others spend their entire lives breaking free from those same molds, and still others remain perpetually torn between their true identity and the one their parents (and others) envision for them? How much collective trauma has humanity endured simply because people insist on trying to bend their offspring to their will?
+
+I stopped attending Church as soon as Dad gave up on forcing me to go when I was 9 years old. For my part, I will never force a child to fit any mold of my own creation - not least of all because I intentionally had my fallopian tubes removed in 2022. I called to schedule the appointment almost immediately before the Supreme Court overturned Roe v. Wade. The timing was prescient. Dare I say… clairvoyant?
+
+---
+
+Motherhood has never interested me. Whatever nascent maternal impulses show up in some children utterly failed to materialize in my youth (nor indeed at any point thereafter). I had absolutely no clue what I was supposed to do with baby dolls. Cabbage patch kids in particular weirded me out, with those strange little elbows, and they smelled odd.
+
+Much to my chagrin, my PhD adviser forcefully nudged me in the direction of studying children for my graduate research. This, among other factors, made the experience of earning my PhD highly unpleasant, to say the least. I made the speedrun leaderboards at Harvard by finishing - no glitches, no hacks - after only three and a half years. I did not achieve this feat with a superhuman intelligence; I was propelled in my feverish pursuits by a burning, nauseating desire to flee academia and to quit spending my precious life energy suppressing dry heaves when children would smear thick wads of snot onto my laptop. And being clairvoyant definitely didn't hurt.
+
+---
+
+Graduate school was my own Hunger Games. Each year, in those days (maybe still?), there were only 10-15 PhD students across the entire department, and we all knew that we were in the running for the same limited set of tenure-track faculty positions at top research institutions. A subset of my cohort designated themselves the "Doctors of Velocity," a moniker that is so aggressively insufferable that I remain traumatized to this day. Then again, they are all tenured faculty at prestigious universities, and I'm vibecoding alone in the mountains with two cats. I guess we all got what we wanted.
+
+Maybe I envy their prestige. But I am prestigious in my own way! I know this because my mother tells me so.
+
+Back in 2017, a friend of mine and I were both staying at my Mom's house in Colorado. At that time, this friend was a fancy Research Engineer at Google with a fancy PhD in Computer Science from Berkeley. My Mom, in her bumbling and good-natured way, took his existence as a mild affront to my superiority, and would repeatedly remind him that I was an analyst at Under Armour(!).
+
+That friend later quit Google to study meditation and do independent research, and I'm vibecoding in the mountains with two cats. Have we both gotten what we wanted?
+
+---
+
+Much to her credit, my Mom - who was only briefly Mormon enough to marry my Dad - always told me I could be whatever I wanted to be and do whatever I wanted to do. And she meant it. In high school, I semi-quasi-seriously contemplated applying to conservatories to study clarinet performance. Of all my innate talents, music is probably the one where I get the most mileage per unit of effort. Mom supported this plan, and it was I who eventually decided against it.
+
+What she always did impress upon me, however, was that I needed to pursue a terminal degree in whatever profession I chose, or else some man with the same degree or higher would become my boss and I would have to answer to him. No doubt this contributed to my decision to pursue a PhD immediately after finishing my undergraduate studies (in Psychology and Music, as it happens) at Carleton College.
+
+Mom herself was a notable-ish Professor of Accounting, with an MBA and a PhD both from Michigan and a career that included a stint at the Tuck School of Business at Dartmouth, which is how I came to spend most of my childhood in Hanover, NH. Dad did not have a career. They divorced bitterly in 1998 and later reconvened as platonic life partners. In their old age, Dad watches YouTube videos on repeat (he alternates between a 4-hour commentary video on <em>The Hunger Games</em> movie and a sermon by Pope Leo) and Mom does his taxes. Go figure <em>that</em> one out.
+
+---
+
+Despite having a fancy PhD, in the "working world" I have answered more often than not to men without PhDs of any sort(!)). I have also reported to a handful of women, who - much more so than my male bosses (by and large) - taught me how to assert myself, ask for what I want, hold leadership accountable, build my personal brand, and pursue my own ideas. Makes you think, huh?
+
+To be clear, I have been blessed with great bosses across the board. In fact, I have been profoundly fortunate in a lot of ways, starting from my snowy yet uncomplicated birth. I try to make productive use of that fortune to enjoy my life as much as possible AND, hopefully, be useful in the service of things that are net-positive for humanity. I suspect people often have children at least in part because they want to know that they had some unambiguously positive impact on the world. I share that impulse alongside a strong aversion to birthing and parenting.
+
+Where does it all converge? I'd love to tell you, but I'm not that clairvoyant...

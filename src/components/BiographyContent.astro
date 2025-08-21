@@ -1,0 +1,119 @@
+---
+import { biographyContent, type BiographyData } from '../data/biography-difficulty';
+
+interface Props {
+  currentLevel?: string;
+}
+
+const { currentLevel = 'normal' } = Astro.props;
+---
+
+<div class="biography-content">
+  <img src="/assets/portrait_square.png" alt="The Authoress" class="bio-image">
+  <div class="bio-text-container" aria-live="polite" aria-atomic="true">
+    {Object.entries(biographyContent).map(([level, content]) => (
+      <p 
+        class="bio-text" 
+        data-difficulty-content={level}
+        set:html={content}
+      />
+    ))}
+  </div>
+</div>
+
+<style>
+  .biography-content {
+    display: flex;
+    align-items: center;
+    width: 600px;
+    max-width: 90vw;
+    background: #1a1a1a;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid #333;
+    position: relative;
+    min-height: 120px;
+  }
+
+  .bio-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: block;
+    margin-right: 20px;
+    flex-shrink: 0;
+  }
+
+  .bio-text-container {
+    flex: 1;
+    position: relative;
+  }
+
+  .bio-text {
+    font-size: 1.125rem;
+    margin: 0;
+    line-height: 1.6;
+    color: #e0e0e0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    display: none;
+  }
+
+  .bio-text.active {
+    opacity: 1;
+    transform: translateY(0);
+    display: block;
+    position: relative;
+  }
+
+  .bio-text.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .bio-text.fade-out {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  .bio-text a {
+    color: #66b3ff;
+    text-decoration: none;
+  }
+
+  .bio-text a:hover {
+    color: #99ccff;
+    text-decoration: underline;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 640px) {
+    .biography-content {
+      flex-direction: column;
+      text-align: center;
+      padding: 1.5rem;
+    }
+
+    .bio-image {
+      margin-right: 0;
+      margin-bottom: 1rem;
+    }
+
+    .bio-text {
+      font-size: 1rem;
+    }
+  }
+
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .bio-text {
+      transition: none;
+    }
+  }
+</style>
