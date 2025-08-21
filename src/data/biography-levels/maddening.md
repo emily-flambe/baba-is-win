@@ -30,7 +30,7 @@ Much to her credit, my Mom - who was only briefly Mormon enough to marry my Dad 
 
 What she always did impress upon me, however, was that I needed to pursue a terminal degree in whatever profession I chose, or else some man with the same degree or higher would become my boss and I would have to answer to him. No doubt this contributed to my decision to pursue a PhD immediately after finishing my undergraduate studies (in Psychology and Music, as it happens) at Carleton College.
 
-Mom herself was a notable-ish Professor of Accounting, with an MBA and a PhD both from Michigan and a career that included a stint at the Tuck School of Business at Dartmouth, which is how I came to spend most of my childhood in Hanover, NH. Dad did not have a career. They divorced bitterly in 1998 and later reconvened as platonic life partners. In their old age, Dad reads about Michigan Football and Mom does his taxes. Go figure that one out.
+Mom herself was a notable-ish Professor of Accounting, with an MBA and a PhD both from Michigan and a career that included a stint at the Tuck School of Business at Dartmouth, which is how I came to spend most of my childhood in Hanover, NH. Dad did not have a career. They divorced bitterly in 1998 and later reconvened as platonic life partners. In their old age, Dad watches YouTube videos on repeat (he alternates between a 4-hour commentary video on <em>The Hunger Games</em> movie and a sermon by Pope Leo) and Mom does his taxes. Go figure <em>that</em> one out.
 
 ---
 
