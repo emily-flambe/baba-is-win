@@ -196,13 +196,13 @@ npm run build
 
 ```bash
 # Run health check
-node .project/scripts/health-check.js
+node .project/docs/scripts/health-check.js
 
 # Validate environment
-node .project/scripts/env-validator.js
+node .project/docs/scripts/env-validator.js
 
 # Check for security issues
-node .project/scripts/package-manager.js audit
+node .project/docs/scripts/package-manager.js audit
 ```
 
 ## Getting Help
@@ -214,6 +214,6 @@ If not resolved:
 4. Ask team with:
    - Error message
    - Steps to reproduce
-   - Output of `node .project/scripts/health-check.js`
+   - Output of `node .project/docs/scripts/health-check.js`
    - Node version (`node -v`)
    - Environment (local/production)
