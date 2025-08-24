@@ -1,6 +1,6 @@
 Welcome to my bio on Hard difficulty! Fallen units in Hard mode are lost forever. In fact, many things are lost forever. Innocence, youth, the sweet pain of a heart learning to fall in love.
 
-Yet many things persist forever, too - an inescapable feeling of inadequacy, a failure to live up to your own expectations, the creeping sensation of profound and cosmic loneliness every time you remember - or perhaps realize again, as if for the first time - that nobody will ever really understand <em>you</em>?
+Yet many things persist forever, too - an inescapable feeling of inadequacy, a failure to live up to your own expectations, the creeping sensation of profound and cosmic loneliness every time you remember - or perhaps realize again, as if for the first time - that nobody will ever really understand <em>you</em>.
 
 Then again, can you blame them? After all, do you understand yourself?
 

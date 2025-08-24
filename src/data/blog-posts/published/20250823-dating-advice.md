@@ -1,7 +1,7 @@
 ---
-title: "DATING ADVICE"
+title: "ONLINE DATING ADVICE"
 publishDate: 23 Aug 2025
-description: "Read this premium advice for your online dating profile! Source: me, who has never successfully dated online 👍"
+description: "Are you a MAN? Trying to date WOMEN? Women who are like ME? Read this premium advice or give up 👍"
 thumbnail: /assets/blog/20250823-dating-advice/bored.png
 tags: ["dating","advice","bossbitch"]
 ---
