@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Bio from '../../components/Bio.astro';
+import FooterBio from '../../components/FooterBio.astro';
 import PremiumContent from '../../components/PremiumContent.astro';
 import getPostData from '../../utils/getPostData';
 
@@ -58,7 +58,7 @@ const rawContent = post.rawContent ? post.rawContent() : '';
     <div class="back-to-blog">
       <a href="/blog">← Back to Blog</a>
     </div>
-    <Bio />
+    <FooterBio />
   </div>
 </BaseLayout>
 

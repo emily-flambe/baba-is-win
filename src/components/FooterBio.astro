@@ -1,0 +1,82 @@
+---
+import { biographyContent } from '../data/biography-difficulty';
+---
+
+<div class="footer-bio-container">
+  <div class="biography-content">
+    <img src="/assets/portrait_square.png" alt="The Authoress" class="bio-image">
+    <div class="bio-text-container">
+      <p class="bio-text" set:html={biographyContent.normal} />
+    </div>
+  </div>
+</div>
+
+<style>
+  .footer-bio-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    margin-top: 3rem;
+  }
+
+  .biography-content {
+    display: flex;
+    align-items: center;
+    width: 600px;
+    max-width: 90vw;
+    background: #1a1a1a;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid #333;
+  }
+
+  .bio-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: block;
+    margin-right: 20px;
+    flex-shrink: 0;
+  }
+
+  .bio-text-container {
+    flex: 1;
+  }
+
+  .bio-text {
+    font-size: 1.125rem;
+    margin: 0;
+    line-height: 1.6;
+    color: #e0e0e0;
+  }
+
+  .bio-text a {
+    color: #66b3ff;
+    text-decoration: none;
+  }
+
+  .bio-text a:hover {
+    color: #99ccff;
+    text-decoration: underline;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 640px) {
+    .biography-content {
+      flex-direction: column;
+      text-align: center;
+      padding: 1.5rem;
+    }
+
+    .bio-image {
+      margin-right: 0;
+      margin-bottom: 1rem;
+    }
+
+    .bio-text {
+      font-size: 1rem;
+    }
+  }
+</style>
