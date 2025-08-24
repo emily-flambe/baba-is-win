@@ -69,7 +69,7 @@ Look, I like these too, but you’re gonna have to be more specific:
 - Beer/Cocktails (YAWN)
 - Video games (ARE WE TALKING ESPORTS OR FUCKIN MARIO OR SOME SHIT)
 - Your dog (BET THEY STICK THEIR TONGUE IN YOUR MOUTH)
-- If you call yourself an “animal lover” and are not vegan then we have 🖐️ nothing to discuss 🖐️
+- If you call yourself an “animal lover” and are not vegan then we have 🖐️ nothing to discuss 🖐️ (BET THEY STICK THEIR TONGUE IN YOUR MOUTH)
 
 ---
 
