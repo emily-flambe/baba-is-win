@@ -56,7 +56,7 @@ Delete your profile and 🛑 STOP DATING IMMEDIATELY 🛑 if you list any of the
 - References from ex-lovers available upon request
 - Highly specific special interests (careful with this one)
 - Doing psychedelics alone in the wilderness and writing fiction based on your experiences
-- Opinions about opera fachs, composers, performers, eras, styles, etc. *Is* coloratura for basic bitches?
+- Opinions about opera _Fächer_, composers, performers, eras, styles, etc. *Is* coloratura for basic bitches?
 - Play the bassoon (_nobody_ plays the bassoon)
 
 ## 🤷 boring but redeemable 🤷
