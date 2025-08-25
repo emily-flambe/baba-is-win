@@ -63,7 +63,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         <li>Sent to: ${to}</li>
         <li>From: ${fromEmail}</li>
         <li>Environment: ${locals.runtime.env.ENVIRONMENT || 'production'}</li>
-        <li>Worker URL: ${locals.runtime.env.SITE_URL}</li>
+        <li>Worker URL: https://www.emilycogsdill.com</li>
       </ul>
     `;
     
@@ -77,7 +77,7 @@ Debug Information:
 - Sent to: ${to}
 - From: ${fromEmail}
 - Environment: ${locals.runtime.env.ENVIRONMENT || 'production'}
-- Worker URL: ${locals.runtime.env.SITE_URL}
+- Worker URL: https://www.emilycogsdill.com
 `;
     
     console.log('[Test Email Debug] Calling Resend API...');
@@ -103,7 +103,7 @@ Debug Information:
         fromEmail,
         timestamp: new Date().toISOString(),
         environment: locals.runtime.env.ENVIRONMENT || 'production',
-        siteUrl: locals.runtime.env.SITE_URL
+        siteUrl: 'https://www.emilycogsdill.com'
       } : undefined
     };
     

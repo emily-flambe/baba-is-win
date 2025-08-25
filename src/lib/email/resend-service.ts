@@ -47,7 +47,7 @@ export class ResendEmailService {
           text: params.text,
           headers: {
             ...params.headers,
-            'List-Unsubscribe': `<${this.env.SITE_URL}/unsubscribe>`,
+            'List-Unsubscribe': '<https://www.emilycogsdill.com/unsubscribe>',
             'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
             'Precedence': 'bulk',
             'X-Entity-Ref-ID': `${Date.now()}-${params.to}`,

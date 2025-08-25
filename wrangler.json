@@ -19,8 +19,6 @@
     }
   ],
   "vars": {
-    "SITE_URL": "https://emilycogsdill.com",
-    "SITE_NAME": "Emily's Blog",
     "ENVIRONMENT": "preview"
   }
 }

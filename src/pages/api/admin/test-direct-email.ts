@@ -42,12 +42,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const testVariables = {
       title: 'Test Blog Post: Direct Template Test',
       description: 'This is a direct test of the email template system. All {{variables}} should be replaced with actual values.',
-      url: `${locals.runtime.env.SITE_URL || 'https://www.emilycogsdill.com'}/blog/test-post`,
-      unsubscribe_url: `${locals.runtime.env.SITE_URL || 'https://www.emilycogsdill.com'}/unsubscribe?token=test123`,
+      url: 'https://www.emilycogsdill.com/blog/test-post',
+      unsubscribe_url: 'https://www.emilycogsdill.com/unsubscribe?token=test123',
       publish_date: new Date().toLocaleDateString(),
       tags: ['test', 'email', 'template', 'debug'],
-      site_name: locals.runtime.env.SITE_NAME || "Emily's Blog",
-      site_url: locals.runtime.env.SITE_URL || 'https://www.emilycogsdill.com',
+      site_name: 'Emily Cogsdill',
+      site_url: 'https://www.emilycogsdill.com',
       user_name: email.split('@')[0], // Use email prefix as username
       content: 'This is the full content of the test blog post. It should appear in the text version of the email.'
     }

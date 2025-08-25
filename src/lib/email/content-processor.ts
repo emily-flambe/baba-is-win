@@ -302,7 +302,7 @@ export class ContentProcessor {
       
       // Try to fetch content from the deployed site's content API
       try {
-        const contentUrl = `${this.env.SITE_URL}/api/content/${slug}`;
+        const contentUrl = `https://www.emilycogsdill.com/api/content/${slug}`;
         const response = await fetch(contentUrl);
         
         if (response.ok) {

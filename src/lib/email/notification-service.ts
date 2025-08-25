@@ -109,7 +109,7 @@ export class EmailNotificationService {
         contentType,
         contentId: content.slug,
         contentTitle: content.title || 'New Content',
-        contentUrl: `${this.env.SITE_URL}/${contentType === 'blog' ? 'blog' : 'thoughts'}/${content.slug}`,
+        contentUrl: `https://www.emilycogsdill.com/${contentType === 'blog' ? 'blog' : 'thoughts'}/${content.slug}`,
         contentExcerpt: contentType === 'blog' 
           ? (content as BlogPost).description 
           : content.content.substring(0, 200),
@@ -122,7 +122,7 @@ export class EmailNotificationService {
         contentType,
         contentId: content.slug,
         contentTitle: content.title || 'New Content',
-        contentUrl: `${this.env.SITE_URL}/${contentType === 'blog' ? 'blog' : 'thoughts'}/${content.slug}`,
+        contentUrl: `https://www.emilycogsdill.com/${contentType === 'blog' ? 'blog' : 'thoughts'}/${content.slug}`,
         contentExcerpt: contentType === 'blog' 
           ? (content as BlogPost).description 
           : content.content.substring(0, 200),
