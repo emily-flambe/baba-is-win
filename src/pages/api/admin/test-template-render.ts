@@ -28,8 +28,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       unsubscribe_url: 'https://example.com/unsubscribe?token=test123',
       publish_date: new Date().toLocaleDateString(),
       tags: ['test', 'template', 'debug'],
-      site_name: env.SITE_NAME || 'Test Site',
-      site_url: env.SITE_URL || 'https://example.com',
+      site_name: 'Emily Cogsdill',
+      site_url: 'https://www.emilycogsdill.com',
       user_name: 'Test User',
       content: 'This is test content for thought notifications.'
     };
@@ -75,8 +75,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       testVariables,
       debug: {
         hasTemplateEngine: !!templateEngine,
-        envSiteName: env.SITE_NAME,
-        envSiteUrl: env.SITE_URL
+        envSiteName: 'Emily Cogsdill',
+        envSiteUrl: 'https://www.emilycogsdill.com'
       }
     }, null, 2), {
       status: 200,

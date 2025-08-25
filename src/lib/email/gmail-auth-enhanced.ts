@@ -168,7 +168,7 @@ export class GmailAuthEnhanced {
       // Create RFC 2822 compliant email
       const emailContent = [
         `To: ${to}`,
-        `From: ${this.env.SITE_NAME} <${this.env.GMAIL_SENDER_EMAIL}>`,
+        `From: Emily Cogsdill <${this.env.GMAIL_SENDER_EMAIL}>`,
         `Subject: ${subject}`,
         `MIME-Version: 1.0`,
         `Content-Type: multipart/alternative; boundary="boundary123"`,

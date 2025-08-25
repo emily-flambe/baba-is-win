@@ -16,9 +16,9 @@ export interface Env {
   RESEND_API_KEY: string;
   RESEND_FROM_EMAIL?: string;
   
-  // Site Configuration
-  SITE_URL: string;
-  SITE_NAME: string;
+  // Site Configuration (optional - hard-coded in email services)
+  SITE_URL?: string;
+  SITE_NAME?: string;
   
   // Content Storage (optional)
   CONTENT_KV?: KVNamespace;

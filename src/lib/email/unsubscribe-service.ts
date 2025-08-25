@@ -32,7 +32,7 @@ export class UnsubscribeService {
       expiresAt
     });
     
-    return `${this.env.SITE_URL}/unsubscribe?token=${token}`;
+    return `https://www.emilycogsdill.com/unsubscribe?token=${token}`;
   }
   
   async processUnsubscribe(token: string, ipAddress?: string, userAgent?: string): Promise<{ success: boolean; error?: string; userId?: string }> {
@@ -151,7 +151,7 @@ export class UnsubscribeService {
   // Helper method to generate List-Unsubscribe header
   generateListUnsubscribeHeader(userId: string): string {
     const token = this.generateSecureToken();
-    const unsubscribeUrl = `${this.env.SITE_URL}/unsubscribe?token=${token}`;
+    const unsubscribeUrl = `https://www.emilycogsdill.com/unsubscribe?token=${token}`;
     
     // Store token for List-Unsubscribe (simplified implementation)
     this.createUnsubscribeToken({
@@ -161,6 +161,6 @@ export class UnsubscribeService {
       expiresAt: Math.floor(Date.now() / 1000) + (365 * 24 * 60 * 60)
     });
     
-    return `<${unsubscribeUrl}>, <mailto:unsubscribe@${this.env.SITE_URL.replace('https://', '')}?subject=unsubscribe>`;
+    return `<${unsubscribeUrl}>, <mailto:unsubscribe@www.emilycogsdill.com?subject=unsubscribe>`;
   }
 }

@@ -45,8 +45,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
         <p>Title: {{title}}</p>
         <p>Description: {{description}}</p>
         <p>If you see actual values below, the templates ARE being processed correctly:</p>
-        <p>Site Name: ${locals.runtime.env.SITE_NAME || 'Emily\'s Blog'}</p>
-        <p>Site URL: ${locals.runtime.env.SITE_URL || 'https://emilycogsdill.com'}</p>
+        <p>Site Name: Emily Cogsdill</p>
+        <p>Site URL: https://www.emilycogsdill.com</p>
       `,
       text: `Test Email
 
@@ -57,8 +57,8 @@ Title: {{title}}
 Description: {{description}}
 
 If you see actual values below, the templates ARE being processed correctly:
-Site Name: ${locals.runtime.env.SITE_NAME || 'Emily\'s Blog'}
-Site URL: ${locals.runtime.env.SITE_URL || 'https://emilycogsdill.com'}`
+Site Name: Emily Cogsdill
+Site URL: https://www.emilycogsdill.com`
     }
     
     console.log('Sending simple test email with payload:', JSON.stringify(payload, null, 2))
@@ -85,8 +85,8 @@ Site URL: ${locals.runtime.env.SITE_URL || 'https://emilycogsdill.com'}`
           hasResendApiKey: !!resendApiKey,
           fromEmail,
           hasTemplateVariables: payload.html.includes('{{'),
-          siteNameValue: locals.runtime.env.SITE_NAME || 'Emily\'s Blog',
-          siteUrlValue: locals.runtime.env.SITE_URL || 'https://emilycogsdill.com'
+          siteNameValue: 'Emily Cogsdill',
+          siteUrlValue: 'https://www.emilycogsdill.com'
         }
       }), {
         status: response.ok ? 200 : response.status,

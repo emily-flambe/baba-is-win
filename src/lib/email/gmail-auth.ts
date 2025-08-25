@@ -114,7 +114,7 @@ export class GmailAuth {
     console.log('[Gmail Send] Recipient:', to);
     console.log('[Gmail Send] Subject:', subject);
     console.log('[Gmail Send] Sender email:', this.env.GMAIL_SENDER_EMAIL);
-    console.log('[Gmail Send] Site name:', this.env.SITE_NAME);
+    console.log('[Gmail Send] Site name:', 'Emily Cogsdill');
     console.log('[Gmail Send] HTML content length:', htmlContent?.length || 0);
     console.log('[Gmail Send] Text content length:', textContent?.length || 0);
     
@@ -124,7 +124,7 @@ export class GmailAuth {
     // Create RFC 2822 compliant email
     const emailContent = [
       `To: ${to}`,
-      `From: ${this.env.SITE_NAME} <${this.env.GMAIL_SENDER_EMAIL}>`,
+      `From: Emily Cogsdill <${this.env.GMAIL_SENDER_EMAIL}>`,
       `Subject: ${subject}`,
       `MIME-Version: 1.0`,
       `Content-Type: multipart/alternative; boundary="boundary123"`,

@@ -156,15 +156,18 @@ export class EmailTemplateEngine {
     post: BlogPost, 
     unsubscribeUrl: string
   ): Promise<{ subject: string; html: string; text: string }> {
+    const siteUrl = 'https://www.emilycogsdill.com';
+    const siteName = 'Emily Cogsdill';
+    
     const variables: TemplateVariables = {
       title: post.title,
       description: post.description,
-      url: `${this.env.SITE_URL}/blog/${post.slug}`,
+      url: `${siteUrl}/blog/${post.slug}`,
       unsubscribe_url: unsubscribeUrl,
       publish_date: post.publishDate.toLocaleDateString(),
       tags: post.tags,
-      site_name: this.env.SITE_NAME,
-      site_url: this.env.SITE_URL,
+      site_name: siteName,
+      site_url: siteUrl,
       user_name: user.username
     };
     
@@ -176,15 +179,18 @@ export class EmailTemplateEngine {
     thought: Thought, 
     unsubscribeUrl: string
   ): Promise<{ subject: string; html: string; text: string }> {
+    const siteUrl = 'https://www.emilycogsdill.com';
+    const siteName = 'Emily Cogsdill';
+    
     const variables: TemplateVariables = {
       title: thought.title || 'New Thought',
       content: thought.content,
-      url: `${this.env.SITE_URL}/thoughts/${thought.slug}`,
+      url: `${siteUrl}/thoughts/${thought.slug}`,
       unsubscribe_url: unsubscribeUrl,
       publish_date: thought.publishDate.toLocaleDateString(),
       tags: thought.tags,
-      site_name: this.env.SITE_NAME,
-      site_url: this.env.SITE_URL,
+      site_name: siteName,
+      site_url: siteUrl,
       user_name: user.username
     };
     
@@ -197,11 +203,11 @@ export class EmailTemplateEngine {
   ): Promise<{ subject: string; html: string; text: string }> {
     const variables: TemplateVariables = {
       title: 'Welcome!',
-      url: this.env.SITE_URL,
+      url: 'https://www.emilycogsdill.com',
       unsubscribe_url: unsubscribeUrl,
       publish_date: new Date().toLocaleDateString(),
-      site_name: this.env.SITE_NAME,
-      site_url: this.env.SITE_URL,
+      site_name: 'Emily Cogsdill',
+      site_url: 'https://www.emilycogsdill.com',
       user_name: user.username
     };
     
@@ -213,11 +219,11 @@ export class EmailTemplateEngine {
   ): Promise<{ subject: string; html: string; text: string }> {
     const variables: TemplateVariables = {
       title: 'Unsubscribed',
-      url: this.env.SITE_URL,
+      url: 'https://www.emilycogsdill.com',
       unsubscribe_url: '', // Not needed for unsubscribe confirmation
       publish_date: new Date().toLocaleDateString(),
-      site_name: this.env.SITE_NAME,
-      site_url: this.env.SITE_URL,
+      site_name: 'Emily Cogsdill',
+      site_url: 'https://www.emilycogsdill.com',
       user_name: user.username
     };
     
