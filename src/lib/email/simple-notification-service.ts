@@ -72,7 +72,7 @@ export class SimpleEmailNotificationService {
         contentType,
         contentId: content.slug,
         contentTitle: content.title,
-        contentUrl: `${this.env.SITE_URL || 'https://emilycogsdill.com'}/${contentType === 'blog' ? 'blog' : 'thoughts'}/${content.slug}`,
+        contentUrl: `${this.env.SITE_URL || 'https://www.emilycogsdill.com'}/${contentType === 'blog' ? 'blog' : 'thoughts'}/${content.slug}`,
         contentExcerpt: content.description,
         notificationType: 'new_content'
       });
@@ -155,7 +155,7 @@ export class SimpleEmailNotificationService {
         publish_date: content.publishDate.toLocaleDateString(),
         tags: content.tags || [],
         site_name: this.env.SITE_NAME || 'Emily Cogsdill',
-        site_url: this.env.SITE_URL || 'https://emilycogsdill.com',
+        site_url: this.env.SITE_URL || 'https://www.emilycogsdill.com',
         user_name: user.username || 'Subscriber',
         content: notification.contentType === 'thought' ? (content as Thought).content : undefined
       };

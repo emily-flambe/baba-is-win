@@ -156,15 +156,18 @@ export class EmailTemplateEngine {
     post: BlogPost, 
     unsubscribeUrl: string
   ): Promise<{ subject: string; html: string; text: string }> {
+    const siteUrl = this.env.SITE_URL || 'https://www.emilycogsdill.com';
+    const siteName = this.env.SITE_NAME || 'Emily Cogsdill';
+    
     const variables: TemplateVariables = {
       title: post.title,
       description: post.description,
-      url: `${this.env.SITE_URL}/blog/${post.slug}`,
+      url: `${siteUrl}/blog/${post.slug}`,
       unsubscribe_url: unsubscribeUrl,
       publish_date: post.publishDate.toLocaleDateString(),
       tags: post.tags,
-      site_name: this.env.SITE_NAME,
-      site_url: this.env.SITE_URL,
+      site_name: siteName,
+      site_url: siteUrl,
       user_name: user.username
     };
     
@@ -176,15 +179,18 @@ export class EmailTemplateEngine {
     thought: Thought, 
     unsubscribeUrl: string
   ): Promise<{ subject: string; html: string; text: string }> {
+    const siteUrl = this.env.SITE_URL || 'https://www.emilycogsdill.com';
+    const siteName = this.env.SITE_NAME || 'Emily Cogsdill';
+    
     const variables: TemplateVariables = {
       title: thought.title || 'New Thought',
       content: thought.content,
-      url: `${this.env.SITE_URL}/thoughts/${thought.slug}`,
+      url: `${siteUrl}/thoughts/${thought.slug}`,
       unsubscribe_url: unsubscribeUrl,
       publish_date: thought.publishDate.toLocaleDateString(),
       tags: thought.tags,
-      site_name: this.env.SITE_NAME,
-      site_url: this.env.SITE_URL,
+      site_name: siteName,
+      site_url: siteUrl,
       user_name: user.username
     };
     
