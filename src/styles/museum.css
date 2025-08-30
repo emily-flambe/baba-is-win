@@ -57,11 +57,7 @@
   --museum-radius-xl: 1rem;        /* 16px */
   --museum-radius-2xl: 1.5rem;     /* 24px */
   
-  /* Museum Transitions */
-  --museum-transition-fast: 0.15s ease;
-  --museum-transition-base: 0.2s ease;
-  --museum-transition-slow: 0.3s ease;
-  --museum-transition-all: all var(--museum-transition-base);
+  /* ALL TRANSITIONS REMOVED */
 }
 
 /* Dark Theme Overrides */
@@ -119,7 +115,7 @@
   border: 1px solid var(--museum-border);
   border-radius: var(--museum-radius-lg);
   box-shadow: var(--museum-shadow-card);
-  transition: var(--museum-transition-all);
+  /* transition removed */
   overflow: hidden;
 }
 
@@ -192,7 +188,7 @@
   font-size: var(--museum-text-sm);
   font-weight: 500;
   text-decoration: none;
-  transition: var(--museum-transition-all);
+  /* transition removed */
   cursor: pointer;
   border: none;
 }
@@ -266,7 +262,7 @@
   background: var(--museum-bg-primary);
   color: var(--museum-text);
   font-size: var(--museum-text-base);
-  transition: var(--museum-transition-all);
+  /* transition removed */
 }
 
 .museum-input:focus {
@@ -284,7 +280,7 @@
   color: var(--museum-text);
   font-size: var(--museum-text-base);
   cursor: pointer;
-  transition: var(--museum-transition-all);
+  /* transition removed */
 }
 
 .museum-select:focus {
@@ -303,14 +299,10 @@
   border: 2px solid var(--museum-border);
   border-radius: 50%;
   border-top-color: var(--museum-primary);
-  animation: museumSpin 1s linear infinite;
+  /* ALL ANIMATIONS REMOVED */
 }
 
-@keyframes museumSpin {
-  to {
-    transform: rotate(360deg);
-  }
-}
+/* ALL KEYFRAMES REMOVED */
 
 /* Museum Responsive Utilities */
 @media (max-width: 768px) {
@@ -355,16 +347,7 @@
 
 /* Accessibility Improvements */
 @media (prefers-reduced-motion: reduce) {
-  .museum-card,
-  .museum-btn,
-  .museum-input,
-  .museum-select {
-    transition: none;
-  }
-  
-  .museum-loading {
-    animation: none;
-  }
+  /* No animations or transitions to disable */
 }
 
 @media (prefers-contrast: high) {

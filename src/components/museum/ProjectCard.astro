@@ -179,7 +179,7 @@ const languageColor = project.language ? (languageColors[project.language] || '#
     --museum-radius-lg: 0.75rem;
     --museum-radius-xl: 1rem;
     
-    --museum-transition-base: 0.2s ease;
+    /* ALL TRANSITIONS REMOVED */
   }
 
   /* Dark Theme Overrides */
@@ -206,11 +206,7 @@ const languageColor = project.language ? (languageColors[project.language] || '#
     display: flex;
     flex-direction: column;
     height: 100%;
-  }
-
-  /* Only apply transitions after page load to prevent initial animation */
-  .transitions-ready .project-card {
-    transition: all var(--museum-transition-base);
+    /* ALL TRANSITIONS REMOVED */
   }
 
   .project-card:hover {
@@ -234,13 +230,10 @@ const languageColor = project.language ? (languageColors[project.language] || '#
     border-bottom: 1px solid var(--museum-border);
     background: linear-gradient(135deg, var(--museum-bg-secondary) 0%, var(--museum-bg-tertiary) 100%);
     background-size: 200% 100%;
-    animation: shimmer 2s infinite;
+    /* ALL ANIMATIONS REMOVED */
   }
 
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
+  /* ALL KEYFRAMES REMOVED */
 
   .image-placeholder {
     width: 100%;
@@ -256,7 +249,9 @@ const languageColor = project.language ? (languageColors[project.language] || '#
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    /* transform removed */
+    top: calc(50% - 30px);
+    left: calc(50% - 30px);
     width: 60px;
     height: 60px;
     background: var(--museum-primary);
@@ -277,11 +272,7 @@ const languageColor = project.language ? (languageColors[project.language] || '#
     object-position: center;
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
-  }
-
-  /* Only apply transitions after page load */
-  .transitions-ready .screenshot {
-    transition: transform var(--museum-transition-base);
+    /* ALL TRANSITIONS REMOVED */
   }
 
   .project-card:hover .screenshot {
@@ -397,11 +388,7 @@ const languageColor = project.language ? (languageColors[project.language] || '#
     font-size: var(--museum-text-xs);
     font-weight: 500;
     border: none;
-  }
-
-  /* Only apply transitions after page load */
-  .transitions-ready .project-link {
-    transition: all var(--museum-transition-base);
+    /* ALL TRANSITIONS REMOVED */
   }
 
   .project-link:hover {
@@ -471,18 +458,7 @@ const languageColor = project.language ? (languageColors[project.language] || '#
 
   /* Accessibility Improvements */
   @media (prefers-reduced-motion: reduce) {
-    .transitions-ready .project-card,
-    .transitions-ready .project-link {
-      transition: none;
-    }
-    
-    .project-image {
-      animation: none;
-    }
-    
-    .project-link:hover {
-      transform: none;
-    }
+    /* No animations or transitions to disable */
   }
 
   /* Focus Styles */

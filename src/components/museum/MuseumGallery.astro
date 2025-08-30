@@ -96,7 +96,8 @@ const allProjects = projects;
     position: absolute;
     bottom: 0;
     left: 50%;
-    transform: translateX(-50%);
+    /* transform removed */
+    left: calc(50% - 50px);
     width: 100px;
     height: 3px;
     background: linear-gradient(90deg, transparent, #a6d8df, transparent);
@@ -140,11 +141,7 @@ const allProjects = projects;
     aspect-ratio: 16 / 10;
     opacity: 1;
     margin: 0;
-  }
-
-  /* Only apply transitions after page load to prevent initial animation */
-  .museum-gallery.transitions-ready .projects-grid .project-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* ALL TRANSITIONS REMOVED */
   }
 
   .projects-grid .project-card:hover {
@@ -234,19 +231,7 @@ const allProjects = projects;
 </style>
 
 <script>
-  // Prevent transitions from firing on initial page load
-  // Add transitions-ready class after a short delay to ensure page is fully rendered
-  if (typeof window !== 'undefined') {
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        const gallery = document.querySelector('.museum-gallery');
-        if (gallery) {
-          gallery.classList.add('transitions-ready');
-        }
-      }, 100);
-    });
-  }
-
+  // ALL ANIMATIONS AND TRANSITIONS REMOVED
   // Handle window resize for responsive updates
   window.addEventListener('resize', () => {
     // Minimal resize handler - CSS Grid handles layout automatically

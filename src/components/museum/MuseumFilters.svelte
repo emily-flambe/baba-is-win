@@ -259,7 +259,7 @@
     border-radius: 0.375rem;
     font-size: 0.875rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    /* transition removed */
   }
 
   .clear-filters:hover {
@@ -285,7 +285,7 @@
     border: 1px solid #d1d5db;
     border-radius: 0.375rem;
     font-size: 0.875rem;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    /* transition removed */
   }
 
   .search-input:focus {
