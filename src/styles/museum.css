@@ -124,7 +124,6 @@
 }
 
 .museum-card:hover {
-  transform: translateY(-2px);
   box-shadow: var(--museum-shadow-hover);
   border-color: var(--museum-border-hover);
 }
@@ -205,7 +204,6 @@
 
 .museum-btn-primary:hover {
   background: color-mix(in srgb, var(--museum-primary) 85%, black);
-  transform: translateY(-1px);
 }
 
 .museum-btn-secondary {
@@ -217,7 +215,6 @@
 .museum-btn-secondary:hover {
   background: var(--museum-bg-tertiary);
   border-color: var(--museum-border-hover);
-  transform: translateY(-1px);
 }
 
 .museum-btn-accent {
@@ -227,7 +224,6 @@
 
 .museum-btn-accent:hover {
   background: color-mix(in srgb, var(--museum-accent) 85%, black);
-  transform: translateY(-1px);
 }
 
 /* Museum Badges */
@@ -297,55 +293,7 @@
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--museum-primary) 20%, transparent);
 }
 
-/* Museum Animations */
-.museum-fade-in {
-  animation: museumFadeIn 0.5s ease-out;
-}
-
-.museum-slide-up {
-  animation: museumSlideUp 0.3s ease-out;
-}
-
-.museum-bounce {
-  animation: museumBounce 0.6s ease-out;
-}
-
-@keyframes museumFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes museumSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes museumBounce {
-  0%, 20%, 53%, 80%, 100% {
-    transform: translate3d(0, 0, 0);
-  }
-  40%, 43% {
-    transform: translate3d(0, -5px, 0);
-  }
-  70% {
-    transform: translate3d(0, -3px, 0);
-  }
-  90% {
-    transform: translate3d(0, -1px, 0);
-  }
-}
+/* Museum Animations - Minimal approach */
 
 /* Museum Loading States */
 .museum-loading {
@@ -414,9 +362,6 @@
     transition: none;
   }
   
-  .museum-fade-in,
-  .museum-slide-up,
-  .museum-bounce,
   .museum-loading {
     animation: none;
   }
