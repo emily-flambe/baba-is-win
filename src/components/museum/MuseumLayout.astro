@@ -107,3 +107,17 @@ const permalink = Astro.url.href;
   }
 
 </style>
+
+<script>
+  // Prevent CSS transitions from firing on initial page load
+  // This fixes the issue where card images slide in on direct navigation
+  if (typeof window !== 'undefined') {
+    // Use requestAnimationFrame to ensure layout is complete
+    requestAnimationFrame(() => {
+      // Small timeout to ensure all styles are applied
+      setTimeout(() => {
+        document.body.classList.add('transitions-ready');
+      }, 50);
+    });
+  }
+</script>

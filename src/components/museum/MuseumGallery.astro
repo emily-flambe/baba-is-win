@@ -138,9 +138,13 @@ const allProjects = projects;
   .projects-grid .project-card {
     width: 100%;
     aspect-ratio: 16 / 10;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
     opacity: 1;
     margin: 0;
+  }
+
+  /* Only apply transitions after page load to prevent initial animation */
+  .museum-gallery.transitions-ready .projects-grid .project-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
   .projects-grid .project-card:hover {
@@ -230,6 +234,19 @@ const allProjects = projects;
 </style>
 
 <script>
+  // Prevent transitions from firing on initial page load
+  // Add transitions-ready class after a short delay to ensure page is fully rendered
+  if (typeof window !== 'undefined') {
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const gallery = document.querySelector('.museum-gallery');
+        if (gallery) {
+          gallery.classList.add('transitions-ready');
+        }
+      }, 100);
+    });
+  }
+
   // Handle window resize for responsive updates
   window.addEventListener('resize', () => {
     // Minimal resize handler - CSS Grid handles layout automatically

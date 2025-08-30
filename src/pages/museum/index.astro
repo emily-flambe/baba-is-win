@@ -151,6 +151,50 @@ const keywords = [
 
   .emoji {
     display: inline-block;
+    animation-name: bounce;
+    animation-timing-function: cubic-bezier(0.28, 0.84, 0.42, 1);
+    animation-iteration-count: infinite;
+  }
+
+  /* Stagger the animations for a playful effect */
+  .emoji-1 {
+    animation-duration: 2.5s;
+    animation-delay: 0s;
+  }
+
+  .emoji-2 {
+    animation-duration: 3s;
+    animation-delay: 0.4s;
+  }
+
+  .emoji-3 {
+    animation-duration: 2.8s;
+    animation-delay: 0.8s;
+  }
+
+  .emoji-4 {
+    animation-duration: 3.2s;
+    animation-delay: 0.2s;
+  }
+
+  .emoji-5 {
+    animation-duration: 2.7s;
+    animation-delay: 0.6s;
+  }
+
+  .emoji-6 {
+    animation-duration: 2.9s;
+    animation-delay: 1s;
+  }
+
+  /* Bouncing animation - more subtle than floating */
+  @keyframes bounce {
+    0%, 100% { 
+      transform: translateY(0px);
+    }
+    50% { 
+      transform: translateY(-8px);
+    }
   }
 
   .hero-description {
@@ -192,6 +236,9 @@ const keywords = [
 
   /* Accessibility improvements */
   @media (prefers-reduced-motion: reduce) {
+    .emoji {
+      animation: none;
+    }
   }
 
   /* High contrast mode support */

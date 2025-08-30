@@ -96,6 +96,30 @@
       "screenshot": "/assets/museum/pong.png",
       "demoUrl": "https://pong.emilycogsdill.com",
       "section": "Applications"
+    },
+    {
+      "name": "web-app-starter-pack",
+      "displayName": "Web App Starter Pack",
+      "customDescription": "A minimalist foundation for building modern web applications. Clean architecture, sensible defaults, ready to roll.",
+      "category": "productivity",
+      "screenshot": "/assets/museum/web-app-starter-pack.png",
+      "section": "Tools"
+    },
+    {
+      "name": "web-app-starter-pack-gcp",
+      "displayName": "Web App Starter Pack (GCP)",
+      "customDescription": "Same great starter pack taste, now with Google Cloud Platform integration. For when you want to live dangerously.",
+      "category": "productivity",
+      "screenshot": "/assets/museum/web-app-starter-pack-gcp.png",
+      "section": "Tools"
+    },
+    {
+      "name": "naptime",
+      "displayName": "Naptime",
+      "customDescription": "I wanted to take Google Cloud Run for a spin so I hooked up the Oura API to put together this horrible thing",
+      "screenshot": "/assets/museum/naptime.png",
+      "demoUrl": "https://naptime.emilycogsdill.com",
+      "section": "Nonsense"
     }
   ],
   "settings": {

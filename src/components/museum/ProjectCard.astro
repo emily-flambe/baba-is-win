@@ -202,11 +202,15 @@ const languageColor = project.language ? (languageColors[project.language] || '#
     border: 1px solid var(--museum-border);
     border-radius: var(--museum-radius-xl);
     box-shadow: var(--museum-shadow-card);
-    transition: all var(--museum-transition-base);
     overflow: hidden;
     display: flex;
     flex-direction: column;
     height: 100%;
+  }
+
+  /* Only apply transitions after page load to prevent initial animation */
+  .transitions-ready .project-card {
+    transition: all var(--museum-transition-base);
   }
 
   .project-card:hover {
@@ -273,6 +277,10 @@ const languageColor = project.language ? (languageColors[project.language] || '#
     object-position: center;
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
+  }
+
+  /* Only apply transitions after page load */
+  .transitions-ready .screenshot {
     transition: transform var(--museum-transition-base);
   }
 
@@ -388,8 +396,12 @@ const languageColor = project.language ? (languageColors[project.language] || '#
     border-radius: var(--museum-radius-sm);
     font-size: var(--museum-text-xs);
     font-weight: 500;
-    transition: all var(--museum-transition-base);
     border: none;
+  }
+
+  /* Only apply transitions after page load */
+  .transitions-ready .project-link {
+    transition: all var(--museum-transition-base);
   }
 
   .project-link:hover {
@@ -459,8 +471,8 @@ const languageColor = project.language ? (languageColors[project.language] || '#
 
   /* Accessibility Improvements */
   @media (prefers-reduced-motion: reduce) {
-    .project-card,
-    .project-link {
+    .transitions-ready .project-card,
+    .transitions-ready .project-link {
       transition: none;
     }
     
