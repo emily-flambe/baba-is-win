@@ -104,10 +104,18 @@
       "category": "productivity",
       "section": "Tools"
     },
+
+    {
+      "name": "web-app-starter-pack",
+      "displayName": "Web App Starter Pack",
+      "customDescription": "I made this before realizing Cloudflare already has C3, which is this but better. Oh well lmao",
+      "category": "productivity",
+      "section": "Tools"
+    },
     {
       "name": "web-app-starter-pack-gcp",
       "displayName": "Web App Starter Pack (GCP)",
-      "customDescription": "Same great starter pack taste, now with Google Cloud Platform integration. For when you want to live dangerously.",
+      "customDescription": "A starter project for web apps deployed from Google Cloud Run. Lol that Makefile is most of the code",
       "category": "productivity",
       "section": "Tools"
     },
