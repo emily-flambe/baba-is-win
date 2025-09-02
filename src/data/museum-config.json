@@ -100,14 +100,6 @@
     {
       "name": "web-app-starter-pack",
       "displayName": "Web App Starter Pack",
-      "customDescription": "A minimalist foundation for building modern web applications. Clean architecture, sensible defaults, ready to roll.",
-      "category": "productivity",
-      "section": "Tools"
-    },
-
-    {
-      "name": "web-app-starter-pack",
-      "displayName": "Web App Starter Pack",
       "customDescription": "I made this before realizing Cloudflare already has C3, which is this but better. Oh well lmao",
       "category": "productivity",
       "section": "Tools"
