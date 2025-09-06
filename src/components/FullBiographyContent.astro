@@ -28,6 +28,13 @@ const { currentLevel = 'normal' } = Astro.props;
     transition: opacity 0.4s ease, transform 0.4s ease;
     display: none;
   }
+  
+  /* Show tutorial content by default to prevent blank page */
+  .biography-content[data-difficulty-content="tutorial"]:not(.js-initialized) {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
 
   .biography-content.active {
     opacity: 1;
