@@ -75,6 +75,12 @@
       "section": "Tools"
     },
     {
+      "name": "emoji-linter",
+      "displayName": "Emoji Linter",
+      "customDescription": "A Github Action that checks for emojis in your code. I better not see another FUCKING 🚀 emoji ever again",
+      "section": "Tools"
+    },
+    {
       "name": "cloudflare-ai-worker",
       "displayName": "Cloudflare AI Worker",
       "customDescription": "Runs open source AI models supported by Cloudflare (currently gpt-oss). Neat!",
@@ -100,17 +106,15 @@
     {
       "name": "web-app-starter-pack",
       "displayName": "Web App Starter Pack",
-      "customDescription": "A minimalist foundation for building modern web applications. Clean architecture, sensible defaults, ready to roll.",
+      "customDescription": "Spin up a Cloudflare Workers app with sensible defaults and CICD. True gamers ONLY",
       "category": "productivity",
-      "screenshot": "/assets/museum/web-app-starter-pack.png",
       "section": "Tools"
     },
     {
       "name": "web-app-starter-pack-gcp",
       "displayName": "Web App Starter Pack (GCP)",
-      "customDescription": "Same great starter pack taste, now with Google Cloud Platform integration. For when you want to live dangerously.",
+      "customDescription": "Spin up a Google Cloud Run app with CICD and whatever. Lol that most of the code is in the Makefile",
       "category": "productivity",
-      "screenshot": "/assets/museum/web-app-starter-pack-gcp.png",
       "section": "Tools"
     },
     {
