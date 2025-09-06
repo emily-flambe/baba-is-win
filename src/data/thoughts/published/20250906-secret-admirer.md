@@ -8,4 +8,7 @@ publishDate: 6 Sep 2025
 publishTime: "8:23 AM"
 tags: ["ummm","help"]
 color: "#5C0000"
+images: [
+  { "url": "/assets/thoughts/danger.png", offset: "0%" },
+]
 ---

@@ -54,17 +54,16 @@ const recentThoughts = allThoughts.slice(0, 5);
       </div>
       <a href="/thoughts" class="view-all">View all thoughts →</a>
     </div>
-    
+
     <div class="right-column">
       <div class="info-box">
         <div class="info-content">
-          <h2 class="info-title">This is a web site, or something</h2>
-          
+          <h2 class="info-title">Wow so many fun things!</h2>
+
           <div class="info-details">
-            <p>Here be:</p>
             <ul class="info-list">
               <li>
-                Silly nonsense that passes for <a href="/thoughts">"thoughts"</a>
+                Some <a href="/thoughts">"thoughts"</a> from my "brain"
                 <span class="info-tooltip" data-tooltip="look to your left">?</span>
               </li>
               <li>
@@ -72,16 +71,16 @@ const recentThoughts = allThoughts.slice(0, 5);
                 <span class="info-tooltip" data-tooltip="2006 called, they want their xanga back">?</span>
               </li>
               <li>
-                A <a href="/museum">"museum"</a> of my so-called "projects"
+                A <a href="/museum">"museum"</a> of my "projects"
                 <span class="info-tooltip" data-tooltip="graphic design is my passion!">?</span>
               </li>
               <li>
                 A <a href="/bio">"Biography"</a>
-                <span class="info-tooltip" data-tooltip="should probably be deleted">?</span>
+                <span class="info-tooltip" data-tooltip="terrible">?</span>
               </li>
             </ul>
           </div>
-          
+
           <div class="info-footer">
             <p class="info-motto">Thank you for your attention to this matter!</p>
           </div>
@@ -93,45 +92,45 @@ const recentThoughts = allThoughts.slice(0, 5);
           <img class="baba-img baba-char" src="../assets/baba/BABA_char.webp" style="margin-right: 400px;">
           <img class="baba-img flag-object" src="../assets/baba/flag_object.webp">
         </div>
-        
+
         <div class="baba-rules">
           <div class="rule-line" data-delay="1">
             <img class="baba-img" src="../assets/baba/love.webp" style="margin-left: 30px;">
-            <img class="baba-img" src="../assets/baba/is.webp"> 
+            <img class="baba-img" src="../assets/baba/is.webp">
             <img class="baba-img" src="../assets/baba/weak.webp">
           </div>
           <div class="rule-line" data-delay="2">
             <img class="baba-img" src="../assets/baba/love.webp" style="margin-left: 80px;">
-            <img class="baba-img" src="../assets/baba/has.webp"> 
+            <img class="baba-img" src="../assets/baba/has.webp">
             <img class="baba-img" src="../assets/baba/key.webp">
           </div>
           <div class="rule-line" data-delay="3">
             <img class="baba-img" src="../assets/baba/key.webp" style="margin-left: 130px;">
-            <img class="baba-img" src="../assets/baba/is.webp"> 
+            <img class="baba-img" src="../assets/baba/is.webp">
             <img class="baba-img" src="../assets/baba/open.webp">
           </div>
           <div class="rule-line" data-delay="4">
             <img class="baba-img" src="../assets/baba/door.webp" style="margin-left: 180px;">
-            <img class="baba-img" src="../assets/baba/is.webp"> 
+            <img class="baba-img" src="../assets/baba/is.webp">
             <img class="baba-img" src="../assets/baba/shut.webp">
           </div>
           <div class="rule-line" data-delay="5">
             <img class="baba-img" src="../assets/baba/flag.webp" style="margin-left: 230px;">
-            <img class="baba-img" src="../assets/baba/is.webp"> 
+            <img class="baba-img" src="../assets/baba/is.webp">
             <img class="baba-img" src="../assets/baba/win.webp">
           </div>
           <div class="rule-line" data-delay="6">
             <img class="baba-img" src="../assets/baba/baba.webp" style="margin-left: 280px;">
-            <img class="baba-img" src="../assets/baba/is.webp"> 
+            <img class="baba-img" src="../assets/baba/is.webp">
             <img class="baba-img" src="../assets/baba/move.webp">
           </div>
           <div class="rule-line highlight" data-delay="7">
             <img class="baba-img" src="../assets/baba/baba.webp" style="margin-left: 330px;">
-            <img class="baba-img" src="../assets/baba/is.webp"> 
+            <img class="baba-img" src="../assets/baba/is.webp">
             <img class="baba-img" src="../assets/baba/win.webp">
           </div>
         </div>
-        
+
         <div class="baba-scene bottom-scene">
           <img class="baba-img baba-char-win" src="../assets/baba/BABA_char.webp" style="margin-left: 400px;">
           <img class="baba-img flag-object" src="../assets/baba/flag_object.webp">
@@ -139,7 +138,7 @@ const recentThoughts = allThoughts.slice(0, 5);
       </div>
     </div>
   </div>
-  
+
   <div class="hero-image-container">
     <picture>
       <source srcset="/assets/best-friends.jpeg" media="(min-width: 700px)">
@@ -251,17 +250,17 @@ const recentThoughts = allThoughts.slice(0, 5);
     margin: 0 0 0.75rem 0;
     color: rgba(255, 255, 255, 0.9);
   }
-  
+
   .thought-content strong {
     font-weight: 600;
     color: #fff;
   }
-  
+
   .thought-content em {
     font-style: italic;
     opacity: 0.9;
   }
-  
+
   .thought-content code {
     background: rgba(255, 255, 255, 0.1);
     padding: 0.125rem 0.25rem;
@@ -531,27 +530,7 @@ const recentThoughts = allThoughts.slice(0, 5);
     position: relative;
   }
 
-  .rule-line.highlight::after {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    border: 2px solid var(--primary-color);
-    border-radius: 4px;
-    opacity: 0;
-    animation: pulse 2s ease-in-out infinite;
-    animation-delay: 1s;
-  }
 
-  @keyframes pulse {
-    0%, 100% {
-      opacity: 0;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 0.5;
-      transform: scale(1.05);
-    }
-  }
 
   .hero-image-container {
     margin: 3em auto 2em;
