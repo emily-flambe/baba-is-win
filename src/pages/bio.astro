@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Bio from '../components/Bio.astro';
+import FooterBio from '../components/FooterBio.astro';
 import FullBiographyDifficultySelector from '../components/FullBiographyDifficultySelector.astro';
 import FullBiographyContent from '../components/FullBiographyContent.astro';
 import { DEFAULT_DIFFICULTY } from '../data/full-biography-difficulty';
@@ -40,18 +40,21 @@ const estimatedReadingTimes = {
       <a href="/thoughts">→ View thoughts</a>
       <a href="/museum">→ Visit the MUSEUM???</a>
     </div>
-    <Bio />
+    <FooterBio />
   </div>
 </BaseLayout>
 
 <script define:vars={{ estimatedReadingTimes }}>
   class FullBiographyDifficultyManager {
-    private currentDifficulty: string;
-    private buttons: NodeListOf<HTMLButtonElement>;
-    private textElements: NodeListOf<HTMLDivElement>;
-    private readingTimeDisplay: HTMLElement | null;
-    private readonly STORAGE_KEY = 'full-biography-difficulty';
-    private readonly readingTimes: Record<string, string>;
+    currentDifficulty;
+    buttons;
+    textElements;
+    readingTimeDisplay;
+    STORAGE_KEY = 'full-biography-difficulty';
+    readingTimes;
+    MAX_RETRY_COUNT = 10;
+    currentRetryCount = 0;
+    RETRY_DELAY_MS = 100;
 
     constructor() {
       this.currentDifficulty = 'tutorial'; // Default difficulty
@@ -60,10 +63,32 @@ const estimatedReadingTimes = {
       this.readingTimeDisplay = document.getElementById('reading-time-display');
       this.readingTimes = estimatedReadingTimes;
       
+      // Mark all content as JS initialized to remove default CSS
+      this.textElements.forEach(el => el.classList.add('js-initialized'));
+      
       this.init();
     }
 
-    private init() {
+    init() {
+      // Ensure content elements exist
+      if (this.textElements.length === 0) {
+        // Prevent infinite loop with max retry count
+        if (this.currentRetryCount >= this.MAX_RETRY_COUNT) {
+          console.error('Biography content failed to load after maximum retries');
+          return;
+        }
+        
+        this.currentRetryCount++;
+        console.warn(`Biography content not loaded yet, retrying... (attempt ${this.currentRetryCount}/${this.MAX_RETRY_COUNT})`);
+        
+        setTimeout(() => {
+          this.textElements = document.querySelectorAll('[data-difficulty-content]');
+          this.textElements.forEach(el => el.classList.add('js-initialized'));
+          this.init();
+        }, this.RETRY_DELAY_MS);
+        return;
+      }
+      
       // Load saved preference from localStorage first
       const savedDifficulty = this.loadSavedDifficulty();
       if (savedDifficulty && this.isValidDifficulty(savedDifficulty)) {
@@ -76,7 +101,7 @@ const estimatedReadingTimes = {
       // Add click handlers to buttons
       this.buttons.forEach(button => {
         button.addEventListener('click', (e) => {
-          const target = e.currentTarget as HTMLButtonElement;
+          const target = e.currentTarget;
           const difficultyId = target.dataset.difficulty;
           if (difficultyId && this.isValidDifficulty(difficultyId)) {
             this.setDifficulty(difficultyId);
@@ -96,7 +121,7 @@ const estimatedReadingTimes = {
       this.addKeyboardNavigation();
     }
 
-    private addKeyboardNavigation() {
+    addKeyboardNavigation() {
       this.buttons.forEach((button, index) => {
         button.addEventListener('keydown', (e) => {
           let targetIndex = index;
@@ -129,11 +154,11 @@ const estimatedReadingTimes = {
       });
     }
 
-    private isValidDifficulty(difficulty: string): boolean {
+    isValidDifficulty(difficulty) {
       return ['tutorial', 'story-mode', 'normal', 'hard', 'maddening'].includes(difficulty);
     }
 
-    private loadSavedDifficulty(): string | null {
+    loadSavedDifficulty() {
       try {
         return localStorage.getItem(this.STORAGE_KEY);
       } catch (error) {
@@ -142,7 +167,7 @@ const estimatedReadingTimes = {
       }
     }
 
-    private saveDifficulty(difficulty: string): void {
+    saveDifficulty(difficulty) {
       try {
         localStorage.setItem(this.STORAGE_KEY, difficulty);
       } catch (error) {
@@ -150,7 +175,7 @@ const estimatedReadingTimes = {
       }
     }
 
-    private setDifficulty(difficultyId: string) {
+    setDifficulty(difficultyId) {
       this.currentDifficulty = difficultyId;
       this.updateDisplay();
       this.saveDifficulty(difficultyId);
@@ -161,7 +186,7 @@ const estimatedReadingTimes = {
       }));
     }
 
-    private updateDisplay() {
+    updateDisplay() {
       // Update button states
       this.buttons.forEach(button => {
         const isActive = button.dataset.difficulty === this.currentDifficulty;
@@ -202,7 +227,7 @@ const estimatedReadingTimes = {
     }
 
     // Fallback method for when content is missing
-    private getFallbackContent(): string {
+    getFallbackContent() {
       const fallbackOrder = ['tutorial', 'normal', 'story-mode'];
       
       for (const difficulty of fallbackOrder) {
@@ -217,21 +242,39 @@ const estimatedReadingTimes = {
   }
 
   // Initialize when DOM is ready
+  let difficultyManagerInstance = null;
+  const FALLBACK_INIT_DELAY_MS = 300; // Delay for fallback initialization
+  
   function initializeFullBiographyDifficulty() {
+    // Prevent multiple initializations
+    if (difficultyManagerInstance) {
+      return;
+    }
+    
     if (document.querySelector('.difficulty-btn')) {
-      new FullBiographyDifficultyManager();
+      difficultyManagerInstance = new FullBiographyDifficultyManager();
     }
   }
 
+  // Multiple initialization strategies for reliability
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeFullBiographyDifficulty);
   } else {
     initializeFullBiographyDifficulty();
   }
+  
+  // Handle Astro client-side navigation
+  document.addEventListener('astro:page-load', () => {
+    difficultyManagerInstance = null; // Reset on navigation
+    initializeFullBiographyDifficulty();
+  });
+  
+  // Fallback for slow content loading
+  setTimeout(initializeFullBiographyDifficulty, FALLBACK_INIT_DELAY_MS);
 
   // Graceful degradation: if JavaScript fails, show tutorial difficulty
   window.addEventListener('error', () => {
-    const tutorialContent = document.querySelector('[data-difficulty-content="tutorial"]') as HTMLElement;
+    const tutorialContent = document.querySelector('[data-difficulty-content="tutorial"]');
     if (tutorialContent) {
       tutorialContent.style.display = 'block';
       tutorialContent.style.position = 'relative';
