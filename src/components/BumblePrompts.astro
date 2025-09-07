@@ -357,7 +357,7 @@
   // State management
   let currentTone = 'opus4';
   let currentCategory = 'fun';
-  let expandedCard = null;
+  let expandedIndices = new Set(); // Track multiple expanded prompts by index
 
   function renderPrompts(category) {
     const container = document.querySelector('.promptsContainer');
@@ -368,7 +368,10 @@
     allPromptSets[currentTone][category].forEach((prompt, index) => {
       const card = document.createElement('div');
       card.className = 'prompt-card';
-      card.onclick = () => togglePrompt(card);
+      if (expandedIndices.has(index)) {
+        card.classList.add('expanded');
+      }
+      card.onclick = () => togglePrompt(index);
       
       card.innerHTML = `
         <div class="prompt-content">
@@ -382,13 +385,21 @@
     });
   }
 
-  function togglePrompt(card) {
-    if (expandedCard && expandedCard !== card) {
-      expandedCard.classList.remove('expanded');
-    }
+  function togglePrompt(index) {
+    const cards = document.querySelectorAll('.prompt-card');
+    const card = cards[index];
     
-    card.classList.toggle('expanded');
-    expandedCard = card.classList.contains('expanded') ? card : null;
+    if (!card) return;
+    
+    if (expandedIndices.has(index)) {
+      // Collapse this card
+      card.classList.remove('expanded');
+      expandedIndices.delete(index);
+    } else {
+      // Expand this card
+      card.classList.add('expanded');
+      expandedIndices.add(index);
+    }
   }
 
   function switchCategory(category) {
@@ -405,8 +416,8 @@
     event.target.style.borderBottomColor = '#1e1e1e';
     event.target.classList.add('active');
     
-    // Reset expanded card
-    expandedCard = null;
+    // Clear expanded indices when switching categories
+    expandedIndices.clear();
     
     // Render new prompts
     renderPrompts(category);
@@ -422,8 +433,8 @@
     
     event.target.classList.add('active');
     
-    // Reset expanded card
-    expandedCard = null;
+    // Don't clear expanded indices when switching tones
+    // This keeps the same prompts expanded across different tones
     
     // Render prompts with new tone
     renderPrompts(currentCategory);
