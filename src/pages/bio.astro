@@ -52,6 +52,9 @@ const estimatedReadingTimes = {
     readingTimeDisplay;
     STORAGE_KEY = 'full-biography-difficulty';
     readingTimes;
+    MAX_RETRY_COUNT = 10;
+    currentRetryCount = 0;
+    RETRY_DELAY_MS = 100;
 
     constructor() {
       this.currentDifficulty = 'tutorial'; // Default difficulty
@@ -69,12 +72,20 @@ const estimatedReadingTimes = {
     init() {
       // Ensure content elements exist
       if (this.textElements.length === 0) {
-        console.warn('Biography content not loaded yet, retrying...');
+        // Prevent infinite loop with max retry count
+        if (this.currentRetryCount >= this.MAX_RETRY_COUNT) {
+          console.error('Biography content failed to load after maximum retries');
+          return;
+        }
+        
+        this.currentRetryCount++;
+        console.warn(`Biography content not loaded yet, retrying... (attempt ${this.currentRetryCount}/${this.MAX_RETRY_COUNT})`);
+        
         setTimeout(() => {
           this.textElements = document.querySelectorAll('[data-difficulty-content]');
           this.textElements.forEach(el => el.classList.add('js-initialized'));
           this.init();
-        }, 100);
+        }, this.RETRY_DELAY_MS);
         return;
       }
       
@@ -232,6 +243,7 @@ const estimatedReadingTimes = {
 
   // Initialize when DOM is ready
   let difficultyManagerInstance = null;
+  const FALLBACK_INIT_DELAY_MS = 300; // Delay for fallback initialization
   
   function initializeFullBiographyDifficulty() {
     // Prevent multiple initializations
@@ -258,7 +270,7 @@ const estimatedReadingTimes = {
   });
   
   // Fallback for slow content loading
-  setTimeout(initializeFullBiographyDifficulty, 300);
+  setTimeout(initializeFullBiographyDifficulty, FALLBACK_INIT_DELAY_MS);
 
   // Graceful degradation: if JavaScript fails, show tutorial difficulty
   window.addEventListener('error', () => {
