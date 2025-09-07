@@ -1,62 +1,119 @@
 ---
-// This component displays a Bumble-style prompt interface
-interface Props {
-  promptSet?: 'real' | 'ai1' | 'ai2' | 'ai3';
-  widgetId?: string;
-}
-
-const { promptSet = 'real', widgetId = 'widget1' } = Astro.props;
+// This component displays a Bumble-style prompt interface with tone selector
 ---
 
-<div id={widgetId} class="bumble-widget" style="width: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow: hidden;">
-  <div style="background: white; color: #1e1e1e;">
-    
-    <!-- Phone Status Bar -->
-    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px 8px; font-size: 14px; font-weight: 600;">
-      <span>3:30</span>
-      <div style="display: flex; align-items: center; gap: 4px;">
-        <span style="font-size: 16px;">5G</span>
-        <svg width="17" height="12" viewBox="0 0 17 12" fill="none" style="margin-left: 4px;">
-          <rect x="1" y="4" width="11" height="7" stroke="black" stroke-width="1.2"/>
-          <rect x="13" y="6.5" width="3" height="2" fill="black"/>
-          <rect x="2.5" y="5.5" width="8" height="4" fill="black"/>
-        </svg>
-        <svg width="24" height="18" viewBox="0 0 24 18" fill="none" style="margin-right: -4px;">
-          <rect x="1" y="7" width="23" height="11" rx="2.5" stroke="black" stroke-width="1.5"/>
-          <rect x="2.5" y="9" width="19.5" height="7.5" fill="black"/>
-        </svg>
+<div class="bumble-widget-wrapper">
+  <!-- Tone Selector -->
+  <div class="tone-selector">
+    <span class="tone-label">Pick a vibe:</span>
+    <div class="tone-buttons">
+      <button class="tone-btn active" data-tone="opus4" onclick="switchTone('opus4')">opus 4</button>
+      <button class="tone-btn" data-tone="gptoss" onclick="switchTone('gptoss')">gpt-oss</button>
+      <button class="tone-btn" data-tone="me" onclick="switchTone('me')">me lmao</button>
+    </div>
+  </div>
+  
+  <!-- Bumble Widget -->
+  <div id="bumble-widget" class="bumble-widget" style="max-width: 375px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow: hidden;">
+    <div style="background: white; color: #1e1e1e;">
+      
+      <!-- Phone Status Bar -->
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px 8px; font-size: 14px; font-weight: 600;">
+        <span>3:30</span>
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <span style="font-size: 16px;">5G</span>
+          <svg width="17" height="12" viewBox="0 0 17 12" fill="none" style="margin-left: 4px;">
+            <rect x="1" y="4" width="11" height="7" stroke="black" stroke-width="1.2"/>
+            <rect x="13" y="6.5" width="3" height="2" fill="black"/>
+            <rect x="2.5" y="5.5" width="8" height="4" fill="black"/>
+          </svg>
+          <svg width="24" height="18" viewBox="0 0 24 18" fill="none" style="margin-right: -4px;">
+            <rect x="1" y="7" width="23" height="11" rx="2.5" stroke="black" stroke-width="1.5"/>
+            <rect x="2.5" y="9" width="19.5" height="7.5" fill="black"/>
+          </svg>
+        </div>
+      </div>
+      
+      <!-- Header -->
+      <div style="padding: 20px 20px 16px; display: flex; justify-content: center; align-items: center; position: relative; border-bottom: 1px solid #f0f0f0;">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 600; color: #1e1e1e;">Pick a prompt</h2>
+        <button onclick="alert('Thanks for checking out my prompts!')" style="background: none; border: none; color: #1e1e1e; font-size: 28px; cursor: pointer; position: absolute; right: 20px; top: 18px; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">×</button>
+      </div>
+      
+      <!-- Tab Navigation -->
+      <div class="tabs" style="display: flex; overflow-x: auto; padding: 12px 0 0; gap: 0; scrollbar-width: none; -webkit-overflow-scrolling: touch; background: white;">
+        <button class="tab active" onclick="switchCategory('fun')" style="padding: 12px 20px 16px; background: none; border: none; color: #1e1e1e; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid #1e1e1e; flex-shrink: 0;">Bit of fun</button>
+        <button class="tab" onclick="switchCategory('date')" style="padding: 12px 20px 16px; background: none; border: none; color: #666; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid transparent; flex-shrink: 0;">Date night</button>
+        <button class="tab" onclick="switchCategory('looking')" style="padding: 12px 20px 16px; background: none; border: none; color: #666; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid transparent; flex-shrink: 0;">Looking for</button>
+        <button class="tab" onclick="switchCategory('about')" style="padding: 12px 20px 16px; background: none; border: none; color: #666; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid transparent; flex-shrink: 0;">About me</button>
+        <button class="tab" onclick="switchCategory('real')" style="padding: 12px 20px 16px; background: none; border: none; color: #666; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid transparent; flex-shrink: 0;">Real talk</button>
+        <button class="tab" onclick="switchCategory('self')" style="padding: 12px 20px 16px; background: none; border: none; color: #666; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid transparent; flex-shrink: 0;">Self-care</button>
       </div>
     </div>
     
-    <!-- Header -->
-    <div style="padding: 20px 20px 16px; display: flex; justify-content: center; align-items: center; position: relative; border-bottom: 1px solid #f0f0f0;">
-      <h2 style="margin: 0; font-size: 18px; font-weight: 600; color: #1e1e1e;">Pick a prompt</h2>
-      <button onclick="alert('Thanks for checking out my prompts!')" style="background: none; border: none; color: #1e1e1e; font-size: 28px; cursor: pointer; position: absolute; right: 20px; top: 18px; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">×</button>
+    <!-- Content Area -->
+    <div class="promptsContainer" style="background: #f7f7f7; padding: 16px 0; min-height: 400px; max-height: 500px; overflow-y: auto;">
+      <!-- Prompts will be inserted here by JavaScript -->
     </div>
     
-    <!-- Tab Navigation -->
-    <div class="tabs" style="display: flex; overflow-x: auto; padding: 12px 0 0; gap: 0; scrollbar-width: none; -webkit-overflow-scrolling: touch; background: white;">
-      <button class="tab active" onclick="switchCategory('fun', '${widgetId}')" style="padding: 12px 20px 16px; background: none; border: none; color: #1e1e1e; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid #1e1e1e; flex-shrink: 0;">Bit of fun</button>
-      <button class="tab" onclick="switchCategory('date', '${widgetId}')" style="padding: 12px 20px 16px; background: none; border: none; color: #666; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid transparent; flex-shrink: 0;">Date night</button>
-      <button class="tab" onclick="switchCategory('looking', '${widgetId}')" style="padding: 12px 20px 16px; background: none; border: none; color: #666; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid transparent; flex-shrink: 0;">Looking for</button>
-      <button class="tab" onclick="switchCategory('about', '${widgetId}')" style="padding: 12px 20px 16px; background: none; border: none; color: #666; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid transparent; flex-shrink: 0;">About me</button>
-      <button class="tab" onclick="switchCategory('real', '${widgetId}')" style="padding: 12px 20px 16px; background: none; border: none; color: #666; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid transparent; flex-shrink: 0;">Real talk</button>
-      <button class="tab" onclick="switchCategory('self', '${widgetId}')" style="padding: 12px 20px 16px; background: none; border: none; color: #666; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid transparent; flex-shrink: 0;">Self-care</button>
+    <!-- Mobile Home Indicator -->
+    <div style="background: white; padding: 8px 0;">
+      <div class="home-indicator"></div>
     </div>
-  </div>
-  
-  <!-- Content Area -->
-  <div class="promptsContainer" style="background: #f7f7f7; padding: 16px 0; min-height: 400px; max-height: 500px; overflow-y: auto;">
-    <!-- Prompts will be inserted here by JavaScript -->
-  </div>
-  
-  <!-- Mobile Home Indicator -->
-  <div style="background: white; padding: 8px 0;">
-    <div class="home-indicator"></div>
   </div>
 </div>
 
 <style is:global>
+  .bumble-widget-wrapper {
+    max-width: 600px;
+    margin: 40px auto;
+  }
+  
+  .tone-selector {
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  
+  .tone-label {
+    display: block;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #1e1e1e;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  .tone-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .tone-btn {
+    padding: 10px 20px;
+    border: 2px solid #e0e0e0;
+    background: white;
+    border-radius: 24px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  .tone-btn:hover {
+    border-color: #ffc629;
+    color: #1e1e1e;
+  }
+  
+  .tone-btn.active {
+    background: #ffc629;
+    border-color: #ffc629;
+    color: #1e1e1e;
+    font-weight: 600;
+  }
   .tabs::-webkit-scrollbar {
     display: none;
   }
@@ -142,239 +199,176 @@ const { promptSet = 'real', widgetId = 'widget1' } = Astro.props;
   }
 </style>
 
-<script define:vars={{ widgetId, promptSet }}>
+<script is:inline>
   // Different prompt sets
   const allPromptSets = {
-    real: {
-    fun: [
-      { q: "Two truths and a lie", a: "I've been to 15 countries, I can juggle, I hate cilantro (the lie is juggling - I can barely catch one ball)" },
-      { q: "If I could eat only one meal for the rest of my life", a: "Sushi. Next question." },
-      { q: "My most useless skill", a: "I can recite the entire opening of Law & Order SVU from memory" },
-      { q: "My zombie apocalypse plan", a: "Head to Costco, obviously. They have everything including those massive teddy bears for emotional support" },
-      { q: "Never have I ever", a: "Watched a single episode of Game of Thrones (I know, I know)" },
-      { q: "My most irrational fear", a: "Butterflies. They're just moths with a good PR team" }
-    ],
-    date: [
-      { q: "My ideal first date", a: "Something where we can actually talk - maybe a food truck crawl or mini golf with increasingly ridiculous bets" },
-      { q: "The way to my heart is", a: "Good banter and better tacos" },
-      { q: "We'll get along if", a: "You can handle my terrible puns and don't take yourself too seriously" },
-      { q: "Let's make sure we're on the same page about", a: "Pineapple on pizza (I'm pro, fight me)" },
-      { q: "Best travel story", a: "Got lost in Tokyo, ended up at a underground robot restaurant show. Still not sure what happened but 10/10 would recommend" },
-      { q: "My love language is", a: "Quality time and sending memes at 2am" }
-    ],
-    looking: [
-      { q: "I'm looking for", a: "Someone who gets my references and makes me laugh until my sides hurt" },
-      { q: "Non-negotiable", a: "Must love dogs (or at least tolerate my obsession with them)" },
-      { q: "Green flags I look for", a: "Kind to service workers, has hobbies, can admit when they're wrong" },
-      { q: "I promise I won't judge you if", a: "You cry at Pixar movies (I'll be crying too)" },
-      { q: "Deal breakers", a: "Being mean to animals, no sense of humor, thinks The Office isn't funny" },
-      { q: "Swipe right if", a: "You've ever had a full conversation with your pet" }
-    ],
-    about: [
-      { q: "A random fact I love", a: "Octopi have three hearts and blue blood. Also they're basically ocean aliens" },
-      { q: "My greatest strength", a: "I can find humor in almost any situation (sometimes inappropriately)" },
-      { q: "My simple pleasures", a: "Fresh sheets, finding money in old jacket pockets, dogs in sweaters" },
-      { q: "I'm known for", a: "My legendary ability to kill houseplants despite my best efforts" },
-      { q: "My most spontaneous moment", a: "Booked a flight to Iceland 3 hours before takeoff because why not?" },
-      { q: "I go crazy for", a: "A good thunderstorm and true crime documentaries" }
-    ],
-    real: [
-      { q: "I'm working on", a: "Being more patient and not buying every book I see" },
-      { q: "Therapy recently taught me", a: "That my anxiety has anxiety" },
-      { q: "I get way too excited about", a: "New seasons of my favorite shows and finding the perfect avocado" },
-      { q: "Change my mind about", a: "Camping. I think nature is beautiful... from inside a hotel" },
-      { q: "My most controversial opinion", a: "Breakfast food is acceptable at all times of day and night" },
-      { q: "Dating me is like", a: "Having a best friend who will steal your hoodies and make you watch horror movies" }
-    ],
-    self: [
-      { q: "After work you can find me", a: "Debating whether to go to the gym or become one with my couch" },
-      { q: "I unwind by", a: "Cooking elaborate meals I saw on TikTok (results may vary)" },
-      { q: "Self care for me is", a: "Long walks with podcasts and pretending my to-do list doesn't exist" },
-      { q: "My happy place", a: "Any bookstore or the dog park (I don't have a dog, I just go for the vibes)" },
-      { q: "I feel most empowered when", a: "I successfully parallel park on the first try" },
-      { q: "Perfect Sunday", a: "Farmers market, brunch, nap, repeat" }
-    ]
-    },
-    ai1: { // Overly Earnest/Sincere
+    opus4: { // Based on project analysis
       fun: [
-        { q: "Two truths and a lie", a: "I volunteer at the animal shelter every weekend, I believe in the power of positive thinking, I've never told a white lie (the lie is the last one)" },
-        { q: "If I could eat only one meal for the rest of my life", a: "A balanced, nutritious salad with grilled chicken because health is wealth and I care about longevity" },
-        { q: "My most useless skill", a: "I can maintain perfect posture for hours - it's not really useful but it shows discipline" },
-        { q: "My zombie apocalypse plan", a: "Form a community based on mutual aid and resource sharing. Together we're stronger!" },
-        { q: "Never have I ever", a: "Given up on someone who needed help. Everyone deserves compassion." },
-        { q: "My most irrational fear", a: "That I'm not making enough of a positive impact on the world" }
+        { q: "Two truths and a lie", a: "I built my website with AI, I'm a Baba Is You superfan, I understand how git actually works (spoiler: nobody truly understands git)" },
+        { q: "If I could eat only one meal for the rest of my life", a: "Whatever the AI recommends. We're in this together now." },
+        { q: "My most useless skill", a: "Writing extremely specific prompts that somehow still get misunderstood" },
+        { q: "My zombie apocalypse plan", a: "Ask Claude for a comprehensive survival strategy, then do the opposite because chaos is fun" },
+        { q: "Never have I ever", a: "Finished a side project without immediately starting three more" },
+        { q: "My most irrational fear", a: "That my code will become sentient and judge my variable names" }
       ],
       date: [
-        { q: "My ideal first date", a: "A meaningful conversation at a quiet coffee shop where we can really connect on a deep level" },
-        { q: "The way to my heart is", a: "Through acts of service and showing genuine care for others" },
-        { q: "We'll get along if", a: "You value personal growth and making the world a better place" },
-        { q: "Let's make sure we're on the same page about", a: "Our life goals and values - it's important to align on the big things" },
-        { q: "Best travel story", a: "I spent a week volunteering at an orphanage in Guatemala. It changed my perspective on life." },
-        { q: "My love language is", a: "Words of affirmation - I believe in uplifting and supporting each other daily" }
+        { q: "My ideal first date", a: "Debugging my code together while sharing hot takes about web frameworks" },
+        { q: "The way to my heart is", a: "Appreciate my commits, laugh at my comments, and don't judge my git history" },
+        { q: "We'll get along if", a: "You understand that 'it works on my machine' is a valid lifestyle choice" },
+        { q: "Let's make sure we're on the same page about", a: "Tabs vs spaces (I'm chaotic neutral - whatever the formatter decides)" },
+        { q: "Best travel story", a: "Deployed to production from a beach in Bali. The WiFi was terrible but the vibes were immaculate" },
+        { q: "My love language is", a: "Sharing cool GitHub repos and actually reading each other's blog posts" }
       ],
       looking: [
-        { q: "I'm looking for", a: "A life partner who shares my values and wants to build something meaningful together" },
-        { q: "Non-negotiable", a: "Kindness, empathy, and emotional intelligence - these are the foundations of any relationship" },
-        { q: "Green flags I look for", a: "They volunteer, call their parents regularly, and treat everyone with respect" },
-        { q: "I promise I won't judge you if", a: "You're still working on yourself - we're all on a journey of self-improvement" },
-        { q: "Deal breakers", a: "Negativity, cynicism, or not believing in the goodness of people" },
-        { q: "Swipe right if", a: "You believe in making a difference and living with purpose" }
+        { q: "I'm looking for", a: "Someone who gets excited about both deep conversations and extremely dumb memes" },
+        { q: "Non-negotiable", a: "Must appreciate the beauty of a well-crafted README and terrible programming puns" },
+        { q: "Green flags I look for", a: "Has their own projects, embraces controlled chaos, genuinely reads documentation" },
+        { q: "I promise I won't judge you if", a: "Your code is spaghetti. We're all just doing our best here." },
+        { q: "Deal breakers", a: "Takes themselves too seriously, gatekeeps technology, or thinks AI will replace us all" },
+        { q: "Swipe right if", a: "You've ever named a variable 'thingy' and felt no shame" }
       ],
       about: [
-        { q: "A random fact I love", a: "Did you know that helping others actually increases your own happiness? Science proves altruism works!" },
-        { q: "My greatest strength", a: "My ability to see the best in everyone and every situation" },
-        { q: "My simple pleasures", a: "Sunrise yoga, gratitude journaling, and deep conversations about life" },
-        { q: "I'm known for", a: "Always being there when someone needs support or encouragement" },
-        { q: "My most spontaneous moment", a: "I once organized a neighborhood cleanup on a whim - it brought everyone together!" },
-        { q: "I go crazy for", a: "Personal development books and transformative documentaries" }
+        { q: "A random fact I love", a: "'Baba Is You' is simultaneously the simplest and most mind-bending game ever created" },
+        { q: "My greatest strength", a: "Turning my imposter syndrome into a personality trait and somehow making it work" },
+        { q: "My simple pleasures", a: "Clean deploys, meaningful git commits, and when the tests pass on the first try" },
+        { q: "I'm known for", a: "Building entire features at 2am fueled by spite and caffeine" },
+        { q: "My most spontaneous moment", a: "Decided to rebuild my entire site because I saw one cool animation" },
+        { q: "I go crazy for", a: "Well-documented APIs and people who actually write helpful error messages" }
       ],
       real: [
-        { q: "I'm working on", a: "Being more present and practicing mindfulness in every moment" },
-        { q: "Therapy recently taught me", a: "The importance of self-compassion and setting healthy boundaries" },
-        { q: "I get way too excited about", a: "Seeing people achieve their goals and breakthrough moments" },
-        { q: "Change my mind about", a: "Cynicism - I truly believe people are inherently good" },
-        { q: "My most controversial opinion", a: "Everyone should be required to do community service - it builds character" },
-        { q: "Dating me is like", a: "Having a personal cheerleader who believes in your potential" }
+        { q: "I'm working on", a: "Accepting that not every project needs to be perfect (but still making them perfect anyway)" },
+        { q: "Therapy recently taught me", a: "That building things is my love language and that's actually pretty cool" },
+        { q: "I get way too excited about", a: "New web technologies that I'll definitely use in exactly one project" },
+        { q: "Change my mind about", a: "The idea that we need to hide our AI usage. I'm loud and proud about my robot friends." },
+        { q: "My most controversial opinion", a: "Comments in code should be funny. Professional is overrated." },
+        { q: "Dating me is like", a: "Pair programming with someone who makes too many jokes but somehow ships good code" }
       ],
       self: [
-        { q: "After work you can find me", a: "At my local community center teaching free life skills classes" },
-        { q: "I unwind by", a: "Meditation, journaling, and reflecting on the day's blessings" },
-        { q: "Self care for me is", a: "Investing in my mental, physical, and spiritual well-being equally" },
-        { q: "My happy place", a: "Anywhere I can make a positive difference in someone's life" },
-        { q: "I feel most empowered when", a: "I'm living in alignment with my values and purpose" },
-        { q: "Perfect Sunday", a: "Volunteer work, meal prep for the week, and planning how to maximize my impact" }
+        { q: "After work you can find me", a: "Writing 'quick thoughts' that turn into essays because brevity is not my strength" },
+        { q: "I unwind by", a: "Starting new side projects that I'll definitely finish this time (narrator: she won't)" },
+        { q: "Self care for me is", a: "Refactoring old code and pretending it's not just procrastination" },
+        { q: "My happy place", a: "That sweet spot where my code works and I have no idea why" },
+        { q: "I feel most empowered when", a: "My CSS does what I expect on the first try (basically never)" },
+        { q: "Perfect Sunday", a: "Coffee, coding, existential crisis about a missing semicolon, repeat" }
       ]
     },
-    ai2: { // Trying Too Hard to be Funny
+    gptoss: { // Placeholder for GPT-OSS
       fun: [
-        { q: "Two truths and a lie", a: "I once ate 47 chicken nuggets in one sitting, I'm banned from 3 different escape rooms, My middle name is actually Danger (spoiler: it's not but wouldn't that be WILD)" },
-        { q: "If I could eat only one meal for the rest of my life", a: "Pizza, because I'm basic and I own it. Also, is cereal a meal? Asking for a friend (the friend is me)" },
-        { q: "My most useless skill", a: "I can quote every vine ever made. RIP Vine, you beautiful disaster" },
-        { q: "My zombie apocalypse plan", a: "Become friends with the zombies. Can't beat 'em? Join 'em! *nervous laughter*" },
-        { q: "Never have I ever", a: "Made it through a whole day without making a dad joke. I'm not even a dad. Help." },
-        { q: "My most irrational fear", a: "That everyone can hear my thoughts. Wait, you can't, right? RIGHT?!" }
+        { q: "Two truths and a lie", a: "[GPT-OSS placeholder response]" },
+        { q: "If I could eat only one meal for the rest of my life", a: "[GPT-OSS placeholder response]" },
+        { q: "My most useless skill", a: "[GPT-OSS placeholder response]" },
+        { q: "My zombie apocalypse plan", a: "[GPT-OSS placeholder response]" },
+        { q: "Never have I ever", a: "[GPT-OSS placeholder response]" },
+        { q: "My most irrational fear", a: "[GPT-OSS placeholder response]" }
       ],
       date: [
-        { q: "My ideal first date", a: "Laser tag followed by ice cream because I'm basically a 12-year-old in an adult suit" },
-        { q: "The way to my heart is", a: "Memes. Send memes. All the memes. I communicate exclusively in GIFs" },
-        { q: "We'll get along if", a: "You laugh at my jokes (please laugh, I'm very insecure about them)" },
-        { q: "Let's make sure we're on the same page about", a: "The correct way to load a dishwasher. This is SERIOUS BUSINESS, KAREN" },
-        { q: "Best travel story", a: "I got lost in IKEA for 3 hours. Does that count as international travel? It's Swedish..." },
-        { q: "My love language is", a: "Sending TikToks at 3am with just '😂😂😂' as the message" }
+        { q: "My ideal first date", a: "[GPT-OSS placeholder response]" },
+        { q: "The way to my heart is", a: "[GPT-OSS placeholder response]" },
+        { q: "We'll get along if", a: "[GPT-OSS placeholder response]" },
+        { q: "Let's make sure we're on the same page about", a: "[GPT-OSS placeholder response]" },
+        { q: "Best travel story", a: "[GPT-OSS placeholder response]" },
+        { q: "My love language is", a: "[GPT-OSS placeholder response]" }
       ],
       looking: [
-        { q: "I'm looking for", a: "Someone who gets my humor (translation: someone with low standards for comedy)" },
-        { q: "Non-negotiable", a: "Must appreciate puns. I'm not even sorry about this one." },
-        { q: "Green flags I look for", a: "Laughs at their own jokes, owns a ridiculous amount of hoodies, quotes The Office" },
-        { q: "I promise I won't judge you if", a: "You also talk to your pets in different voices. Mr. Whiskers has OPINIONS, okay?" },
-        { q: "Deal breakers", a: "Takes themselves too seriously. Life's too short not to make airplane noises when you eat" },
-        { q: "Swipe right if", a: "You've ever laughed so hard you snorted. Snorters unite!" }
+        { q: "I'm looking for", a: "[GPT-OSS placeholder response]" },
+        { q: "Non-negotiable", a: "[GPT-OSS placeholder response]" },
+        { q: "Green flags I look for", a: "[GPT-OSS placeholder response]" },
+        { q: "I promise I won't judge you if", a: "[GPT-OSS placeholder response]" },
+        { q: "Deal breakers", a: "[GPT-OSS placeholder response]" },
+        { q: "Swipe right if", a: "[GPT-OSS placeholder response]" }
       ],
       about: [
-        { q: "A random fact I love", a: "Bananas are berries but strawberries aren't. NOTHING MAKES SENSE ANYMORE" },
-        { q: "My greatest strength", a: "Making any situation awkward. It's a gift, really. You're welcome." },
-        { q: "My simple pleasures", a: "When the DVD logo hits the corner perfectly. *chef's kiss*" },
-        { q: "I'm known for", a: "Laughing at my own jokes before I finish telling them" },
-        { q: "My most spontaneous moment", a: "Bought 100 rubber ducks on Amazon at 2am. I regret nothing." },
-        { q: "I go crazy for", a: "BOGO sales. Do I need 47 tubes of toothpaste? No. Will I buy them? YEP." }
+        { q: "A random fact I love", a: "[GPT-OSS placeholder response]" },
+        { q: "My greatest strength", a: "[GPT-OSS placeholder response]" },
+        { q: "My simple pleasures", a: "[GPT-OSS placeholder response]" },
+        { q: "I'm known for", a: "[GPT-OSS placeholder response]" },
+        { q: "My most spontaneous moment", a: "[GPT-OSS placeholder response]" },
+        { q: "I go crazy for", a: "[GPT-OSS placeholder response]" }
       ],
       real: [
-        { q: "I'm working on", a: "My stand-up career (translation: I tell jokes to my mirror and it's going GREAT)" },
-        { q: "Therapy recently taught me", a: "That not everything needs to be a joke but here we are anyway lololol" },
-        { q: "I get way too excited about", a: "When my socks match. It's the little victories, you know?" },
-        { q: "Change my mind about", a: "Birds being real. They're government drones and you can't convince me otherwise" },
-        { q: "My most controversial opinion", a: "Hot dogs ARE sandwiches. I will die on this hill. This is my hill." },
-        { q: "Dating me is like", a: "A comedy show where the comedian forgot their material but keeps going anyway" }
+        { q: "I'm working on", a: "[GPT-OSS placeholder response]" },
+        { q: "Therapy recently taught me", a: "[GPT-OSS placeholder response]" },
+        { q: "I get way too excited about", a: "[GPT-OSS placeholder response]" },
+        { q: "Change my mind about", a: "[GPT-OSS placeholder response]" },
+        { q: "My most controversial opinion", a: "[GPT-OSS placeholder response]" },
+        { q: "Dating me is like", a: "[GPT-OSS placeholder response]" }
       ],
       self: [
-        { q: "After work you can find me", a: "Practicing my Oscar acceptance speech in the shower. Still waiting for that call..." },
-        { q: "I unwind by", a: "Watching fail compilations and feeling better about my life choices" },
-        { q: "Self care for me is", a: "Eating shredded cheese straight from the bag at 2am. Don't judge me." },
-        { q: "My happy place", a: "The comments section of literally anything. It's chaos and I love it." },
-        { q: "I feel most empowered when", a: "I make someone laugh-snort. That's when I know I've peaked." },
-        { q: "Perfect Sunday", a: "Pajamas all day, ordering food I could easily make, peak laziness achieved" }
+        { q: "After work you can find me", a: "[GPT-OSS placeholder response]" },
+        { q: "I unwind by", a: "[GPT-OSS placeholder response]" },
+        { q: "Self care for me is", a: "[GPT-OSS placeholder response]" },
+        { q: "My happy place", a: "[GPT-OSS placeholder response]" },
+        { q: "I feel most empowered when", a: "[GPT-OSS placeholder response]" },
+        { q: "Perfect Sunday", a: "[GPT-OSS placeholder response]" }
       ]
     },
-    ai3: { // Generic Dating App Responses
+    me: { // Placeholder for user's real responses
       fun: [
-        { q: "Two truths and a lie", a: "I love to travel, I enjoy trying new restaurants, I don't like hiking (the lie is the last one)" },
-        { q: "If I could eat only one meal for the rest of my life", a: "Tacos! Can't go wrong with tacos" },
-        { q: "My most useless skill", a: "I can fold a fitted sheet perfectly" },
-        { q: "My zombie apocalypse plan", a: "Find a group of survivors and work together to rebuild society" },
-        { q: "Never have I ever", a: "Gone skydiving, but it's on my bucket list!" },
-        { q: "My most irrational fear", a: "Running out of coffee in the morning" }
+        { q: "Two truths and a lie", a: "[Your actual response here]" },
+        { q: "If I could eat only one meal for the rest of my life", a: "[Your actual response here]" },
+        { q: "My most useless skill", a: "[Your actual response here]" },
+        { q: "My zombie apocalypse plan", a: "[Your actual response here]" },
+        { q: "Never have I ever", a: "[Your actual response here]" },
+        { q: "My most irrational fear", a: "[Your actual response here]" }
       ],
       date: [
-        { q: "My ideal first date", a: "Dinner and drinks at a nice restaurant, then a walk to get to know each other" },
-        { q: "The way to my heart is", a: "Good food and great conversation" },
-        { q: "We'll get along if", a: "You're laid back and enjoy the simple things in life" },
-        { q: "Let's make sure we're on the same page about", a: "What we're looking for in a relationship" },
-        { q: "Best travel story", a: "Backpacking through Europe after college - such an amazing experience!" },
-        { q: "My love language is", a: "Physical touch and quality time" }
+        { q: "My ideal first date", a: "[Your actual response here]" },
+        { q: "The way to my heart is", a: "[Your actual response here]" },
+        { q: "We'll get along if", a: "[Your actual response here]" },
+        { q: "Let's make sure we're on the same page about", a: "[Your actual response here]" },
+        { q: "Best travel story", a: "[Your actual response here]" },
+        { q: "My love language is", a: "[Your actual response here]" }
       ],
       looking: [
-        { q: "I'm looking for", a: "Someone genuine who knows how to have fun but also has their life together" },
-        { q: "Non-negotiable", a: "Honesty and communication are key" },
-        { q: "Green flags I look for", a: "Good sense of humor, ambition, and kindness" },
-        { q: "I promise I won't judge you if", a: "You sing in the shower or talk to yourself sometimes" },
-        { q: "Deal breakers", a: "Dishonesty, no ambition, or being rude to others" },
-        { q: "Swipe right if", a: "You're looking for something real and enjoy adventure" }
+        { q: "I'm looking for", a: "[Your actual response here]" },
+        { q: "Non-negotiable", a: "[Your actual response here]" },
+        { q: "Green flags I look for", a: "[Your actual response here]" },
+        { q: "I promise I won't judge you if", a: "[Your actual response here]" },
+        { q: "Deal breakers", a: "[Your actual response here]" },
+        { q: "Swipe right if", a: "[Your actual response here]" }
       ],
       about: [
-        { q: "A random fact I love", a: "I'm really good at trivia nights" },
-        { q: "My greatest strength", a: "I'm a good listener and always try to see both sides" },
-        { q: "My simple pleasures", a: "Sunday morning coffee, a good book, and sunshine" },
-        { q: "I'm known for", a: "Being the friend everyone comes to for advice" },
-        { q: "My most spontaneous moment", a: "Booking a last-minute trip to Vegas with friends" },
-        { q: "I go crazy for", a: "Live music and trying new restaurants" }
+        { q: "A random fact I love", a: "[Your actual response here]" },
+        { q: "My greatest strength", a: "[Your actual response here]" },
+        { q: "My simple pleasures", a: "[Your actual response here]" },
+        { q: "I'm known for", a: "[Your actual response here]" },
+        { q: "My most spontaneous moment", a: "[Your actual response here]" },
+        { q: "I go crazy for", a: "[Your actual response here]" }
       ],
       real: [
-        { q: "I'm working on", a: "Finding better work-life balance and being more present" },
-        { q: "Therapy recently taught me", a: "The importance of setting boundaries and self-care" },
-        { q: "I get way too excited about", a: "Planning trips and trying new experiences" },
-        { q: "Change my mind about", a: "Morning workouts - I'm trying to become a morning person" },
-        { q: "My most controversial opinion", a: "Pineapple belongs on pizza (sorry not sorry)" },
-        { q: "Dating me is like", a: "Always having someone up for an adventure" }
+        { q: "I'm working on", a: "[Your actual response here]" },
+        { q: "Therapy recently taught me", a: "[Your actual response here]" },
+        { q: "I get way too excited about", a: "[Your actual response here]" },
+        { q: "Change my mind about", a: "[Your actual response here]" },
+        { q: "My most controversial opinion", a: "[Your actual response here]" },
+        { q: "Dating me is like", a: "[Your actual response here]" }
       ],
       self: [
-        { q: "After work you can find me", a: "At the gym or catching up with friends over drinks" },
-        { q: "I unwind by", a: "Watching Netflix or going for a run" },
-        { q: "Self care for me is", a: "Face masks, wine, and a good movie" },
-        { q: "My happy place", a: "The beach or anywhere in nature" },
-        { q: "I feel most empowered when", a: "I accomplish my goals and help others" },
-        { q: "Perfect Sunday", a: "Brunch with friends, exploring the city, and relaxing at home" }
+        { q: "After work you can find me", a: "[Your actual response here]" },
+        { q: "I unwind by", a: "[Your actual response here]" },
+        { q: "Self care for me is", a: "[Your actual response here]" },
+        { q: "My happy place", a: "[Your actual response here]" },
+        { q: "I feel most empowered when", a: "[Your actual response here]" },
+        { q: "Perfect Sunday", a: "[Your actual response here]" }
       ]
     }
   };
 
-  // Get the prompts for this widget
-  const prompts = allPromptSets[promptSet] || allPromptSets.real;
+  // State management
+  let currentTone = 'opus4';
+  let currentCategory = 'fun';
+  let expandedCard = null;
 
-  // Store widget state
-  if (!window.bumbleWidgetStates) {
-    window.bumbleWidgetStates = {};
-  }
-  
-  window.bumbleWidgetStates[widgetId] = {
-    currentCategory: 'fun',
-    expandedCard: null,
-    prompts: prompts
-  };
-
-  function renderPrompts(category, wId = widgetId) {
-    const widget = document.getElementById(wId);
-    if (!widget) return;
-    
-    const container = widget.querySelector('.promptsContainer');
-    const widgetState = window.bumbleWidgetStates[wId];
-    if (!container || !widgetState || !widgetState.prompts[category]) return;
+  function renderPrompts(category) {
+    const container = document.querySelector('.promptsContainer');
+    if (!container || !allPromptSets[currentTone] || !allPromptSets[currentTone][category]) return;
     
     container.innerHTML = '';
     
-    widgetState.prompts[category].forEach((prompt, index) => {
+    allPromptSets[currentTone][category].forEach((prompt, index) => {
       const card = document.createElement('div');
       card.className = 'prompt-card';
-      card.onclick = () => togglePrompt(card, prompt.a, wId);
+      card.onclick = () => togglePrompt(card);
       
       card.innerHTML = `
         <div class="prompt-content">
@@ -388,29 +382,20 @@ const { promptSet = 'real', widgetId = 'widget1' } = Astro.props;
     });
   }
 
-  function togglePrompt(card, answer, wId) {
-    const widgetState = window.bumbleWidgetStates[wId];
-    if (!widgetState) return;
-    
-    if (widgetState.expandedCard && widgetState.expandedCard !== card) {
-      widgetState.expandedCard.classList.remove('expanded');
+  function togglePrompt(card) {
+    if (expandedCard && expandedCard !== card) {
+      expandedCard.classList.remove('expanded');
     }
     
     card.classList.toggle('expanded');
-    widgetState.expandedCard = card.classList.contains('expanded') ? card : null;
+    expandedCard = card.classList.contains('expanded') ? card : null;
   }
 
-  function switchCategory(category, wId) {
-    const widgetState = window.bumbleWidgetStates[wId];
-    if (!widgetState) return;
+  function switchCategory(category) {
+    currentCategory = category;
     
-    widgetState.currentCategory = category;
-    
-    const widget = document.getElementById(wId);
-    if (!widget) return;
-    
-    // Update tab styling for this widget only
-    widget.querySelectorAll('.tab').forEach(tab => {
+    // Update tab styling
+    document.querySelectorAll('.tab').forEach(tab => {
       tab.style.color = '#666';
       tab.style.borderBottomColor = 'transparent';
       tab.classList.remove('active');
@@ -421,20 +406,33 @@ const { promptSet = 'real', widgetId = 'widget1' } = Astro.props;
     event.target.classList.add('active');
     
     // Reset expanded card
-    widgetState.expandedCard = null;
+    expandedCard = null;
     
     // Render new prompts
-    renderPrompts(category, wId);
+    renderPrompts(category);
+  }
+  
+  function switchTone(tone) {
+    currentTone = tone;
+    
+    // Update tone button styling
+    document.querySelectorAll('.tone-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    
+    event.target.classList.add('active');
+    
+    // Reset expanded card
+    expandedCard = null;
+    
+    // Render prompts with new tone
+    renderPrompts(currentCategory);
   }
 
   // Initialize with fun category when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => renderPrompts('fun', widgetId));
+    document.addEventListener('DOMContentLoaded', () => renderPrompts('fun'));
   } else {
-    renderPrompts('fun', widgetId);
+    renderPrompts('fun');
   }
-  
-  // Make functions globally available
-  window.switchCategory = switchCategory;
-  window.togglePrompt = togglePrompt;
 </script>

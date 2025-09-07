@@ -7,7 +7,7 @@ import getPostData from '../../utils/getPostData';
 const { slug } = Astro.params;
 
 // Load all posts and find the matching one
-const postModules = import.meta.glob('../../data/blog-posts/published/*.md', { eager: true });
+const postModules = import.meta.glob('../../data/blog-posts/published/*.{md,mdx}', { eager: true });
 const posts = Object.entries(postModules).map(([path, module]) => ({
   ...module,
   file: path
