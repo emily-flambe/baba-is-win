@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-const allPosts = Object.values(import.meta.glob('../../data/blog-posts/published/*.md', { eager: true }));
+const allPosts = Object.values(import.meta.glob('../../data/blog-posts/published/*.{md,mdx}', { eager: true }));
 const tags = [...new Set(allPosts.map((post: any) => post.frontmatter.tags).flat())].filter(tag => tag);
 const pageTitle = "Tag Index";
 ---

@@ -1,0 +1,449 @@
+---
+// This component displays a Bumble-style prompt interface with tone selector
+---
+
+<div class="bumble-widget-wrapper">
+  <!-- Tone Selector -->
+  <div class="tone-selector">
+    <span class="tone-label">Pick a vibe:</span>
+    <div class="tone-buttons">
+      <button class="tone-btn active" data-tone="opus4" onclick="switchTone('opus4')">opus 4</button>
+      <button class="tone-btn" data-tone="gptoss" onclick="switchTone('gptoss')">gpt-oss</button>
+      <button class="tone-btn" data-tone="me" onclick="switchTone('me')">me lmao</button>
+    </div>
+  </div>
+  
+  <!-- Bumble Widget -->
+  <div id="bumble-widget" class="bumble-widget" style="max-width: 375px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow: hidden;">
+    <div style="background: white; color: #1e1e1e;">
+      
+      <!-- Phone Status Bar -->
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px 8px; font-size: 14px; font-weight: 600;">
+        <span>3:30</span>
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <span style="font-size: 16px;">5G</span>
+          <svg width="17" height="12" viewBox="0 0 17 12" fill="none" style="margin-left: 4px;">
+            <rect x="1" y="4" width="11" height="7" stroke="black" stroke-width="1.2"/>
+            <rect x="13" y="6.5" width="3" height="2" fill="black"/>
+            <rect x="2.5" y="5.5" width="8" height="4" fill="black"/>
+          </svg>
+          <svg width="24" height="18" viewBox="0 0 24 18" fill="none" style="margin-right: -4px;">
+            <rect x="1" y="7" width="23" height="11" rx="2.5" stroke="black" stroke-width="1.5"/>
+            <rect x="2.5" y="9" width="19.5" height="7.5" fill="black"/>
+          </svg>
+        </div>
+      </div>
+      
+      <!-- Header -->
+      <div style="padding: 20px 20px 16px; display: flex; justify-content: center; align-items: center; position: relative; border-bottom: 1px solid #f0f0f0;">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 600; color: #1e1e1e;">Pick a prompt</h2>
+        <button onclick="alert('Thanks for checking out my prompts!')" style="background: none; border: none; color: #1e1e1e; font-size: 28px; cursor: pointer; position: absolute; right: 20px; top: 18px; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">×</button>
+      </div>
+      
+      <!-- Tab Navigation -->
+      <div class="tabs" style="display: flex; overflow-x: auto; padding: 12px 0 0; gap: 0; scrollbar-width: none; -webkit-overflow-scrolling: touch; background: white;">
+        <button class="tab active" onclick="switchCategory('fun')" style="padding: 12px 20px 16px; background: none; border: none; color: #1e1e1e; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid #1e1e1e; flex-shrink: 0;">Bit of fun</button>
+        <button class="tab" onclick="switchCategory('date')" style="padding: 12px 20px 16px; background: none; border: none; color: #666; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid transparent; flex-shrink: 0;">Date night</button>
+        <button class="tab" onclick="switchCategory('looking')" style="padding: 12px 20px 16px; background: none; border: none; color: #666; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid transparent; flex-shrink: 0;">Looking for</button>
+        <button class="tab" onclick="switchCategory('about')" style="padding: 12px 20px 16px; background: none; border: none; color: #666; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid transparent; flex-shrink: 0;">About me</button>
+        <button class="tab" onclick="switchCategory('real')" style="padding: 12px 20px 16px; background: none; border: none; color: #666; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid transparent; flex-shrink: 0;">Real talk</button>
+        <button class="tab" onclick="switchCategory('self')" style="padding: 12px 20px 16px; background: none; border: none; color: #666; font-size: 16px; font-weight: 400; white-space: nowrap; cursor: pointer; border-bottom: 3px solid transparent; flex-shrink: 0;">Self-care</button>
+      </div>
+    </div>
+    
+    <!-- Content Area -->
+    <div class="promptsContainer" style="background: #f7f7f7; padding: 16px 0; min-height: 400px; max-height: 500px; overflow-y: auto;">
+      <!-- Prompts will be inserted here by JavaScript -->
+    </div>
+    
+    <!-- Mobile Home Indicator -->
+    <div style="background: white; padding: 8px 0;">
+      <div class="home-indicator"></div>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  .bumble-widget-wrapper {
+    max-width: 600px;
+    margin: 40px auto;
+  }
+  
+  .tone-selector {
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  
+  .tone-label {
+    display: block;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #1e1e1e;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  .tone-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .tone-btn {
+    padding: 10px 20px;
+    border: 2px solid #e0e0e0;
+    background: white;
+    border-radius: 24px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  .tone-btn:hover {
+    border-color: #ffc629;
+    color: #1e1e1e;
+  }
+  
+  .tone-btn.active {
+    background: #ffc629;
+    border-color: #ffc629;
+    color: #1e1e1e;
+    font-weight: 600;
+  }
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .promptsContainer::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .promptsContainer {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .prompt-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin: 0 16px 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: none;
+  }
+  
+  .prompt-card:active {
+    transform: scale(0.98);
+  }
+  
+  .prompt-question {
+    color: #1e1e1e;
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.4;
+    flex: 1;
+    padding-right: 12px;
+  }
+  
+  .prompt-chevron {
+    color: #999;
+    font-size: 20px;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  
+  .prompt-card.expanded .prompt-chevron {
+    transform: rotate(90deg);
+  }
+  
+  .prompt-answer {
+    color: #666;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    padding: 0 40px 0 0;
+  }
+  
+  .prompt-card.expanded .prompt-answer {
+    max-height: 300px;
+    padding: 12px 40px 0 0;
+  }
+  
+  .prompt-card.expanded {
+    background: white;
+  }
+  
+  .prompt-content {
+    flex: 1;
+  }
+  
+  /* Mobile home indicator */
+  .home-indicator {
+    width: 134px;
+    height: 5px;
+    background: #1e1e1e;
+    border-radius: 100px;
+    margin: 8px auto 8px;
+  }
+</style>
+
+<script is:inline>
+  // Different prompt sets
+  const allPromptSets = {
+    opus4: { // Based on project analysis
+      fun: [
+        { q: "Two truths and a lie", a: "I built my website with AI, I'm a Baba Is You superfan, I understand how git actually works (spoiler: nobody truly understands git)" },
+        { q: "If I could eat only one meal for the rest of my life", a: "Whatever the AI recommends. We're in this together now." },
+        { q: "My most useless skill", a: "Writing extremely specific prompts that somehow still get misunderstood" },
+        { q: "My zombie apocalypse plan", a: "Ask Claude for a comprehensive survival strategy, then do the opposite because chaos is fun" },
+        { q: "Never have I ever", a: "Finished a side project without immediately starting three more" },
+        { q: "My most irrational fear", a: "That my code will become sentient and judge my variable names" }
+      ],
+      date: [
+        { q: "My ideal first date", a: "Debugging my code together while sharing hot takes about web frameworks" },
+        { q: "The way to my heart is", a: "Appreciate my commits, laugh at my comments, and don't judge my git history" },
+        { q: "We'll get along if", a: "You understand that 'it works on my machine' is a valid lifestyle choice" },
+        { q: "Let's make sure we're on the same page about", a: "Tabs vs spaces (I'm chaotic neutral - whatever the formatter decides)" },
+        { q: "Best travel story", a: "Deployed to production from a beach in Bali. The WiFi was terrible but the vibes were immaculate" },
+        { q: "My love language is", a: "Sharing cool GitHub repos and actually reading each other's blog posts" }
+      ],
+      looking: [
+        { q: "I'm looking for", a: "Someone who gets excited about both deep conversations and extremely dumb memes" },
+        { q: "Non-negotiable", a: "Must appreciate the beauty of a well-crafted README and terrible programming puns" },
+        { q: "Green flags I look for", a: "Has their own projects, embraces controlled chaos, genuinely reads documentation" },
+        { q: "I promise I won't judge you if", a: "Your code is spaghetti. We're all just doing our best here." },
+        { q: "Deal breakers", a: "Takes themselves too seriously, gatekeeps technology, or thinks AI will replace us all" },
+        { q: "Swipe right if", a: "You've ever named a variable 'thingy' and felt no shame" }
+      ],
+      about: [
+        { q: "A random fact I love", a: "'Baba Is You' is simultaneously the simplest and most mind-bending game ever created" },
+        { q: "My greatest strength", a: "Turning my imposter syndrome into a personality trait and somehow making it work" },
+        { q: "My simple pleasures", a: "Clean deploys, meaningful git commits, and when the tests pass on the first try" },
+        { q: "I'm known for", a: "Building entire features at 2am fueled by spite and caffeine" },
+        { q: "My most spontaneous moment", a: "Decided to rebuild my entire site because I saw one cool animation" },
+        { q: "I go crazy for", a: "Well-documented APIs and people who actually write helpful error messages" }
+      ],
+      real: [
+        { q: "I'm working on", a: "Accepting that not every project needs to be perfect (but still making them perfect anyway)" },
+        { q: "Therapy recently taught me", a: "That building things is my love language and that's actually pretty cool" },
+        { q: "I get way too excited about", a: "New web technologies that I'll definitely use in exactly one project" },
+        { q: "Change my mind about", a: "The idea that we need to hide our AI usage. I'm loud and proud about my robot friends." },
+        { q: "My most controversial opinion", a: "Comments in code should be funny. Professional is overrated." },
+        { q: "Dating me is like", a: "Pair programming with someone who makes too many jokes but somehow ships good code" }
+      ],
+      self: [
+        { q: "After work you can find me", a: "Writing 'quick thoughts' that turn into essays because brevity is not my strength" },
+        { q: "I unwind by", a: "Starting new side projects that I'll definitely finish this time (narrator: she won't)" },
+        { q: "Self care for me is", a: "Refactoring old code and pretending it's not just procrastination" },
+        { q: "My happy place", a: "That sweet spot where my code works and I have no idea why" },
+        { q: "I feel most empowered when", a: "My CSS does what I expect on the first try (basically never)" },
+        { q: "Perfect Sunday", a: "Coffee, coding, existential crisis about a missing semicolon, repeat" }
+      ]
+    },
+    gptoss: { // Placeholder for GPT-OSS
+      fun: [
+        { q: "Two truths and a lie", a: "[GPT-OSS placeholder response]" },
+        { q: "If I could eat only one meal for the rest of my life", a: "[GPT-OSS placeholder response]" },
+        { q: "My most useless skill", a: "[GPT-OSS placeholder response]" },
+        { q: "My zombie apocalypse plan", a: "[GPT-OSS placeholder response]" },
+        { q: "Never have I ever", a: "[GPT-OSS placeholder response]" },
+        { q: "My most irrational fear", a: "[GPT-OSS placeholder response]" }
+      ],
+      date: [
+        { q: "My ideal first date", a: "[GPT-OSS placeholder response]" },
+        { q: "The way to my heart is", a: "[GPT-OSS placeholder response]" },
+        { q: "We'll get along if", a: "[GPT-OSS placeholder response]" },
+        { q: "Let's make sure we're on the same page about", a: "[GPT-OSS placeholder response]" },
+        { q: "Best travel story", a: "[GPT-OSS placeholder response]" },
+        { q: "My love language is", a: "[GPT-OSS placeholder response]" }
+      ],
+      looking: [
+        { q: "I'm looking for", a: "[GPT-OSS placeholder response]" },
+        { q: "Non-negotiable", a: "[GPT-OSS placeholder response]" },
+        { q: "Green flags I look for", a: "[GPT-OSS placeholder response]" },
+        { q: "I promise I won't judge you if", a: "[GPT-OSS placeholder response]" },
+        { q: "Deal breakers", a: "[GPT-OSS placeholder response]" },
+        { q: "Swipe right if", a: "[GPT-OSS placeholder response]" }
+      ],
+      about: [
+        { q: "A random fact I love", a: "[GPT-OSS placeholder response]" },
+        { q: "My greatest strength", a: "[GPT-OSS placeholder response]" },
+        { q: "My simple pleasures", a: "[GPT-OSS placeholder response]" },
+        { q: "I'm known for", a: "[GPT-OSS placeholder response]" },
+        { q: "My most spontaneous moment", a: "[GPT-OSS placeholder response]" },
+        { q: "I go crazy for", a: "[GPT-OSS placeholder response]" }
+      ],
+      real: [
+        { q: "I'm working on", a: "[GPT-OSS placeholder response]" },
+        { q: "Therapy recently taught me", a: "[GPT-OSS placeholder response]" },
+        { q: "I get way too excited about", a: "[GPT-OSS placeholder response]" },
+        { q: "Change my mind about", a: "[GPT-OSS placeholder response]" },
+        { q: "My most controversial opinion", a: "[GPT-OSS placeholder response]" },
+        { q: "Dating me is like", a: "[GPT-OSS placeholder response]" }
+      ],
+      self: [
+        { q: "After work you can find me", a: "[GPT-OSS placeholder response]" },
+        { q: "I unwind by", a: "[GPT-OSS placeholder response]" },
+        { q: "Self care for me is", a: "[GPT-OSS placeholder response]" },
+        { q: "My happy place", a: "[GPT-OSS placeholder response]" },
+        { q: "I feel most empowered when", a: "[GPT-OSS placeholder response]" },
+        { q: "Perfect Sunday", a: "[GPT-OSS placeholder response]" }
+      ]
+    },
+    me: { // Placeholder for user's real responses
+      fun: [
+        { q: "Two truths and a lie", a: "[Your actual response here]" },
+        { q: "If I could eat only one meal for the rest of my life", a: "[Your actual response here]" },
+        { q: "My most useless skill", a: "[Your actual response here]" },
+        { q: "My zombie apocalypse plan", a: "[Your actual response here]" },
+        { q: "Never have I ever", a: "[Your actual response here]" },
+        { q: "My most irrational fear", a: "[Your actual response here]" }
+      ],
+      date: [
+        { q: "My ideal first date", a: "[Your actual response here]" },
+        { q: "The way to my heart is", a: "[Your actual response here]" },
+        { q: "We'll get along if", a: "[Your actual response here]" },
+        { q: "Let's make sure we're on the same page about", a: "[Your actual response here]" },
+        { q: "Best travel story", a: "[Your actual response here]" },
+        { q: "My love language is", a: "[Your actual response here]" }
+      ],
+      looking: [
+        { q: "I'm looking for", a: "[Your actual response here]" },
+        { q: "Non-negotiable", a: "[Your actual response here]" },
+        { q: "Green flags I look for", a: "[Your actual response here]" },
+        { q: "I promise I won't judge you if", a: "[Your actual response here]" },
+        { q: "Deal breakers", a: "[Your actual response here]" },
+        { q: "Swipe right if", a: "[Your actual response here]" }
+      ],
+      about: [
+        { q: "A random fact I love", a: "[Your actual response here]" },
+        { q: "My greatest strength", a: "[Your actual response here]" },
+        { q: "My simple pleasures", a: "[Your actual response here]" },
+        { q: "I'm known for", a: "[Your actual response here]" },
+        { q: "My most spontaneous moment", a: "[Your actual response here]" },
+        { q: "I go crazy for", a: "[Your actual response here]" }
+      ],
+      real: [
+        { q: "I'm working on", a: "[Your actual response here]" },
+        { q: "Therapy recently taught me", a: "[Your actual response here]" },
+        { q: "I get way too excited about", a: "[Your actual response here]" },
+        { q: "Change my mind about", a: "[Your actual response here]" },
+        { q: "My most controversial opinion", a: "[Your actual response here]" },
+        { q: "Dating me is like", a: "[Your actual response here]" }
+      ],
+      self: [
+        { q: "After work you can find me", a: "[Your actual response here]" },
+        { q: "I unwind by", a: "[Your actual response here]" },
+        { q: "Self care for me is", a: "[Your actual response here]" },
+        { q: "My happy place", a: "[Your actual response here]" },
+        { q: "I feel most empowered when", a: "[Your actual response here]" },
+        { q: "Perfect Sunday", a: "[Your actual response here]" }
+      ]
+    }
+  };
+
+  // State management
+  let currentTone = 'opus4';
+  let currentCategory = 'fun';
+  let expandedIndices = new Set(); // Track multiple expanded prompts by index
+
+  function renderPrompts(category) {
+    const container = document.querySelector('.promptsContainer');
+    if (!container || !allPromptSets[currentTone] || !allPromptSets[currentTone][category]) return;
+    
+    container.innerHTML = '';
+    
+    allPromptSets[currentTone][category].forEach((prompt, index) => {
+      const card = document.createElement('div');
+      card.className = 'prompt-card';
+      if (expandedIndices.has(index)) {
+        card.classList.add('expanded');
+      }
+      card.onclick = () => togglePrompt(index);
+      
+      card.innerHTML = `
+        <div class="prompt-content">
+          <div class="prompt-question">${prompt.q}</div>
+          <div class="prompt-answer">${prompt.a}</div>
+        </div>
+        <span class="prompt-chevron">›</span>
+      `;
+      
+      container.appendChild(card);
+    });
+  }
+
+  function togglePrompt(index) {
+    const cards = document.querySelectorAll('.prompt-card');
+    const card = cards[index];
+    
+    if (!card) return;
+    
+    if (expandedIndices.has(index)) {
+      // Collapse this card
+      card.classList.remove('expanded');
+      expandedIndices.delete(index);
+    } else {
+      // Expand this card
+      card.classList.add('expanded');
+      expandedIndices.add(index);
+    }
+  }
+
+  function switchCategory(category) {
+    currentCategory = category;
+    
+    // Update tab styling
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.style.color = '#666';
+      tab.style.borderBottomColor = 'transparent';
+      tab.classList.remove('active');
+    });
+    
+    event.target.style.color = '#1e1e1e';
+    event.target.style.borderBottomColor = '#1e1e1e';
+    event.target.classList.add('active');
+    
+    // Clear expanded indices when switching categories
+    expandedIndices.clear();
+    
+    // Render new prompts
+    renderPrompts(category);
+  }
+  
+  function switchTone(tone) {
+    currentTone = tone;
+    
+    // Update tone button styling
+    document.querySelectorAll('.tone-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    
+    event.target.classList.add('active');
+    
+    // Don't clear expanded indices when switching tones
+    // This keeps the same prompts expanded across different tones
+    
+    // Render prompts with new tone
+    renderPrompts(currentCategory);
+  }
+
+  // Initialize with fun category when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => renderPrompts('fun'));
+  } else {
+    renderPrompts('fun');
+  }
+</script>

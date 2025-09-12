@@ -5,7 +5,7 @@ import BlogPost from '../../components/BlogPost.astro';
 const { tag } = Astro.params;
 
 // Load all posts
-const postModules = import.meta.glob('../../data/blog-posts/published/*.md', { eager: true });
+const postModules = import.meta.glob('../../data/blog-posts/published/*.{md,mdx}', { eager: true });
 const allPosts = Object.entries(postModules).map(([path, module]) => ({
   ...module,
   file: path
