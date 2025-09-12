@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://baba-is.win/sitemap.xml
