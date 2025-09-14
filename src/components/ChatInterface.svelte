@@ -88,36 +88,9 @@
   };
 
   const renderMarkdown = (text) => {
-    // Basic markdown renderer with regex
-    let html = text;
-
-    // Escape HTML first
-    html = html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-    // Hyperlinks [text](url) - process before other markdown
-    html = html.replace(/\[([^\]]+?)\]\(([^\)]+?)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:#66a3b3;text-decoration:underline">$1</a>');
-
-    // Bold **text**
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-    // Bullet lists (process before italics to avoid conflicts)
-    html = html.replace(/^\* (.+)$/gm, '• $1');
-
-    // Italic *text* (but not at start of line which could be a bullet)
-    html = html.replace(/(?<!^)\*([^*\n]+?)\*/g, '<em>$1</em>');
-
-    // Code with backticks
-    html = html.replace(/`([^`]+?)`/g, '<code style="background:rgba(200,200,200,0.15);padding:2px 4px;font-family:\'SF Mono\',monospace;color:#00d030">$1</code>');
-
-    // Headers - using gim flags like cool-scripts
-    html = html.replace(/^### (.*$)/gim, '<h3 style="font-size:1.1em;margin-top:0.5em;color:#ffb366">$1</h3>');
-    html = html.replace(/^## (.*$)/gim, '<h2 style="font-size:1.2em;margin-top:0.5em;color:#ff9933">$1</h2>');
-    html = html.replace(/^# (.*$)/gim, '<h1 style="font-size:1.3em;margin-top:0.5em;color:#e68000">$1</h1>');
-
-    // Line breaks
-    html = html.replace(/\n/g, '<br>');
-
-    return html;
+    // The API already sends processed HTML with markdown converted
+    // Just pass it through directly without escaping
+    return text;
   };
 
   onMount(() => {
@@ -127,9 +100,10 @@
       type: 'assistant',
       text: "Hi! Would you like to ask a question? No? Well too bad",
       suggestions: [
-        "What is this site about?",
-        "Tell me about Emily - who is she???",
-        "What are the latest blog posts?",
+        "What's all this about?",
+        "Who is she???",
+        "What has Emily blogged recently?",
+        "What thoughts are in her brain?",
         "How do I get Emily to date me?"
       ],
       timestamp: new Date()
@@ -213,6 +187,26 @@
     margin: 0;
     line-height: 1.5;
     font-family: Merriweather, serif;
+  }
+
+  /* Style markdown elements to prevent orange color */
+  .message-text :global(strong) {
+    font-weight: 600;
+    color: inherit;
+  }
+
+  .message-text :global(em) {
+    font-style: italic;
+    color: inherit;
+  }
+
+  .message-text :global(code) {
+    background-color: rgba(200, 200, 200, 0.15);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-family: 'SF Mono', monospace;
+    color: #00d030;
   }
 
   .message-meta {

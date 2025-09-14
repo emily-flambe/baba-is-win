@@ -197,6 +197,29 @@
     margin: 0;
   }
 
+  /* Style markdown elements within messages */
+  .message-text :global(strong) {
+    font-weight: 600;
+    color: inherit;
+  }
+
+  .message-text :global(em) {
+    font-style: italic;
+    color: inherit;
+  }
+
+  .message-text :global(code) {
+    background-color: #f3f4f6;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-family: monospace;
+  }
+
+  .message.assistant .message-text :global(code) {
+    background-color: rgba(99, 102, 241, 0.1);
+  }
+
   .sources {
     margin-top: 8px;
     padding-top: 8px;
@@ -307,7 +330,7 @@
       <div class="messages-container">
         {#each messages as message}
           <div class="message {message.type}">
-            <p class="message-text">{message.text}</p>
+            <p class="message-text">{@html message.text}</p>
 
             {#if message.sources && message.sources.length > 0}
               <div class="sources">

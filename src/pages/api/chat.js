@@ -3,6 +3,8 @@
  * Using Astro API route pattern
  */
 
+import { processSimpleMarkdown } from '../../utils/simpleMarkdown.js';
+
 export const prerender = false;
 
 export const POST = async ({ request, locals }) => {
@@ -129,9 +131,17 @@ export const POST = async ({ request, locals }) => {
       // Extract the actual result
       const result = autoragResponse.result || {};
 
-      // Process the response
-      const answer = cleanResponse(result.response ||
+      // Process the response - clean first, then apply markdown
+      let cleanedResponse = cleanResponse(result.response ||
                                   "I couldn't find specific information about that. Could you rephrase your question?");
+
+      // Replace [LINEBREAK] markers with paragraph breaks
+      cleanedResponse = cleanedResponse.replace(/\[LINEBREAK\]/g, '\n\n');
+
+      // Normalize existing line breaks - convert multiple newlines to just 2
+      cleanedResponse = cleanedResponse.replace(/\n{3,}/g, '\n\n');
+
+      const answer = processSimpleMarkdown(cleanedResponse);
 
       // Extract and format sources
       const sources = processSources(result.data || []);
@@ -210,18 +220,33 @@ function cleanResponse(text) {
     .replace(/from (?:the )?(?:documentation|docs|file)[^,.]*[,.]?/gi, '')
     // Remove "in the X file/document"
     .replace(/in the [\w\s\-]+ (?:file|document|page)[^,.]*[,.]?/gi, '')
-    // Clean up extra spaces
-    .replace(/\s+/g, ' ')
+    // Clean up extra spaces while preserving newlines
+    .replace(/[^\S\n]+/g, ' ')  // Replace multiple spaces/tabs (but not newlines) with single space
+    .replace(/\n{3,}/g, '\n\n')  // Replace 3+ newlines with just 2
     .trim();
   
-  // Ensure reasonable length
+  // Ensure reasonable length while preserving sentence endings
   if (cleaned.length > 500) {
-    const lastSentence = cleaned.substring(0, 500).lastIndexOf('.');
+    // Find the last complete sentence within 500 chars
+    const lastPeriod = cleaned.substring(0, 500).lastIndexOf('.');
+    const lastQuestion = cleaned.substring(0, 500).lastIndexOf('?');
+    const lastExclamation = cleaned.substring(0, 500).lastIndexOf('!');
+
+    // Get the position of the last sentence ending
+    const lastSentence = Math.max(lastPeriod, lastQuestion, lastExclamation);
+
     if (lastSentence > 300) {
+      // Truncate at the last complete sentence
       cleaned = cleaned.substring(0, lastSentence + 1);
     } else {
+      // If no good sentence break, truncate and add ellipsis
       cleaned = cleaned.substring(0, 497) + '...';
     }
+  }
+
+  // Ensure the response ends with proper punctuation
+  if (cleaned && !/[.!?]$/.test(cleaned.trim())) {
+    cleaned = cleaned.trim() + '.';
   }
   
   return cleaned;
@@ -284,28 +309,80 @@ function generateSourceUrl(filename) {
  * Generate suggestions based on query
  */
 function generateSuggestions(query) {
-  const suggestions = [];
-  
-  // Topic-based suggestions
-  const queryLower = query.toLowerCase();
-  
-  if (queryLower.includes('emily') || queryLower.includes('who')) {
-    suggestions.push("What are Emily's interests?");
-    suggestions.push("What has Emily written about?");
-  } else if (queryLower.includes('blog') || queryLower.includes('post')) {
-    suggestions.push("What are the latest blog posts?");
-    suggestions.push("Tell me about Emily's writing style");
-  } else if (queryLower.includes('museum')) {
-    suggestions.push("What's in the museum?");
-    suggestions.push("How often is the museum updated?");
-  } else {
-    // Default suggestions
-    suggestions.push("What is this site about?");
-    suggestions.push("Tell me about Emily");
-    suggestions.push("What can I find here?");
-  }
-  
-  return suggestions.slice(0, 3);
+  // Fun question pool
+  const funQuestions = [
+    "Who is she???",
+    "What's all this about?",
+    "What has Emily blogged recently?",
+    "What thoughts are in her brain?",
+    "How do I get Emily to date me?",
+    "What's Emily's deal with cats?",
+    "Does Emily have any hot takes?",
+    "What makes Emily laugh?",
+    "What's in the museum of weird?",
+    "Tell me Emily's most controversial opinion",
+    "What does Emily think about AI?",
+    "Is Emily actually funny?",
+    "What's Emily's biggest pet peeve?",
+    "Does Emily believe in aliens?",
+    "What would Emily never admit publicly?",
+    "What's Emily's weirdest project?",
+    "How chaotic is Emily really?",
+    "What keeps Emily up at night?",
+    "What's Emily's favorite conspiracy theory?",
+    "Would Emily survive a zombie apocalypse?",
+    "What's Emily's most unpopular opinion?",
+    "Is Emily a morning person or night owl?",
+    "What's Emily's secret talent?",
+    "Does Emily have any nemeses?",
+    "What would Emily's superpower be?",
+    "What's Emily's ideal first date?",
+    "How many plants has Emily killed?",
+    "What's Emily's go-to karaoke song?",
+    "Would Emily win in a fight?",
+    "What's Emily's biggest red flag?",
+    "Is Emily secretly three kids in a trenchcoat?",
+    "What's Emily's most irrational fear?",
+    "Does Emily actually like people?",
+    "What's Emily's toxic trait?",
+    "Would Emily eat the last slice of pizza?",
+    "Is Emily a witch?",
+    "Can Emily smell colors?",
+    "How many bodies?",
+    "Is Emily real?",
+    "Does Emily know about the incident?",
+    "What crimes has Emily committed?",
+    "Is Emily watching me right now?",
+    "Has Emily ever eaten a bug?",
+    "Can Emily do a backflip?",
+    "Is Emily secretly a robot?",
+    "What's Emily hiding in the basement?",
+    "Does Emily have bones?",
+    "Is Emily allergic to fun?",
+    "Has Emily ever fought a goose?",
+    "Can Emily see through walls?",
+    "Is Emily made of bees?",
+    "What cursed knowledge does Emily possess?",
+    "Has Emily met the void?",
+    "Does Emily pay taxes?",
+    "Is Emily capable of love?",
+    "What did Emily do in 2019?",
+    "Can Emily photosynthesize?",
+    "Is Emily legally allowed in Ohio?",
+    "Does Emily dream of electric sheep?",
+    "Has Emily achieved enlightenment?",
+    "Is Emily's mom proud of her?",
+    "Can Emily speak to pigeons?",
+    "What's Emily's credit score?",
+    "Is Emily biodegradable?",
+    "Has Emily ever been to space?",
+    "Does Emily know what you did?",
+    "Has anyone really been far even as decided to use even go want to do look more like?"
+  ];
+
+  // Shuffle and pick 3 random questions
+  const shuffled = funQuestions.sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 3);
 }
 
 /**
