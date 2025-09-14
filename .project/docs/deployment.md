@@ -1,6 +1,12 @@
-# Deployment Guide
+# Deployment Guide - CLOUDFLARE WORKERS
 
-## Production Deployment
+## IMPORTANT: This is Cloudflare Workers, NOT Cloudflare Pages!
+This project deploys to **Cloudflare Workers** using `wrangler deploy`.
+- **NOT** Cloudflare Pages
+- **NOT** using `wrangler pages deploy`
+- Production URL format: `https://[worker-name].[account-subdomain].workers.dev`
+
+## Production Deployment (Cloudflare Workers)
 
 ### Pre-deployment Checklist
 - [ ] All tests passing (`npm test`)
@@ -16,9 +22,9 @@
 npm run build
 ```
 
-2. **Deploy to Cloudflare**:
+2. **Deploy to Cloudflare Workers** (NOT Pages!):
 ```bash
-npm run deploy
+npm run deploy  # This runs: astro build && wrangler deploy
 ```
 
 3. **Apply database migrations** (if needed):
@@ -80,7 +86,7 @@ npm run deploy
 ### CI/CD Pipeline
 
 Currently manual deployment. For automation, consider:
-1. GitHub Actions workflow
-2. Cloudflare Pages integration
+1. GitHub Actions workflow for Workers deployment
+2. Wrangler GitHub Action (NOT Pages integration)
 3. Automated testing before deploy
 4. Automatic rollback on failure

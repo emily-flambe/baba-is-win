@@ -18,7 +18,11 @@
       "database_id": "db4b6f95-ed48-4723-8c77-ee3a028d117e"
     }
   ],
+  "ai": {
+    "binding": "AI"
+  },
   "vars": {
-    "ENVIRONMENT": "preview"
+    "ENVIRONMENT": "preview",
+    "AUTORAG_INSTANCE": "personal-site-rag"
   }
 }
