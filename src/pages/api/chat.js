@@ -98,7 +98,7 @@ export const POST = async ({ request, locals }) => {
 
     // Get AutoRAG instance name from environment or use default
     const ragInstance = env.AUTORAG_INSTANCE || 'personal-site-rag';
-    const accountId = env.CF_ACCOUNT_ID || 'facf6619808dc039df729531bbb26d1d';
+    const accountId = env.CF_ACCOUNT_ID;
 
     try {
       // Query AutoRAG using REST API
