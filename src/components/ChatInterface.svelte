@@ -87,6 +87,36 @@
     }
   };
 
+  const renderMarkdown = (text) => {
+    // Basic markdown renderer with regex
+    let html = text;
+
+    // Escape HTML first
+    html = html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    // Hyperlinks [text](url) - process before other markdown
+    html = html.replace(/\[([^\]]+?)\]\(([^\)]+?)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:#66a3b3;text-decoration:underline">$1</a>');
+
+    // Bold **text**
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+    // Italic *text* (but not ** for bold)
+    html = html.replace(/(?<!\*)\*([^*\n]+?)\*(?!\*)/g, '<em>$1</em>');
+
+    // Code with backticks
+    html = html.replace(/`([^`]+?)`/g, '<code style="background:rgba(200,200,200,0.15);padding:2px 4px;font-family:\'SF Mono\',monospace;color:#00d030">$1</code>');
+
+    // Headers
+    html = html.replace(/^### (.*$)/gim, '<h3 style="font-size:1.1em;margin-top:0.5em">$1</h3>');
+    html = html.replace(/^## (.*$)/gim, '<h2 style="font-size:1.2em;margin-top:0.5em">$1</h2>');
+    html = html.replace(/^# (.*$)/gim, '<h1 style="font-size:1.3em;margin-top:0.5em">$1</h1>');
+
+    // Line breaks
+    html = html.replace(/\n/g, '<br>');
+
+    return html;
+  };
+
   onMount(() => {
     // Add initial greeting
     messages = [{
@@ -179,7 +209,6 @@
   .message-text {
     margin: 0;
     line-height: 1.5;
-    white-space: pre-wrap;
     font-family: Merriweather, serif;
   }
 
@@ -420,7 +449,7 @@
         {/if}
 
         <div class="message-bubble">
-          <p class="message-text">{message.text}</p>
+          <p class="message-text">{@html renderMarkdown(message.text)}</p>
 
           {#if message.sources && message.sources.length > 0}
             <div class="sources">
