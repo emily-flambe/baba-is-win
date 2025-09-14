@@ -30,6 +30,9 @@ auth-worktree/
 thoughts-dev/
 .cache/
 
+# R2 configuration (contains sensitive credentials)
+.r2.env
+
 # worktrees
 worktrees/
 

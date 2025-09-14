@@ -1,11 +1,17 @@
 # Technology Stack
 
+## DEPLOYMENT: CLOUDFLARE WORKERS (NOT PAGES!)
+**CRITICAL**: This project uses **Cloudflare Workers**, NOT Cloudflare Pages.
+- Deployment: `wrangler deploy` (NOT `wrangler pages deploy`)
+- Production URL: `https://personal.emily-cogsdill.workers.dev`
+- Config file: `wrangler.json` (Workers configuration)
+
 ## Core Technologies
 - **Language**: TypeScript 5.0+
 - **Framework**: Astro 4.0+ (Static Site Generator with Islands Architecture)
-- **Runtime**: Cloudflare Workers (Edge Computing)
+- **Runtime**: **Cloudflare Workers** (Edge Computing) - NOT Pages!
 - **Database**: Cloudflare D1 (SQLite-based, named 'baba-is-win-db')
-- **Hosting**: Cloudflare Pages/Workers
+- **Hosting**: Cloudflare Workers ONLY (NOT Pages)
 
 ## Key Dependencies
 - **astro**: Core framework for static site generation
@@ -64,7 +70,7 @@ npm run build           # Build for production
 npm run preview        # Preview production build
 
 # Deploy
-npm run deploy          # Deploy to Cloudflare Workers
+npm run deploy          # Deploy to Cloudflare Workers (NOT Pages!)
 ```
 
 ## Code Patterns
@@ -122,11 +128,12 @@ export async function getUserById(id: string) {
 **Rationale**: Optimal performance with minimal JavaScript shipped to client
 **Trade-offs**: Learning curve for island architecture pattern
 
-### Cloudflare Workers + D1
+### Cloudflare Workers + D1 (NOT Pages!)
 **Context**: Need for serverless, globally distributed hosting
-**Decision**: Use Cloudflare Workers with D1 database
+**Decision**: Use Cloudflare Workers (NOT Pages) with D1 database
 **Rationale**: Edge computing for low latency, integrated ecosystem
 **Trade-offs**: SQLite limitations, Cloudflare vendor lock-in
+**Important**: Workers deployment via `wrangler deploy`, NOT Pages
 
 ### JWT Authentication
 **Context**: Need for stateless authentication
