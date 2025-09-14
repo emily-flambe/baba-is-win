@@ -22,8 +22,8 @@ const recentThoughts = allThoughts.slice(0, 5);
 <BaseLayout title={title} description={description} permalink={permalink}>
   <div class="home-container">
     <div class="thoughts-sidebar">
-      <h2 class="thoughts-header"><a href="/thoughts">Some sort of feed</a></h2>
-      <p class="thoughts-description">I do not have "SOCIAL MEDIA" this is what you get deal with it</p>
+      <h2 class="thoughts-header"><a href="/thoughts">I do not have "SOCIAL MEDIA"</a></h2>
+      <hr style="border: 0; height: 1px; background: rgba(255, 255, 255, 0.1); margin: 1.5rem 0;">
       <div class="thoughts-list">
         {recentThoughts.map((thought) => {
           const href = `/thoughts/${thought.file.split('/').pop().split('.').shift()}`;
@@ -59,11 +59,12 @@ const recentThoughts = allThoughts.slice(0, 5);
       <div class="info-box">
         <div class="info-content">
           <h2 class="info-title">Wow so many fun things!</h2>
+          <hr style="border: 0; height: 1px; background: rgba(255, 255, 255, 0.1); margin: 1.5rem 0;">
 
           <div class="info-details">
             <ul class="info-list">
               <li>
-                Some <a href="/thoughts">"thoughts"</a> from my "brain"
+                <a href="/thoughts">"Thoughts"</a> from my "brain"
                 <span class="info-tooltip" data-tooltip="look to your left">?</span>
               </li>
               <li>
@@ -71,12 +72,16 @@ const recentThoughts = allThoughts.slice(0, 5);
                 <span class="info-tooltip" data-tooltip="2006 called, they want their xanga back">?</span>
               </li>
               <li>
-                A <a href="/museum">"museum"</a> of my "projects"
+                <a href="/museum">"Museum"</a> of my "projects"
                 <span class="info-tooltip" data-tooltip="graphic design is my passion!">?</span>
               </li>
               <li>
                 A <a href="/bio">"Biography"</a>
                 <span class="info-tooltip" data-tooltip="terrible">?</span>
+              </li>
+              <li>
+                <a href="/chat">"Chat"</a> with "me"
+                <span class="info-tooltip" data-tooltip="note: not actually me">?</span>
               </li>
             </ul>
           </div>
