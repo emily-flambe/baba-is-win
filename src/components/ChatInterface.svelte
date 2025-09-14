@@ -100,8 +100,11 @@
     // Bold **text**
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-    // Italic *text* (simpler pattern to avoid conflicts)
-    html = html.replace(/\*([^*\n]+?)\*/g, '<em>$1</em>');
+    // Bullet lists (process before italics to avoid conflicts)
+    html = html.replace(/^\* (.+)$/gm, '• $1');
+
+    // Italic *text* (but not at start of line which could be a bullet)
+    html = html.replace(/(?<!^)\*([^*\n]+?)\*/g, '<em>$1</em>');
 
     // Code with backticks
     html = html.replace(/`([^`]+?)`/g, '<code style="background:rgba(200,200,200,0.15);padding:2px 4px;font-family:\'SF Mono\',monospace;color:#00d030">$1</code>');
