@@ -100,16 +100,16 @@
     // Bold **text**
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-    // Italic *text* (but not ** for bold)
-    html = html.replace(/(?<!\*)\*([^*\n]+?)\*(?!\*)/g, '<em>$1</em>');
+    // Italic *text* (simpler pattern to avoid conflicts)
+    html = html.replace(/\*([^*\n]+?)\*/g, '<em>$1</em>');
 
     // Code with backticks
     html = html.replace(/`([^`]+?)`/g, '<code style="background:rgba(200,200,200,0.15);padding:2px 4px;font-family:\'SF Mono\',monospace;color:#00d030">$1</code>');
 
-    // Headers
-    html = html.replace(/^### (.*$)/gim, '<h3 style="font-size:1.1em;margin-top:0.5em">$1</h3>');
-    html = html.replace(/^## (.*$)/gim, '<h2 style="font-size:1.2em;margin-top:0.5em">$1</h2>');
-    html = html.replace(/^# (.*$)/gim, '<h1 style="font-size:1.3em;margin-top:0.5em">$1</h1>');
+    // Headers - using gim flags like cool-scripts
+    html = html.replace(/^### (.*$)/gim, '<h3 style="font-size:1.1em;margin-top:0.5em;color:#ffb366">$1</h3>');
+    html = html.replace(/^## (.*$)/gim, '<h2 style="font-size:1.2em;margin-top:0.5em;color:#ff9933">$1</h2>');
+    html = html.replace(/^# (.*$)/gim, '<h1 style="font-size:1.3em;margin-top:0.5em;color:#e68000">$1</h1>');
 
     // Line breaks
     html = html.replace(/\n/g, '<br>');
@@ -189,11 +189,11 @@
   }
 
   .message.assistant .message-bubble {
-    background: rgba(255, 179, 102, 0.1);
+    background: rgba(255, 179, 102, 0.05);
     color: #fff;
     padding: 0.75rem 1rem;
     border-radius: 18px 18px 18px 4px;
-    border: 1px solid rgba(255, 179, 102, 0.2);
+    border: 1px solid rgba(255, 179, 102, 0.15);
   }
 
   .message.error .message-bubble {
@@ -230,13 +230,13 @@
   .sources {
     margin-top: 0.75rem;
     padding-top: 0.75rem;
-    border-top: 1px solid rgba(255, 179, 102, 0.2);
+    border-top: 1px solid rgba(84, 142, 155, 0.2);
   }
 
   .sources-title {
     font-size: 0.75rem;
     font-weight: 600;
-    color: #ff9933;
+    color: #66a3b3;
     margin-bottom: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -301,10 +301,10 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 1rem;
-    background: rgba(255, 179, 102, 0.1);
+    background: rgba(255, 179, 102, 0.05);
     border-radius: 18px 18px 18px 4px;
     max-width: 200px;
-    border: 1px solid rgba(255, 179, 102, 0.2);
+    border: 1px solid rgba(255, 179, 102, 0.15);
   }
 
   .loading-dots {
