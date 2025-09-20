@@ -14,15 +14,3 @@ export const POST: APIRoute = async ({ locals }) => {
     }
   });
 };
-
-export const GET: APIRoute = async ({ locals }) => {
-  const authService = new AuthService(locals.runtime.env.JWT_SECRET);
-
-  return new Response(null, {
-    status: 302,
-    headers: {
-      'Location': '/',
-      'Set-Cookie': authService.createClearCookie()
-    }
-  });
-};

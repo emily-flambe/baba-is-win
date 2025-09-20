@@ -352,46 +352,61 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
       if (clientMenu) clientMenu.style.display = 'block';
     }
 
-    // User menu toggle - using event delegation for reliability
+    // User menu toggle - simple and reliable approach
+    const youToggle = document.getElementById('you-toggle');
     const userDropdown = document.getElementById('user-dropdown');
 
-    // Track if listeners are already attached (prevent duplicates)
-    if (!window.__menuListenersAttached && userDropdown) {
-      window.__menuListenersAttached = true;
+    if (youToggle && userDropdown) {
+      // Remove old listeners if they exist
+      const oldHandler = youToggle._clickHandler;
+      if (oldHandler) {
+        youToggle.removeEventListener('click', oldHandler);
+      }
 
-      // Use event delegation on the parent element for better reliability
-      document.addEventListener('click', (e) => {
-        const target = e.target as HTMLElement;
+      // Create new handler
+      const clickHandler = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        userDropdown.classList.toggle('show');
+        console.log('User menu toggled:', userDropdown.classList.contains('show'));
+      };
 
-        // Check if clicked on the YOU/YOU? button
-        if (target && target.id === 'you-toggle') {
-          e.preventDefault();
-          e.stopPropagation();
-          userDropdown.classList.toggle('show');
-          console.log('User menu toggled:', userDropdown.classList.contains('show'));
-          return;
-        }
+      // Store handler reference on element
+      youToggle._clickHandler = clickHandler;
 
-        // Close menu when clicking outside
-        if (userDropdown.classList.contains('show')) {
-          const youToggle = document.getElementById('you-toggle');
-          const isClickInsideToggle = youToggle && youToggle.contains(target);
-          const isClickInsideDropdown = userDropdown.contains(target);
+      // Add the click listener
+      youToggle.addEventListener('click', clickHandler);
 
-          if (!isClickInsideToggle && !isClickInsideDropdown) {
-            userDropdown.classList.remove('show');
-            console.log('User menu closed - clicked outside');
+      // Close menu when clicking outside - only attach once
+      if (!window.__outsideClickAttached) {
+        window.__outsideClickAttached = true;
+
+        document.addEventListener('click', (e) => {
+          const dropdown = document.getElementById('user-dropdown');
+          const toggle = document.getElementById('you-toggle');
+
+          if (dropdown && toggle && dropdown.classList.contains('show')) {
+            const isClickInsideToggle = toggle.contains(e.target);
+            const isClickInsideDropdown = dropdown.contains(e.target);
+
+            if (!isClickInsideToggle && !isClickInsideDropdown) {
+              dropdown.classList.remove('show');
+              console.log('User menu closed - clicked outside');
+            }
           }
-        }
-      });
+        });
 
-      // Close menu on escape key
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && userDropdown.classList.contains('show')) {
-          userDropdown.classList.remove('show');
-          console.log('User menu closed - escape key');
-        }
-      });
+        // Close menu on escape key
+        document.addEventListener('keydown', (e) => {
+          const dropdown = document.getElementById('user-dropdown');
+          if (e.key === 'Escape' && dropdown && dropdown.classList.contains('show')) {
+            dropdown.classList.remove('show');
+            console.log('User menu closed - escape key');
+          }
+        });
+      }
+    } else {
+      console.error('User menu elements not found:', { youToggle, userDropdown });
     }
 
     // Logout functionality for both server and client buttons
@@ -402,7 +417,6 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
           e.preventDefault();
 
           try {
-            // Try to logout gracefully
             const response = await fetch('/api/auth/logout', {
               method: 'POST',
               credentials: 'same-origin'
@@ -412,13 +426,12 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
               // Redirect to home after successful logout
               window.location.href = '/';
             } else {
-              // If POST fails, fallback to GET redirect
-              window.location.href = '/api/auth/logout';
+              console.error('Logout failed:', response.status);
+              alert('Logout failed. Please try again.');
             }
           } catch (error) {
             console.error('Logout error:', error);
-            // On network error, still try to clear cookies via GET redirect
-            window.location.href = '/api/auth/logout';
+            alert('Network error during logout. Please try again.');
           }
         });
       }

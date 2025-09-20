@@ -1,11 +1,31 @@
 import type { APIRoute } from 'astro';
 import { AuthDB } from '../../../lib/auth/db';
 import { verifyPassword, hashPassword } from '../../../lib/auth/password';
+import { OAuthRateLimiter } from '../../../lib/oauth/rate-limiter';
 
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
+    // Rate limiting
+    const rateLimiter = new OAuthRateLimiter(locals.runtime.env);
+    const rateLimitResult = await rateLimiter.checkRateLimit(request);
+
+    if (!rateLimitResult.allowed) {
+      return new Response(
+        JSON.stringify({
+          error: rateLimitResult.reason || 'Too many requests. Please try again later.',
+          retryAfter: rateLimitResult.retryAfter
+        }),
+        {
+          status: 429,
+          headers: {
+            'Content-Type': 'application/json',
+            'Retry-After': String(rateLimitResult.retryAfter)
+          }
+        }
+      );
+    }
     // Check authentication
     const user = locals.user;
     if (!user) {
@@ -87,6 +107,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // Hash new password and update
     const newPasswordHash = await hashPassword(newPassword);
     await db.updatePasswordHash(user.id, newPasswordHash);
+
+    // Mark rate limit attempt as successful
+    rateLimiter.markSuccess(request);
 
     return new Response(
       JSON.stringify({ success: true, message: 'Password changed successfully' }),
