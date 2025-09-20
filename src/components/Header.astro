@@ -400,8 +400,25 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
         logoutBtn.addEventListener('click', async (e) => {
           e.preventDefault();
 
-          // Simply redirect to logout endpoint which handles everything
-          window.location.href = '/api/auth/logout';
+          try {
+            // Try to logout gracefully
+            const response = await fetch('/api/auth/logout', {
+              method: 'POST',
+              credentials: 'same-origin'
+            });
+
+            if (response.ok) {
+              // Redirect to home after successful logout
+              window.location.href = '/';
+            } else {
+              // If POST fails, fallback to GET redirect
+              window.location.href = '/api/auth/logout';
+            }
+          } catch (error) {
+            console.error('Logout error:', error);
+            // On network error, still try to clear cookies via GET redirect
+            window.location.href = '/api/auth/logout';
+          }
         });
       }
     }

@@ -10,9 +10,25 @@ if (!user) {
   return Astro.redirect('/login?redirect=/account');
 }
 
+// Helper function to explicitly escape HTML (though Astro does this by default)
+function escapeHtml(text: string): string {
+  const map: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return text.replace(/[&<>"']/g, m => map[m]);
+}
+
 const title = 'Account Settings';
 const description = 'Manage your account preferences';
 const permalink = `${Astro.site.href}account`;
+
+// Escape user data for extra safety (Astro escapes by default but being explicit)
+const safeEmail = escapeHtml(user.email);
+const safeUsername = escapeHtml(user.username);
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink}>
@@ -23,11 +39,11 @@ const permalink = `${Astro.site.href}account`;
       <h2>Profile Information</h2>
       <div class="info-group">
         <label>Email</label>
-        <div class="info-value">{user.email}</div>
+        <div class="info-value">{safeEmail}</div>
       </div>
       <div class="info-group">
         <label>Username</label>
-        <div class="info-value">@{user.username}</div>
+        <div class="info-value">@{safeUsername}</div>
       </div>
       {user.google_id && (
         <div class="info-group">
