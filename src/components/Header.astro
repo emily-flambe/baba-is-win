@@ -352,30 +352,33 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
       if (clientMenu) clientMenu.style.display = 'block';
     }
 
-    // User menu toggle - works for both logged in and logged out states
-    const youToggle = document.getElementById('you-toggle');
+    // User menu toggle - using event delegation for reliability
     const userDropdown = document.getElementById('user-dropdown');
 
-    if (youToggle && userDropdown) {
-      // Remove any existing event listeners to prevent duplicates
-      const newMenuToggle = youToggle.cloneNode(true);
-      youToggle.parentNode.replaceChild(newMenuToggle, youToggle);
+    // Track if listeners are already attached (prevent duplicates)
+    if (!window.__menuListenersAttached && userDropdown) {
+      window.__menuListenersAttached = true;
 
-      // Add click event listener to the new element
-      newMenuToggle.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        userDropdown.classList.toggle('show');
-        console.log('User menu toggled:', userDropdown.classList.contains('show'));
-      });
-
-      // Close menu when clicking outside
+      // Use event delegation on the parent element for better reliability
       document.addEventListener('click', (e) => {
-        if (e.target && e.target instanceof Element) {
-          const isClickInsideToggle = newMenuToggle.contains(e.target);
-          const isClickInsideDropdown = userDropdown.contains(e.target);
+        const target = e.target as HTMLElement;
 
-          if (!isClickInsideToggle && !isClickInsideDropdown && userDropdown.classList.contains('show')) {
+        // Check if clicked on the YOU/YOU? button
+        if (target && target.id === 'you-toggle') {
+          e.preventDefault();
+          e.stopPropagation();
+          userDropdown.classList.toggle('show');
+          console.log('User menu toggled:', userDropdown.classList.contains('show'));
+          return;
+        }
+
+        // Close menu when clicking outside
+        if (userDropdown.classList.contains('show')) {
+          const youToggle = document.getElementById('you-toggle');
+          const isClickInsideToggle = youToggle && youToggle.contains(target);
+          const isClickInsideDropdown = userDropdown.contains(target);
+
+          if (!isClickInsideToggle && !isClickInsideDropdown) {
             userDropdown.classList.remove('show');
             console.log('User menu closed - clicked outside');
           }
@@ -389,8 +392,6 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
           console.log('User menu closed - escape key');
         }
       });
-    } else {
-      console.error('User menu elements not found:', { youToggle, userDropdown });
     }
 
     // Logout functionality for both server and client buttons
