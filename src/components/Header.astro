@@ -311,6 +311,9 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
   } else {
     randomizeSubtitle();
   }
+
+  // Also randomize on View Transitions navigation
+  document.addEventListener('astro:page-load', randomizeSubtitle);
   
   // Main functionality - runs after DOM is ready and on page transitions
   async function initializeUserMenu() {
