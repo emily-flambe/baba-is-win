@@ -146,6 +146,9 @@ export const GET: APIRoute = async ({ request, locals }) => {
         });
 
         await OAuthSecurityMonitor.logUserCreation(user.id, 'google', request);
+
+        // Mark this as a new signup so we redirect to welcome page
+        stateData.isNewSignup = true;
       } else {
         // Update existing OAuth user info
         await userManager.updateOAuthUser(userInfo.sub, {
@@ -161,7 +164,8 @@ export const GET: APIRoute = async ({ request, locals }) => {
     // Set cookie
     const cookie = authService.createCookie(sessionToken);
     
-    const returnUrl = stateData.returnUrl || (isLinking ? '/profile' : '/');
+    // Redirect new OAuth signups to welcome page for email preferences
+    const returnUrl = stateData.isNewSignup ? '/welcome' : (stateData.returnUrl || (isLinking ? '/profile' : '/'));
 
     // Log successful OAuth completion
     await OAuthSecurityMonitor.monitorOAuthAttempt(user.id, true, undefined, request);

@@ -263,3 +263,64 @@
 .oauth-button__text {
   white-space: nowrap;
 }
+
+/* Email preferences styling */
+.email-preferences {
+  background: rgba(42, 43, 44, 0.5);
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+/* Expandable form styles */
+.expandable-form {
+  width: 100%;
+}
+
+.expandable-form[open] {
+  margin-top: 0.5rem;
+}
+
+.expand-button {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--text-secondary);
+  border-radius: 4px;
+  background: var(--background-body);
+  color: var(--text-main);
+  font-weight: 500;
+  font-size: 0.875rem;
+  font-family: var(--font-family-sans);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  list-style: none;
+  text-align: center;
+}
+
+.expand-button::-webkit-details-marker {
+  display: none;
+}
+
+.expand-button::before {
+  content: '▼ ';
+  display: inline-block;
+  transition: transform 0.2s ease;
+  font-size: 0.7rem;
+  margin-right: 0.25rem;
+}
+
+.expandable-form[open] .expand-button::before {
+  transform: rotate(-180deg);
+}
+
+.expand-button:hover {
+  background: #2a2b2c;
+  border-color: var(--primary-color);
+}
+
+.expandable-form .auth-form {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}

@@ -35,87 +35,96 @@ const returnUrl = url.searchParams.get('returnUrl') || '/';
       </div>
     </div>
     <p class="auth-subtitle">you really don't have to do this.</p>
-    
-    <div class="auth-methods">
-      <GoogleOAuthButton mode="signup" returnUrl={returnUrl} />
-      
-      <div class="auth-divider">
-        <span>or</span>
-      </div>
 
-      <form id="signup-form" class="auth-form">
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input 
-          type="email" 
-          id="email" 
-          name="email" 
-          required
-          autocomplete="email"
-        />
-      </div>
-      
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input 
-          type="text" 
-          id="username" 
-          name="username" 
-          required
-          autocomplete="username"
-          pattern="[a-zA-Z0-9_\\-]+"
-          title="Username can only contain letters, numbers, underscores, and hyphens"
-        />
-      </div>
-      
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input 
-          type="password" 
-          id="password" 
-          name="password" 
-          required
-          autocomplete="new-password"
-          minlength="8"
-        />
-        <small class="help-text">At least 8 characters</small>
-      </div>
-      
-      <div class="form-group">
+    <div class="auth-methods">
+      <!-- Email opt-in checkboxes moved to top, visible for all signup methods -->
+      <div class="form-group email-preferences">
         <label class="section-label">Opt in to email updates (why????):</label>
         <div class="checkbox-group">
           <label class="checkbox-label">
-            <input 
-              type="checkbox" 
-              id="emailBlogUpdates" 
+            <input
+              type="checkbox"
+              id="emailBlogUpdates"
               name="emailBlogUpdates"
+              form="signup-form"
             />
             <span class="checkbox-text">New blog posts</span>
           </label>
           <label class="checkbox-label">
-            <input 
-              type="checkbox" 
-              id="emailThoughtUpdates" 
+            <input
+              type="checkbox"
+              id="emailThoughtUpdates"
               name="emailThoughtUpdates"
+              form="signup-form"
             />
             <span class="checkbox-text">New "thoughts" (???)</span>
           </label>
           <label class="checkbox-label">
-            <input 
-              type="checkbox" 
-              id="emailAnnouncements" 
+            <input
+              type="checkbox"
+              id="emailAnnouncements"
               name="emailAnnouncements"
+              form="signup-form"
             />
             <span class="checkbox-text">Announcements</span>
           </label>
         </div>
         <small class="help-text">You can change these preferences later. Don't panic.</small>
       </div>
-      
-      <div id="error-message" class="error-message"></div>
-      
-      <button type="submit" class="submit-btn">Create Account</button>
-    </form>
+
+      <GoogleOAuthButton mode="signup" returnUrl={returnUrl} class="google-oauth-btn" />
+
+      <div class="auth-divider">
+        <span>or</span>
+      </div>
+
+      <!-- Expandable section for username/password signup -->
+      <details class="expandable-form">
+        <summary class="expand-button">Sign up with username and password</summary>
+
+        <form id="signup-form" class="auth-form">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              autocomplete="email"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              required
+              autocomplete="username"
+              pattern="[a-zA-Z0-9_\\-]+"
+              title="Username can only contain letters, numbers, underscores, and hyphens"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              autocomplete="new-password"
+              minlength="8"
+            />
+            <small class="help-text">At least 8 characters</small>
+          </div>
+
+          <div id="error-message" class="error-message"></div>
+
+          <button type="submit" class="submit-btn">Create Account</button>
+        </form>
+      </details>
     </div>
   </div>
 </BaseLayout>
@@ -125,10 +134,33 @@ const returnUrl = url.searchParams.get('returnUrl') || '/';
   const form = document.getElementById('signup-form') as HTMLFormElement;
   const errorMessage = document.getElementById('error-message') as HTMLDivElement;
   const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+  const googleOAuthBtn = document.querySelector('.google-oauth-btn') as HTMLAnchorElement;
+
+  // Intercept Google OAuth button to include email preferences
+  if (googleOAuthBtn) {
+    googleOAuthBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      // Get email preferences
+      const emailBlogUpdates = (document.getElementById('emailBlogUpdates') as HTMLInputElement).checked;
+      const emailThoughtUpdates = (document.getElementById('emailThoughtUpdates') as HTMLInputElement).checked;
+      const emailAnnouncements = (document.getElementById('emailAnnouncements') as HTMLInputElement).checked;
+
+      // Store preferences in session storage to retrieve after OAuth callback
+      sessionStorage.setItem('emailPreferences', JSON.stringify({
+        emailBlogUpdates,
+        emailThoughtUpdates,
+        emailAnnouncements
+      }));
+
+      // Continue with OAuth flow
+      window.location.href = googleOAuthBtn.href;
+    });
+  }
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     errorMessage.textContent = '';
     errorMessage.classList.remove('show');
     submitBtn.disabled = true;
