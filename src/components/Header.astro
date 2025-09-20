@@ -312,8 +312,8 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
     randomizeSubtitle();
   }
   
-  // Main functionality - runs after DOM is ready
-  document.addEventListener('DOMContentLoaded', async () => {
+  // Main functionality - runs after DOM is ready and on page transitions
+  async function initializeUserMenu() {
     // Check authentication status via API
     let currentUser = null;
     try {
@@ -439,6 +439,15 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
 
     setupLogoutButton('logout-btn');
     setupLogoutButton('client-logout-btn');
+  }
 
-  });
+  // Initialize on both DOMContentLoaded and astro:page-load for View Transitions
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeUserMenu);
+  } else {
+    initializeUserMenu();
+  }
+
+  // Also initialize on View Transitions navigation
+  document.addEventListener('astro:page-load', initializeUserMenu);
 </script>
