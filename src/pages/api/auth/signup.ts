@@ -46,8 +46,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // Create user
     const passwordHash = await hashPassword(password);
     const user = await db.createUser(
-      email, 
-      username, 
+      email,
+      username,
       passwordHash,
       Boolean(emailBlogUpdates),
       Boolean(emailThoughtUpdates),
@@ -65,20 +65,20 @@ export const POST: APIRoute = async ({ request, locals }) => {
     );
 
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         user: {
           id: user.id,
           email: user.email,
           username: user.username
         },
-        token 
+        token
       }),
-      { 
-        status: 200, 
-        headers: { 
+      {
+        status: 200,
+        headers: {
           'Content-Type': 'application/json',
-          'Set-Cookie': `auth-token=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${7 * 24 * 60 * 60}`
-        } 
+          'Set-Cookie': `session=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${7 * 24 * 60 * 60}`
+        }
       }
     );
   } catch (error) {

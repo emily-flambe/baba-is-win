@@ -67,10 +67,11 @@ export const GET: APIRoute = async ({ request, locals }) => {
   }
 };
 
-export const PUT: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
-    const user = await getUserFromToken(request, locals.runtime.env);
-    
+    // Use locals.user if available (from middleware)
+    const user = locals.user || await getUserFromToken(request, locals.runtime.env);
+
     if (!user) {
       return new Response(
         JSON.stringify({ error: 'Not authenticated' }),
@@ -79,22 +80,13 @@ export const PUT: APIRoute = async ({ request, locals }) => {
     }
 
     const body = await request.json();
-    const { preferences } = body;
 
-    // Validate preferences input
-    if (!preferences || typeof preferences !== 'object') {
-      return new Response(
-        JSON.stringify({ error: 'Invalid preferences data' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Validate boolean values
+    // Handle direct preference properties (from account page)
     const validatedPreferences: EmailPreferences = {
-      emailBlogUpdates: Boolean(preferences.emailBlogUpdates),
-      emailThoughtUpdates: Boolean(preferences.emailThoughtUpdates),
-      emailAnnouncements: Boolean(preferences.emailAnnouncements),
-      emailFrequency: preferences.emailFrequency || 'immediate'
+      emailBlogUpdates: Boolean(body.emailBlogUpdates ?? body.preferences?.emailBlogUpdates),
+      emailThoughtUpdates: Boolean(body.emailThoughtUpdates ?? body.preferences?.emailThoughtUpdates),
+      emailAnnouncements: Boolean(body.emailAnnouncements ?? body.preferences?.emailAnnouncements),
+      emailFrequency: body.emailFrequency || body.preferences?.emailFrequency || 'immediate'
     };
 
     // Validate email frequency
@@ -111,13 +103,13 @@ export const PUT: APIRoute = async ({ request, locals }) => {
     await db.updateUserPreferences(user.id, validatedPreferences);
 
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         message: 'Preferences updated successfully',
-        preferences: validatedPreferences 
+        preferences: validatedPreferences
       }),
-      { 
-        status: 200, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
       }
     );
   } catch (error) {
@@ -127,4 +119,9 @@ export const PUT: APIRoute = async ({ request, locals }) => {
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
+};
+
+export const PUT: APIRoute = async ({ request, locals }) => {
+  // Delegate to POST for backwards compatibility
+  return POST({ request, locals });
 };

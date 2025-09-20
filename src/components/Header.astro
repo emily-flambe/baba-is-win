@@ -92,9 +92,26 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
     padding-left: 1.7em;
   }
 
-  .kebab-menu {
+  .user-menu {
     position: relative;
     margin-left: 0.5em;
+  }
+
+  .you-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5em 0.75em;
+    color: var(--text-main);
+    font-family: var(--font-family-sans);
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    transition: opacity 0.2s ease;
+  }
+
+  .you-button:hover {
+    opacity: 0.8;
   }
 
   .kebab-button {
@@ -126,7 +143,7 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
     border-radius: 50%;
   }
 
-  .kebab-dropdown {
+  .user-dropdown {
     position: absolute;
     top: calc(100% + 0.5rem);
     right: 0;
@@ -143,14 +160,14 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
     overflow: hidden;
   }
 
-  .kebab-dropdown.show {
+  .user-dropdown.show {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
   }
 
-  .kebab-dropdown a,
-  .kebab-dropdown button {
+  .user-dropdown a,
+  .user-dropdown button {
     display: block;
     width: 100%;
     padding: 0.75rem 1rem;
@@ -166,12 +183,12 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
     white-space: nowrap;
   }
 
-  .kebab-dropdown a:hover,
-  .kebab-dropdown button:hover {
+  .user-dropdown a:hover,
+  .user-dropdown button:hover {
     background: var(--background-body);
   }
 
-  .kebab-dropdown .divider {
+  .user-dropdown .divider {
     height: 1px;
     background: var(--text-secondary);
     margin: 0;
@@ -223,19 +240,24 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
   </div>
   <Nav current={current} />
   <div class="social-icons">
-    <div class="kebab-menu">
-      <button class="kebab-button" id="kebab-toggle" aria-label="Account menu">
-        <div class="kebab-dots">
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-        </div>
-      </button>
-      <div class="kebab-dropdown" id="kebab-dropdown">
+    <div class="user-menu">
+      {user ? (
+        <button class="you-button" id="you-toggle" aria-label="User menu">
+          YOU
+        </button>
+      ) : (
+        <button class="you-button" id="you-toggle" aria-label="Account menu">
+          YOU?
+        </button>
+      )}
+      <div class="user-dropdown" id="user-dropdown">
         <!-- Server-side rendered menu -->
         <div id="server-menu">
           {user ? (
             <>
+              <div class="user-badge">@{user.username}</div>
+              <a href="/account">Account</a>
+              <div class="divider"></div>
               <button id="logout-btn">Logout</button>
             </>
           ) : (
@@ -249,6 +271,8 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
         <div id="client-menu" style="display: none;">
           <div id="logged-in-menu" style="display: none;">
             <div class="user-badge" id="client-user-badge"></div>
+            <a href="/account">Account</a>
+            <div class="divider"></div>
             <button id="client-logout-btn">Logout</button>
           </div>
           <div id="logged-out-menu" style="display: none;">
@@ -287,9 +311,12 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
   } else {
     randomizeSubtitle();
   }
+
+  // Also randomize on View Transitions navigation
+  document.addEventListener('astro:page-load', randomizeSubtitle);
   
-  // Main functionality - runs after DOM is ready
-  document.addEventListener('DOMContentLoaded', async () => {
+  // Main functionality - runs after DOM is ready and on page transitions
+  async function initializeUserMenu() {
     // Check authentication status via API
     let currentUser = null;
     try {
@@ -328,45 +355,61 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
       if (clientMenu) clientMenu.style.display = 'block';
     }
 
-    // Kebab menu toggle - with improved event handling
-    const kebabToggle = document.getElementById('kebab-toggle');
-    const kebabDropdown = document.getElementById('kebab-dropdown');
-    
-    if (kebabToggle && kebabDropdown) {
-      // Remove any existing event listeners to prevent duplicates
-      const newKebabToggle = kebabToggle.cloneNode(true);
-      kebabToggle.parentNode.replaceChild(newKebabToggle, kebabToggle);
-      
-      // Add click event listener to the new element
-      newKebabToggle.addEventListener('click', (e) => {
+    // User menu toggle - simple and reliable approach
+    const youToggle = document.getElementById('you-toggle');
+    const userDropdown = document.getElementById('user-dropdown');
+
+    if (youToggle && userDropdown) {
+      // Remove old listeners if they exist
+      const oldHandler = youToggle._clickHandler;
+      if (oldHandler) {
+        youToggle.removeEventListener('click', oldHandler);
+      }
+
+      // Create new handler
+      const clickHandler = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        kebabDropdown.classList.toggle('show');
-        console.log('Kebab menu toggled:', kebabDropdown.classList.contains('show'));
-      });
+        userDropdown.classList.toggle('show');
+        console.log('User menu toggled:', userDropdown.classList.contains('show'));
+      };
 
-      // Close menu when clicking outside
-      document.addEventListener('click', (e) => {
-        if (e.target && e.target instanceof Element) {
-          const isClickInsideToggle = newKebabToggle.contains(e.target);
-          const isClickInsideDropdown = kebabDropdown.contains(e.target);
-          
-          if (!isClickInsideToggle && !isClickInsideDropdown && kebabDropdown.classList.contains('show')) {
-            kebabDropdown.classList.remove('show');
-            console.log('Kebab menu closed - clicked outside');
+      // Store handler reference on element
+      youToggle._clickHandler = clickHandler;
+
+      // Add the click listener
+      youToggle.addEventListener('click', clickHandler);
+
+      // Close menu when clicking outside - only attach once
+      if (!window.__outsideClickAttached) {
+        window.__outsideClickAttached = true;
+
+        document.addEventListener('click', (e) => {
+          const dropdown = document.getElementById('user-dropdown');
+          const toggle = document.getElementById('you-toggle');
+
+          if (dropdown && toggle && dropdown.classList.contains('show')) {
+            const isClickInsideToggle = toggle.contains(e.target);
+            const isClickInsideDropdown = dropdown.contains(e.target);
+
+            if (!isClickInsideToggle && !isClickInsideDropdown) {
+              dropdown.classList.remove('show');
+              console.log('User menu closed - clicked outside');
+            }
           }
-        }
-      });
+        });
 
-      // Close menu on escape key
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && kebabDropdown.classList.contains('show')) {
-          kebabDropdown.classList.remove('show');
-          console.log('Kebab menu closed - escape key');
-        }
-      });
+        // Close menu on escape key
+        document.addEventListener('keydown', (e) => {
+          const dropdown = document.getElementById('user-dropdown');
+          if (e.key === 'Escape' && dropdown && dropdown.classList.contains('show')) {
+            dropdown.classList.remove('show');
+            console.log('User menu closed - escape key');
+          }
+        });
+      }
     } else {
-      console.error('Kebab menu elements not found:', { kebabToggle, kebabDropdown });
+      console.error('User menu elements not found:', { youToggle, userDropdown });
     }
 
     // Logout functionality for both server and client buttons
@@ -375,17 +418,23 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
       if (logoutBtn) {
         logoutBtn.addEventListener('click', async (e) => {
           e.preventDefault();
-          const confirmed = confirm('Are you sure you want to logout?');
-          if (!confirmed) return;
-          
+
           try {
-            await fetch('/api/auth/logout', { method: 'POST' });
-            // Update UI immediately
-            updateAuthUI(null);
-            // Redirect to home
-            window.location.href = '/';
+            const response = await fetch('/api/auth/logout', {
+              method: 'POST',
+              credentials: 'same-origin'
+            });
+
+            if (response.ok) {
+              // Redirect to home after successful logout
+              window.location.href = '/';
+            } else {
+              console.error('Logout failed:', response.status);
+              alert('Logout failed. Please try again.');
+            }
           } catch (error) {
-            console.error('Logout failed:', error);
+            console.error('Logout error:', error);
+            alert('Network error during logout. Please try again.');
           }
         });
       }
@@ -393,6 +442,15 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
 
     setupLogoutButton('logout-btn');
     setupLogoutButton('client-logout-btn');
+  }
 
-  });
+  // Initialize on both DOMContentLoaded and astro:page-load for View Transitions
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeUserMenu);
+  } else {
+    initializeUserMenu();
+  }
+
+  // Also initialize on View Transitions navigation
+  document.addEventListener('astro:page-load', initializeUserMenu);
 </script>

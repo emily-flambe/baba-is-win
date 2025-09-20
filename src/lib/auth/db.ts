@@ -113,6 +113,13 @@ export class AuthDB {
     return result ? (result.password_hash as string) : null;
   }
 
+  async updatePasswordHash(userId: string, newPasswordHash: string): Promise<void> {
+    await this.db
+      .prepare('UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?')
+      .bind(newPasswordHash, Date.now(), userId)
+      .run();
+  }
+
   async createSession(userId: string): Promise<Session> {
     const id = nanoid();
     const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7 days

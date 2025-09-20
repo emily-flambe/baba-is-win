@@ -1,0 +1,171 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/auth.css';
+
+export const prerender = false;
+
+const title = 'Welcome!';
+const description = 'Set your email preferences';
+const permalink = `${Astro.site.href}welcome`;
+
+// Check if user is logged in
+const user = Astro.locals.user;
+if (!user) {
+  return Astro.redirect('/login');
+}
+---
+
+<BaseLayout title={title} description={description} permalink={permalink}>
+  <div class="auth-container">
+    <h1 class="auth-header">Welcome to Baba Is Win!</h1>
+    <p class="auth-subtitle">Your account has been created successfully.</p>
+
+    <form id="preferences-form" class="auth-form">
+      <div class="form-group email-preferences">
+        <label class="section-label">Would you like to receive email updates?</label>
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              id="emailBlogUpdates"
+              name="emailBlogUpdates"
+            />
+            <span class="checkbox-text">New blog posts</span>
+          </label>
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              id="emailThoughtUpdates"
+              name="emailThoughtUpdates"
+            />
+            <span class="checkbox-text">New "thoughts"</span>
+          </label>
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              id="emailAnnouncements"
+              name="emailAnnouncements"
+            />
+            <span class="checkbox-text">Announcements</span>
+          </label>
+        </div>
+        <small class="help-text">You can change these preferences anytime in your profile settings.</small>
+      </div>
+
+      <div id="error-message" class="error-message"></div>
+      <div id="success-message" class="success-message"></div>
+
+      <div class="button-group">
+        <button type="submit" class="submit-btn">Save Preferences</button>
+        <a href="/" class="skip-link">Skip for now</a>
+      </div>
+    </form>
+  </div>
+</BaseLayout>
+
+<style>
+  .button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 1.5rem;
+  }
+
+  .skip-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.2s ease;
+  }
+
+  .skip-link:hover {
+    color: var(--text-main);
+    text-decoration: underline;
+  }
+
+  .success-message {
+    color: #28a745;
+    font-size: 0.875rem;
+    display: none;
+    margin-top: 0.5rem;
+  }
+
+  .success-message.show {
+    display: block;
+  }
+</style>
+
+<script>
+  // Check if we have stored email preferences from OAuth signup
+  const storedPrefs = sessionStorage.getItem('emailPreferences');
+  if (storedPrefs) {
+    try {
+      const prefs = JSON.parse(storedPrefs);
+      const blogCheckbox = document.getElementById('emailBlogUpdates') as HTMLInputElement;
+      const thoughtCheckbox = document.getElementById('emailThoughtUpdates') as HTMLInputElement;
+      const announcementsCheckbox = document.getElementById('emailAnnouncements') as HTMLInputElement;
+
+      if (blogCheckbox) blogCheckbox.checked = prefs.emailBlogUpdates || false;
+      if (thoughtCheckbox) thoughtCheckbox.checked = prefs.emailThoughtUpdates || false;
+      if (announcementsCheckbox) announcementsCheckbox.checked = prefs.emailAnnouncements || false;
+
+      // Clear the stored preferences after using them
+      sessionStorage.removeItem('emailPreferences');
+    } catch (e) {
+      console.error('Failed to parse stored email preferences:', e);
+    }
+  }
+
+  const form = document.getElementById('preferences-form') as HTMLFormElement;
+  const errorMessage = document.getElementById('error-message') as HTMLDivElement;
+  const successMessage = document.getElementById('success-message') as HTMLDivElement;
+  const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    errorMessage.textContent = '';
+    errorMessage.classList.remove('show');
+    successMessage.textContent = '';
+    successMessage.classList.remove('show');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Saving...';
+
+    const formData = new FormData(form);
+    const data = {
+      emailBlogUpdates: formData.get('emailBlogUpdates') === 'on',
+      emailThoughtUpdates: formData.get('emailThoughtUpdates') === 'on',
+      emailAnnouncements: formData.get('emailAnnouncements') === 'on'
+    };
+
+    try {
+      const response = await fetch('/api/user/preferences', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to save preferences');
+      }
+
+      successMessage.textContent = 'Preferences saved successfully!';
+      successMessage.classList.add('show');
+
+      // Redirect to home after a short delay
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1500);
+    } catch (error) {
+      errorMessage.textContent = error instanceof Error ? error.message : 'Failed to save preferences';
+      errorMessage.classList.add('show');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Save Preferences';
+    }
+  });
+</script>
