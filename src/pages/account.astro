@@ -1,0 +1,456 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/auth.css';
+
+export const prerender = false;
+
+// Redirect if not authenticated
+const user = Astro.locals.user;
+if (!user) {
+  return Astro.redirect('/login?redirect=/account');
+}
+
+const title = 'Account Settings';
+const description = 'Manage your account preferences';
+const permalink = `${Astro.site.href}account`;
+---
+
+<BaseLayout title={title} description={description} permalink={permalink}>
+  <div class="account-container">
+    <h1 class="account-header">Account Settings</h1>
+
+    <div class="account-section">
+      <h2>Profile Information</h2>
+      <div class="info-group">
+        <label>Email</label>
+        <div class="info-value">{user.email}</div>
+      </div>
+      <div class="info-group">
+        <label>Username</label>
+        <div class="info-value">@{user.username}</div>
+      </div>
+      {user.google_id && (
+        <div class="info-group">
+          <label>Google Account</label>
+          <div class="info-value">Connected</div>
+        </div>
+      )}
+      <div class="info-group">
+        <label>Member Since</label>
+        <div class="info-value">{new Date(user.created_at).toLocaleDateString()}</div>
+      </div>
+    </div>
+
+    <div class="account-section">
+      <h2>Email Preferences</h2>
+      <form id="preferences-form">
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              id="emailBlogUpdates"
+              name="emailBlogUpdates"
+              checked={user.email_blog_updates}
+            />
+            <span class="checkbox-text">New blog posts</span>
+          </label>
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              id="emailThoughtUpdates"
+              name="emailThoughtUpdates"
+              checked={user.email_thought_updates}
+            />
+            <span class="checkbox-text">New thoughts</span>
+          </label>
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              id="emailAnnouncements"
+              name="emailAnnouncements"
+              checked={user.email_announcements}
+            />
+            <span class="checkbox-text">Announcements</span>
+          </label>
+        </div>
+        <button type="submit" class="save-btn">Save Preferences</button>
+      </form>
+      <div id="success-message" class="success-message"></div>
+      <div id="error-message" class="error-message"></div>
+    </div>
+
+    {!user.google_id && (
+      <div class="account-section">
+        <h2>Change Password</h2>
+        <form id="password-form">
+          <div class="form-group">
+            <label for="currentPassword">Current Password</label>
+            <input
+              type="password"
+              id="currentPassword"
+              name="currentPassword"
+              required
+              autocomplete="current-password"
+            />
+          </div>
+          <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <input
+              type="password"
+              id="newPassword"
+              name="newPassword"
+              required
+              autocomplete="new-password"
+              minlength="8"
+            />
+            <small class="help-text">At least 8 characters</small>
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirm New Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              required
+              autocomplete="new-password"
+            />
+          </div>
+          <button type="submit" class="save-btn">Change Password</button>
+        </form>
+        <div id="password-success" class="success-message"></div>
+        <div id="password-error" class="error-message"></div>
+      </div>
+    )}
+
+    <div class="account-section danger-zone">
+      <h2>Danger Zone</h2>
+      <p class="warning-text">Once you delete your account, there is no going back. Please be certain.</p>
+      <button id="delete-account-btn" class="danger-btn">Delete Account</button>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .account-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+  }
+
+  .account-header {
+    font-family: var(--font-family-sans);
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .account-section {
+    background: #2a2b2c;
+    border: 1px solid var(--text-secondary);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .account-section h2 {
+    font-family: var(--font-family-sans);
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--text-main);
+  }
+
+  .info-group {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .info-group:last-child {
+    border-bottom: none;
+  }
+
+  .info-group label {
+    font-weight: 600;
+    font-family: var(--font-family-sans);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .info-value {
+    color: var(--text-main);
+    font-size: 0.875rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-family: var(--font-family-sans);
+    font-size: 0.875rem;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--text-secondary);
+    border-radius: 4px;
+    background: var(--background-body);
+    color: var(--text-main);
+    font-size: 1rem;
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .checkbox-text {
+    font-size: 0.875rem;
+  }
+
+  .save-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .save-btn:hover {
+    opacity: 0.9;
+  }
+
+  .save-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .danger-zone {
+    border-color: #dc3545;
+    background: rgba(220, 53, 69, 0.1);
+  }
+
+  .warning-text {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+
+  .danger-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .danger-btn:hover {
+    opacity: 0.9;
+  }
+
+  .success-message {
+    color: #28a745;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    display: none;
+  }
+
+  .success-message.show {
+    display: block;
+  }
+
+  .error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    display: none;
+  }
+
+  .error-message.show {
+    display: block;
+  }
+
+  .help-text {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+  }
+</style>
+
+<script>
+  // Email preferences form
+  const preferencesForm = document.getElementById('preferences-form') as HTMLFormElement;
+  const successMessage = document.getElementById('success-message') as HTMLDivElement;
+  const errorMessage = document.getElementById('error-message') as HTMLDivElement;
+
+  if (preferencesForm) {
+    preferencesForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const submitBtn = preferencesForm.querySelector('button[type="submit"]') as HTMLButtonElement;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving...';
+
+      const formData = new FormData(preferencesForm);
+      const data = {
+        emailBlogUpdates: formData.get('emailBlogUpdates') === 'on',
+        emailThoughtUpdates: formData.get('emailThoughtUpdates') === 'on',
+        emailAnnouncements: formData.get('emailAnnouncements') === 'on'
+      };
+
+      try {
+        const response = await fetch('/api/user/preferences', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to save preferences');
+        }
+
+        successMessage.textContent = 'Preferences saved successfully!';
+        successMessage.classList.add('show');
+        errorMessage.classList.remove('show');
+
+        setTimeout(() => {
+          successMessage.classList.remove('show');
+        }, 3000);
+      } catch (error) {
+        errorMessage.textContent = 'Failed to save preferences. Please try again.';
+        errorMessage.classList.add('show');
+        successMessage.classList.remove('show');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Save Preferences';
+      }
+    });
+  }
+
+  // Password change form
+  const passwordForm = document.getElementById('password-form') as HTMLFormElement;
+  const passwordSuccess = document.getElementById('password-success') as HTMLDivElement;
+  const passwordError = document.getElementById('password-error') as HTMLDivElement;
+
+  if (passwordForm) {
+    passwordForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const newPassword = (document.getElementById('newPassword') as HTMLInputElement).value;
+      const confirmPassword = (document.getElementById('confirmPassword') as HTMLInputElement).value;
+
+      if (newPassword !== confirmPassword) {
+        passwordError.textContent = 'New passwords do not match';
+        passwordError.classList.add('show');
+        return;
+      }
+
+      const submitBtn = passwordForm.querySelector('button[type="submit"]') as HTMLButtonElement;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Changing...';
+
+      const formData = new FormData(passwordForm);
+      const data = {
+        currentPassword: formData.get('currentPassword'),
+        newPassword: formData.get('newPassword')
+      };
+
+      try {
+        const response = await fetch('/api/user/change-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to change password');
+        }
+
+        passwordSuccess.textContent = 'Password changed successfully!';
+        passwordSuccess.classList.add('show');
+        passwordError.classList.remove('show');
+        passwordForm.reset();
+
+        setTimeout(() => {
+          passwordSuccess.classList.remove('show');
+        }, 3000);
+      } catch (error) {
+        passwordError.textContent = error instanceof Error ? error.message : 'Failed to change password';
+        passwordError.classList.add('show');
+        passwordSuccess.classList.remove('show');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Change Password';
+      }
+    });
+  }
+
+  // Delete account button
+  const deleteAccountBtn = document.getElementById('delete-account-btn') as HTMLButtonElement;
+
+  if (deleteAccountBtn) {
+    deleteAccountBtn.addEventListener('click', async () => {
+      const confirmed = confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.');
+
+      if (!confirmed) return;
+
+      const doubleConfirm = prompt('Please type "DELETE" to confirm account deletion:');
+
+      if (doubleConfirm !== 'DELETE') {
+        alert('Account deletion cancelled');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/user/delete-account', {
+          method: 'DELETE'
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to delete account');
+        }
+
+        alert('Your account has been deleted. You will now be logged out.');
+        window.location.href = '/';
+      } catch (error) {
+        alert('Failed to delete account. Please try again later.');
+      }
+    });
+  }
+</script>
