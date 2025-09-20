@@ -104,7 +104,7 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
     padding: 0.5em 0.75em;
     color: var(--text-main);
     font-family: var(--font-family-sans);
-    font-size: 1.2rem;
+    font-size: 2rem;
     font-weight: bold;
     letter-spacing: 0.05em;
     transition: opacity 0.2s ease;
@@ -246,12 +246,8 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
           YOU
         </button>
       ) : (
-        <button class="kebab-button" id="kebab-toggle" aria-label="Account menu">
-          <div class="kebab-dots">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-          </div>
+        <button class="you-button" id="you-toggle" aria-label="Account menu">
+          YOU?
         </button>
       )}
       <div class="user-dropdown" id="user-dropdown">
@@ -356,17 +352,14 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
       if (clientMenu) clientMenu.style.display = 'block';
     }
 
-    // User menu toggle - works for both YOU button and kebab menu
+    // User menu toggle - works for both logged in and logged out states
     const youToggle = document.getElementById('you-toggle');
-    const kebabToggle = document.getElementById('kebab-toggle');
     const userDropdown = document.getElementById('user-dropdown');
 
-    const menuToggle = youToggle || kebabToggle;
-
-    if (menuToggle && userDropdown) {
+    if (youToggle && userDropdown) {
       // Remove any existing event listeners to prevent duplicates
-      const newMenuToggle = menuToggle.cloneNode(true);
-      menuToggle.parentNode.replaceChild(newMenuToggle, menuToggle);
+      const newMenuToggle = youToggle.cloneNode(true);
+      youToggle.parentNode.replaceChild(newMenuToggle, youToggle);
 
       // Add click event listener to the new element
       newMenuToggle.addEventListener('click', (e) => {
@@ -397,7 +390,7 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
         }
       });
     } else {
-      console.error('User menu elements not found:', { youToggle, kebabToggle, userDropdown });
+      console.error('User menu elements not found:', { youToggle, userDropdown });
     }
 
     // Logout functionality for both server and client buttons
@@ -406,18 +399,9 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
       if (logoutBtn) {
         logoutBtn.addEventListener('click', async (e) => {
           e.preventDefault();
-          const confirmed = confirm('Are you sure you want to logout?');
-          if (!confirmed) return;
-          
-          try {
-            await fetch('/api/auth/logout', { method: 'POST' });
-            // Update UI immediately
-            updateAuthUI(null);
-            // Redirect to home
-            window.location.href = '/';
-          } catch (error) {
-            console.error('Logout failed:', error);
-          }
+
+          // Simply redirect to logout endpoint which handles everything
+          window.location.href = '/api/auth/logout';
         });
       }
     }

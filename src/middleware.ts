@@ -4,7 +4,7 @@ import { AuthDB } from './lib/auth/db';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   // Skip auth check for public routes and API endpoints
-  const publicRoutes = ['/login', '/signup', '/api/auth/login', '/api/auth/signup', '/api/user/unsubscribe'];
+  const publicRoutes = ['/login', '/signup', '/api/auth/login', '/api/auth/signup', '/api/auth/logout', '/api/user/unsubscribe'];
   const isPublicRoute = publicRoutes.some(route => context.url.pathname.startsWith(route));
   
   // Skip auth for static assets and non-HTML requests
