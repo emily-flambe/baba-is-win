@@ -1,0 +1,97 @@
+name: Upload Content to R2
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      # Trigger on content changes
+      - 'src/data/blog-posts/**'
+      - 'src/data/thoughts/**'
+      - 'src/data/guides/**'
+      - 'src/data/biography-levels/**'
+      - 'src/data/museum-config.json'
+      - '.project/docs/**'
+      # Also trigger if the upload script itself changes
+      - 'scripts/upload-content-to-r2.js'
+      # Or if this workflow changes
+      - '.github/workflows/upload-to-r2.yml'
+
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      clear_bucket:
+        description: 'Clear bucket before upload'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  upload-to-r2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for proper file timestamps
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          # Install all dependencies to ensure upload script has what it needs
+          npm ci
+          # Explicitly ensure required packages are available
+          npm list @aws-sdk/client-s3 gray-matter dotenv || npm install @aws-sdk/client-s3 gray-matter dotenv
+
+      - name: Configure R2 credentials
+        run: |
+          # Create .r2.env file with secrets
+          cat > .r2.env << EOF
+          R2_ENDPOINT=${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID=${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY=${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME=${{ secrets.R2_BUCKET_NAME }}
+          EOF
+
+      - name: Upload content to R2
+        run: |
+          set -e  # Exit on any error
+          # Check if we should clear the bucket first (manual trigger)
+          if [ "${{ github.event.inputs.clear_bucket }}" = "true" ]; then
+            echo "Clearing bucket before upload..."
+            node scripts/upload-content-to-r2.js --clear
+          else
+            echo "Uploading content to R2..."
+            node scripts/upload-content-to-r2.js
+          fi
+
+      - name: Upload summary
+        if: always()
+        run: |
+          echo "### R2 Upload Complete! 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Content has been uploaded to R2 for AutoRAG indexing." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ github.event.inputs.clear_bucket }}" = "true" ]; then
+            echo "**Mode:** Clear and re-upload" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "**Mode:** Standard upload" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: |
+          # Remove the .r2.env file for security
+          rm -f .r2.env
