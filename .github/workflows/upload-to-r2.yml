@@ -47,10 +47,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # Only install necessary dependencies for the upload script
-          npm ci --only=production
-          # Ensure AWS SDK is installed (needed for R2 upload)
-          npm install @aws-sdk/client-s3 gray-matter dotenv
+          # Install all dependencies to ensure upload script has what it needs
+          npm ci
+          # Explicitly ensure required packages are available
+          npm list @aws-sdk/client-s3 gray-matter dotenv || npm install @aws-sdk/client-s3 gray-matter dotenv
 
       - name: Configure R2 credentials
         run: |
@@ -64,6 +64,7 @@ jobs:
 
       - name: Upload content to R2
         run: |
+          set -e  # Exit on any error
           # Check if we should clear the bucket first (manual trigger)
           if [ "${{ github.event.inputs.clear_bucket }}" = "true" ]; then
             echo "Clearing bucket before upload..."
