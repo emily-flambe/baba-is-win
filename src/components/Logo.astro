@@ -1,16 +1,24 @@
 <style>
+  .logo-link {
+    flex-shrink: 0;
+    display: block;
+  }
+
   img {
     display: block;
     width: 75px;
+    min-width: 75px;
+    height: auto;
   }
 
   @media screen and (max-width: 520px) {
+    .logo-link,
     img {
       display: none;
     }
   }
 </style>
 
-<a href="/">
+<a href="/" class="logo-link">
   <img alt="Blog Logo" src="/assets/profile-pic.png" width="75" height="50" />
 </a>

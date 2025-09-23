@@ -26,6 +26,8 @@ const selectedSubtitle = subtitlesData.subtitles[randomIndex];
     display: flex;
     align-items: center;
     gap: 5em;
+    flex: 1;
+    min-width: 0;
   }
 
   .site-title {
@@ -39,14 +41,16 @@ const selectedSubtitle = subtitlesData.subtitles[randomIndex];
     font-size: 0.9em;
     font-style: italic;
     margin-top: 0.5em;
-    background: linear-gradient(90deg, 
-      #ff0000, #ff7f00, #ffff00, #00ff00, 
+    background: linear-gradient(90deg,
+      #ff0000, #ff7f00, #ffff00, #00ff00,
       #0000ff, #4b0082, #9400d3, #ff0000);
     background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     animation: rainbowSwoosh 6s linear infinite;
+    max-width: 600px;
+    word-wrap: break-word;
   }
 
   @keyframes rainbowSwoosh {
