@@ -9,21 +9,6 @@ const user = Astro.locals?.user || null;
 // Select a random subtitle
 const randomIndex = Math.floor(Math.random() * subtitlesData.subtitles.length);
 const selectedSubtitle = subtitlesData.subtitles[randomIndex];
-
-// Function to render subtitle with links
-function renderSubtitleHTML(subtitle) {
-  let html = subtitle.text;
-  
-  // Replace link placeholders
-  subtitle.links.forEach(link => {
-    const linkHTML = `<a href="${link.url}"${link.target ? ` target="${link.target}"` : ''}>${link.text}</a>`;
-    html = html.replace(link.text, linkHTML);
-  });
-  
-  return html;
-}
-
-const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
 ---
 
 <style>
@@ -41,6 +26,8 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
     display: flex;
     align-items: center;
     gap: 5em;
+    flex: 1;
+    min-width: 0;
   }
 
   .site-title {
@@ -54,14 +41,16 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
     font-size: 0.9em;
     font-style: italic;
     margin-top: 0.5em;
-    background: linear-gradient(90deg, 
-      #ff0000, #ff7f00, #ffff00, #00ff00, 
+    background: linear-gradient(90deg,
+      #ff0000, #ff7f00, #ffff00, #00ff00,
       #0000ff, #4b0082, #9400d3, #ff0000);
     background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     animation: rainbowSwoosh 6s linear infinite;
+    max-width: 600px;
+    word-wrap: break-word;
   }
 
   @keyframes rainbowSwoosh {
@@ -73,18 +62,6 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
     }
   }
 
-  .site-subheader a {
-    color: var(--text-accent);
-    text-decoration: underline;
-    background: linear-gradient(90deg, 
-      #ff0000, #ff7f00, #ffff00, #00ff00, 
-      #0000ff, #4b0082, #9400d3, #ff0000);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: rainbowSwoosh 6s linear infinite;
-  }
 
   .social-icons {
     display: flex;
@@ -235,7 +212,7 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
     <Logo />
     <div>
       <a href="/" class="site-title">Emily Cogsdill</a>
-      <div class="site-subheader" id="subtitle" set:html={subtitleHTML}></div>
+      <div class="site-subheader" id="subtitle">{selectedSubtitle}</div>
     </div>
   </div>
   <Nav current={current} />
@@ -291,17 +268,10 @@ const subtitleHTML = renderSubtitleHTML(selectedSubtitle);
     const subtitles = JSON.parse(`${JSON.stringify(subtitlesData.subtitles)}`);
     const randomIndex = Math.floor(Math.random() * subtitles.length);
     const selectedSubtitle = subtitles[randomIndex];
-    
-    // Use the same renderSubtitleHTML function logic as remote
-    let html = selectedSubtitle.text;
-    selectedSubtitle.links.forEach(link => {
-      const linkHTML = `<a href="${link.url}"${link.target ? ` target="${link.target}"` : ''}>${link.text}</a>`;
-      html = html.replace(link.text, linkHTML);
-    });
-    
+
     const subtitleElement = document.getElementById('subtitle');
     if (subtitleElement) {
-      subtitleElement.innerHTML = html;
+      subtitleElement.textContent = selectedSubtitle;
     }
   }
 
