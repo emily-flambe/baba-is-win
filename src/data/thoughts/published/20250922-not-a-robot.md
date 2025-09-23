@@ -1,5 +1,5 @@
 ---
-title: "Vibing"
+title: "NOT a robot"
 content: |
   I stayed up late last night to earn my certificate! Honestly so proud
 
