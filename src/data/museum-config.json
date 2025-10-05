@@ -50,6 +50,14 @@
       "hidden": true
     },
     {
+      "name": "balatrohno",
+      "displayName": "BalatrOH NO",
+      "customDescription": "stupida fucking game",
+      "demoUrl": "https://balatrohno.emilycogsdill.com",
+      "screenshot": "/assets/museum/joker.png",
+      "section": "Applications"
+    },
+    {
       "name": "esquie",
       "displayName": "Esquie",
       "customDescription": "Mon ami!!!",
