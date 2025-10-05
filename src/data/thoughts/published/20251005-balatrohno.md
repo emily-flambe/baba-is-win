@@ -3,7 +3,7 @@ title: "BalatrOH NO"
 content: |
   ‼️ BEHOLD ‼️
 
-  A <a href="/chat" target="_blank">website for mildly cheating(?) at Balatro</a> :O
+  A <a href="https://balatrohno.emilycogsdill.com" target="_blank">website for mildly cheating(?) at Balatro</a> :O
 
   stupida fucking game
 publishDate: 5 Oct 2025
