@@ -10,4 +10,7 @@ publishDate: 5 Oct 2025
 publishTime: "3:57 PM"
 tags: ["balatro","wow","bossbitch"]
 color: "#80002f"
+images: [
+  { "url": "/assets/thoughts/joker.png", offset: "25%" },
+]
 ---
