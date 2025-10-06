@@ -1,7 +1,6 @@
 ---
 import MuseumLayout from '../../components/museum/MuseumLayout.astro';
 import MuseumGallery from '../../components/museum/MuseumGallery.astro';
-import MuseumFilters from '../../components/museum/MuseumFilters.svelte';
 import type { MuseumProject } from '../../lib/github/types.js';
 import museumConfig from '../../data/museum-config.json';
 
@@ -17,17 +16,15 @@ const projects: MuseumProject[] = museumConfig.repositories
     demoUrl: repo.demoUrl || null,
     githubUrl: `https://github.com/${museumConfig.owner}/${repo.name}`,
     topics: [],
-    updatedAt: new Date().toISOString(),
-    createdAt: new Date().toISOString(),
+    updatedAt: '',
+    createdAt: '',
     homepage: repo.demoUrl || null,
     screenshot: repo.screenshot || null,
     screenshots: repo.screenshots || null,
     section: repo.section || null
   }));
 
-const languages: string[] = [];
 const totalProjects = projects.length;
-const lastUpdated = new Date().toISOString();
 
 const pageTitle = "Project Museum | Emily's GitHub Projects";
 const pageDescription = "An interactive museum showcasing Emily's open source projects and development work. Explore productivity tools, web applications, APIs, and more.";
