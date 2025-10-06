@@ -91,7 +91,7 @@
     {
       "name": "cloudflare-ai-worker",
       "displayName": "Cloudflare AI Worker",
-      "customDescription": "Runs open source AI models supported by Cloudflare (currently gpt-oss). Neat!",
+      "customDescription": "Runs gpt-oss. Neat!",
       "screenshot": "/assets/museum/cloudflare-ai-worker.png",
       "section": "Tools"
     },
