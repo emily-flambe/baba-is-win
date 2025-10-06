@@ -2,28 +2,32 @@
 import MuseumLayout from '../../components/museum/MuseumLayout.astro';
 import MuseumGallery from '../../components/museum/MuseumGallery.astro';
 import MuseumFilters from '../../components/museum/MuseumFilters.svelte';
-import { generateMuseumData } from '../../lib/github/api.js';
-import type { MuseumData } from '../../lib/github/types.js';
+import type { MuseumProject } from '../../lib/github/types.js';
+import museumConfig from '../../data/museum-config.json';
 
-// For static generation, we can use the pre-generated data
-// or fetch fresh data during build time
-let museumData: MuseumData;
+// Hardcoded museum data - no GitHub API calls
+const projects: MuseumProject[] = museumConfig.repositories
+  .filter(repo => !repo.hidden)
+  .map(repo => ({
+    id: repo.name,
+    displayName: repo.displayName || repo.name,
+    description: repo.customDescription || 'No description available',
+    extendedDescription: repo.extendedDescription || null,
+    language: null,
+    demoUrl: repo.demoUrl || null,
+    githubUrl: `https://github.com/${museumConfig.owner}/${repo.name}`,
+    topics: [],
+    updatedAt: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+    homepage: repo.demoUrl || null,
+    screenshot: repo.screenshot || null,
+    screenshots: repo.screenshots || null,
+    section: repo.section || null
+  }));
 
-try {
-  // Try to fetch fresh data during build
-  museumData = await generateMuseumData('emily-flambe');
-} catch (error) {
-  console.warn('Failed to fetch fresh GitHub data, using fallback:', error);
-  // Fallback is handled internally by generateMuseumData
-  museumData = {
-    lastUpdated: new Date().toISOString(),
-    projects: [],
-    languages: [],
-    totalProjects: 0
-  };
-}
-
-const { projects, languages, totalProjects, lastUpdated } = museumData;
+const languages: string[] = [];
+const totalProjects = projects.length;
+const lastUpdated = new Date().toISOString();
 
 const pageTitle = "Project Museum | Emily's GitHub Projects";
 const pageDescription = "An interactive museum showcasing Emily's open source projects and development work. Explore productivity tools, web applications, APIs, and more.";

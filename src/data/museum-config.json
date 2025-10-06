@@ -10,6 +10,14 @@
       "section": "Applications"
     },
     {
+      "name": "balatrohno",
+      "displayName": "BalatrOH NO",
+      "customDescription": "stupida fucking game",
+      "demoUrl": "https://balatrohno.emilycogsdill.com",
+      "screenshot": "/assets/museum/joker.png",
+      "section": "Applications"
+    },
+    {
       "name": "list-cutter",
       "displayName": "List Cutter (\"Cutty\")",
       "customDescription": "Ceci n'est pas un CRM. Now with a friendly cuttlefish chat agent!",
@@ -20,21 +28,21 @@
       "section": "Applications"
     },
     {
-      "name": "games",
-      "displayName": "Games",
-      "customDescription": "Games I have made. Kinda shitty, kinda not",
-      "category": "games",
-      "demoUrl": "https://games.emilycogsdill.com",
-      "screenshot": "/assets/museum/games.png",
-      "section": "Applications"
-    },
-    {
       "name": "chat-bgd",
       "displayName": "ChatBGD",
       "customDescription": "My mom insists on calling ChatGPT 'ChatBGD' so I made this using gpt-oss hosted on a Cloudflare AI Worker.",
       "category": "games",
       "demoUrl": "https://chat.emilycogsdill.com",
       "screenshot": "/assets/museum/chatbgd.png",
+      "section": "Applications"
+    },
+    {
+      "name": "games",
+      "displayName": "Games",
+      "customDescription": "Games I have made. Kinda shitty lol",
+      "category": "games",
+      "demoUrl": "https://games.emilycogsdill.com",
+      "screenshot": "/assets/museum/games.png",
       "section": "Applications"
     },
     {
@@ -50,14 +58,6 @@
       "hidden": true
     },
     {
-      "name": "balatrohno",
-      "displayName": "BalatrOH NO",
-      "customDescription": "stupida fucking game",
-      "demoUrl": "https://balatrohno.emilycogsdill.com",
-      "screenshot": "/assets/museum/joker.png",
-      "section": "Applications"
-    },
-    {
       "name": "esquie",
       "displayName": "Esquie",
       "customDescription": "Mon ami!!!",
@@ -65,6 +65,12 @@
       "demoUrl": "https://esquie.emilycogsdill.com",
       "screenshot": "/assets/museum/esquie.png",
       "section": "Nonsense"
+    },
+    {
+      "name": "emoji-linter",
+      "displayName": "Emoji Linter",
+      "customDescription": "An honest-to-God Github Action that checks for emojis in your code. I better not see another FUCKING 🚀 emoji ever again",
+      "section": "Tools"
     },
     {
       "name": "SuperClaude",
@@ -83,17 +89,19 @@
       "section": "Tools"
     },
     {
-      "name": "emoji-linter",
-      "displayName": "Emoji Linter",
-      "customDescription": "A Github Action that checks for emojis in your code. I better not see another FUCKING 🚀 emoji ever again",
-      "section": "Tools"
-    },
-    {
       "name": "cloudflare-ai-worker",
       "displayName": "Cloudflare AI Worker",
       "customDescription": "Runs open source AI models supported by Cloudflare (currently gpt-oss). Neat!",
       "screenshot": "/assets/museum/cloudflare-ai-worker.png",
       "section": "Tools"
+    },
+    {
+      "name": "naptime",
+      "displayName": "Naptime",
+      "customDescription": "I wanted to take Google Cloud Run for a spin so I hooked up the Oura API to put together this horrible thing",
+      "screenshot": "/assets/museum/naptime.png",
+      "demoUrl": "https://naptime.emilycogsdill.com",
+      "section": "Nonsense"
     },
     {
       "name": "zoo",
@@ -106,10 +114,10 @@
     {
       "name": "pong",
       "displayName": "Paddle Game",
-      "customDescription": "Premium mindless recreation.",
+      "customDescription": "Pong but with an INSANE TWIST.",
       "screenshot": "/assets/museum/pong.png",
       "demoUrl": "https://pong.emilycogsdill.com",
-      "section": "Applications"
+      "section": "Nonsense"
     },
     {
       "name": "web-app-starter-pack",
@@ -124,14 +132,6 @@
       "customDescription": "Spin up a Google Cloud Run app with CICD and whatever. Lol that most of the code is in the Makefile",
       "category": "productivity",
       "section": "Tools"
-    },
-    {
-      "name": "naptime",
-      "displayName": "Naptime",
-      "customDescription": "I wanted to take Google Cloud Run for a spin so I hooked up the Oura API to put together this horrible thing",
-      "screenshot": "/assets/museum/naptime.png",
-      "demoUrl": "https://naptime.emilycogsdill.com",
-      "section": "Nonsense"
     }
   ],
   "settings": {
