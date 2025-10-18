@@ -200,9 +200,63 @@ const selectedSubtitle = subtitlesData.subtitles[randomIndex];
     font-size: 0.75rem;
   }
 
+  /* Medium screens - reduce gap and font sizes to prevent overlap */
+  @media screen and (max-width: 1100px) {
+    .logo-title {
+      gap: 2em;
+    }
+
+    .site-title {
+      font-size: 2.2em;
+    }
+
+    .site-subheader {
+      font-size: 0.8em;
+      max-width: 400px;
+    }
+  }
+
+  /* Smaller screens - stack navigation vertically */
+  @media screen and (max-width: 900px) {
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5em;
+    }
+
+    .logo-title {
+      width: 100%;
+      gap: 1.5em;
+    }
+
+    .site-title {
+      font-size: 2em;
+    }
+
+    .social-icons {
+      padding-left: 0;
+      position: absolute;
+      top: 2em;
+      right: 2em;
+    }
+  }
+
   @media screen and (max-width: 520px) {
     header {
       padding: 2em 0;
+    }
+
+    .logo-title {
+      gap: 1em;
+    }
+
+    .site-title {
+      font-size: 1.8em;
+    }
+
+    .site-subheader {
+      font-size: 0.75em;
+      max-width: 300px;
     }
   }
 </style>
