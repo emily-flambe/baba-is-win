@@ -69,7 +69,7 @@
     {
       "name": "emoji-linter",
       "displayName": "Emoji Linter",
-      "customDescription": "An honest-to-God Github Action that checks for emojis in your code. I better not see another FUCKING 🚀 emoji ever again",
+      "customDescription": "An honest-to-God GitHub Action that checks for emojis in your code. I better not see another FUCKING 🚀 emoji ever again",
       "section": "Tools"
     },
     {
