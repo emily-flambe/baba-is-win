@@ -5,6 +5,7 @@
       "name": "baba-is-win",
       "displayName": "This site lmao",
       "customDescription": "It insists upon itself.",
+      "language": "TypeScript",
       "demoUrl": "https://www.emilycogsdill.com",
       "screenshot": "/assets/museum/personal-site.png",
       "section": "Applications"
@@ -13,6 +14,7 @@
       "name": "balatrohno",
       "displayName": "BalatrOH NO",
       "customDescription": "stupida fucking game",
+      "language": "TypeScript",
       "demoUrl": "https://balatrohno.emilycogsdill.com",
       "screenshot": "/assets/museum/joker.png",
       "section": "Applications"
@@ -22,6 +24,7 @@
       "displayName": "List Cutter (\"Cutty\")",
       "customDescription": "Ceci n'est pas un CRM. Now with a friendly cuttlefish chat agent!",
       "extendedDescription": "Cutty the cuttlefish (not an octopus) is your BEST FRIEND and he is here to help you do stuff with voter contact data! Not a CRM. Uses a comically unhelpful though slightly agentic chat friend, which is neat.",
+      "language": "JavaScript",
       "category": "data-processing",
       "demoUrl": "https://cutty.emilycogsdill.com",
       "screenshot": "/assets/museum/cutty.png",
@@ -31,6 +34,7 @@
       "name": "chat-bgd",
       "displayName": "ChatBGD",
       "customDescription": "My mom insists on calling ChatGPT 'ChatBGD' so I made this using gpt-oss hosted on a Cloudflare AI Worker.",
+      "language": "TypeScript",
       "category": "games",
       "demoUrl": "https://chat.emilycogsdill.com",
       "screenshot": "/assets/museum/chatbgd.png",
@@ -40,6 +44,7 @@
       "name": "games",
       "displayName": "Games",
       "customDescription": "Games I have made. Kinda shitty lol",
+      "language": "JavaScript",
       "category": "games",
       "demoUrl": "https://games.emilycogsdill.com",
       "screenshot": "/assets/museum/games.png",
@@ -50,6 +55,7 @@
       "displayName": "Chesscom Helper",
       "customDescription": "I wanted a thing to email me when certain chess players started playing live matches! built on Cloudflare Workers that tracks player activities and sends notifications.",
       "extendedDescription": "",
+      "language": "TypeScript",
       "category": "api-integration",
       "demoUrl": "https://chesscomhelper.emilycogsdill.com",
       "order": 5,
@@ -62,6 +68,7 @@
       "displayName": "Esquie",
       "customDescription": "Mon ami!!!",
       "extendedDescription": "Wheeee, whoooo",
+      "language": "JavaScript",
       "demoUrl": "https://esquie.emilycogsdill.com",
       "screenshot": "/assets/museum/esquie.png",
       "section": "Nonsense"
@@ -70,6 +77,7 @@
       "name": "emoji-linter",
       "displayName": "Emoji Linter",
       "customDescription": "An honest-to-God GitHub Action that checks for emojis in your code. I better not see another FUCKING 🚀 emoji ever again",
+      "language": "JavaScript",
       "section": "Tools"
     },
     {
@@ -77,6 +85,7 @@
       "displayName": "SuperClaude",
       "customDescription": "My fork of the SuperClaude project. Slightly unhinged. --persona-critic is the real MVP",
       "extendedDescription": "",
+      "language": "Python",
       "category": "productivity",
       "screenshot": "/assets/museum/superclaude.jpg",
       "section": "Tools"
@@ -85,6 +94,7 @@
       "name": "dotfiles",
       "displayName": "dotfiles",
       "customDescription": "Custom configurations for Kitty (terminal) and AeroSpace (window management). Extremely advanced. Big-brain users ONLY.",
+      "language": "Python",
       "screenshot": "/assets/museum/kitty.png",
       "section": "Tools"
     },
@@ -92,6 +102,7 @@
       "name": "cloudflare-ai-worker",
       "displayName": "Cloudflare AI Worker",
       "customDescription": "Runs gpt-oss. Neat!",
+      "language": "TypeScript",
       "screenshot": "/assets/museum/cloudflare-ai-worker.png",
       "section": "Tools"
     },
@@ -99,6 +110,7 @@
       "name": "naptime",
       "displayName": "Naptime",
       "customDescription": "I wanted to take Google Cloud Run for a spin so I hooked up the Oura API to put together this horrible thing",
+      "language": "JavaScript",
       "screenshot": "/assets/museum/naptime.png",
       "demoUrl": "https://naptime.emilycogsdill.com",
       "section": "Nonsense"
@@ -107,6 +119,7 @@
       "name": "zoo",
       "displayName": "Cyber Zoo",
       "customDescription": "An homage to a simpler time.",
+      "language": "JavaScript",
       "screenshot": "/assets/museum/zoo.png",
       "demoUrl": "https://zoo.emilycogsdill.com",
       "section": "Nonsense"
@@ -115,6 +128,7 @@
       "name": "pong",
       "displayName": "Paddle Game",
       "customDescription": "Pong but with an INSANE TWIST.",
+      "language": "JavaScript",
       "screenshot": "/assets/museum/pong.png",
       "demoUrl": "https://pong.emilycogsdill.com",
       "section": "Nonsense"
@@ -123,6 +137,7 @@
       "name": "web-app-starter-pack",
       "displayName": "Web App Starter Pack",
       "customDescription": "Spin up a Cloudflare Workers app with sensible defaults and CICD. True gamers ONLY",
+      "language": "TypeScript",
       "category": "productivity",
       "section": "Tools"
     },
@@ -130,6 +145,7 @@
       "name": "web-app-starter-pack-gcp",
       "displayName": "Web App Starter Pack (GCP)",
       "customDescription": "Spin up a Google Cloud Run app with CICD and whatever. Lol that most of the code is in the Makefile",
+      "language": "Makefile",
       "category": "productivity",
       "section": "Tools"
     }
