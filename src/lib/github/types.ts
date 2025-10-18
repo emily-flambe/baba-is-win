@@ -57,9 +57,9 @@ export interface MuseumProject {
   language: string | null;
   demoUrl: string | null;
   githubUrl: string;
-  topics: string[];
-  updatedAt: string;
-  createdAt: string;
+  topics?: string[];
+  updatedAt?: string;
+  createdAt?: string;
   homepage?: string | null;
   screenshot?: string | null;
   screenshots?: string[] | null;
@@ -99,6 +99,7 @@ export interface MuseumRepositoryConfig {
   displayName?: string;
   customDescription?: string | null;
   extendedDescription?: string | null;
+  language?: string | null;
   demoUrl?: string | null;
   order?: number;
   screenshot?: string | null;

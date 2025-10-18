@@ -9,11 +9,6 @@ export interface Props {
 }
 
 const { project, featured = false, size = 'medium' } = Astro.props;
-const updatedDate = new Date(project.updatedAt).toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric'
-});
 
 // GitHub language colors (subset of common languages)
 const languageColors: Record<string, string> = {
@@ -85,17 +80,9 @@ const languageColor = project.language ? (languageColors[project.language] || '#
   <div class="project-content">
     <div class="project-header">
       <h3 class="project-title">{project.displayName}</h3>
-      <span class="project-updated">{updatedDate}</span>
     </div>
-    
+
     <p class="project-description">{project.description}</p>
-    
-    <!-- Tech Badges -->
-    <div class="project-badges">
-      {project.topics.slice(0, 3).map(topic => (
-        <span class="tech-badge">{topic}</span>
-      ))}
-    </div>
   </div>
 
   <!-- Card Footer -->
@@ -288,10 +275,6 @@ const languageColor = project.language ? (languageColors[project.language] || '#
 
   .project-header {
     margin-bottom: var(--museum-space-md);
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: var(--museum-space-md);
   }
 
   .project-title {
@@ -300,8 +283,6 @@ const languageColor = project.language ? (languageColors[project.language] || '#
     color: var(--museum-text);
     margin: 0;
     line-height: 1.3;
-    flex: 1;
-    min-width: 0;
   }
 
   .project-description {
@@ -419,40 +400,22 @@ const languageColor = project.language ? (languageColors[project.language] || '#
     background: color-mix(in srgb, var(--museum-text) 85%, black);
   }
 
-  .project-updated {
-    font-size: 0.625rem;
-    color: var(--museum-muted);
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
   /* Mobile Responsive */
   @media (max-width: 480px) {
     .project-content {
       padding: var(--museum-space-md);
     }
-    
+
     .project-footer {
       padding: var(--museum-space-sm) var(--museum-space-md);
       flex-direction: column;
       gap: var(--museum-space-sm);
       align-items: flex-start;
     }
-    
+
     .project-links {
       width: 100%;
       justify-content: flex-start;
-    }
-    
-    .project-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: var(--museum-space-xs);
-    }
-    
-    .project-updated {
-      font-size: 0.625rem;
     }
   }
 
