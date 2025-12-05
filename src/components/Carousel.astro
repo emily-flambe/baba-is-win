@@ -1,6 +1,6 @@
 ---
 export interface Props {
-  images: (string | { url: string; offset?: string })[];
+  images: (string | { url: string; offset?: string; height?: string })[];
   alt?: string;
   size?: 'large' | 'mini';
 }
@@ -11,12 +11,12 @@ if (!images || images.length === 0) {
   return null;
 }
 
-// Normalize images to objects with url and offset
+// Normalize images to objects with url, offset, and optional height
 const normalizedImages = images.map(img => {
   if (typeof img === 'string') {
-    return { url: img, offset: '50%' };
+    return { url: img, offset: '50%', height: undefined };
   }
-  return { url: img.url, offset: img.offset || '50%' };
+  return { url: img.url, offset: img.offset || '50%', height: img.height };
 });
 
 const isMini = size === 'mini';
@@ -35,7 +35,7 @@ const indicatorsClass = isMini ? 'mini-carousel-indicators' : 'carousel-indicato
     <div class={trackClass} data-carousel-track={isMini ? undefined : ''} data-mini-carousel-track={isMini ? '' : undefined}>
       {normalizedImages.map((image, index) => (
         <div class={slideClass} data-slide={isMini ? undefined : index} data-mini-slide={isMini ? index : undefined}>
-          <img src={image.url} alt={`${alt} ${index + 1}`} loading="lazy" style={`object-position: center ${image.offset};`} />
+          <img src={image.url} alt={`${alt} ${index + 1}`} loading="lazy" style={`object-position: center ${image.offset};${image.height ? ` height: ${image.height};` : ''}`} />
         </div>
       ))}
     </div>
