@@ -83,10 +83,82 @@ Before marking any task complete:
 - Never commit .dev.vars file
 - Use wrangler secret put for production
 
-### Screenshots
-- Save all screenshots to .screenshots/ directory
-- Use descriptive names with timestamps
-- Directory is gitignored to prevent repository bloat
+### Visual Verification with Playwright
+
+**Use Playwright screenshots for ALL UI development** - not just testing. When making any visual changes, capture and inspect screenshots to verify the result.
+
+- Save verification screenshots to `.screenshots/` directory (gitignored)
+- Save museum screenshots to `public/assets/museum/`
+
+#### Quick Screenshot (dev server running)
+
+```bash
+# Basic capture
+npx playwright screenshot --viewport-size=1200,800 --wait-for-timeout=3000 http://localhost:4321/page .screenshots/verify.png
+
+# Then view it
+# Use the Read tool on .screenshots/verify.png
+```
+
+#### Interactive Screenshots (login, navigation, dynamic content)
+
+Create a temporary Playwright test:
+
+```typescript
+import { test } from '@playwright/test';
+
+test('verify UI change', async ({ page }) => {
+  test.setTimeout(60000);
+  await page.setViewportSize({ width: 1200, height: 800 });
+
+  await page.goto('http://localhost:4321');
+  await page.waitForTimeout(2000);
+
+  // Navigate, click, fill forms as needed
+  await page.click('text=Some Link');
+  await page.waitForTimeout(3000);
+
+  // Scroll if needed
+  await page.evaluate(() => window.scrollBy(0, 500));
+
+  await page.screenshot({ path: '.screenshots/verify.png' });
+});
+```
+
+Run with: `npx playwright test tests/verify.spec.ts --reporter=line`
+
+#### When to Use Playwright Screenshots
+
+- **After any CSS/layout changes** - verify nothing broke
+- **After component changes** - check rendering
+- **When adding new pages** - verify they display correctly
+- **When debugging UI issues** - see what's actually rendering
+- **Before claiming UI work is complete** - evidence over assertions
+
+#### Visual Verification is Mandatory
+
+1. Capture screenshot after making changes
+2. Use the Read tool to view the screenshot
+3. Verify content is correct (not loading spinners, empty states, or broken layouts)
+4. Re-capture with longer waits if content hasn't loaded
+
+**Do NOT claim UI changes work without screenshot verification.**
+
+#### Museum Screenshots
+
+For museum project entries specifically:
+
+```bash
+# External sites
+npx playwright screenshot --viewport-size=1200,800 --wait-for-timeout=3000 https://project.emilycogsdill.com public/assets/museum/project-name.png
+```
+
+For sites requiring login or interaction, use a Playwright test (see above) with the output path set to `public/assets/museum/project-name.png`.
+
+After adding museum entries:
+1. Run `npm run build`
+2. Start dev server and screenshot the museum page
+3. Verify project cards render with correct screenshots
 
 ### Database
 - Database name is always 'baba-is-win-db'

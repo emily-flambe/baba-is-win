@@ -11,6 +11,34 @@
       "section": "Applications"
     },
     {
+      "name": "etl-for-dumdums",
+      "displayName": "ETL for Dumdums",
+      "customDescription": "I got really excited about Streamlit one day and threw together some ETL + data viz. Enter `hunter2` to view my Oura metrics lmao",
+      "language": "TypeScript",
+      "demoUrl": "https://data.emilycogsdill.com",
+      "screenshot": "/assets/museum/etl-for-dumdums.png",
+      "section": "Applications"
+    },
+    {
+      "name": "exercise-tracker-thingy",
+      "displayName": "Workout Tracker",
+      "customDescription": "Every workout tracking app ever created sucks complete ass, including this one probably",
+      "language": "TypeScript",
+      "demoUrl": "https://workout.emilycogsdill.com",
+      "screenshot": "/assets/museum/exercise-tracker.png",
+      "screenshotPosition": "top",
+      "section": "Applications"
+    },
+    {
+      "name": "splitdumb",
+      "displayName": "SplitDumb",
+      "customDescription": "An app for group expense tracking à la Splitwise before it got enshittified",
+      "language": "TypeScript",
+      "demoUrl": "https://splitdumb.emilycogsdill.com",
+      "screenshot": "/assets/museum/splitdumb.png",
+      "section": "Applications"
+    },
+    {
       "name": "balatrohno",
       "displayName": "BalatrOH NO",
       "customDescription": "stupida fucking game",
@@ -43,7 +71,7 @@
     {
       "name": "games",
       "displayName": "Games",
-      "customDescription": "Games I have made. Kinda shitty lol",
+      "customDescription": "Games I have made. Pretty shitty lol",
       "language": "JavaScript",
       "category": "games",
       "demoUrl": "https://games.emilycogsdill.com",
@@ -71,6 +99,15 @@
       "language": "JavaScript",
       "demoUrl": "https://esquie.emilycogsdill.com",
       "screenshot": "/assets/museum/esquie.png",
+      "section": "Nonsense"
+    },
+    {
+      "name": "emilys-monkey-web-site",
+      "displayName": "Which Monkey is Nicer?",
+      "customDescription": "A psychological experiment from 2014 where you judge which rhesus macaque looks nicer. This thing got me through grad school lmao",
+      "language": "TypeScript",
+      "demoUrl": "https://monkey.emilycogsdill.com",
+      "screenshot": "/assets/museum/monkey.png",
       "section": "Nonsense"
     },
     {

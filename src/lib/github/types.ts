@@ -63,6 +63,7 @@ export interface MuseumProject {
   homepage?: string | null;
   screenshot?: string | null;
   screenshots?: string[] | null;
+  screenshotPosition?: string | null;
   section?: string | null;
 }
 
