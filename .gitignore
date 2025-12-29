@@ -51,6 +51,7 @@ worker-configuration.d.ts
 # Keep .project/ directory in version control for AI agents and team collaboration
 
 # Test and debug files
+test-results/
 debug-*.js
 test-*.js
 !tests/**/*
