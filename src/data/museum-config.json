@@ -11,6 +11,14 @@
       "section": "Applications"
     },
     {
+      "name": "claude-configs",
+      "displayName": "Claude Configs",
+      "customDescription": "Will probably fall out of date pretty quickly but if you're curious what I run on my machine, this is it",
+      "language": "Markdown",
+      "screenshot": "/assets/museum/superclaude.jpg",
+      "section": "Tools"
+    },
+    {
       "name": "etl-for-dumdums",
       "displayName": "ETL for Dumdums",
       "customDescription": "I got really excited about Streamlit one day and threw together some ETL + data viz. Enter `hunter2` to view my Oura metrics lmao",
@@ -76,7 +84,7 @@
       "category": "games",
       "demoUrl": "https://games.emilycogsdill.com",
       "screenshot": "/assets/museum/games.png",
-      "section": "Applications"
+      "section": "Nonsense"
     },
     {
       "name": "chesscom-helper",
@@ -115,16 +123,6 @@
       "displayName": "Emoji Linter",
       "customDescription": "An honest-to-God GitHub Action that checks for emojis in your code. I better not see another FUCKING 🚀 emoji ever again",
       "language": "JavaScript",
-      "section": "Tools"
-    },
-    {
-      "name": "SuperClaude",
-      "displayName": "SuperClaude",
-      "customDescription": "My fork of the SuperClaude project. Slightly unhinged. --persona-critic is the real MVP",
-      "extendedDescription": "",
-      "language": "Python",
-      "category": "productivity",
-      "screenshot": "/assets/museum/superclaude.jpg",
       "section": "Tools"
     },
     {
@@ -169,22 +167,6 @@
       "screenshot": "/assets/museum/pong.png",
       "demoUrl": "https://pong.emilycogsdill.com",
       "section": "Nonsense"
-    },
-    {
-      "name": "web-app-starter-pack",
-      "displayName": "Web App Starter Pack",
-      "customDescription": "Spin up a Cloudflare Workers app with sensible defaults and CICD. True gamers ONLY",
-      "language": "TypeScript",
-      "category": "productivity",
-      "section": "Tools"
-    },
-    {
-      "name": "web-app-starter-pack-gcp",
-      "displayName": "Web App Starter Pack (GCP)",
-      "customDescription": "Spin up a Google Cloud Run app with CICD and whatever. Lol that most of the code is in the Makefile",
-      "language": "Makefile",
-      "category": "productivity",
-      "section": "Tools"
     }
   ],
   "settings": {
