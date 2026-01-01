@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import YearInReview from '../components/year-review/YearInReview.svelte';
+import metricsData from '../data/year-in-review-2025.json';
+import curatedData from '../data/year-in-review-2025-curated.json';
+
+const title = "2025: Year in Review";
+const description = "A quantified look back at my year - code, wellness, and everything in between.";
+const permalink = "https://emilycogsdill.com/2025";
+---
+
+<BaseLayout title={title} description={description} permalink={permalink}>
+  <div class="year-review-container">
+    <YearInReview
+      client:load
+      metricsData={metricsData}
+      curatedData={curatedData}
+    />
+  </div>
+</BaseLayout>
+
+<style>
+  .year-review-container {
+    /* Let the Svelte component handle all layout */
+    width: 100%;
+  }
+
+  /* Make hero section break out of any parent constraints */
+  :global(.year-review-container .hero) {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+  }
+</style>

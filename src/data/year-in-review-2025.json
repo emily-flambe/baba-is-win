@@ -1,0 +1,1521 @@
+{
+  "generated_at": "2025-12-31T22:44:47.657582Z",
+  "github": {
+    "personal": {
+      "total_prs": 0,
+      "total_commits": 0,
+      "repos": [],
+      "fun_commits": [],
+      "busiest_day": null
+    },
+    "work": {
+      "total_prs": 387,
+      "total_commits": 190782
+    }
+  },
+  "oura": {
+    "averages": {
+      "sleep_score": 71.5,
+      "readiness_score": 73.5,
+      "steps_daily": 10586
+    },
+    "totals": {
+      "steps": 3768535,
+      "active_calories": 259511
+    },
+    "monthly": [
+      {
+        "month": "2025-01",
+        "month_label": "Jan",
+        "sleep_score": 67.8,
+        "readiness_score": 71.7,
+        "activity_score": 90.1,
+        "avg_steps": 10402
+      },
+      {
+        "month": "2025-02",
+        "month_label": "Feb",
+        "sleep_score": 71.5,
+        "readiness_score": 73.2,
+        "activity_score": 88.5,
+        "avg_steps": 10373
+      },
+      {
+        "month": "2025-03",
+        "month_label": "Mar",
+        "sleep_score": 72.8,
+        "readiness_score": 68.3,
+        "activity_score": 90.7,
+        "avg_steps": 11731
+      },
+      {
+        "month": "2025-04",
+        "month_label": "Apr",
+        "sleep_score": 72.3,
+        "readiness_score": 74.1,
+        "activity_score": 94.1,
+        "avg_steps": 8270
+      },
+      {
+        "month": "2025-05",
+        "month_label": "May",
+        "sleep_score": 74.1,
+        "readiness_score": 77.0,
+        "activity_score": 95.8,
+        "avg_steps": 12015
+      },
+      {
+        "month": "2025-06",
+        "month_label": "Jun",
+        "sleep_score": 72.6,
+        "readiness_score": 70.6,
+        "activity_score": 92.4,
+        "avg_steps": 10041
+      },
+      {
+        "month": "2025-07",
+        "month_label": "Jul",
+        "sleep_score": 71.2,
+        "readiness_score": 69.3,
+        "activity_score": 92.9,
+        "avg_steps": 11318
+      },
+      {
+        "month": "2025-08",
+        "month_label": "Aug",
+        "sleep_score": 66.4,
+        "readiness_score": 65.6,
+        "activity_score": 92.5,
+        "avg_steps": 7786
+      },
+      {
+        "month": "2025-09",
+        "month_label": "Sep",
+        "sleep_score": 72.2,
+        "readiness_score": 76.1,
+        "activity_score": 93.0,
+        "avg_steps": 13296
+      },
+      {
+        "month": "2025-10",
+        "month_label": "Oct",
+        "sleep_score": 74.2,
+        "readiness_score": 77.7,
+        "activity_score": 91.7,
+        "avg_steps": 9638
+      },
+      {
+        "month": "2025-11",
+        "month_label": "Nov",
+        "sleep_score": 71.3,
+        "readiness_score": 76.4,
+        "activity_score": 93.1,
+        "avg_steps": 10728
+      },
+      {
+        "month": "2025-12",
+        "month_label": "Dec",
+        "sleep_score": 69.6,
+        "readiness_score": 74.9,
+        "activity_score": 81.2,
+        "avg_steps": 11459
+      }
+    ],
+    "correlation_data": [
+      {
+        "date": "2025-01-01",
+        "temp_deviation": 0.46,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-02",
+        "temp_deviation": 0.21,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-04",
+        "temp_deviation": 0.02,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-05",
+        "temp_deviation": 0.01,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-07",
+        "temp_deviation": 0.62,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-08",
+        "temp_deviation": 0.13,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-09",
+        "temp_deviation": 0.08,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-10",
+        "temp_deviation": 0.06,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-12",
+        "temp_deviation": 0.26,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-13",
+        "temp_deviation": 0.24,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-14",
+        "temp_deviation": -0.15,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-16",
+        "temp_deviation": -0.24,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-17",
+        "temp_deviation": -0.24,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-18",
+        "temp_deviation": -0.16,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-20",
+        "temp_deviation": 0.53,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-21",
+        "temp_deviation": -0.06,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-23",
+        "temp_deviation": 0.02,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-24",
+        "temp_deviation": 0.31,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-26",
+        "temp_deviation": 0.2,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-27",
+        "temp_deviation": 0.1,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-29",
+        "temp_deviation": 0.28,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-30",
+        "temp_deviation": 0.29,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-01-31",
+        "temp_deviation": 0.05,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-01",
+        "temp_deviation": -0.02,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-03",
+        "temp_deviation": 0.15,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-04",
+        "temp_deviation": -0.25,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-05",
+        "temp_deviation": -0.12,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-06",
+        "temp_deviation": 0.16,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-07",
+        "temp_deviation": 0.17,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-08",
+        "temp_deviation": -0.14,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-09",
+        "temp_deviation": -0.1,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-10",
+        "temp_deviation": -0.05,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-13",
+        "temp_deviation": -0.35,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-14",
+        "temp_deviation": -0.28,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-17",
+        "temp_deviation": -0.4,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-18",
+        "temp_deviation": -0.43,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-20",
+        "temp_deviation": -0.16,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-22",
+        "temp_deviation": 0.12,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-26",
+        "temp_deviation": 0.39,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-27",
+        "temp_deviation": 0.38,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-02-28",
+        "temp_deviation": 0.1,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-01",
+        "temp_deviation": 0.09,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-03",
+        "temp_deviation": -0.01,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-04",
+        "temp_deviation": -0.04,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-07",
+        "temp_deviation": -0.18,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-08",
+        "temp_deviation": -0.03,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-11",
+        "temp_deviation": 0.34,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-12",
+        "temp_deviation": 0.06,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-13",
+        "temp_deviation": 0.18,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-14",
+        "temp_deviation": 0.02,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-15",
+        "temp_deviation": -0.19,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-16",
+        "temp_deviation": -0.26,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-17",
+        "temp_deviation": -0.17,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-19",
+        "temp_deviation": 0.31,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-20",
+        "temp_deviation": 0.12,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-23",
+        "temp_deviation": 0.26,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-27",
+        "temp_deviation": 0.1,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-29",
+        "temp_deviation": 0.12,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-30",
+        "temp_deviation": 0.07,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-03-31",
+        "temp_deviation": 0.06,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-01",
+        "temp_deviation": -0.36,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-02",
+        "temp_deviation": -0.04,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-03",
+        "temp_deviation": -0.27,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-05",
+        "temp_deviation": 0.15,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-06",
+        "temp_deviation": -0.15,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-07",
+        "temp_deviation": -0.3,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-09",
+        "temp_deviation": -0.05,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-12",
+        "temp_deviation": -0.29,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-13",
+        "temp_deviation": -0.1,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-14",
+        "temp_deviation": 0.35,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-17",
+        "temp_deviation": -0.1,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-18",
+        "temp_deviation": 0.43,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-20",
+        "temp_deviation": 0.25,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-21",
+        "temp_deviation": 0.29,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-23",
+        "temp_deviation": 0.01,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-25",
+        "temp_deviation": 0,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-28",
+        "temp_deviation": -0.16,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-29",
+        "temp_deviation": -0.16,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-04-30",
+        "temp_deviation": -0.02,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-01",
+        "temp_deviation": 0.08,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-03",
+        "temp_deviation": -0.33,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-04",
+        "temp_deviation": -0.15,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-05",
+        "temp_deviation": -0.19,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-06",
+        "temp_deviation": 0.13,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-07",
+        "temp_deviation": 0.1,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-08",
+        "temp_deviation": -0.15,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-09",
+        "temp_deviation": -0.31,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-10",
+        "temp_deviation": -0.25,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-11",
+        "temp_deviation": -0.31,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-13",
+        "temp_deviation": 0.05,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-14",
+        "temp_deviation": 0.09,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-15",
+        "temp_deviation": 0.08,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-16",
+        "temp_deviation": 0.15,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-17",
+        "temp_deviation": 0.09,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-18",
+        "temp_deviation": 0.27,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-20",
+        "temp_deviation": 0.24,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-21",
+        "temp_deviation": 0.05,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-22",
+        "temp_deviation": -0.09,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-23",
+        "temp_deviation": -0.17,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-24",
+        "temp_deviation": 0.09,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-27",
+        "temp_deviation": 0.05,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-28",
+        "temp_deviation": 0.07,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-29",
+        "temp_deviation": -0.36,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-30",
+        "temp_deviation": -0.12,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-05-31",
+        "temp_deviation": -0.41,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-02",
+        "temp_deviation": -0.06,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-04",
+        "temp_deviation": -0.05,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-05",
+        "temp_deviation": 0.15,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-06",
+        "temp_deviation": 0.07,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-07",
+        "temp_deviation": -0.1,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-09",
+        "temp_deviation": -0.32,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-11",
+        "temp_deviation": -0.03,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-12",
+        "temp_deviation": -0.11,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-13",
+        "temp_deviation": 0.38,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-15",
+        "temp_deviation": 0.19,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-16",
+        "temp_deviation": 0.45,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-17",
+        "temp_deviation": -0.03,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-19",
+        "temp_deviation": 0.02,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-21",
+        "temp_deviation": 0.06,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-22",
+        "temp_deviation": 0.11,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-24",
+        "temp_deviation": -0.21,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-25",
+        "temp_deviation": -0.64,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-26",
+        "temp_deviation": -0.11,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-28",
+        "temp_deviation": 0.06,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-29",
+        "temp_deviation": -0.07,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-06-30",
+        "temp_deviation": -0.26,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-01",
+        "temp_deviation": -0.07,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-02",
+        "temp_deviation": -0.24,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-04",
+        "temp_deviation": -0.14,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-05",
+        "temp_deviation": -0.08,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-07",
+        "temp_deviation": -0.04,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-08",
+        "temp_deviation": 0.16,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-09",
+        "temp_deviation": 0.01,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-10",
+        "temp_deviation": 0.07,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-11",
+        "temp_deviation": 0.15,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-13",
+        "temp_deviation": 0.16,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-14",
+        "temp_deviation": 0.08,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-16",
+        "temp_deviation": 0.28,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-18",
+        "temp_deviation": 0.22,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-20",
+        "temp_deviation": 0.05,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-21",
+        "temp_deviation": 0.06,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-22",
+        "temp_deviation": -0.31,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-23",
+        "temp_deviation": -0.69,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-24",
+        "temp_deviation": -0.05,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-26",
+        "temp_deviation": 0.08,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-27",
+        "temp_deviation": -0.07,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-07-29",
+        "temp_deviation": 0.44,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-08-05",
+        "temp_deviation": 0.13,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-08-07",
+        "temp_deviation": -0.05,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-08-09",
+        "temp_deviation": 0.23,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-08-11",
+        "temp_deviation": 0.28,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-08-12",
+        "temp_deviation": 0.13,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-08-13",
+        "temp_deviation": 0.09,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-08-14",
+        "temp_deviation": 0.14,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-08-17",
+        "temp_deviation": -0.09,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-08-19",
+        "temp_deviation": -0.15,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-08-20",
+        "temp_deviation": -0.07,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-08-23",
+        "temp_deviation": -0.78,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-08-25",
+        "temp_deviation": -0.23,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-08-28",
+        "temp_deviation": -0.14,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-08-29",
+        "temp_deviation": -0.26,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-08-30",
+        "temp_deviation": 0.37,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-08-31",
+        "temp_deviation": 0.3,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-01",
+        "temp_deviation": -0.05,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-02",
+        "temp_deviation": 0.28,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-04",
+        "temp_deviation": 0.15,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-05",
+        "temp_deviation": 0.17,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-06",
+        "temp_deviation": 0.17,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-07",
+        "temp_deviation": 0.22,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-08",
+        "temp_deviation": 0.5,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-09",
+        "temp_deviation": 0.56,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-10",
+        "temp_deviation": 0.22,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-11",
+        "temp_deviation": 0.2,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-12",
+        "temp_deviation": -0.09,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-13",
+        "temp_deviation": -0.2,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-14",
+        "temp_deviation": 0.06,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-15",
+        "temp_deviation": -0.01,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-16",
+        "temp_deviation": -0.04,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-17",
+        "temp_deviation": 0.06,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-18",
+        "temp_deviation": -0.24,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-19",
+        "temp_deviation": 0.1,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-20",
+        "temp_deviation": -0.12,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-21",
+        "temp_deviation": 0.27,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-22",
+        "temp_deviation": -0.16,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-23",
+        "temp_deviation": -0.16,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-24",
+        "temp_deviation": -0.6,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-25",
+        "temp_deviation": -0.04,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-26",
+        "temp_deviation": -0.11,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-27",
+        "temp_deviation": 0.11,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-28",
+        "temp_deviation": 0.05,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-29",
+        "temp_deviation": 0.44,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-09-30",
+        "temp_deviation": 0.28,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-01",
+        "temp_deviation": 0.19,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-02",
+        "temp_deviation": 0.24,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-03",
+        "temp_deviation": 0.15,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-04",
+        "temp_deviation": 0.32,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-05",
+        "temp_deviation": 0.04,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-06",
+        "temp_deviation": 0.21,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-07",
+        "temp_deviation": 0.3,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-08",
+        "temp_deviation": 0.34,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-09",
+        "temp_deviation": 0.19,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-10",
+        "temp_deviation": 0.03,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-11",
+        "temp_deviation": -0.23,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-12",
+        "temp_deviation": -0.09,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-13",
+        "temp_deviation": -0.17,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-14",
+        "temp_deviation": -0.27,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-15",
+        "temp_deviation": -0.16,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-16",
+        "temp_deviation": -0.27,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-17",
+        "temp_deviation": -0.31,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-18",
+        "temp_deviation": -0.03,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-19",
+        "temp_deviation": -0.31,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-20",
+        "temp_deviation": 0.07,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-21",
+        "temp_deviation": -0.32,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-22",
+        "temp_deviation": 0.04,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-23",
+        "temp_deviation": 0.02,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-24",
+        "temp_deviation": 0.05,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-26",
+        "temp_deviation": 0.04,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-27",
+        "temp_deviation": -0.31,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-28",
+        "temp_deviation": 0.29,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-29",
+        "temp_deviation": 0.12,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-10-30",
+        "temp_deviation": 0.19,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-03",
+        "temp_deviation": 0.58,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-04",
+        "temp_deviation": 0.03,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-05",
+        "temp_deviation": 0.27,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-06",
+        "temp_deviation": 0.19,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-07",
+        "temp_deviation": 0.15,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-08",
+        "temp_deviation": 0.26,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-09",
+        "temp_deviation": -0.11,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-10",
+        "temp_deviation": 0.09,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-11",
+        "temp_deviation": -0.23,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-12",
+        "temp_deviation": 0.05,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-13",
+        "temp_deviation": -0.24,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-14",
+        "temp_deviation": 0.44,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-15",
+        "temp_deviation": -0.11,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-16",
+        "temp_deviation": -0.25,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-17",
+        "temp_deviation": -0.02,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-18",
+        "temp_deviation": -0.45,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-19",
+        "temp_deviation": 0.22,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-20",
+        "temp_deviation": -0.12,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-22",
+        "temp_deviation": 0.39,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-23",
+        "temp_deviation": 0.21,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-24",
+        "temp_deviation": 0.17,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-25",
+        "temp_deviation": 0.12,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-26",
+        "temp_deviation": 0.32,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-27",
+        "temp_deviation": 0.14,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-28",
+        "temp_deviation": 0.26,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-29",
+        "temp_deviation": 0.19,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-11-30",
+        "temp_deviation": 0.2,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-01",
+        "temp_deviation": -0.01,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-02",
+        "temp_deviation": 0.13,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-03",
+        "temp_deviation": 0.11,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-04",
+        "temp_deviation": -0.12,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-05",
+        "temp_deviation": -0.29,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-06",
+        "temp_deviation": -0.05,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-07",
+        "temp_deviation": 0.18,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-08",
+        "temp_deviation": -0.2,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-09",
+        "temp_deviation": -0.16,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-10",
+        "temp_deviation": -0.2,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-11",
+        "temp_deviation": -0.21,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-12",
+        "temp_deviation": -0.19,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-13",
+        "temp_deviation": -0.17,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-14",
+        "temp_deviation": -0.07,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-15",
+        "temp_deviation": 0.01,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-18",
+        "temp_deviation": 0.83,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-19",
+        "temp_deviation": 0.35,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-20",
+        "temp_deviation": 0.48,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-21",
+        "temp_deviation": 0.46,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-22",
+        "temp_deviation": 0.43,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-23",
+        "temp_deviation": 0.39,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-24",
+        "temp_deviation": 0.42,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-25",
+        "temp_deviation": 0.56,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-26",
+        "temp_deviation": 0.57,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-27",
+        "temp_deviation": 0.42,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-28",
+        "temp_deviation": 0.43,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-29",
+        "temp_deviation": 0.29,
+        "lines_merged": 0
+      },
+      {
+        "date": "2025-12-30",
+        "temp_deviation": 0.03,
+        "lines_merged": 0
+      }
+    ],
+    "fun_facts": {
+      "best_sleep": {
+        "date": "2025-03-15",
+        "score": 88
+      },
+      "worst_sleep": {
+        "date": "2025-01-29",
+        "score": 51
+      },
+      "most_steps_day": {
+        "date": "2025-09-28",
+        "steps": 58785
+      }
+    }
+  }
+}

@@ -23,6 +23,7 @@
     "astro": "^5.11.0",
     "bcrypt": "^6.0.0",
     "better-sqlite3": "^11.10.0",
+    "chart.js": "^4.5.1",
     "dotenv": "^17.2.2",
     "googleapis": "^140.0.1",
     "gray-matter": "^4.0.3",

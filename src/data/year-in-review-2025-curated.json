@@ -1,0 +1,16 @@
+{
+  "events": [
+    {
+      "title": "Example Event",
+      "description": "Replace with your actual life events from 2025",
+      "month": "January"
+    }
+  ],
+  "games": [
+    {
+      "title": "Example Game",
+      "rating": 4,
+      "description": "Replace with games you played in 2025"
+    }
+  ]
+}
