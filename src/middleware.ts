@@ -18,7 +18,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   // Protected routes that require authentication
-  const protectedRoutes = ['/admin', '/profile', '/api/auth/me', '/api/user/preferences', '/api/auth/google/status', '/api/auth/google/disconnect'];
+  const protectedRoutes = ['/admin', '/api/admin', '/profile', '/api/auth/me', '/api/user/preferences', '/api/auth/google/status', '/api/auth/google/disconnect'];
   const isProtectedRoute = protectedRoutes.some(route => context.url.pathname.startsWith(route));
 
   if (isProtectedRoute) {

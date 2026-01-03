@@ -189,6 +189,20 @@ export async function getBlogPostBySlug(
   return mapDbRowToBlogPost(result as Record<string, unknown>);
 }
 
+export async function getBlogPostById(
+  db: D1Database,
+  id: string
+): Promise<BlogPost | null> {
+  const result = await db
+    .prepare('SELECT * FROM blog_posts WHERE id = ?')
+    .bind(id)
+    .first();
+
+  if (!result) return null;
+
+  return mapDbRowToBlogPost(result as Record<string, unknown>);
+}
+
 export async function createBlogPost(
   db: D1Database,
   post: CreateBlogPostInput
