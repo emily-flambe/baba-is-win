@@ -371,6 +371,20 @@ export async function getThoughtBySlug(
   return mapDbRowToThought(result as Record<string, unknown>);
 }
 
+export async function getThoughtById(
+  db: D1Database,
+  id: string
+): Promise<Thought | null> {
+  const result = await db
+    .prepare('SELECT * FROM thoughts WHERE id = ?')
+    .bind(id)
+    .first();
+
+  if (!result) return null;
+
+  return mapDbRowToThought(result as Record<string, unknown>);
+}
+
 export async function createThought(
   db: D1Database,
   thought: CreateThoughtInput
