@@ -21,6 +21,12 @@
   "ai": {
     "binding": "AI"
   },
+  "r2_buckets": [
+    {
+      "binding": "IMAGES",
+      "bucket_name": "baba-is-win-images"
+    }
+  ],
   "vars": {
     "ENVIRONMENT": "preview",
     "AUTORAG_INSTANCE": "personal-site-rag"

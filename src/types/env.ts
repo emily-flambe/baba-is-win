@@ -1,6 +1,9 @@
 export interface Env {
   // Database
   DB: D1Database;
+
+  // R2 Storage
+  IMAGES?: R2Bucket;
   
   // Authentication
   JWT_SECRET: string;
