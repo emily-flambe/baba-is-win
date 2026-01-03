@@ -2,6 +2,25 @@ import { defineMiddleware } from 'astro:middleware';
 import { verifyJWT } from './lib/auth/jwt';
 import { AuthDB } from './lib/auth/db';
 
+/**
+ * Extract auth token from request.
+ * Checks Authorization header first (for mobile app), then falls back to cookie (for web).
+ */
+function extractToken(request: Request): string | undefined {
+  // Check Authorization header first (mobile app sends Bearer token)
+  const authHeader = request.headers.get('Authorization');
+  if (authHeader?.startsWith('Bearer ')) {
+    return authHeader.slice(7); // Remove 'Bearer ' prefix
+  }
+
+  // Fall back to cookie (web browser)
+  const cookieHeader = request.headers.get('cookie');
+  return cookieHeader
+    ?.split('; ')
+    .find(row => row.startsWith('session='))
+    ?.split('=')[1];
+}
+
 export const onRequest = defineMiddleware(async (context, next) => {
   // Skip auth check for public routes and API endpoints
   const publicRoutes = ['/login', '/signup', '/api/auth/login', '/api/auth/signup', '/api/user/unsubscribe'];
@@ -22,11 +41,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const isProtectedRoute = protectedRoutes.some(route => context.url.pathname.startsWith(route));
 
   if (isProtectedRoute) {
-    const cookieHeader = context.request.headers.get('cookie');
-    const token = cookieHeader
-      ?.split('; ')
-      .find(row => row.startsWith('session='))
-      ?.split('=')[1];
+    const token = extractToken(context.request);
 
     if (!token) {
       if (context.url.pathname.startsWith('/api/')) {
@@ -65,11 +80,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   // For all other routes, try to get user if token exists but don't require it
-  const cookieHeader = context.request.headers.get('cookie');
-  const token = cookieHeader
-    ?.split('; ')
-    .find(row => row.startsWith('session='))
-    ?.split('=')[1];
+  const token = extractToken(context.request);
 
   if (token) {
     try {
