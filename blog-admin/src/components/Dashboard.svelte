@@ -160,7 +160,7 @@
               <span class="status {getStatusClass(post.status)}">
                 {post.status}
               </span>
-              <span class="date">{formatDate(post.updated_at)}</span>
+              <span class="date">{formatDate(post.updatedAt)}</span>
             </div>
           </button>
         {/each}
@@ -187,7 +187,7 @@
               <span class="status {getStatusClass(thought.status)}">
                 {thought.status}
               </span>
-              <span class="date">{formatDate(thought.updated_at)}</span>
+              <span class="date">{formatDate(thought.updatedAt)}</span>
             </div>
           </button>
         {/each}

@@ -9,26 +9,42 @@ export interface User {
   name?: string;
 }
 
+export type ContentStatus = 'draft' | 'published' | 'archived';
+
 export interface Post {
   id: string;
   slug: string;
   title: string;
   content: string;
-  description?: string;
-  image?: string;
-  status: 'draft' | 'published' | 'archived';
-  created_at: string;
-  updated_at: string;
-  published_at?: string;
+  description: string | null;
+  thumbnail: string | null;
+  tags: string[];
+  premium: boolean;
+  status: ContentStatus;
+  publishDate: string | null;
+  readingTimeMinutes: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ThoughtImage {
+  url: string;
+  offset?: { x: number; y: number };
 }
 
 export interface Thought {
   id: string;
+  slug: string;
+  title: string | null;
   content: string;
-  status: 'draft' | 'published' | 'archived';
-  created_at: string;
-  updated_at: string;
-  published_at?: string;
+  color: string | null;
+  images: ThoughtImage[];
+  tags: string[];
+  status: ContentStatus;
+  publishDate: string | null;
+  publishTime: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ApiError {

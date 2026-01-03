@@ -1,14 +1,21 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { user, loading } from './lib/stores';
-  import { getMe, type User } from './lib/api';
+  import { getMe, type User, type Post, type Thought } from './lib/api';
   import Login from './components/Login.svelte';
   import Dashboard from './components/Dashboard.svelte';
+  import PostEditor from './components/PostEditor.svelte';
+  import ThoughtEditor from './components/ThoughtEditor.svelte';
 
   const version = __APP_VERSION__;
 
+  type ViewState = 'dashboard' | 'editPost' | 'newPost' | 'editThought' | 'newThought';
+
   let currentUser = $state<User | null>(null);
   let isLoading = $state(true);
+  let currentView = $state<ViewState>('dashboard');
+  let editingId = $state<string | undefined>(undefined);
+  let dashboardKey = $state(0);
 
   // Subscribe to stores
   $effect(() => {
@@ -42,30 +49,59 @@
   }
 
   function handleLogout() {
-    // Clear user state (actual logout API call would happen here if needed)
     user.set(null);
-    // Reload to clear any cached state
     window.location.reload();
   }
 
   function handleEditPost(event: CustomEvent<string>) {
-    // TODO: Navigate to post editor (Task 3.3)
-    console.log('Edit post:', event.detail);
+    editingId = event.detail;
+    currentView = 'editPost';
   }
 
   function handleEditThought(event: CustomEvent<string>) {
-    // TODO: Navigate to thought editor (Task 3.3)
-    console.log('Edit thought:', event.detail);
+    editingId = event.detail;
+    currentView = 'editThought';
   }
 
   function handleNewPost() {
-    // TODO: Navigate to new post editor (Task 3.3)
-    console.log('New post');
+    editingId = undefined;
+    currentView = 'newPost';
   }
 
   function handleNewThought() {
-    // TODO: Navigate to new thought editor (Task 3.3)
-    console.log('New thought');
+    editingId = undefined;
+    currentView = 'newThought';
+  }
+
+  function returnToDashboard() {
+    currentView = 'dashboard';
+    editingId = undefined;
+    // Increment key to force Dashboard remount and refresh data
+    dashboardKey++;
+  }
+
+  function handlePostSave(_event: CustomEvent<Post>) {
+    returnToDashboard();
+  }
+
+  function handlePostDelete() {
+    returnToDashboard();
+  }
+
+  function handlePostCancel() {
+    returnToDashboard();
+  }
+
+  function handleThoughtSave(_event: CustomEvent<Thought>) {
+    returnToDashboard();
+  }
+
+  function handleThoughtDelete() {
+    returnToDashboard();
+  }
+
+  function handleThoughtCancel() {
+    returnToDashboard();
   }
 </script>
 
@@ -77,13 +113,43 @@
       <p class="version">v{version}</p>
     </div>
   {:else if currentUser}
-    <Dashboard
-      on:logout={handleLogout}
-      on:editPost={handleEditPost}
-      on:editThought={handleEditThought}
-      on:newPost={handleNewPost}
-      on:newThought={handleNewThought}
-    />
+    {#if currentView === 'dashboard'}
+      {#key dashboardKey}
+        <Dashboard
+          on:logout={handleLogout}
+          on:editPost={handleEditPost}
+          on:editThought={handleEditThought}
+          on:newPost={handleNewPost}
+          on:newThought={handleNewThought}
+        />
+      {/key}
+    {:else if currentView === 'newPost'}
+      <PostEditor
+        on:save={handlePostSave}
+        on:delete={handlePostDelete}
+        on:cancel={handlePostCancel}
+      />
+    {:else if currentView === 'editPost'}
+      <PostEditor
+        postId={editingId}
+        on:save={handlePostSave}
+        on:delete={handlePostDelete}
+        on:cancel={handlePostCancel}
+      />
+    {:else if currentView === 'newThought'}
+      <ThoughtEditor
+        on:save={handleThoughtSave}
+        on:delete={handleThoughtDelete}
+        on:cancel={handleThoughtCancel}
+      />
+    {:else if currentView === 'editThought'}
+      <ThoughtEditor
+        thoughtId={editingId}
+        on:save={handleThoughtSave}
+        on:delete={handleThoughtDelete}
+        on:cancel={handleThoughtCancel}
+      />
+    {/if}
   {:else}
     <Login on:login={handleLogin} />
   {/if}
