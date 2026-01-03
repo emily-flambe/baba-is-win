@@ -20,6 +20,5 @@ npm-debug.log*
 *.sln
 *.sw?
 
-# Capacitor (Android/iOS)
-android/
+# Capacitor iOS (not used)
 ios/
