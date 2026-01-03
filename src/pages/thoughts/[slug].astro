@@ -1,28 +1,24 @@
 ---
+export const prerender = false;
+
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Carousel from '../../components/Carousel.astro';
 import { processSimpleMarkdown } from '../../utils/simpleMarkdown.js';
+import { getThoughtBySlug } from '../../lib/db/content';
 
 const { slug } = Astro.params;
 
-// Load all thoughts and find the matching one
-const thoughtModules = import.meta.glob('../../data/thoughts/published/*.md', { eager: true });
-const thoughts = Object.entries(thoughtModules).map(([path, module]) => ({
-  ...module,
-  file: path
-}));
+// Get D1 database from runtime environment
+const db = Astro.locals.runtime.env.DB;
 
-const thought = thoughts.find(t => {
-  const thoughtSlug = t.file.split('/').pop().split('.').shift();
-  return thoughtSlug === slug;
-});
+// Fetch the thought from D1
+const thought = await getThoughtBySlug(db, slug);
 
 if (!thought) {
-  throw new Error(`Thought not found: ${slug}`);
+  return Astro.redirect('/404');
 }
 
-const { frontmatter } = thought;
-const { content, publishDate, publishTime, tags, images, color } = frontmatter;
+const { content, publishDate, publishTime, tags, images, color } = thought;
 const bgColor = color || 'var(--background-body)';
 const permalink = `${Astro.site.href}thoughts/${slug}`;
 ---

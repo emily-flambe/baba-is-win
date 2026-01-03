@@ -1,39 +1,39 @@
 ---
+export const prerender = false;
+
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FooterBio from '../../components/FooterBio.astro';
 import PremiumContent from '../../components/PremiumContent.astro';
-import getPostData from '../../utils/getPostData';
+import { getBlogPostBySlug } from '../../lib/db/content';
 
 const { slug } = Astro.params;
 
-// Load all posts and find the matching one
-const postModules = import.meta.glob('../../data/blog-posts/published/*.md', { eager: true });
-const posts = Object.entries(postModules).map(([path, module]) => ({
-  ...module,
-  file: path
-}));
+// Get D1 database from runtime environment
+const db = Astro.locals.runtime.env.DB;
 
-const post = posts.find(p => {
-  const postSlug = p.file.split('/').pop().split('.').shift();
-  return postSlug === slug;
-});
+// Fetch the blog post from D1
+const post = await getBlogPostBySlug(db, slug);
 
 if (!post) {
-  throw new Error(`Post not found: ${slug}`);
+  return Astro.redirect('/404');
 }
 
-const { Content, frontmatter } = post;
-const { title, description, publishDate, premium } = frontmatter;
-const { slug: postSlug, readingTime } = getPostData(post);
-const permalink = `${Astro.site.href}blog/${postSlug}`;
+const { title, description, publishDate, premium, content, readingTimeMinutes } = post;
+const permalink = `${Astro.site.href}blog/${slug}`;
+
+// Format reading time
+const readingTime = readingTimeMinutes ? `${readingTimeMinutes} min read` : '';
 
 // Get current user for premium content handling
 const user = Astro.locals?.user || null;
 const isAuthenticated = !!user;
 const isPremium = premium === true;
 
-// Get raw content for premium content processing
-const rawContent = post.rawContent ? post.rawContent() : '';
+// Create frontmatter-like object for PremiumContent component
+const frontmatter = {
+  premium: isPremium,
+  publishDate: publishDate || '',
+};
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="blog">
@@ -45,12 +45,11 @@ const rawContent = post.rawContent ? post.rawContent() : '';
   <div class="container">
     <article class="content">
       <PremiumContent
-        content={rawContent}
+        content={content}
         isPremium={isPremium}
         isAuthenticated={isAuthenticated}
         contentType="blog"
         frontmatter={frontmatter}
-        ContentComponent={Content}
         showIndicator={false}
       />
     </article>

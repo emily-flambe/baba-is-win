@@ -1,19 +1,23 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { processContentForDisplay } from '../../utils/contentProcessing';
+export const prerender = false;
 
-// Import the tags from the tags index page
-const allPostsForTags = Object.values(import.meta.glob('../../data/blog-posts/published/*.md', { eager: true }));
-const tags = [...new Set(allPostsForTags.map((post: any) => post.frontmatter.tags).flat())]
-  .filter(tag => tag)
-  .sort(); // Sort tags alphabetically
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getBlogPosts } from '../../lib/db/content';
 
 const title = 'Blog';
 const description = 'Latest articles.';
 const permalink = `${Astro.site.href}blog`;
 
-let allPosts = await Astro.glob('../../data/blog-posts/published/*.md');
-allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf() - new Date(a.frontmatter.publishDate).valueOf());
+// Get D1 database from runtime environment
+const db = Astro.locals.runtime.env.DB;
+
+// Fetch published blog posts from D1
+const allPosts = await getBlogPosts(db, { status: 'published', limit: 100 });
+
+// Extract all unique tags
+const tags = [...new Set(allPosts.flatMap(post => post.tags))]
+  .filter(tag => tag)
+  .sort();
 
 // Get current user for premium content handling
 const user = Astro.locals?.user || null;
@@ -36,33 +40,24 @@ const user = Astro.locals?.user || null;
     </div>
     <hr />
     {allPosts.map((post, index) => {
-      const href = `/blog/${post.file.split('/').pop().split('.').shift()}`;
-      const imageUrl = post.frontmatter.thumbnail; // Use the thumbnail field from frontmatter
+      const href = `/blog/${post.slug}`;
+      const imageUrl = post.thumbnail;
       const isEven = index % 2 === 0;
-      const postTags = post.frontmatter.tags || []; // Get tags from frontmatter
-      const isPremium = post.frontmatter.premium === true;
-      
-      // Process content for display in listing (use description first, fallback to content)
-      const contentForProcessing = post.frontmatter.description || post.frontmatter.content || '';
-      const contentData = processContentForDisplay(
-        contentForProcessing,
-        post.frontmatter,
-        user,
-        'blog'
-      );
-      
+      const postTags = post.tags || [];
+      const isPremium = post.premium === true;
+
       return (
         <div>
           { index !== 0 && <hr /> }
           <div class={`post-item ${isEven ? 'image-left' : 'image-right'}`}>
-            {imageUrl && <img src={imageUrl} alt={post.frontmatter.title} class="post-image" />}
+            {imageUrl && <img src={imageUrl} alt={post.title} class="post-image" />}
             <div class="post-content">
 
               <div class="post-item-footer">
-                <span class="post-item-date">{post.frontmatter.publishDate}</span>
+                <span class="post-item-date">{post.publishDate}</span>
               </div>
               <h2>
-                <a href={href}>{post.frontmatter.title}</a>
+                <a href={href}>{post.title}</a>
                 {isPremium && (
                   <a href="/login" class="premium-badge-inline">
                     ULTRA PREMIUM
@@ -70,7 +65,7 @@ const user = Astro.locals?.user || null;
                   </a>
                 )}
               </h2>
-              <p>{post.frontmatter.description}</p>
+              <p>{post.description}</p>
 
               <p style="font-size: 0.85em;">Tags:
               <br><i>
