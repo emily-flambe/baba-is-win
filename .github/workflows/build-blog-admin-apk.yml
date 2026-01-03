@@ -1,0 +1,81 @@
+name: Build Blog Admin APK
+
+# Triggers on version tags like blog-admin-v1.0.0
+on:
+  push:
+    tags:
+      - 'blog-admin-v*'
+
+# Required secrets (configure in GitHub repo settings):
+#   ANDROID_KEYSTORE_BASE64 - Base64-encoded keystore file
+#                             Generate with: base64 -i your-keystore.jks | pbcopy
+#   ANDROID_KEY_ALIAS       - Key alias in keystore (e.g., "blog-admin")
+#   ANDROID_KEY_PASSWORD    - Password for the key
+#   ANDROID_STORE_PASSWORD  - Password for the keystore
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: blog-admin
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: blog-admin/package-lock.json
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          # Tag format: blog-admin-v1.0.0 -> extract 1.0.0
+          VERSION=${GITHUB_REF#refs/tags/blog-admin-v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build web app
+        run: npm run build
+
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      - name: Decode keystore
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android/app/release.keystore
+
+      - name: Build release APK
+        working-directory: blog-admin/android
+        env:
+          KEYSTORE_FILE: release.keystore
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: ./gradlew assembleRelease
+
+      - name: Rename APK with version
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          mv android/app/build/outputs/apk/release/app-release.apk android/app/build/outputs/apk/release/blog-admin-v${VERSION}.apk
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: blog-admin/android/app/build/outputs/apk/release/*.apk
+          generate_release_notes: true
