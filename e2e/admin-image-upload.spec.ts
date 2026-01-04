@@ -36,7 +36,7 @@ test.describe('Admin Image Upload', () => {
     await page.click('button:has-text("New Thought")');
 
     // Wait for editor to load
-    await expect(page.locator('text=New Thought')).toBeVisible();
+    await expect(page.locator('h1:has-text("New Thought")')).toBeVisible();
 
     // Click upload image button and handle file chooser
     const [fileChooser] = await Promise.all([
@@ -53,6 +53,24 @@ test.describe('Admin Image Upload', () => {
     // Verify the image src contains the upload path
     const imageSrc = await page.locator('.image-preview').getAttribute('src');
     expect(imageSrc).toContain('/assets/uploads/');
+
+    // Fill required content field
+    await page.fill('textarea#content', 'Test thought content');
+
+    // Try to save - this verifies form validation passes with relative URL
+    await page.click('button:has-text("Create Thought")');
+
+    // Should redirect back to dashboard (success) or show no validation errors
+    // Wait for either dashboard or success state
+    await expect(page.locator('text=Logout').or(page.locator('.error'))).toBeVisible({ timeout: 10000 });
+
+    // Verify no error appeared (form validation passed)
+    const errorVisible = await page.locator('.error').isVisible();
+    if (errorVisible) {
+      const errorText = await page.locator('.error').textContent();
+      // Only fail if it's a validation error, not a server error
+      expect(errorText).not.toContain('Please enter a URL');
+    }
   });
 
   test('upload thumbnail in PostEditor', async ({ page }) => {
