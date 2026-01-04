@@ -57,7 +57,7 @@
   },
   "scripts": {
     "astro": "astro",
-    "build:admin": "cd blog-admin && npm run build && cp -r dist/* ../public/admin/",
+    "build:admin": "cd blog-admin && npm install && npm run build && mkdir -p ../public/admin && cp -r dist/* ../public/admin/",
     "build": "npm run build:admin && astro build",
     "check": "npm run build && tsc && wrangler deploy --dry-run",
     "deploy": "npm run build && wrangler deploy",
