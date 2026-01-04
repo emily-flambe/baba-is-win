@@ -57,9 +57,10 @@
   },
   "scripts": {
     "astro": "astro",
-    "build": "astro build",
-    "check": "astro build && tsc && wrangler deploy --dry-run",
-    "deploy": "astro build && wrangler deploy",
+    "build:admin": "cd blog-admin && npm run build && cp -r dist/* ../public/admin/",
+    "build": "npm run build:admin && astro build",
+    "check": "npm run build && tsc && wrangler deploy --dry-run",
+    "deploy": "npm run build && wrangler deploy",
     "dev:astro": "astro dev",
     "dev": "astro build && wrangler dev --port 4321",
     "dev:pages": "astro build && wrangler pages dev dist/ --compatibility-date=2024-11-01 --compatibility-flags nodejs_compat --d1 DB=baba-is-win-db",

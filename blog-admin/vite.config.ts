@@ -4,6 +4,7 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 export default defineConfig({
   plugins: [svelte({ configFile: '../svelte.config.js' })],
   root: 'src',
+  base: '/admin/',
   build: {
     outDir: '../dist',
     emptyOutDir: true,
