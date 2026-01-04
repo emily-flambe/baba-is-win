@@ -369,11 +369,11 @@
               {/if}
               <div class="image-row">
                 <input
-                  type="url"
+                  type="text"
                   value={image.url}
                   oninput={(e) => updateImageUrl(index, (e.target as HTMLInputElement).value)}
                   disabled={saving}
-                  placeholder="https://example.com/image.jpg"
+                  placeholder="Image URL or /assets/uploads/..."
                 />
                 <button
                   type="button"
