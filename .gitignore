@@ -66,3 +66,4 @@ quick-*.js
 
 # Python cache
 __pycache__/
+playwright-report/
