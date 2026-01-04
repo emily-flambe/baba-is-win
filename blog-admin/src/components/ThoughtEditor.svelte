@@ -5,6 +5,7 @@
     createThought,
     updateThought,
     deleteThought,
+    uploadImage,
     type Thought,
     type ThoughtImage,
     type ContentStatus,
@@ -41,8 +42,10 @@
   let loading = $state(false);
   let saving = $state(false);
   let deleting = $state(false);
+  let uploading = $state(false);
   let error = $state('');
   let slugManuallyEdited = $state(false);
+  let fileInput: HTMLInputElement;
 
   const contentLength = $derived(content.length);
   const contentOverLimit = $derived(contentLength > MAX_CONTENT_LENGTH);
@@ -125,6 +128,44 @@
 
   function updateImageUrl(index: number, url: string) {
     images = images.map((img, i) => (i === index ? { ...img, url } : img));
+  }
+
+  function triggerFileUpload() {
+    fileInput?.click();
+  }
+
+  async function handleFileSelect(e: Event) {
+    const target = e.target as HTMLInputElement;
+    const file = target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      error = 'Invalid file type. Allowed: JPEG, PNG, GIF, WebP';
+      return;
+    }
+
+    // Validate file size (10MB max)
+    if (file.size > 10 * 1024 * 1024) {
+      error = 'File too large. Maximum size: 10MB';
+      return;
+    }
+
+    uploading = true;
+    error = '';
+
+    try {
+      const result = await uploadImage(file);
+      images = [...images, { url: result.url }];
+    } catch (err) {
+      const apiError = err as ApiError;
+      error = apiError.error || 'Failed to upload image';
+    } finally {
+      uploading = false;
+      // Reset file input so same file can be selected again
+      target.value = '';
+    }
   }
 
   async function handleSubmit(e: Event) {
@@ -322,32 +363,54 @@
         <span class="field-label">Images</span>
         <div class="images-list">
           {#each images as image, index (index)}
-            <div class="image-row">
-              <input
-                type="url"
-                value={image.url}
-                oninput={(e) => updateImageUrl(index, (e.target as HTMLInputElement).value)}
-                disabled={saving}
-                placeholder="https://example.com/image.jpg"
-              />
-              <button
-                type="button"
-                class="remove-image-btn"
-                onclick={() => removeImage(index)}
-                disabled={saving}
-              >
-                Remove
-              </button>
+            <div class="image-item">
+              {#if image.url}
+                <img src={image.url} alt="Uploaded image" class="image-preview" />
+              {/if}
+              <div class="image-row">
+                <input
+                  type="url"
+                  value={image.url}
+                  oninput={(e) => updateImageUrl(index, (e.target as HTMLInputElement).value)}
+                  disabled={saving}
+                  placeholder="https://example.com/image.jpg"
+                />
+                <button
+                  type="button"
+                  class="remove-image-btn"
+                  onclick={() => removeImage(index)}
+                  disabled={saving}
+                >
+                  Remove
+                </button>
+              </div>
             </div>
           {/each}
-          <button
-            type="button"
-            class="add-image-btn"
-            onclick={addImage}
-            disabled={saving}
-          >
-            + Add Image
-          </button>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            onchange={handleFileSelect}
+            bind:this={fileInput}
+            class="file-input-hidden"
+          />
+          <div class="image-buttons">
+            <button
+              type="button"
+              class="upload-image-btn"
+              onclick={triggerFileUpload}
+              disabled={saving || uploading}
+            >
+              {uploading ? 'Uploading...' : 'Upload Image'}
+            </button>
+            <button
+              type="button"
+              class="add-image-btn"
+              onclick={addImage}
+              disabled={saving || uploading}
+            >
+              + Add URL
+            </button>
+          </div>
         </div>
       </div>
 
@@ -550,7 +613,24 @@
   .images-list {
     display: flex;
     flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .image-item {
+    display: flex;
+    flex-direction: column;
     gap: 0.5rem;
+    padding: 0.75rem;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+  }
+
+  .image-preview {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: 4px;
   }
 
   .image-row {
@@ -560,6 +640,36 @@
 
   .image-row input {
     flex: 1;
+  }
+
+  .file-input-hidden {
+    display: none;
+  }
+
+  .image-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .upload-image-btn {
+    padding: 0.5rem 1rem;
+    background: #2d5a2d;
+    border: 1px solid #3d7a3d;
+    border-radius: 6px;
+    color: #8fdf8f;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .upload-image-btn:hover:not(:disabled) {
+    background: #3d7a3d;
+    color: #afffaf;
+  }
+
+  .upload-image-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
   .remove-image-btn {
