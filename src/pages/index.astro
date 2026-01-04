@@ -1,22 +1,38 @@
 ---
+export const prerender = false;
+
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Carousel from '../components/Carousel.astro';
 import { processSimpleMarkdown } from '../utils/simpleMarkdown.js';
+import { getThoughts } from '../lib/db/content';
 
 const title = 'Emily Cogsdill';
 const description = 'One of the people of all time.';
 const permalink = Astro.site.href;
 
-// Get recent thoughts
-let allThoughts = await Astro.glob('../data/thoughts/published/*.md');
-allThoughts = allThoughts.sort((a, b) => {
-  const dateA = new Date(`${a.frontmatter.publishDate} ${a.frontmatter.publishTime}`);
-  const dateB = new Date(`${b.frontmatter.publishDate} ${b.frontmatter.publishTime}`);
-  return dateB.valueOf() - dateA.valueOf();
-});
+// Get D1 database from runtime environment
+const db = Astro.locals.runtime.env.DB;
 
-// Get only the 5 most recent thoughts
-const recentThoughts = allThoughts.slice(0, 5);
+// Check if user is admin
+const user = Astro.locals.user;
+const isAdmin = user?.isAdmin === true;
+
+// Fetch thoughts - include drafts for admins
+let recentThoughts;
+if (isAdmin) {
+  const published = await getThoughts(db, { status: 'published', limit: 5 });
+  const drafts = await getThoughts(db, { status: 'draft', limit: 5 });
+  // Combine and sort by date, take top 5
+  const all = [...drafts, ...published];
+  all.sort((a, b) => {
+    const dateA = new Date(`${a.publishDate} ${a.publishTime}`);
+    const dateB = new Date(`${b.publishDate} ${b.publishTime}`);
+    return dateB.valueOf() - dateA.valueOf();
+  });
+  recentThoughts = all.slice(0, 5);
+} else {
+  recentThoughts = await getThoughts(db, { status: 'published', limit: 5 });
+}
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink}>
@@ -26,20 +42,22 @@ const recentThoughts = allThoughts.slice(0, 5);
       <hr style="border: 0; height: 1px; background: rgba(255, 255, 255, 0.1); margin: 1.5rem 0;">
       <div class="thoughts-list">
         {recentThoughts.map((thought) => {
-          const href = `/thoughts/${thought.file.split('/').pop().split('.').shift()}`;
-          const bgColor = thought.frontmatter.color || 'var(--background-body)';
+          const href = `/thoughts/${thought.slug}`;
+          const bgColor = thought.color || 'var(--background-body)';
+          const isDraft = thought.status === 'draft';
           return (
-            <article class="thought-item" style={`background-color: ${bgColor};`}>
-              <p class="thought-content" set:html={processSimpleMarkdown(thought.frontmatter.content)}></p>
-              {thought.frontmatter.images && thought.frontmatter.images.length > 0 && (
-                <Carousel images={thought.frontmatter.images} alt="Thought image" size="mini" />
+            <article class={`thought-item ${isDraft ? 'draft' : ''}`} style={`background-color: ${bgColor};`}>
+              {isDraft && <span class="draft-badge">DRAFT</span>}
+              <p class="thought-content" set:html={processSimpleMarkdown(thought.content)}></p>
+              {thought.images && thought.images.length > 0 && (
+                <Carousel images={thought.images} alt="Thought image" size="mini" />
               )}
               <div class="thought-meta">
-                <time>{thought.frontmatter.publishDate}</time>
-                <time class="thought-time">{thought.frontmatter.publishTime}</time>
-                {thought.frontmatter.tags && thought.frontmatter.tags.length > 0 && (
+                <time>{thought.publishDate || 'No date'}</time>
+                <time class="thought-time">{thought.publishTime}</time>
+                {thought.tags && thought.tags.length > 0 && (
                   <span class="tags">
-                    {thought.frontmatter.tags.map((tag, index) => (
+                    {thought.tags.map((tag, index) => (
                       <>
                         {index > 0 && ' '}
                         <span class="tag">#{tag}</span>
@@ -246,6 +264,24 @@ const recentThoughts = allThoughts.slice(0, 5);
     border-color: rgba(255, 255, 255, 0.2);
     transform: translateX(4px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .thought-item.draft {
+    border-color: #f59e0b;
+    border-style: dashed;
+    position: relative;
+  }
+
+  .draft-badge {
+    background: #f59e0b;
+    color: #000;
+    font-size: 0.65rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    font-weight: 700;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
   }
 
 
