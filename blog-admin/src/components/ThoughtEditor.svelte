@@ -53,6 +53,11 @@
   onMount(async () => {
     if (thoughtId) {
       await loadThought();
+    } else {
+      // Auto-populate date and time for new thoughts (user's local time)
+      const now = new Date();
+      publishDate = now.toISOString().split('T')[0]; // YYYY-MM-DD format
+      publishTime = now.toTimeString().slice(0, 5); // HH:MM format
     }
   });
 

@@ -51,6 +51,10 @@
   onMount(async () => {
     if (postId) {
       await loadPost();
+    } else {
+      // Auto-populate date for new posts (user's local date)
+      const now = new Date();
+      publishDate = now.toISOString().split('T')[0]; // YYYY-MM-DD format
     }
   });
 
