@@ -114,14 +114,16 @@ describe('contentProcessing', () => {
     });
 
     it('should truncate premium blog posts for anonymous users', () => {
-      const content = 'This is a premium blog post with much more content than the fifty word limit allows for anonymous users so it should definitely be truncated at the appropriate point and show ellipsis because we need way more than fifty words here to trigger the truncation logic properly and ensure the test passes correctly. This sentence alone should put us well over the fifty word limit that is specified for blog post truncation when anonymous users try to view premium content on the website.';
+      // Blog posts use 250 word limit, so we need >250 words to trigger truncation
+      const words = Array(300).fill('word').join(' ');
+      const content = `This is a premium blog post. ${words}`;
       const frontmatter: ContentFrontmatter = {
         publishDate: '2025-01-01',
         premium: true
       };
 
       const result = processContentForDisplay(content, frontmatter, null, 'blog');
-      
+
       expect(result.content).not.toBe(content);
       expect(result.content).toContain('...');
       expect(result.isPremium).toBe(true);

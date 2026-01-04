@@ -91,6 +91,21 @@ async function main() {
     console.error('  Failed to create test user:', message);
   }
 
+  // Verify essential tables exist (catches migration issues)
+  console.log('\nVerifying essential tables...');
+  const requiredTables = ['users', 'sessions', 'blog_posts', 'thoughts'];
+  const existingTables = db.prepare(
+    "SELECT name FROM sqlite_master WHERE type='table'"
+  ).all().map((r: { name: string }) => r.name);
+
+  const missingTables = requiredTables.filter(t => !existingTables.includes(t));
+  if (missingTables.length > 0) {
+    console.error(`  FATAL: Missing required tables: ${missingTables.join(', ')}`);
+    console.error('  This indicates migrations were not properly applied.');
+    process.exit(1);
+  }
+  console.log('  All required tables present:', requiredTables.join(', '));
+
   db.close();
   console.log('\nDone!');
 }
