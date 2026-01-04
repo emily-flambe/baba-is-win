@@ -11,10 +11,21 @@ const { slug } = Astro.params;
 // Get D1 database from runtime environment
 const db = Astro.locals.runtime.env.DB;
 
+// Get current user for premium content handling
+const user = Astro.locals?.user || null;
+const isAuthenticated = !!user;
+const isAdmin = user?.isAdmin === true;
+
 // Fetch the blog post from D1
 const post = await getBlogPostBySlug(db, slug);
 
 if (!post) {
+  return Astro.redirect('/404');
+}
+
+// Only allow admins to view draft posts
+const isDraft = post.status === 'draft';
+if (isDraft && !isAdmin) {
   return Astro.redirect('/404');
 }
 
@@ -24,9 +35,6 @@ const permalink = `${Astro.site.href}blog/${slug}`;
 // Format reading time
 const readingTime = readingTimeMinutes ? `${readingTimeMinutes} min read` : '';
 
-// Get current user for premium content handling
-const user = Astro.locals?.user || null;
-const isAuthenticated = !!user;
 const isPremium = premium === true;
 
 // Create frontmatter-like object for PremiumContent component
@@ -37,9 +45,10 @@ const frontmatter = {
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="blog">
-  <header>
-    <p>{publishDate} ~ {readingTime}</p>
-    <h1>{title}</h1>
+  {isDraft && <div class="draft-banner">DRAFT - Only visible to admins</div>}
+  <header class={isDraft ? 'draft' : ''}>
+    <p>{publishDate || 'No date'} ~ {readingTime}</p>
+    <h1>{title || 'Untitled'}</h1>
     <hr />
   </header>
   <div class="container">
@@ -62,8 +71,24 @@ const frontmatter = {
 </BaseLayout>
 
 <style>
+  .draft-banner {
+    background: #f59e0b;
+    color: #000;
+    text-align: center;
+    padding: 0.5rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
   header {
     text-align: center;
+  }
+
+  header.draft {
+    border: 2px dashed #f59e0b;
+    border-radius: 8px;
+    padding: 1rem;
   }
 
   header h1 {

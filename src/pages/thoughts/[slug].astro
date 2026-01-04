@@ -11,10 +11,20 @@ const { slug } = Astro.params;
 // Get D1 database from runtime environment
 const db = Astro.locals.runtime.env.DB;
 
+// Check if user is admin
+const user = Astro.locals.user;
+const isAdmin = user?.isAdmin === true;
+
 // Fetch the thought from D1
 const thought = await getThoughtBySlug(db, slug);
 
 if (!thought) {
+  return Astro.redirect('/404');
+}
+
+// Only allow admins to view draft thoughts
+const isDraft = thought.status === 'draft';
+if (isDraft && !isAdmin) {
   return Astro.redirect('/404');
 }
 
@@ -25,9 +35,10 @@ const permalink = `${Astro.site.href}thoughts/${slug}`;
 
 <BaseLayout title="Thought" description={content.substring(0, 100) + '...'} permalink={permalink} current="thoughts">
   <div class="container">
-    <article class="thought-single" style={`background-color: ${bgColor};`}>
+    {isDraft && <div class="draft-banner">DRAFT - Only visible to admins</div>}
+    <article class={`thought-single ${isDraft ? 'draft' : ''}`} style={`background-color: ${bgColor};`}>
       <div class="thought-header">
-        <time>{publishDate} at {publishTime}</time>
+        <time>{publishDate || 'No date'} at {publishTime || 'No time'}</time>
       </div>
       <div class="thought-body">
         <p set:html={processSimpleMarkdown(content)}></p>
@@ -50,12 +61,32 @@ const permalink = `${Astro.site.href}thoughts/${slug}`;
 </BaseLayout>
 
 <style>
+  .draft-banner {
+    max-width: 600px;
+    margin: 2rem auto 0;
+    background: #f59e0b;
+    color: #000;
+    text-align: center;
+    padding: 0.5rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 8px 8px 0 0;
+  }
+
   .thought-single {
     max-width: 600px;
     margin: 4rem auto;
     border: 1px solid var(--text-secondary);
     border-radius: 12px;
     padding: 2rem;
+  }
+
+  .thought-single.draft {
+    margin-top: 0;
+    border-color: #f59e0b;
+    border-style: dashed;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
   }
 
   .thought-header {

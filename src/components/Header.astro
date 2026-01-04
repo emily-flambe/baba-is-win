@@ -395,7 +395,6 @@ const selectedSubtitle = subtitlesData.subtitles[randomIndex];
         e.preventDefault();
         e.stopPropagation();
         userDropdown.classList.toggle('show');
-        console.log('User menu toggled:', userDropdown.classList.contains('show'));
       };
 
       // Store handler reference on element
@@ -418,7 +417,6 @@ const selectedSubtitle = subtitlesData.subtitles[randomIndex];
 
             if (!isClickInsideToggle && !isClickInsideDropdown) {
               dropdown.classList.remove('show');
-              console.log('User menu closed - clicked outside');
             }
           }
         });
@@ -428,7 +426,6 @@ const selectedSubtitle = subtitlesData.subtitles[randomIndex];
           const dropdown = document.getElementById('user-dropdown');
           if (e.key === 'Escape' && dropdown && dropdown.classList.contains('show')) {
             dropdown.classList.remove('show');
-            console.log('User menu closed - escape key');
           }
         });
       }

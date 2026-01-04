@@ -13,8 +13,20 @@ const permalink = `${Astro.site.href}thoughts`;
 // Get D1 database from runtime environment
 const db = Astro.locals.runtime.env.DB;
 
-// Fetch published thoughts from D1
-const allThoughts = await getThoughts(db, { status: 'published', limit: 200 });
+// Check if user is admin
+const user = Astro.locals.user;
+const isAdmin = user?.isAdmin === true;
+
+// Fetch thoughts - include drafts for admins
+let allThoughts;
+if (isAdmin) {
+  // Fetch both published and draft thoughts for admins
+  const published = await getThoughts(db, { status: 'published', limit: 200 });
+  const drafts = await getThoughts(db, { status: 'draft', limit: 200 });
+  allThoughts = [...drafts, ...published]; // Show drafts first
+} else {
+  allThoughts = await getThoughts(db, { status: 'published', limit: 200 });
+}
 
 // Group thoughts by date
 const thoughtsByDate = allThoughts.reduce((acc, thought) => {
@@ -38,17 +50,19 @@ const thoughtsByDate = allThoughts.reduce((acc, thought) => {
             const href = `/thoughts/${thought.slug}`;
             const bgColor = thought.color || 'var(--background-body)';
 
+            const isDraft = thought.status === 'draft';
             return (
               <>
                 <h2 class="date-header">
                   <a href={href} class="date-header-link">
-                    {thought.publishDate}
+                    {isDraft && <span class="draft-badge">DRAFT</span>}
+                    {thought.publishDate || 'No date'}
                     {thought.title && (
                       <span> - {thought.title}</span>
                     )}
                   </a>
                 </h2>
-                <article class="thought-card" style={`background-color: ${bgColor};`}>
+                <article class={`thought-card ${isDraft ? 'draft' : ''}`} style={`background-color: ${bgColor};`}>
                 <div class="thought-content">
                   <div class="thought-text" set:html={processSimpleMarkdown(thought.content)}></div>
                   {thought.images && thought.images.length > 0 && (
@@ -118,6 +132,21 @@ const thoughtsByDate = allThoughts.reduce((acc, thought) => {
 
   .date-header-link:hover {
     color: #fff;
+  }
+
+  .draft-badge {
+    background: #f59e0b;
+    color: #000;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    margin-right: 0.5rem;
+    font-weight: 700;
+  }
+
+  .thought-card.draft {
+    border-color: #f59e0b;
+    border-style: dashed;
   }
 
   .thought-card {
