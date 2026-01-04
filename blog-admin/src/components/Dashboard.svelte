@@ -160,7 +160,7 @@
               <span class="status {getStatusClass(post.status)}">
                 {post.status}
               </span>
-              <span class="date">{formatDate(post.updatedAt)}</span>
+              <span class="date">{post.publishDate || 'No date'}</span>
             </div>
           </button>
         {/each}
@@ -187,7 +187,7 @@
               <span class="status {getStatusClass(thought.status)}">
                 {thought.status}
               </span>
-              <span class="date">{formatDate(thought.updatedAt)}</span>
+              <span class="date">{thought.publishDate || 'No date'}{thought.publishTime ? ` ${thought.publishTime}` : ''}</span>
             </div>
           </button>
         {/each}
