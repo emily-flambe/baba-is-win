@@ -11,23 +11,6 @@
       "section": "Applications"
     },
     {
-      "name": "claude-configs",
-      "displayName": "Claude Configs",
-      "customDescription": "Will probably fall out of date pretty quickly but if you're curious what I run on my machine, this is it",
-      "language": "Markdown",
-      "screenshot": "/assets/museum/superclaude.jpg",
-      "section": "Tools"
-    },
-    {
-      "name": "etl-for-dumdums",
-      "displayName": "ETL for Dumdums",
-      "customDescription": "I got really excited about Streamlit one day and threw together some ETL + data viz. Enter `hunter2` to view my Oura metrics lmao",
-      "language": "TypeScript",
-      "demoUrl": "https://data.emilycogsdill.com",
-      "screenshot": "/assets/museum/etl-for-dumdums.png",
-      "section": "Applications"
-    },
-    {
       "name": "exercise-tracker-thingy",
       "displayName": "Workout Tracker",
       "customDescription": "Every workout tracking app ever created sucks complete ass, including this one probably",
@@ -38,12 +21,30 @@
       "section": "Applications"
     },
     {
+      "name": "gaming-journal",
+      "displayName": "Gaming Journal",
+      "customDescription": "A timeline of my questionable gaming decisions with journal entries to prove I'm overthinking them",
+      "language": "TypeScript",
+      "demoUrl": "https://gaming.emilycogsdill.com",
+      "screenshot": "/assets/museum/gaming-journal.png",
+      "section": "Applications"
+    },
+    {
       "name": "splitdumb",
       "displayName": "SplitDumb",
       "customDescription": "An app for group expense tracking à la Splitwise before it got enshittified",
       "language": "TypeScript",
       "demoUrl": "https://splitdumb.emilycogsdill.com",
       "screenshot": "/assets/museum/splitdumb.png",
+      "section": "Applications"
+    },
+    {
+      "name": "etl-for-dumdums",
+      "displayName": "ETL for Dumdums",
+      "customDescription": "I got really excited about Streamlit one day and threw together some ETL + data viz. Enter `hunter2` to view my Oura metrics lmao",
+      "language": "TypeScript",
+      "demoUrl": "https://data.emilycogsdill.com",
+      "screenshot": "/assets/museum/etl-for-dumdums.png",
       "section": "Applications"
     },
     {
@@ -77,16 +78,6 @@
       "section": "Applications"
     },
     {
-      "name": "games",
-      "displayName": "Games",
-      "customDescription": "Games I have made. Pretty shitty lol",
-      "language": "JavaScript",
-      "category": "games",
-      "demoUrl": "https://games.emilycogsdill.com",
-      "screenshot": "/assets/museum/games.png",
-      "section": "Nonsense"
-    },
-    {
       "name": "chesscom-helper",
       "displayName": "Chesscom Helper",
       "customDescription": "I wanted a thing to email me when certain chess players started playing live matches! built on Cloudflare Workers that tracks player activities and sends notifications.",
@@ -100,29 +91,11 @@
       "hidden": true
     },
     {
-      "name": "esquie",
-      "displayName": "Esquie",
-      "customDescription": "Mon ami!!!",
-      "extendedDescription": "Wheeee, whoooo",
-      "language": "JavaScript",
-      "demoUrl": "https://esquie.emilycogsdill.com",
-      "screenshot": "/assets/museum/esquie.png",
-      "section": "Nonsense"
-    },
-    {
-      "name": "emilys-monkey-web-site",
-      "displayName": "Which Monkey is Nicer?",
-      "customDescription": "A psychological experiment from 2014 where you judge which rhesus macaque looks nicer. This thing got me through grad school lmao",
-      "language": "TypeScript",
-      "demoUrl": "https://monkey.emilycogsdill.com",
-      "screenshot": "/assets/museum/monkey.png",
-      "section": "Nonsense"
-    },
-    {
-      "name": "emoji-linter",
-      "displayName": "Emoji Linter",
-      "customDescription": "An honest-to-God GitHub Action that checks for emojis in your code. I better not see another FUCKING 🚀 emoji ever again",
-      "language": "JavaScript",
+      "name": "claude-configs",
+      "displayName": "Claude Configs",
+      "customDescription": "Will probably fall out of date pretty quickly but if you're curious what I run on my machine, this is it",
+      "language": "Markdown",
+      "screenshot": "/assets/museum/superclaude.jpg",
       "section": "Tools"
     },
     {
@@ -142,12 +115,47 @@
       "section": "Tools"
     },
     {
+      "name": "emoji-linter",
+      "displayName": "Emoji Linter",
+      "customDescription": "An honest-to-God GitHub Action that checks for emojis in your code. I better not see another FUCKING 🚀 emoji ever again",
+      "language": "JavaScript",
+      "section": "Tools"
+    },
+    {
+      "name": "emilys-monkey-web-site",
+      "displayName": "Which Monkey is Nicer?",
+      "customDescription": "A psychological experiment from 2014 where you judge which rhesus macaque looks nicer. This thing got me through grad school lmao",
+      "language": "TypeScript",
+      "demoUrl": "https://monkey.emilycogsdill.com",
+      "screenshot": "/assets/museum/monkey.png",
+      "section": "Nonsense"
+    },
+    {
       "name": "naptime",
       "displayName": "Naptime",
       "customDescription": "I wanted to take Google Cloud Run for a spin so I hooked up the Oura API to put together this horrible thing",
       "language": "JavaScript",
       "screenshot": "/assets/museum/naptime.png",
       "demoUrl": "https://naptime.emilycogsdill.com",
+      "section": "Nonsense"
+    },
+    {
+      "name": "games",
+      "displayName": "Games",
+      "customDescription": "Games I have made. Pretty shitty lol",
+      "language": "JavaScript",
+      "category": "games",
+      "demoUrl": "https://games.emilycogsdill.com",
+      "screenshot": "/assets/museum/games.png",
+      "section": "Nonsense"
+    },
+    {
+      "name": "pong",
+      "displayName": "Paddle Game",
+      "customDescription": "Pong but with an INSANE TWIST.",
+      "language": "JavaScript",
+      "screenshot": "/assets/museum/pong.png",
+      "demoUrl": "https://pong.emilycogsdill.com",
       "section": "Nonsense"
     },
     {
@@ -160,12 +168,13 @@
       "section": "Nonsense"
     },
     {
-      "name": "pong",
-      "displayName": "Paddle Game",
-      "customDescription": "Pong but with an INSANE TWIST.",
+      "name": "esquie",
+      "displayName": "Esquie",
+      "customDescription": "Mon ami!!!",
+      "extendedDescription": "Wheeee, whoooo",
       "language": "JavaScript",
-      "screenshot": "/assets/museum/pong.png",
-      "demoUrl": "https://pong.emilycogsdill.com",
+      "demoUrl": "https://esquie.emilycogsdill.com",
+      "screenshot": "/assets/museum/esquie.png",
       "section": "Nonsense"
     }
   ],
