@@ -48,14 +48,11 @@ if (customTruncateLimit && contentData.isTruncated) {
   }
 }
 
-// Convert markdown to HTML for truncated content
-let truncatedHTML = '';
-if (contentData.isTruncated) {
-  const processedContent = await remark()
-    .use(remarkHtml)
-    .process(finalContent);
-  truncatedHTML = processedContent.toString();
-}
+// Always convert markdown to HTML
+const processedContent = await remark()
+  .use(remarkHtml, { sanitize: false })
+  .process(finalContent);
+const htmlContent = processedContent.toString();
 
 const shouldShowFade = contentData.isTruncated && contentData.requiresAuth;
 ---
@@ -74,7 +71,7 @@ const shouldShowFade = contentData.isTruncated && contentData.requiresAuth;
       )}
     ) : (
       <!-- Otherwise render as HTML -->
-      <div class="content-html" set:html={finalContent}></div>
+      <div class="content-html" set:html={htmlContent}></div>
     )}
     
     <!-- Fade overlay for truncated premium content -->
