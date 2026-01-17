@@ -73,8 +73,8 @@ export const POST: APIRoute = async ({ locals, request }) => {
       images: body.images || [],
       tags: body.tags || [],
       status: body.status || 'draft',
-      publishDate: body.publish_date || null,
-      publishTime: body.publish_time || null,
+      publishDate: body.publishDate || body.publish_date || null,
+      publishTime: body.publishTime || body.publish_time || null,
     };
 
     const thought = await createThought(db, input);

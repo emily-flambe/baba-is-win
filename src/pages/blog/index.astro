@@ -11,16 +11,24 @@ const permalink = `${Astro.site.href}blog`;
 // Get D1 database from runtime environment
 const db = Astro.locals.runtime.env.DB;
 
-// Fetch published blog posts from D1
-const allPosts = await getBlogPosts(db, { status: 'published', limit: 100 });
+// Get current user for premium content handling
+const user = Astro.locals?.user || null;
+const isAdmin = user?.isAdmin === true;
+
+// Fetch posts - include drafts for admins
+let allPosts;
+if (isAdmin) {
+  const published = await getBlogPosts(db, { status: 'published', limit: 100 });
+  const drafts = await getBlogPosts(db, { status: 'draft', limit: 100 });
+  allPosts = [...drafts, ...published]; // Show drafts first
+} else {
+  allPosts = await getBlogPosts(db, { status: 'published', limit: 100 });
+}
 
 // Extract all unique tags
 const tags = [...new Set(allPosts.flatMap(post => post.tags))]
   .filter(tag => tag)
   .sort();
-
-// Get current user for premium content handling
-const user = Astro.locals?.user || null;
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="blog">
@@ -45,19 +53,21 @@ const user = Astro.locals?.user || null;
       const isEven = index % 2 === 0;
       const postTags = post.tags || [];
       const isPremium = post.premium === true;
+      const isDraft = post.status === 'draft';
 
       return (
         <div>
           { index !== 0 && <hr /> }
-          <div class={`post-item ${isEven ? 'image-left' : 'image-right'}`}>
+          <div class={`post-item ${isEven ? 'image-left' : 'image-right'} ${isDraft ? 'draft' : ''}`}>
             {imageUrl && <img src={imageUrl} alt={post.title} class="post-image" />}
             <div class="post-content">
 
               <div class="post-item-footer">
-                <span class="post-item-date">{post.publishDate}</span>
+                {isDraft && <span class="draft-badge">DRAFT</span>}
+                <span class="post-item-date">{post.publishDate || 'No date'}</span>
               </div>
               <h2>
-                <a href={href}>{post.title}</a>
+                <a href={href}>{post.title || 'Untitled'}</a>
                 {isPremium && (
                   <a href="/login" class="premium-badge-inline">
                     ULTRA PREMIUM
@@ -96,6 +106,21 @@ const user = Astro.locals?.user || null;
     text-align: left;
     text-transform: uppercase;
     margin-right: 16px;
+  }
+
+  .draft-badge {
+    background: #f59e0b;
+    color: #000;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+
+  .post-item.draft {
+    border: 2px dashed #f59e0b;
+    border-radius: 8px;
+    padding: 1rem;
   }
 
   hr {

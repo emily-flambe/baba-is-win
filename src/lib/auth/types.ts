@@ -13,6 +13,8 @@ export interface User {
   displayName?: string;
   profilePictureUrl?: string;
   emailVerified?: boolean;
+  // Admin role
+  isAdmin?: boolean;
 }
 
 export interface Session {

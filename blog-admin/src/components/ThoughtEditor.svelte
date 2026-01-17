@@ -5,6 +5,7 @@
     createThought,
     updateThought,
     deleteThought,
+    uploadImage,
     type Thought,
     type ThoughtImage,
     type ContentStatus,
@@ -41,8 +42,11 @@
   let loading = $state(false);
   let saving = $state(false);
   let deleting = $state(false);
+  let uploading = $state(false);
   let error = $state('');
   let slugManuallyEdited = $state(false);
+  let fileInput: HTMLInputElement;
+  let expandedImageConfigs = $state<Set<number>>(new Set());
 
   const contentLength = $derived(content.length);
   const contentOverLimit = $derived(contentLength > MAX_CONTENT_LENGTH);
@@ -50,6 +54,11 @@
   onMount(async () => {
     if (thoughtId) {
       await loadThought();
+    } else {
+      // Auto-populate date and time for new thoughts (user's local time)
+      const now = new Date();
+      publishDate = now.toISOString().split('T')[0]; // YYYY-MM-DD format
+      publishTime = now.toTimeString().slice(0, 5); // HH:MM format
     }
   });
 
@@ -125,6 +134,83 @@
 
   function updateImageUrl(index: number, url: string) {
     images = images.map((img, i) => (i === index ? { ...img, url } : img));
+  }
+
+  function toggleImageConfig(index: number) {
+    const newSet = new Set(expandedImageConfigs);
+    if (newSet.has(index)) {
+      newSet.delete(index);
+    } else {
+      newSet.add(index);
+    }
+    expandedImageConfigs = newSet;
+  }
+
+  function updateImageOffset(index: number, axis: 'x' | 'y', value: number) {
+    images = images.map((img, i) => {
+      if (i !== index) return img;
+      const currentOffset = img.offset ?? { x: 50, y: 50 };
+      return {
+        ...img,
+        offset: { ...currentOffset, [axis]: value }
+      };
+    });
+  }
+
+  function moveImage(index: number, direction: 'up' | 'down') {
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= images.length) return;
+
+    const newImages = [...images];
+    [newImages[index], newImages[newIndex]] = [newImages[newIndex], newImages[index]];
+    images = newImages;
+
+    // Update expanded config indices
+    const newExpanded = new Set<number>();
+    expandedImageConfigs.forEach((i) => {
+      if (i === index) newExpanded.add(newIndex);
+      else if (i === newIndex) newExpanded.add(index);
+      else newExpanded.add(i);
+    });
+    expandedImageConfigs = newExpanded;
+  }
+
+  function triggerFileUpload() {
+    fileInput?.click();
+  }
+
+  async function handleFileSelect(e: Event) {
+    const target = e.target as HTMLInputElement;
+    const file = target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      error = 'Invalid file type. Allowed: JPEG, PNG, GIF, WebP';
+      return;
+    }
+
+    // Validate file size (10MB max)
+    if (file.size > 10 * 1024 * 1024) {
+      error = 'File too large. Maximum size: 10MB';
+      return;
+    }
+
+    uploading = true;
+    error = '';
+
+    try {
+      const result = await uploadImage(file);
+      images = [...images, { url: result.url }];
+    } catch (err) {
+      const apiError = err as ApiError;
+      error = apiError.error || 'Failed to upload image';
+    } finally {
+      uploading = false;
+      // Reset file input so same file can be selected again
+      target.value = '';
+    }
   }
 
   async function handleSubmit(e: Event) {
@@ -322,32 +408,113 @@
         <span class="field-label">Images</span>
         <div class="images-list">
           {#each images as image, index (index)}
-            <div class="image-row">
-              <input
-                type="url"
-                value={image.url}
-                oninput={(e) => updateImageUrl(index, (e.target as HTMLInputElement).value)}
-                disabled={saving}
-                placeholder="https://example.com/image.jpg"
-              />
-              <button
-                type="button"
-                class="remove-image-btn"
-                onclick={() => removeImage(index)}
-                disabled={saving}
-              >
-                Remove
-              </button>
+            <div class="image-item">
+              <div class="image-header">
+                <div class="reorder-buttons">
+                  <button
+                    type="button"
+                    class="reorder-btn"
+                    onclick={() => moveImage(index, 'up')}
+                    disabled={saving || index === 0}
+                    title="Move up"
+                  >↑</button>
+                  <button
+                    type="button"
+                    class="reorder-btn"
+                    onclick={() => moveImage(index, 'down')}
+                    disabled={saving || index === images.length - 1}
+                    title="Move down"
+                  >↓</button>
+                </div>
+                <span class="image-index">Image {index + 1}</span>
+                <button
+                  type="button"
+                  class="config-toggle-btn"
+                  onclick={() => toggleImageConfig(index)}
+                  disabled={saving}
+                >
+                  {expandedImageConfigs.has(index) ? '▼ Configure' : '▶ Configure'}
+                </button>
+              </div>
+              {#if image.url}
+                <img src={image.url} alt="Uploaded image" class="image-preview" />
+              {/if}
+              <div class="image-row">
+                <input
+                  type="text"
+                  value={image.url}
+                  oninput={(e) => updateImageUrl(index, (e.target as HTMLInputElement).value)}
+                  disabled={saving}
+                  placeholder="Image URL or /assets/uploads/..."
+                />
+                <button
+                  type="button"
+                  class="remove-image-btn"
+                  onclick={() => removeImage(index)}
+                  disabled={saving}
+                >
+                  Remove
+                </button>
+              </div>
+              {#if expandedImageConfigs.has(index)}
+                <div class="image-config">
+                  <div class="offset-row">
+                    <label>
+                      Horizontal offset:
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={image.offset?.x ?? 50}
+                        oninput={(e) => updateImageOffset(index, 'x', parseInt((e.target as HTMLInputElement).value))}
+                        disabled={saving}
+                      />
+                      <span class="offset-value">{image.offset?.x ?? 50}%</span>
+                    </label>
+                  </div>
+                  <div class="offset-row">
+                    <label>
+                      Vertical offset:
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={image.offset?.y ?? 50}
+                        oninput={(e) => updateImageOffset(index, 'y', parseInt((e.target as HTMLInputElement).value))}
+                        disabled={saving}
+                      />
+                      <span class="offset-value">{image.offset?.y ?? 50}%</span>
+                    </label>
+                  </div>
+                </div>
+              {/if}
             </div>
           {/each}
-          <button
-            type="button"
-            class="add-image-btn"
-            onclick={addImage}
-            disabled={saving}
-          >
-            + Add Image
-          </button>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            onchange={handleFileSelect}
+            bind:this={fileInput}
+            class="file-input-hidden"
+          />
+          <div class="image-buttons">
+            <button
+              type="button"
+              class="upload-image-btn"
+              onclick={triggerFileUpload}
+              disabled={saving || uploading}
+            >
+              {uploading ? 'Uploading...' : 'Upload Image'}
+            </button>
+            <button
+              type="button"
+              class="add-image-btn"
+              onclick={addImage}
+              disabled={saving || uploading}
+            >
+              + Add URL
+            </button>
+          </div>
         </div>
       </div>
 
@@ -550,7 +717,129 @@
   .images-list {
     display: flex;
     flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .image-item {
+    display: flex;
+    flex-direction: column;
     gap: 0.5rem;
+    padding: 0.75rem;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+  }
+
+  .image-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .reorder-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .reorder-btn {
+    width: 24px;
+    height: 20px;
+    padding: 0;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: #888;
+    font-size: 0.75rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .reorder-btn:hover:not(:disabled) {
+    background: #3a3a3a;
+    color: #fff;
+  }
+
+  .reorder-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .image-index {
+    font-size: 0.75rem;
+    color: #666;
+    flex: 1;
+  }
+
+  .config-toggle-btn {
+    padding: 0.25rem 0.5rem;
+    background: transparent;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: #888;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .config-toggle-btn:hover:not(:disabled) {
+    border-color: #666;
+    color: #ccc;
+  }
+
+  .config-toggle-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .image-config {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: #0f0f0f;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    margin-top: 0.25rem;
+  }
+
+  .offset-row {
+    display: flex;
+    align-items: center;
+  }
+
+  .offset-row label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: #888;
+    flex: 1;
+  }
+
+  .offset-row input[type="range"] {
+    flex: 1;
+    max-width: 150px;
+    height: 4px;
+    background: #333;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  .offset-value {
+    min-width: 35px;
+    text-align: right;
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 0.7rem;
+    color: #666;
+  }
+
+  .image-preview {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: 4px;
   }
 
   .image-row {
@@ -560,6 +849,36 @@
 
   .image-row input {
     flex: 1;
+  }
+
+  .file-input-hidden {
+    display: none;
+  }
+
+  .image-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .upload-image-btn {
+    padding: 0.5rem 1rem;
+    background: #2d5a2d;
+    border: 1px solid #3d7a3d;
+    border-radius: 6px;
+    color: #8fdf8f;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .upload-image-btn:hover:not(:disabled) {
+    background: #3d7a3d;
+    color: #afffaf;
+  }
+
+  .upload-image-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
   .remove-image-btn {

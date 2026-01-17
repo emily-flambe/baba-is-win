@@ -95,7 +95,7 @@ export const POST: APIRoute = async ({ locals, request }) => {
       tags: body.tags || [],
       premium: body.premium || false,
       status: body.status || 'draft',
-      publishDate: body.publish_date || null,
+      publishDate: body.publishDate || body.publish_date || null,
       readingTimeMinutes,
     };
 
