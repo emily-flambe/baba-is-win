@@ -83,7 +83,7 @@ const languageColor = project.language ? (languageColors[project.language] || '#
       <h3 class="project-title">{project.displayName}</h3>
     </div>
 
-    <p class="project-description">{project.description}</p>
+    <p class="project-description" set:html={project.description}></p>
   </div>
 
   <!-- Card Footer -->
@@ -296,6 +296,15 @@ const languageColor = project.language ? (languageColors[project.language] || '#
     -webkit-box-orient: vertical;
     overflow: hidden;
     margin: 0;
+  }
+
+  .project-description a {
+    color: var(--museum-primary);
+    text-decoration: underline;
+  }
+
+  .project-description a:hover {
+    color: var(--museum-text);
   }
 
   /* Tech Badges */
