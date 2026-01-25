@@ -461,35 +461,34 @@
   }
 
   .wall-grid {
-    column-count: 4;
-    column-gap: 1.25rem;
-    perspective: 1000px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    align-items: start;
   }
 
   @media (max-width: 1200px) {
     .wall-grid {
-      column-count: 3;
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 
   @media (max-width: 900px) {
     .wall-grid {
-      column-count: 2;
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 
   @media (max-width: 600px) {
     .wall-grid {
-      column-count: 1;
+      grid-template-columns: 1fr;
     }
   }
 
   .thought-card {
-    break-inside: avoid;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     overflow: hidden;
-    margin-bottom: 1.25rem;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     animation: cardFadeIn 0.5s ease-out both;
     display: flex;
