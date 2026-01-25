@@ -103,13 +103,13 @@
   }
 
   function nextSlide(thoughtId: string, totalImages: number) {
-    const current = getCarouselIndex(thoughtId);
+    const current = carouselIndexes[thoughtId] || 0;
     carouselIndexes[thoughtId] = (current + 1) % totalImages;
     carouselIndexes = carouselIndexes; // trigger reactivity
   }
 
   function prevSlide(thoughtId: string, totalImages: number) {
-    const current = getCarouselIndex(thoughtId);
+    const current = carouselIndexes[thoughtId] || 0;
     carouselIndexes[thoughtId] = (current - 1 + totalImages) % totalImages;
     carouselIndexes = carouselIndexes; // trigger reactivity
   }
@@ -127,6 +127,31 @@
   function getImageOffset(image: ThoughtImage | string): string {
     if (typeof image === 'string') return '50%';
     return image.offset ? `${image.offset.y}%` : '50%';
+  }
+
+  // Scroll reveal effect - cards fade in as they enter viewport
+  function scrollReveal(node: HTMLElement) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            node.classList.add('in-view');
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      }
+    );
+
+    observer.observe(node);
+
+    return {
+      destroy() {
+        observer.unobserve(node);
+      }
+    };
   }
 </script>
 
@@ -192,6 +217,7 @@
           <article
             class="thought-card"
             style="background-color: {thought.color || 'var(--background-body)'}; animation-delay: {(rowIndex * numColumns + colIndex) * 0.04}s;"
+            use:scrollReveal
           >
         <div class="card-content">
           <div class="thought-text">
@@ -200,7 +226,7 @@
 
           {#if thought.images && thought.images.length > 0}
             <div class="card-carousel">
-              <div class="carousel-track" style="transform: translateX(-{getCarouselIndex(thought.id) * 100}%);">
+              <div class="carousel-track" style="transform: translateX(-{(carouselIndexes[thought.id] || 0) * 100}%);">
                 {#each thought.images as image, i}
                   <div class="carousel-slide">
                     <img
@@ -236,7 +262,7 @@
                 <div class="carousel-indicators">
                   {#each thought.images as _, i}
                     <button
-                      class="carousel-dot {getCarouselIndex(thought.id) === i ? 'active' : ''}"
+                      class="carousel-dot {(carouselIndexes[thought.id] || 0) === i ? 'active' : ''}"
                       on:click={() => goToSlide(thought.id, i)}
                       aria-label="Go to image {i + 1}"
                     ></button>
@@ -495,24 +521,29 @@
 
   .wall-grid {
     display: flex;
-    gap: 1.25rem;
+    gap: 2rem;
   }
 
   .wall-column {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 2rem;
   }
 
   .thought-card {
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     overflow: hidden;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease-out;
     animation: cardFadeIn 0.5s ease-out both;
     display: flex;
     flex-direction: column;
+    opacity: 0.25;
+  }
+
+  .thought-card.in-view {
+    opacity: 1;
   }
 
   /* Staggered card tilts for visual interest */
@@ -773,7 +804,11 @@
     }
 
     .wall-grid {
-      gap: 1rem;
+      gap: 1.5rem;
+    }
+
+    .wall-column {
+      gap: 1.5rem;
     }
 
     .carousel-btn {
