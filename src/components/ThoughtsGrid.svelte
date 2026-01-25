@@ -23,6 +23,7 @@
   let searchQuery = '';
   let selectedTags: Set<string> = new Set();
   let sortOrder: 'newest' | 'oldest' = 'newest';
+  let tagsExpanded = false;
 
   // Extract all unique tags from thoughts
   $: allTags = [...new Set(thoughts.flatMap(t => t.tags || []))].sort();
@@ -123,16 +124,30 @@
 
       <div class="filter-controls">
         {#if allTags.length > 0}
-          <div class="tag-pills">
-            {#each allTags as tag}
-              <button
-                class="tag-pill"
-                class:active={selectedTags.has(tag)}
-                on:click={() => toggleTag(tag)}
-              >
-                #{tag}
-              </button>
-            {/each}
+          <div class="tags-collapsible">
+            <button
+              class="tags-toggle"
+              on:click={() => tagsExpanded = !tagsExpanded}
+              aria-expanded={tagsExpanded}
+            >
+              <span>Filter by tag ({allTags.length})</span>
+              <svg class="toggle-icon" class:expanded={tagsExpanded} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6,9 12,15 18,9"></polyline>
+              </svg>
+            </button>
+            {#if tagsExpanded}
+              <div class="tag-pills">
+                {#each allTags as tag}
+                  <button
+                    class="tag-pill"
+                    class:active={selectedTags.has(tag)}
+                    on:click={() => toggleTag(tag)}
+                  >
+                    #{tag}
+                  </button>
+                {/each}
+              </div>
+            {/if}
           </div>
         {/if}
 
@@ -308,6 +323,44 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 0.75rem;
+  }
+
+  .tags-collapsible {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
+  }
+
+  .tags-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-family: var(--font-family-sans);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: fit-content;
+  }
+
+  .tags-toggle:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+  }
+
+  .toggle-icon {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.2s ease;
+  }
+
+  .toggle-icon.expanded {
+    transform: rotate(180deg);
   }
 
   .tag-pills {
