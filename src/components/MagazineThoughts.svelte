@@ -26,6 +26,7 @@
 
   let selectedCategory: string = 'all';
   let sortOrder: 'newest' | 'oldest' = 'newest';
+  let filtersExpanded: boolean = false;
 
   // Extract unique tags from all thoughts
   $: allTags = [...new Set(thoughts.flatMap(t => t.tags || []))].sort();
@@ -195,23 +196,49 @@
 <div class="magazine-container">
   <!-- Controls Bar -->
   <div class="controls-bar">
-    <div class="category-tabs">
+    <div class="filter-section">
       <button
-        class="tab-button"
-        class:active={selectedCategory === 'all'}
-        on:click={() => selectCategory('all')}
+        class="filter-toggle"
+        on:click={() => filtersExpanded = !filtersExpanded}
+        aria-expanded={filtersExpanded}
       >
-        All
-      </button>
-      {#each allTags as tag}
-        <button
-          class="tab-button"
-          class:active={selectedCategory === tag}
-          on:click={() => selectCategory(tag)}
+        <span class="filter-toggle-text">
+          Filter by tag
+          {#if selectedCategory !== 'all'}
+            <span class="active-filter-indicator">({selectedCategory})</span>
+          {/if}
+        </span>
+        <svg
+          class="filter-toggle-icon"
+          class:expanded={filtersExpanded}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
         >
-          {tag}
-        </button>
-      {/each}
+          <polyline points="6,9 12,15 18,9"></polyline>
+        </svg>
+      </button>
+      {#if filtersExpanded}
+        <div class="category-tabs">
+          <button
+            class="tab-button"
+            class:active={selectedCategory === 'all'}
+            on:click={() => selectCategory('all')}
+          >
+            All
+          </button>
+          {#each allTags as tag}
+            <button
+              class="tab-button"
+              class:active={selectedCategory === tag}
+              on:click={() => selectCategory(tag)}
+            >
+              {tag}
+            </button>
+          {/each}
+        </div>
+      {/if}
     </div>
     <div class="sort-control">
       <label for="sort-select" class="sort-label">Sort:</label>
@@ -365,16 +392,64 @@
   .controls-bar {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 1rem;
     margin-bottom: 2rem;
     flex-wrap: wrap;
+  }
+
+  .filter-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .filter-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-family: var(--font-family-sans);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .filter-toggle:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+  }
+
+  .filter-toggle-text {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .active-filter-indicator {
+    color: var(--primary-color);
+    font-weight: 500;
+  }
+
+  .filter-toggle-icon {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.2s ease;
+  }
+
+  .filter-toggle-icon.expanded {
+    transform: rotate(180deg);
   }
 
   .category-tabs {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
+    padding-left: 0.25rem;
   }
 
   .tab-button {
@@ -821,6 +896,10 @@
     .controls-bar {
       flex-direction: column;
       align-items: flex-start;
+    }
+
+    .filter-section {
+      width: 100%;
     }
 
     .category-tabs {
