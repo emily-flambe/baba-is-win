@@ -115,14 +115,25 @@
       >
         All
       </button>
-      {#each allTags as tag}
-        <button
-          class="filter-btn {selectedTag === tag ? 'active' : ''}"
-          on:click={() => selectTag(tag)}
-        >
-          #{tag}
-        </button>
-      {/each}
+      <details class="tags-collapsible">
+        <summary class="tags-toggle">
+          {#if selectedTag}
+            #{selectedTag}
+          {:else}
+            Tags ({allTags.length})
+          {/if}
+        </summary>
+        <div class="tags-list">
+          {#each allTags as tag}
+            <button
+              class="filter-btn {selectedTag === tag ? 'active' : ''}"
+              on:click={() => selectTag(tag)}
+            >
+              #{tag}
+            </button>
+          {/each}
+        </div>
+      </details>
     </div>
 
     <div class="sort-bar">
@@ -306,6 +317,81 @@
     flex-wrap: wrap;
     gap: 0.5rem;
     justify-content: center;
+    align-items: center;
+  }
+
+  .tags-collapsible {
+    position: relative;
+  }
+
+  .tags-toggle {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: var(--font-family-sans);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .tags-toggle::-webkit-details-marker {
+    display: none;
+  }
+
+  .tags-toggle::after {
+    content: '';
+    border: solid var(--text-secondary);
+    border-width: 0 2px 2px 0;
+    padding: 3px;
+    transform: rotate(45deg);
+    transition: transform 0.2s ease;
+    margin-left: 0.25rem;
+  }
+
+  .tags-collapsible[open] .tags-toggle::after {
+    transform: rotate(-135deg);
+  }
+
+  .tags-toggle:hover {
+    background: rgba(84, 142, 155, 0.2);
+    border-color: var(--primary-color);
+    color: var(--text-main);
+  }
+
+  .tags-list {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--background-body);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    max-width: 400px;
+    min-width: 200px;
+    z-index: 100;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    animation: tagsDropdown 0.2s ease-out;
+  }
+
+  @keyframes tagsDropdown {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
   }
 
   .filter-btn {
@@ -375,50 +461,89 @@
   }
 
   .wall-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.5rem;
+    column-count: 4;
+    column-gap: 1.25rem;
     perspective: 1000px;
   }
 
+  @media (max-width: 1200px) {
+    .wall-grid {
+      column-count: 3;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .wall-grid {
+      column-count: 2;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .wall-grid {
+      column-count: 1;
+    }
+  }
+
   .thought-card {
+    break-inside: avoid;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    animation: cardAppear 0.5s ease-out both;
+    margin-bottom: 1.25rem;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: cardFlipIn 0.6s ease-out both;
     display: flex;
     flex-direction: column;
+    transform-style: preserve-3d;
   }
 
-  .thought-card:nth-child(1) { animation-delay: 0.05s; }
-  .thought-card:nth-child(2) { animation-delay: 0.1s; }
-  .thought-card:nth-child(3) { animation-delay: 0.15s; }
-  .thought-card:nth-child(4) { animation-delay: 0.2s; }
-  .thought-card:nth-child(5) { animation-delay: 0.25s; }
-  .thought-card:nth-child(6) { animation-delay: 0.3s; }
-  .thought-card:nth-child(7) { animation-delay: 0.35s; }
-  .thought-card:nth-child(8) { animation-delay: 0.4s; }
-  .thought-card:nth-child(9) { animation-delay: 0.45s; }
-  .thought-card:nth-child(10) { animation-delay: 0.5s; }
+  /* Staggered card tilts for visual interest */
+  .thought-card:nth-child(3n+1) {
+    transform: rotate(-0.5deg);
+  }
+  .thought-card:nth-child(3n+2) {
+    transform: rotate(0.3deg);
+  }
+  .thought-card:nth-child(3n) {
+    transform: rotate(-0.2deg);
+  }
 
-  @keyframes cardAppear {
-    from {
+  .thought-card:nth-child(1) { animation-delay: 0.02s; }
+  .thought-card:nth-child(2) { animation-delay: 0.06s; }
+  .thought-card:nth-child(3) { animation-delay: 0.10s; }
+  .thought-card:nth-child(4) { animation-delay: 0.14s; }
+  .thought-card:nth-child(5) { animation-delay: 0.18s; }
+  .thought-card:nth-child(6) { animation-delay: 0.22s; }
+  .thought-card:nth-child(7) { animation-delay: 0.26s; }
+  .thought-card:nth-child(8) { animation-delay: 0.30s; }
+  .thought-card:nth-child(9) { animation-delay: 0.34s; }
+  .thought-card:nth-child(10) { animation-delay: 0.38s; }
+  .thought-card:nth-child(11) { animation-delay: 0.42s; }
+  .thought-card:nth-child(12) { animation-delay: 0.46s; }
+
+  @keyframes cardFlipIn {
+    0% {
       opacity: 0;
-      transform: translateY(30px) rotateX(-10deg);
+      transform: rotateY(-90deg) scale(0.8);
     }
-    to {
+    50% {
+      opacity: 0.7;
+      transform: rotateY(10deg) scale(1.02);
+    }
+    100% {
       opacity: 1;
-      transform: translateY(0) rotateX(0);
+      transform: rotateY(0) scale(1) rotate(var(--card-rotation, 0deg));
     }
   }
 
   .thought-card:hover {
-    transform: translateY(-8px) scale(1.02);
+    transform: rotate(0deg) translateY(-6px) scale(1.03);
     border-color: var(--primary-color);
     box-shadow:
-      0 20px 40px rgba(0, 0, 0, 0.3),
-      0 0 30px rgba(84, 142, 155, 0.15);
+      0 25px 50px rgba(0, 0, 0, 0.4),
+      0 0 40px rgba(84, 142, 155, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    z-index: 10;
   }
 
   .card-content {
