@@ -491,10 +491,9 @@
     overflow: hidden;
     margin-bottom: 1.25rem;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    animation: cardFlipIn 0.6s ease-out both;
+    animation: cardFadeIn 0.5s ease-out both;
     display: flex;
     flex-direction: column;
-    transform-style: preserve-3d;
   }
 
   /* Staggered card tilts for visual interest */
@@ -521,18 +520,14 @@
   .thought-card:nth-child(11) { animation-delay: 0.42s; }
   .thought-card:nth-child(12) { animation-delay: 0.46s; }
 
-  @keyframes cardFlipIn {
-    0% {
+  @keyframes cardFadeIn {
+    from {
       opacity: 0;
-      transform: rotateY(-90deg) scale(0.8);
+      transform: translateY(20px);
     }
-    50% {
-      opacity: 0.7;
-      transform: rotateY(10deg) scale(1.02);
-    }
-    100% {
+    to {
       opacity: 1;
-      transform: rotateY(0) scale(1) rotate(var(--card-rotation, 0deg));
+      transform: translateY(0);
     }
   }
 
