@@ -171,7 +171,11 @@
 
 <div class="wall-container">
   <div class="wall-header">
-    <h1 class="wall-title">THOUGHTS</h1>
+    <div class="title-row">
+      <img src="/assets/thoughts/gerbil.png" alt="" class="gerbil-left" />
+      <h1 class="wall-title">THOUGHTS</h1>
+      <img src="/assets/thoughts/gerbil.png" alt="" class="gerbil-right" />
+    </div>
     <p class="wall-subtitle">GET OFF MY LAWN</p>
   </div>
 
@@ -307,6 +311,12 @@
         </div>
       </article>
     </div>
+
+    <div class="hamu-row">
+      {#each Array(8) as _, i}
+        <img src="/assets/thoughts/hamu.png" alt="" class="hamu" style="animation-delay: {i * 0.1}s" />
+      {/each}
+    </div>
   {/if}
 
   <div class="wall-grid">
@@ -417,6 +427,69 @@
   .wall-header {
     text-align: center;
     margin-bottom: 2rem;
+  }
+
+  .title-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .gerbil-left,
+  .gerbil-right {
+    width: 48px;
+    height: auto;
+    animation: gerbilBounce 0.5s ease-in-out infinite;
+  }
+
+  .gerbil-right {
+    transform: scaleX(-1);
+  }
+
+  @keyframes gerbilBounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  .gerbil-right {
+    animation: gerbilBounceFlipped 0.5s ease-in-out infinite;
+  }
+
+  @keyframes gerbilBounceFlipped {
+    0%, 100% {
+      transform: scaleX(-1) translateY(0);
+    }
+    50% {
+      transform: scaleX(-1) translateY(-8px);
+    }
+  }
+
+  .hamu-row {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .hamu {
+    width: 40px;
+    height: auto;
+    animation: hamuDance 0.3s ease-in-out infinite alternate;
+  }
+
+  @keyframes hamuDance {
+    0% {
+      transform: rotate(-5deg) translateY(0);
+    }
+    100% {
+      transform: rotate(5deg) translateY(-3px);
+    }
   }
 
   .wall-title {
