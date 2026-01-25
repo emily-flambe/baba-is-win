@@ -2,6 +2,24 @@
   "owner": "emily-flambe",
   "repositories": [
     {
+      "name": "mesearch",
+      "displayName": "Mesearch",
+      "customDescription": "God forbid a girl love taking tests. Scientifically-backed and/or bullshit personality assessments",
+      "language": "TypeScript",
+      "demoUrl": "https://mesearch.emilycogsdill.com",
+      "screenshot": "/assets/museum/mesearch.png",
+      "section": "Applications"
+    },
+    {
+      "name": "llm-observatory",
+      "displayName": "LLM Observatory",
+      "customDescription": "Prompt lots of models at once (for science). Confusing mixed metaphors of bees and astronomy. Do NOT give xAI your money \ud83d\udc4d",
+      "language": "TypeScript",
+      "demoUrl": "https://observatory.emilycogsdill.com",
+      "screenshot": "/assets/museum/llm-observatory.png",
+      "section": "Applications"
+    },
+    {
       "name": "baba-is-win",
       "displayName": "This site lmao",
       "customDescription": "It insists upon itself.",
@@ -13,7 +31,7 @@
     {
       "name": "exercise-tracker-thingy",
       "displayName": "Workout Tracker",
-      "customDescription": "Every workout tracking app ever created sucks complete ass, including this one probably",
+      "customDescription": "I actually use this. My muscles are huge \ud83d\udc4d",
       "language": "TypeScript",
       "demoUrl": "https://workout.emilycogsdill.com",
       "screenshot": "/assets/museum/exercise-tracker.png",
@@ -21,18 +39,18 @@
       "section": "Applications"
     },
     {
-      "name": "gaming-journal",
-      "displayName": "Gaming Journal",
-      "customDescription": "A timeline of my questionable gaming decisions with journal entries to prove I'm overthinking them",
+      "name": "get-money-get-paid",
+      "displayName": "Paper Trading Dashboard",
+      "customDescription": "Gonna learn how to win the stock market and get WEALTHY (why has nobody tried this?)",
       "language": "TypeScript",
-      "demoUrl": "https://gaming.emilycogsdill.com",
-      "screenshot": "/assets/museum/gaming-journal.png",
+      "demoUrl": "https://stonks.emilycogsdill.com",
+      "screenshot": "/assets/museum/stonks.png",
       "section": "Applications"
     },
     {
       "name": "splitdumb",
       "displayName": "SplitDumb",
-      "customDescription": "An app for group expense tracking à la Splitwise before it got enshittified",
+      "customDescription": "An app for group expense tracking \u00e0 la Splitwise before it got enshittified. I actually use this \ud83d\udc4d",
       "language": "TypeScript",
       "demoUrl": "https://splitdumb.emilycogsdill.com",
       "screenshot": "/assets/museum/splitdumb.png",
@@ -48,18 +66,18 @@
       "section": "Applications"
     },
     {
-      "name": "balatrohno",
-      "displayName": "BalatrOH NO",
-      "customDescription": "stupida fucking game",
+      "name": "gaming-journal",
+      "displayName": "Gaming Journal",
+      "customDescription": "A video game journaling platform. (<a href=\"https://gaming.emilycogsdill.com/u/emilycogsdill\" target=\"_blank\">I actually use this \ud83d\udc4d</a>)",
       "language": "TypeScript",
-      "demoUrl": "https://balatrohno.emilycogsdill.com",
-      "screenshot": "/assets/museum/joker.png",
+      "demoUrl": "https://gaming.emilycogsdill.com",
+      "screenshot": "/assets/museum/gaming-journal.png",
       "section": "Applications"
     },
     {
       "name": "list-cutter",
       "displayName": "List Cutter (\"Cutty\")",
-      "customDescription": "Ceci n'est pas un CRM. Now with a friendly cuttlefish chat agent!",
+      "customDescription": "One of my first adventures in vibecoding. A hot mess. BUT I did make a cuttlefish chat agent \ud83d\udc4d",
       "extendedDescription": "Cutty the cuttlefish (not an octopus) is your BEST FRIEND and he is here to help you do stuff with voter contact data! Not a CRM. Uses a comically unhelpful though slightly agentic chat friend, which is neat.",
       "language": "JavaScript",
       "category": "data-processing",
@@ -70,7 +88,7 @@
     {
       "name": "chat-bgd",
       "displayName": "ChatBGD",
-      "customDescription": "My mom insists on calling ChatGPT 'ChatBGD' so I made this using gpt-oss hosted on a Cloudflare AI Worker.",
+      "customDescription": "My mom can never remember what letters are in ChatGPT so I made this. I don't know why I did that \ud83d\udc4d ",
       "language": "TypeScript",
       "category": "games",
       "demoUrl": "https://chat.emilycogsdill.com",
@@ -91,35 +109,23 @@
       "hidden": true
     },
     {
-      "name": "claude-configs",
-      "displayName": "Claude Configs",
-      "customDescription": "Will probably fall out of date pretty quickly but if you're curious what I run on my machine, this is it",
-      "language": "Markdown",
-      "screenshot": "/assets/museum/superclaude.jpg",
-      "section": "Tools"
-    },
-    {
-      "name": "dotfiles",
-      "displayName": "dotfiles",
-      "customDescription": "Custom configurations for Kitty (terminal) and AeroSpace (window management). Extremely advanced. Big-brain users ONLY.",
-      "language": "Python",
-      "screenshot": "/assets/museum/kitty.png",
-      "section": "Tools"
-    },
-    {
-      "name": "cloudflare-ai-worker",
-      "displayName": "Cloudflare AI Worker",
-      "customDescription": "Runs gpt-oss. Neat!",
+      "name": "boulder-quiz",
+      "displayName": "Boulder Quiz",
+      "customDescription": "Test your Boulder, Colorado knowledge! From CU history to local landmarks to quirky facts only true Boulderites know",
       "language": "TypeScript",
-      "screenshot": "/assets/museum/cloudflare-ai-worker.png",
-      "section": "Tools"
+      "demoUrl": "https://quiz.emilycogsdill.com",
+      "screenshot": "/assets/museum/boulder-quiz.png",
+      "section": "Nonsense"
     },
     {
-      "name": "emoji-linter",
-      "displayName": "Emoji Linter",
-      "customDescription": "An honest-to-God GitHub Action that checks for emojis in your code. I better not see another FUCKING 🚀 emoji ever again",
+      "name": "games",
+      "displayName": "Games",
+      "customDescription": "Games I have made. Pretty shitty lol",
       "language": "JavaScript",
-      "section": "Tools"
+      "category": "games",
+      "demoUrl": "https://games.emilycogsdill.com",
+      "screenshot": "/assets/museum/games.png",
+      "section": "Nonsense"
     },
     {
       "name": "emilys-monkey-web-site",
@@ -131,22 +137,21 @@
       "section": "Nonsense"
     },
     {
+      "name": "balatrohno",
+      "displayName": "BalatrOH NO",
+      "customDescription": "stupida fucking game",
+      "language": "TypeScript",
+      "demoUrl": "https://balatrohno.emilycogsdill.com",
+      "screenshot": "/assets/museum/joker.png",
+      "section": "Nonsense"
+    },
+    {
       "name": "naptime",
       "displayName": "Naptime",
       "customDescription": "I wanted to take Google Cloud Run for a spin so I hooked up the Oura API to put together this horrible thing",
       "language": "JavaScript",
       "screenshot": "/assets/museum/naptime.png",
       "demoUrl": "https://naptime.emilycogsdill.com",
-      "section": "Nonsense"
-    },
-    {
-      "name": "games",
-      "displayName": "Games",
-      "customDescription": "Games I have made. Pretty shitty lol",
-      "language": "JavaScript",
-      "category": "games",
-      "demoUrl": "https://games.emilycogsdill.com",
-      "screenshot": "/assets/museum/games.png",
       "section": "Nonsense"
     },
     {
@@ -176,6 +181,37 @@
       "demoUrl": "https://esquie.emilycogsdill.com",
       "screenshot": "/assets/museum/esquie.png",
       "section": "Nonsense"
+    },
+    {
+      "name": "claude-configs",
+      "displayName": "Claude Configs",
+      "customDescription": "Will probably fall out of date pretty quickly but if you're curious what I run on my machine, this is it",
+      "language": "Markdown",
+      "screenshot": "/assets/museum/superclaude.jpg",
+      "section": "Useful(?)"
+    },
+    {
+      "name": "dotfiles",
+      "displayName": "dotfiles",
+      "customDescription": "Custom configurations for Kitty (terminal) and AeroSpace (window management). Extremely advanced. Big-brain users ONLY.",
+      "language": "Python",
+      "screenshot": "/assets/museum/kitty.png",
+      "section": "Useful(?)"
+    },
+    {
+      "name": "cloudflare-ai-worker",
+      "displayName": "Cloudflare AI Worker",
+      "customDescription": "Runs gpt-oss. Neat!",
+      "language": "TypeScript",
+      "screenshot": "/assets/museum/cloudflare-ai-worker.png",
+      "section": "Useful(?)"
+    },
+    {
+      "name": "emoji-linter",
+      "displayName": "Emoji Linter",
+      "customDescription": "An honest-to-God GitHub Action that checks for emojis in your code. I better not see another FUCKING emoji ever again",
+      "language": "JavaScript",
+      "section": "Useful(?)"
     }
   ],
   "settings": {
