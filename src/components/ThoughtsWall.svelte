@@ -732,7 +732,7 @@
 
   .carousel-slide img {
     width: 100%;
-    height: 200px;
+    height: 280px;
     object-fit: cover;
   }
 
