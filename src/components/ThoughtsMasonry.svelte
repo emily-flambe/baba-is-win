@@ -93,23 +93,33 @@
 <div class="thoughts-masonry-container">
   <div class="controls-bar">
     <div class="tag-filters">
-      <span class="filter-label">Filter:</span>
-      <div class="tag-pills">
-        {#each allTags as tag}
-          <button
-            class="tag-pill"
-            class:active={selectedTags.has(tag)}
-            on:click={() => toggleTag(tag)}
-          >
-            #{tag}
+      <details class="tag-filter-details">
+        <summary class="filter-toggle">
+          <span class="filter-label">Filter by tag</span>
+          {#if selectedTags.size > 0}
+            <span class="active-count">({selectedTags.size} active)</span>
+          {/if}
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6,9 12,15 18,9"></polyline>
+          </svg>
+        </summary>
+        <div class="tag-pills">
+          {#each allTags as tag}
+            <button
+              class="tag-pill"
+              class:active={selectedTags.has(tag)}
+              on:click={() => toggleTag(tag)}
+            >
+              #{tag}
+            </button>
+          {/each}
+        </div>
+        {#if selectedTags.size > 0}
+          <button class="clear-filters" on:click={clearFilters}>
+            Clear all filters
           </button>
-        {/each}
-      </div>
-      {#if selectedTags.size > 0}
-        <button class="clear-filters" on:click={clearFilters}>
-          Clear
-        </button>
-      {/if}
+        {/if}
+      </details>
     </div>
     <div class="sort-control">
       <label for="sort-select">Sort:</label>
@@ -246,16 +256,65 @@
     flex: 1;
   }
 
+  .tag-filter-details {
+    width: 100%;
+  }
+
+  .filter-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    padding: 0.25rem 0;
+  }
+
+  .filter-toggle::-webkit-details-marker {
+    display: none;
+  }
+
+  .filter-toggle::marker {
+    display: none;
+    content: '';
+  }
+
   .filter-label {
     color: rgba(255, 255, 255, 0.6);
     font-size: 0.9rem;
     font-weight: 500;
   }
 
+  .active-count {
+    color: var(--primary-color, #e91e63);
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .chevron {
+    width: 1rem;
+    height: 1rem;
+    color: rgba(255, 255, 255, 0.5);
+    transition: transform 0.2s ease;
+    margin-left: auto;
+  }
+
+  .tag-filter-details[open] .chevron {
+    transform: rotate(180deg);
+  }
+
+  .filter-toggle:hover .filter-label,
+  .filter-toggle:hover .chevron {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
   .tag-pills {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
   }
 
   .tag-pill {
@@ -292,6 +351,7 @@
     cursor: pointer;
     transition: all 0.2s ease;
     font-family: inherit;
+    margin-top: 0.75rem;
   }
 
   .clear-filters:hover {
