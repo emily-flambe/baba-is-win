@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "deny": [
+      "**/.env",
+      "**/.env.*",
+      "**/.dev.vars",
+      "**/.r2.env",
+      "**/credentials.json",
+      "**/*.key",
+      "**/*.pem",
+      "**/secrets.*"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx astro check --minimumSeverity warning 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}

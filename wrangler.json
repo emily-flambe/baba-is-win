@@ -24,7 +24,8 @@
   "r2_buckets": [
     {
       "binding": "IMAGES",
-      "bucket_name": "baba-is-win-images"
+      "bucket_name": "baba-is-win-images",
+      "preview_bucket_name": "baba-is-win-images"
     }
   ],
   "vars": {
