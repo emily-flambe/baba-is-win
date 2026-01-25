@@ -174,10 +174,10 @@
   <div class="wall-header">
     <div class="title-row">
       <img src="/assets/thoughts/gerbil.png" alt="" class="gerbil-left" />
-      <h1 class="wall-title">THOUGHTS</h1>
+      <h1 class="wall-title">WELCOME TO MY WEB SITE</h1>
       <img src="/assets/thoughts/gerbil.png" alt="" class="gerbil-right" />
     </div>
-    <p class="wall-subtitle">GET OFF MY LAWN</p>
+    <p class="wall-subtitle">I HOPE YOU FIND WHAT YOU'RE LOOKING FOR</p>
   </div>
 
 
