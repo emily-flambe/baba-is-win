@@ -28,16 +28,15 @@
   let filteredThoughts: Thought[] = [];
   let carouselIndexes: Record<string, number> = {};
 
-  // Responsive column count - 3 columns default for wider cards
-  let numColumns = 3;
+  // Responsive column count - 2 columns default for wider cards
+  let numColumns = 2;
   let windowWidth = 1400;
 
   function updateColumnCount() {
     if (typeof window !== 'undefined') {
       windowWidth = window.innerWidth;
-      if (windowWidth <= 600) numColumns = 1;
-      else if (windowWidth <= 900) numColumns = 2;
-      else numColumns = 3;
+      if (windowWidth <= 700) numColumns = 1;
+      else numColumns = 2;
     }
   }
 
@@ -285,18 +284,19 @@
           {/if}
         </div>
 
-        <div class="thought-meta">
-          <time class="thought-date">
-            {pinnedThought.publishDate}
+        <div class="card-footer">
+          <a href="/thoughts/{pinnedThought.slug}" class="card-date">
+            <time>{pinnedThought.publishDate}</time>
             {#if pinnedThought.publishTime}
-              {pinnedThought.publishTime}
+              <span class="card-time">{pinnedThought.publishTime}</span>
             {/if}
-          </time>
+          </a>
+
           {#if pinnedThought.tags && pinnedThought.tags.length > 0}
-            <div class="thought-tags">
+            <div class="card-tags">
               {#each pinnedThought.tags as tag}
                 <button
-                  class="tag-pill {selectedTag === tag ? 'active' : ''}"
+                  class="card-tag {selectedTag === tag ? 'active' : ''}"
                   on:click={() => selectTag(tag)}
                 >
                   #{tag}
@@ -625,13 +625,8 @@
   }
 
   .pinned-card {
-    max-width: 600px;
+    max-width: 700px;
     width: 100%;
-    font-size: 1.1em;
-  }
-
-  .pinned-card .thought-text {
-    font-size: 1.1em;
   }
 
   .wall-grid {
