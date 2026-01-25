@@ -28,6 +28,35 @@
   let filteredThoughts: Thought[] = [];
   let carouselIndexes: Record<string, number> = {};
 
+  // Responsive column count
+  let numColumns = 4;
+  let windowWidth = 1400;
+
+  function updateColumnCount() {
+    if (typeof window !== 'undefined') {
+      windowWidth = window.innerWidth;
+      if (windowWidth <= 600) numColumns = 1;
+      else if (windowWidth <= 900) numColumns = 2;
+      else if (windowWidth <= 1200) numColumns = 3;
+      else numColumns = 4;
+    }
+  }
+
+  onMount(() => {
+    updateColumnCount();
+    window.addEventListener('resize', updateColumnCount);
+    return () => window.removeEventListener('resize', updateColumnCount);
+  });
+
+  // Distribute thoughts into columns round-robin for left-to-right reading order
+  $: thoughtColumns = (() => {
+    const columns: Thought[][] = Array.from({ length: numColumns }, () => []);
+    filteredThoughts.forEach((thought, index) => {
+      columns[index % numColumns].push(thought);
+    });
+    return columns;
+  })();
+
   // Extract unique tags from all thoughts
   $: allTags = [...new Set(thoughts.flatMap(t => t.tags || []))].sort();
 
@@ -157,11 +186,13 @@
   </div>
 
   <div class="wall-grid">
-    {#each filteredThoughts as thought (thought.id)}
-      <article
-        class="thought-card"
-        style="background-color: {thought.color || 'var(--background-body)'};"
-      >
+    {#each thoughtColumns as column, colIndex}
+      <div class="wall-column">
+        {#each column as thought, rowIndex (thought.id)}
+          <article
+            class="thought-card"
+            style="background-color: {thought.color || 'var(--background-body)'}; animation-delay: {(rowIndex * numColumns + colIndex) * 0.04}s;"
+          >
         <div class="card-content">
           <div class="thought-text">
             {@html processSimpleMarkdown(thought.content)}
@@ -237,7 +268,9 @@
             </div>
           {/if}
         </div>
-      </article>
+          </article>
+        {/each}
+      </div>
     {/each}
   </div>
 
@@ -461,34 +494,21 @@
   }
 
   .wall-grid {
-    column-count: 4;
-    column-gap: 1.25rem;
+    display: flex;
+    gap: 1.25rem;
   }
 
-  @media (max-width: 1200px) {
-    .wall-grid {
-      column-count: 3;
-    }
-  }
-
-  @media (max-width: 900px) {
-    .wall-grid {
-      column-count: 2;
-    }
-  }
-
-  @media (max-width: 600px) {
-    .wall-grid {
-      column-count: 1;
-    }
+  .wall-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
   }
 
   .thought-card {
-    break-inside: avoid;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     overflow: hidden;
-    margin-bottom: 1.25rem;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     animation: cardFadeIn 0.5s ease-out both;
     display: flex;
@@ -506,18 +526,7 @@
     transform: rotate(-0.2deg);
   }
 
-  .thought-card:nth-child(1) { animation-delay: 0.02s; }
-  .thought-card:nth-child(2) { animation-delay: 0.06s; }
-  .thought-card:nth-child(3) { animation-delay: 0.10s; }
-  .thought-card:nth-child(4) { animation-delay: 0.14s; }
-  .thought-card:nth-child(5) { animation-delay: 0.18s; }
-  .thought-card:nth-child(6) { animation-delay: 0.22s; }
-  .thought-card:nth-child(7) { animation-delay: 0.26s; }
-  .thought-card:nth-child(8) { animation-delay: 0.30s; }
-  .thought-card:nth-child(9) { animation-delay: 0.34s; }
-  .thought-card:nth-child(10) { animation-delay: 0.38s; }
-  .thought-card:nth-child(11) { animation-delay: 0.42s; }
-  .thought-card:nth-child(12) { animation-delay: 0.46s; }
+  /* Animation delays now applied via inline styles for reading-order staggering */
 
   @keyframes cardFadeIn {
     from {
@@ -764,7 +773,6 @@
     }
 
     .wall-grid {
-      grid-template-columns: 1fr;
       gap: 1rem;
     }
 
