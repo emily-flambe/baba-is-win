@@ -19,7 +19,7 @@
   type Tab = 'posts' | 'thoughts';
   type StatusFilter = 'all' | 'draft' | 'published' | 'archived';
 
-  let activeTab = $state<Tab>('posts');
+  let activeTab = $state<Tab>('thoughts');
   let statusFilter = $state<StatusFilter>('all');
   let posts = $state<Post[]>([]);
   let thoughts = $state<Thought[]>([]);
@@ -91,17 +91,17 @@
   <nav class="tabs">
     <button
       class="tab"
-      class:active={activeTab === 'posts'}
-      onclick={() => handleTabChange('posts')}
-    >
-      Posts
-    </button>
-    <button
-      class="tab"
       class:active={activeTab === 'thoughts'}
       onclick={() => handleTabChange('thoughts')}
     >
       Thoughts
+    </button>
+    <button
+      class="tab"
+      class:active={activeTab === 'posts'}
+      onclick={() => handleTabChange('posts')}
+    >
+      Posts
     </button>
   </nav>
 

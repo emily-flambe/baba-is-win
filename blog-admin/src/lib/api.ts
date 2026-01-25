@@ -181,6 +181,9 @@ export async function uploadImage(
   const response = await fetch(url, {
     method: 'POST',
     credentials: 'include',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+    },
     body: formData,
   });
 
