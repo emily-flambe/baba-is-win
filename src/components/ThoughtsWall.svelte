@@ -174,7 +174,7 @@
   <div class="wall-header">
     <div class="title-row">
       <img src="/assets/thoughts/gerbil.png" alt="" class="gerbil-left" />
-      <h1 class="wall-title">WELCOME TO MY WEB SITE</h1>
+      <h1 class="wall-title">WELCOME</h1>
       <img src="/assets/thoughts/gerbil.png" alt="" class="gerbil-right" />
     </div>
     <p class="wall-subtitle">I HOPE YOU FIND WHAT YOU'RE LOOKING FOR</p>
@@ -696,7 +696,7 @@
   }
 
   .thought-text {
-    font-size: 1rem;
+    font-size: 1.125rem;
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.9);
     word-wrap: break-word;
