@@ -28,8 +28,8 @@
   let filteredThoughts: Thought[] = [];
   let carouselIndexes: Record<string, number> = {};
 
-  // Responsive column count
-  let numColumns = 4;
+  // Responsive column count - 3 columns default for wider cards
+  let numColumns = 3;
   let windowWidth = 1400;
 
   function updateColumnCount() {
@@ -37,8 +37,7 @@
       windowWidth = window.innerWidth;
       if (windowWidth <= 600) numColumns = 1;
       else if (windowWidth <= 900) numColumns = 2;
-      else if (windowWidth <= 1200) numColumns = 3;
-      else numColumns = 4;
+      else numColumns = 3;
     }
   }
 
@@ -48,10 +47,14 @@
     return () => window.removeEventListener('resize', updateColumnCount);
   });
 
-  // Distribute thoughts into columns round-robin for left-to-right reading order
+  // Pin the most recent thought at the top
+  $: pinnedThought = filteredThoughts.length > 0 ? filteredThoughts[0] : null;
+
+  // Remaining thoughts (excluding pinned) distributed into columns
   $: thoughtColumns = (() => {
+    const remaining = filteredThoughts.slice(1);
     const columns: Thought[][] = Array.from({ length: numColumns }, () => []);
-    filteredThoughts.forEach((thought, index) => {
+    remaining.forEach((thought, index) => {
       columns[index % numColumns].push(thought);
     });
     return columns;
@@ -129,18 +132,30 @@
     return image.offset ? `${image.offset.y}%` : '50%';
   }
 
-  // Scroll reveal effect - cards fade in as they enter viewport
+  // Scroll reveal effect - cards below the fold fade in as they scroll into view
   function scrollReveal(node: HTMLElement) {
+    // Check if card is mostly above the fold (top 70% of viewport)
+    const rect = node.getBoundingClientRect();
+    const isAboveFold = rect.top < window.innerHeight * 0.6;
+
+    if (isAboveFold) {
+      // Cards mostly in initial viewport start fully visible
+      node.classList.add('in-view');
+      return { destroy() {} };
+    }
+
+    // Cards below the fold start faded and reveal on scroll
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             node.classList.add('in-view');
+            observer.unobserve(node);
           }
         });
       },
       {
-        threshold: 0.1,
+        threshold: 0.2,
         rootMargin: '0px 0px -50px 0px'
       }
     );
@@ -210,13 +225,97 @@
     Showing {filteredThoughts.length} of {thoughts.length} thoughts
   </div>
 
+  {#if pinnedThought}
+    <div class="pinned-section">
+      <article
+        class="thought-card pinned-card in-view"
+        style="background-color: {pinnedThought.color || 'var(--background-body)'};"
+      >
+        <div class="card-content">
+          <div class="thought-text">
+            {@html processSimpleMarkdown(pinnedThought.content)}
+          </div>
+
+          {#if pinnedThought.images && pinnedThought.images.length > 0}
+            <div class="card-carousel">
+              <div class="carousel-track" style="transform: translateX(-{(carouselIndexes[pinnedThought.id] || 0) * 100}%);">
+                {#each pinnedThought.images as image, i}
+                  <div class="carousel-slide">
+                    <img
+                      src={getImageUrl(image)}
+                      alt="Thought image {i + 1}"
+                      loading="lazy"
+                      style="object-position: center {getImageOffset(image)};"
+                    />
+                  </div>
+                {/each}
+              </div>
+
+              {#if pinnedThought.images.length > 1}
+                <button
+                  class="carousel-btn carousel-btn-prev"
+                  on:click={() => prevSlide(pinnedThought.id, pinnedThought.images.length)}
+                  aria-label="Previous image"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15,18 9,12 15,6"></polyline>
+                  </svg>
+                </button>
+                <button
+                  class="carousel-btn carousel-btn-next"
+                  on:click={() => nextSlide(pinnedThought.id, pinnedThought.images.length)}
+                  aria-label="Next image"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9,18 15,12 9,6"></polyline>
+                  </svg>
+                </button>
+
+                <div class="carousel-indicators">
+                  {#each pinnedThought.images as _, i}
+                    <button
+                      class="carousel-dot {(carouselIndexes[pinnedThought.id] || 0) === i ? 'active' : ''}"
+                      on:click={() => goToSlide(pinnedThought.id, i)}
+                      aria-label="Go to image {i + 1}"
+                    ></button>
+                  {/each}
+                </div>
+              {/if}
+            </div>
+          {/if}
+        </div>
+
+        <div class="thought-meta">
+          <time class="thought-date">
+            {pinnedThought.publishDate}
+            {#if pinnedThought.publishTime}
+              {pinnedThought.publishTime}
+            {/if}
+          </time>
+          {#if pinnedThought.tags && pinnedThought.tags.length > 0}
+            <div class="thought-tags">
+              {#each pinnedThought.tags as tag}
+                <button
+                  class="tag-pill {selectedTag === tag ? 'active' : ''}"
+                  on:click={() => selectTag(tag)}
+                >
+                  #{tag}
+                </button>
+              {/each}
+            </div>
+          {/if}
+        </div>
+      </article>
+    </div>
+  {/if}
+
   <div class="wall-grid">
     {#each thoughtColumns as column, colIndex}
       <div class="wall-column">
         {#each column as thought, rowIndex (thought.id)}
           <article
             class="thought-card"
-            style="background-color: {thought.color || 'var(--background-body)'}; animation-delay: {(rowIndex * numColumns + colIndex) * 0.04}s;"
+            style="background-color: {thought.color || 'var(--background-body)'};"
             use:scrollReveal
           >
         <div class="card-content">
@@ -519,6 +618,22 @@
     animation: fadeSlideIn 0.4s ease-out;
   }
 
+  .pinned-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 3rem;
+  }
+
+  .pinned-card {
+    max-width: 600px;
+    width: 100%;
+    font-size: 1.1em;
+  }
+
+  .pinned-card .thought-text {
+    font-size: 1.1em;
+  }
+
   .wall-grid {
     display: flex;
     gap: 2rem;
@@ -535,39 +650,27 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     overflow: hidden;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease-out;
-    animation: cardFadeIn 0.5s ease-out both;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease-out;
     display: flex;
     flex-direction: column;
-    opacity: 0.25;
+    opacity: 0;
+    transform: translateY(20px);
   }
 
   .thought-card.in-view {
     opacity: 1;
+    transform: translateY(0);
   }
 
-  /* Staggered card tilts for visual interest */
-  .thought-card:nth-child(3n+1) {
-    transform: rotate(-0.5deg);
+  /* Staggered card tilts for visual interest - only when in view */
+  .thought-card.in-view:nth-child(3n+1) {
+    transform: translateY(0) rotate(-0.5deg);
   }
-  .thought-card:nth-child(3n+2) {
-    transform: rotate(0.3deg);
+  .thought-card.in-view:nth-child(3n+2) {
+    transform: translateY(0) rotate(0.3deg);
   }
-  .thought-card:nth-child(3n) {
-    transform: rotate(-0.2deg);
-  }
-
-  /* Animation delays now applied via inline styles for reading-order staggering */
-
-  @keyframes cardFadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .thought-card.in-view:nth-child(3n) {
+    transform: translateY(0) rotate(-0.2deg);
   }
 
   .thought-card:hover {
@@ -818,7 +921,12 @@
 
   /* Reduced motion */
   @media (prefers-reduced-motion: reduce) {
-    .thought-card,
+    .thought-card {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
     .filter-btn,
     .sort-btn,
     .wall-title,
