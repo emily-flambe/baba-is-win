@@ -440,33 +440,22 @@
   .gerbil-right {
     width: 48px;
     height: auto;
-    animation: gerbilBounce 0.5s ease-in-out infinite;
+    animation: gerbilWiggle 0.4s ease-in-out infinite alternate;
   }
 
   .gerbil-right {
     transform: scaleX(-1);
+    animation: gerbilWiggleFlipped 0.4s ease-in-out infinite alternate;
   }
 
-  @keyframes gerbilBounce {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-8px);
-    }
+  @keyframes gerbilWiggle {
+    0% { transform: rotate(-3deg); }
+    100% { transform: rotate(3deg); }
   }
 
-  .gerbil-right {
-    animation: gerbilBounceFlipped 0.5s ease-in-out infinite;
-  }
-
-  @keyframes gerbilBounceFlipped {
-    0%, 100% {
-      transform: scaleX(-1) translateY(0);
-    }
-    50% {
-      transform: scaleX(-1) translateY(-8px);
-    }
+  @keyframes gerbilWiggleFlipped {
+    0% { transform: scaleX(-1) rotate(-3deg); }
+    100% { transform: scaleX(-1) rotate(3deg); }
   }
 
   .hamu-row {
@@ -480,16 +469,12 @@
   .hamu {
     width: 40px;
     height: auto;
-    animation: hamuDance 0.3s ease-in-out infinite alternate;
+    animation: hamuWiggle 0.3s ease-in-out infinite alternate;
   }
 
-  @keyframes hamuDance {
-    0% {
-      transform: rotate(-5deg) translateY(0);
-    }
-    100% {
-      transform: rotate(5deg) translateY(-3px);
-    }
+  @keyframes hamuWiggle {
+    0% { transform: rotate(-4deg); }
+    100% { transform: rotate(4deg); }
   }
 
   .wall-title {
