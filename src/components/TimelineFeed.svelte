@@ -544,12 +544,12 @@
   }
 
   .thought-content {
-    padding: 1.5rem;
+    padding: 1rem 1.25rem;
   }
 
   .thought-text {
     font-size: 1rem;
-    line-height: 1.6;
+    line-height: 1.5;
     color: rgba(255, 255, 255, 0.9);
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -659,7 +659,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 1.5rem 1.5rem;
+    padding: 0.5rem 1.25rem 1rem;
     font-size: 0.85rem;
     color: var(--text-secondary);
   }
