@@ -225,17 +225,25 @@
       </div>
 
       {#if allTags.length > 0}
-        <div class="tag-filters">
-          {#each allTags as tag}
-            <button
-              class="tag-pill"
-              class:selected={selectedTags.has(tag)}
-              on:click={() => toggleTag(tag)}
-            >
-              #{tag}
-            </button>
-          {/each}
-        </div>
+        <details class="tag-filters-collapsible">
+          <summary class="tag-filters-toggle">
+            Filter by tags ({allTags.length})
+            <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6,9 12,15 18,9"></polyline>
+            </svg>
+          </summary>
+          <div class="tag-filters">
+            {#each allTags as tag}
+              <button
+                class="tag-pill"
+                class:selected={selectedTags.has(tag)}
+                on:click={() => toggleTag(tag)}
+              >
+                #{tag}
+              </button>
+            {/each}
+          </div>
+        </details>
       {/if}
 
       {#if hasActiveFilters}
@@ -447,10 +455,46 @@
     transform: rotate(180deg);
   }
 
+  .tag-filters-collapsible {
+    width: 100%;
+  }
+
+  .tag-filters-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-family: var(--font-family-sans);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    padding: 0.5rem 0;
+    user-select: none;
+    list-style: none;
+  }
+
+  .tag-filters-toggle::-webkit-details-marker {
+    display: none;
+  }
+
+  .tag-filters-toggle:hover {
+    color: var(--primary-color);
+  }
+
+  .toggle-icon {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.2s ease;
+  }
+
+  details[open] .toggle-icon {
+    transform: rotate(180deg);
+  }
+
   .tag-filters {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+    padding-top: 0.5rem;
   }
 
   .tag-pill {
