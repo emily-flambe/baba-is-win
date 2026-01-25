@@ -49,7 +49,7 @@ export class AuthDB {
 
   async getUserByEmail(email: string): Promise<User | null> {
     const result = await this.db
-      .prepare('SELECT id, email, username, email_blog_updates, email_thought_updates, email_announcements, created_at FROM users WHERE email = ?')
+      .prepare('SELECT id, email, username, email_blog_updates, email_thought_updates, email_announcements, is_admin, created_at FROM users WHERE email = ?')
       .bind(email.toLowerCase())
       .first();
 
@@ -62,13 +62,14 @@ export class AuthDB {
       createdAt: new Date(result.created_at as number),
       emailBlogUpdates: Boolean(result.email_blog_updates),
       emailThoughtUpdates: Boolean(result.email_thought_updates),
-      emailAnnouncements: Boolean(result.email_announcements)
+      emailAnnouncements: Boolean(result.email_announcements),
+      isAdmin: Boolean(result.is_admin)
     };
   }
 
   async getUserByUsername(username: string): Promise<User | null> {
     const result = await this.db
-      .prepare('SELECT id, email, username, email_blog_updates, email_thought_updates, email_announcements, created_at FROM users WHERE username = ?')
+      .prepare('SELECT id, email, username, email_blog_updates, email_thought_updates, email_announcements, is_admin, created_at FROM users WHERE username = ?')
       .bind(username.toLowerCase())
       .first();
 
@@ -81,13 +82,14 @@ export class AuthDB {
       createdAt: new Date(result.created_at as number),
       emailBlogUpdates: Boolean(result.email_blog_updates),
       emailThoughtUpdates: Boolean(result.email_thought_updates),
-      emailAnnouncements: Boolean(result.email_announcements)
+      emailAnnouncements: Boolean(result.email_announcements),
+      isAdmin: Boolean(result.is_admin)
     };
   }
 
   async getUserById(id: string): Promise<User | null> {
     const result = await this.db
-      .prepare('SELECT id, email, username, email_blog_updates, email_thought_updates, email_announcements, created_at FROM users WHERE id = ?')
+      .prepare('SELECT id, email, username, email_blog_updates, email_thought_updates, email_announcements, is_admin, created_at FROM users WHERE id = ?')
       .bind(id)
       .first();
 
@@ -100,7 +102,8 @@ export class AuthDB {
       createdAt: new Date(result.created_at as number),
       emailBlogUpdates: Boolean(result.email_blog_updates),
       emailThoughtUpdates: Boolean(result.email_thought_updates),
-      emailAnnouncements: Boolean(result.email_announcements)
+      emailAnnouncements: Boolean(result.email_announcements),
+      isAdmin: Boolean(result.is_admin)
     };
   }
 
@@ -459,7 +462,8 @@ export class AuthDB {
       createdAt: new Date(dbUser.created_at),
       emailBlogUpdates: !!dbUser.email_blog_updates,
       emailThoughtUpdates: !!dbUser.email_thought_updates,
-      emailAnnouncements: !!dbUser.email_announcements
+      emailAnnouncements: !!dbUser.email_announcements,
+      isAdmin: !!dbUser.is_admin
     };
   }
 

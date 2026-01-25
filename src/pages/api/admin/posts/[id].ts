@@ -98,7 +98,8 @@ export const PUT: APIRoute = async ({ locals, params, request }) => {
     if (body.tags !== undefined) updates.tags = body.tags;
     if (body.premium !== undefined) updates.premium = body.premium;
     if (body.status !== undefined) updates.status = body.status;
-    if (body.publish_date !== undefined) updates.publishDate = body.publish_date;
+    if (body.publishDate !== undefined || body.publish_date !== undefined)
+      updates.publishDate = body.publishDate ?? body.publish_date;
 
     const post = await updateBlogPost(db, id, updates);
 

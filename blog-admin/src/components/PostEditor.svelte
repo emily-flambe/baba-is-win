@@ -5,6 +5,7 @@
     createPost,
     updatePost,
     deletePost,
+    uploadImage,
     type Post,
     type ContentStatus,
     type ApiError,
@@ -39,12 +40,21 @@
   let loading = $state(false);
   let saving = $state(false);
   let deleting = $state(false);
+  let uploading = $state(false);
+  let uploadingContent = $state(false);
   let error = $state('');
   let slugManuallyEdited = $state(false);
+  let fileInput: HTMLInputElement;
+  let contentFileInput: HTMLInputElement;
+  let contentTextarea: HTMLTextAreaElement;
 
   onMount(async () => {
     if (postId) {
       await loadPost();
+    } else {
+      // Auto-populate date for new posts (user's local date)
+      const now = new Date();
+      publishDate = now.toISOString().split('T')[0]; // YYYY-MM-DD format
     }
   });
 
@@ -96,6 +106,98 @@
     const target = e.target as HTMLInputElement;
     slug = target.value;
     slugManuallyEdited = true;
+  }
+
+  function triggerFileUpload() {
+    fileInput?.click();
+  }
+
+  async function handleFileSelect(e: Event) {
+    const target = e.target as HTMLInputElement;
+    const file = target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      error = 'Invalid file type. Allowed: JPEG, PNG, GIF, WebP';
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      error = 'File too large. Maximum size: 10MB';
+      return;
+    }
+
+    uploading = true;
+    error = '';
+
+    try {
+      const result = await uploadImage(file);
+      thumbnail = result.url;
+    } catch (err) {
+      const apiError = err as ApiError;
+      error = apiError.error || 'Failed to upload image';
+    } finally {
+      uploading = false;
+      target.value = '';
+    }
+  }
+
+  function clearThumbnail() {
+    thumbnail = '';
+  }
+
+  function triggerContentImageUpload() {
+    contentFileInput?.click();
+  }
+
+  async function handleContentImageSelect(e: Event) {
+    const target = e.target as HTMLInputElement;
+    const file = target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      error = 'Invalid file type. Allowed: JPEG, PNG, GIF, WebP';
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      error = 'File too large. Maximum size: 10MB';
+      return;
+    }
+
+    uploadingContent = true;
+    error = '';
+
+    try {
+      const result = await uploadImage(file);
+
+      // Insert markdown at cursor position
+      const textarea = contentTextarea;
+      if (textarea) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const markdown = `![](${result.url})`;
+        content = content.slice(0, start) + markdown + content.slice(end);
+
+        // Set cursor after inserted text
+        setTimeout(() => {
+          textarea.focus();
+          const newPos = start + markdown.length;
+          textarea.setSelectionRange(newPos, newPos);
+        }, 0);
+      } else {
+        // Fallback: append to end
+        content += `\n![](${result.url})`;
+      }
+    } catch (err) {
+      const apiError = err as ApiError;
+      error = apiError.error || 'Failed to upload image';
+    } finally {
+      uploadingContent = false;
+      target.value = '';
+    }
   }
 
   function parseTags(input: string): string[] {
@@ -227,26 +329,78 @@
       </div>
 
       <div class="field">
-        <label for="content">Content</label>
+        <div class="content-header">
+          <label for="content">Content</label>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            class="file-input-hidden"
+            bind:this={contentFileInput}
+            onchange={handleContentImageSelect}
+            disabled={saving || uploadingContent}
+          />
+          <button
+            type="button"
+            class="insert-image-btn"
+            onclick={triggerContentImageUpload}
+            disabled={saving || uploadingContent}
+          >
+            {uploadingContent ? 'Uploading...' : 'Insert Image'}
+          </button>
+        </div>
         <textarea
           id="content"
           class="content-textarea"
           bind:value={content}
+          bind:this={contentTextarea}
           disabled={saving}
           rows="15"
           placeholder="Write your post content in Markdown..."
         ></textarea>
+        <span class="hint">Markdown supported. Click "Insert Image" to upload and insert at cursor.</span>
       </div>
 
       <div class="field">
-        <label for="thumbnail">Thumbnail URL</label>
+        <label for="thumbnail">Thumbnail</label>
         <input
-          type="url"
-          id="thumbnail"
-          bind:value={thumbnail}
-          disabled={saving}
-          placeholder="https://example.com/image.jpg"
+          type="file"
+          accept="image/jpeg,image/png,image/gif,image/webp"
+          class="file-input-hidden"
+          bind:this={fileInput}
+          onchange={handleFileSelect}
+          disabled={saving || uploading}
         />
+        {#if thumbnail}
+          <div class="thumbnail-preview">
+            <img src={thumbnail} alt="Thumbnail preview" />
+            <button
+              type="button"
+              class="remove-thumbnail-btn"
+              onclick={clearThumbnail}
+              disabled={saving || uploading}
+            >
+              Remove
+            </button>
+          </div>
+        {/if}
+        <div class="thumbnail-controls">
+          <button
+            type="button"
+            class="upload-btn"
+            onclick={triggerFileUpload}
+            disabled={saving || uploading}
+          >
+            {uploading ? 'Uploading...' : 'Upload Image'}
+          </button>
+          <span class="or-divider">or</span>
+          <input
+            type="text"
+            id="thumbnail"
+            bind:value={thumbnail}
+            disabled={saving || uploading}
+            placeholder="Paste image URL"
+          />
+        </div>
       </div>
 
       <div class="field">
@@ -428,9 +582,118 @@
     line-height: 1.5;
   }
 
+  .content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .insert-image-btn {
+    padding: 0.375rem 0.75rem;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 6px;
+    color: #ccc;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .insert-image-btn:hover:not(:disabled) {
+    background: #333;
+    border-color: #555;
+    color: #fff;
+  }
+
+  .insert-image-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
   .hint {
     font-size: 0.75rem;
     color: #666;
+  }
+
+  .file-input-hidden {
+    display: none;
+  }
+
+  .thumbnail-preview {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+  }
+
+  .thumbnail-preview img {
+    max-width: 200px;
+    max-height: 150px;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+
+  .remove-thumbnail-btn {
+    padding: 0.375rem 0.75rem;
+    background: transparent;
+    border: 1px solid #6b2020;
+    border-radius: 4px;
+    color: #f87171;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .remove-thumbnail-btn:hover:not(:disabled) {
+    background: #3d1515;
+    border-color: #f87171;
+  }
+
+  .remove-thumbnail-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .thumbnail-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .thumbnail-controls input {
+    flex: 1;
+  }
+
+  .upload-btn {
+    padding: 0.75rem 1rem;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: #ccc;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .upload-btn:hover:not(:disabled) {
+    background: #333;
+    border-color: #555;
+    color: #fff;
+  }
+
+  .upload-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .or-divider {
+    color: #666;
+    font-size: 0.75rem;
   }
 
   .row {

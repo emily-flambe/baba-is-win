@@ -36,11 +36,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return next();
   }
 
-  // Protected routes that require authentication
-  const protectedRoutes = ['/admin', '/api/admin', '/profile', '/api/auth/me', '/api/user/preferences', '/api/auth/google/status', '/api/auth/google/disconnect'];
+  // Routes that require admin privileges
+  const adminRoutes = ['/admin', '/api/admin'];
+  const isAdminRoute = adminRoutes.some(route => context.url.pathname.startsWith(route));
+
+  // Protected routes that require authentication (but not admin)
+  const protectedRoutes = ['/profile', '/api/auth/me', '/api/user/preferences', '/api/auth/google/status', '/api/auth/google/disconnect'];
   const isProtectedRoute = protectedRoutes.some(route => context.url.pathname.startsWith(route));
 
-  if (isProtectedRoute) {
+  if (isAdminRoute || isProtectedRoute) {
     const token = extractToken(context.request);
 
     if (!token) {
@@ -64,6 +68,17 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
       if (!user) {
         throw new Error('User not found');
+      }
+
+      // Check admin privileges for admin routes
+      if (isAdminRoute && !user.isAdmin) {
+        if (context.url.pathname.startsWith('/api/')) {
+          return new Response(
+            JSON.stringify({ error: 'Admin access required' }),
+            { status: 403, headers: { 'Content-Type': 'application/json' } }
+          );
+        }
+        return new Response('Forbidden: Admin access required', { status: 403 });
       }
 
       // Add user to context

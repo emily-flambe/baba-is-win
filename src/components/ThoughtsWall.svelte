@@ -95,6 +95,7 @@
     if (!text) return text;
     return text
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
       .replace(/`([^`]+)`/g, '<code>$1</code>')
       .replace(/\n\n/g, '<br><br>')
       .replace(/\n/g, '<br>');
@@ -171,58 +172,14 @@
 
 <div class="wall-container">
   <div class="wall-header">
-    <h1 class="wall-title">THOUGHTS</h1>
-    <p class="wall-subtitle">GET OFF MY LAWN</p>
-  </div>
-
-  <div class="controls">
-    <div class="filter-bar">
-      <button
-        class="filter-btn {selectedTag === null ? 'active' : ''}"
-        on:click={() => selectTag(null)}
-      >
-        All
-      </button>
-      <details class="tags-collapsible">
-        <summary class="tags-toggle">
-          {#if selectedTag}
-            #{selectedTag}
-          {:else}
-            Tags ({allTags.length})
-          {/if}
-        </summary>
-        <div class="tags-list">
-          {#each allTags as tag}
-            <button
-              class="filter-btn {selectedTag === tag ? 'active' : ''}"
-              on:click={() => selectTag(tag)}
-            >
-              #{tag}
-            </button>
-          {/each}
-        </div>
-      </details>
+    <div class="title-row">
+      <img src="/assets/thoughts/gerbil.png" alt="" class="gerbil-left" />
+      <h1 class="wall-title">WELCOME</h1>
+      <img src="/assets/thoughts/gerbil.png" alt="" class="gerbil-right" />
     </div>
-
-    <div class="sort-bar">
-      <button
-        class="sort-btn {sortOrder === 'newest' ? 'active' : ''}"
-        on:click={() => setSortOrder('newest')}
-      >
-        Newest
-      </button>
-      <button
-        class="sort-btn {sortOrder === 'oldest' ? 'active' : ''}"
-        on:click={() => setSortOrder('oldest')}
-      >
-        Oldest
-      </button>
-    </div>
+    <p class="wall-subtitle">I HOPE YOU FIND WHAT YOU'RE LOOKING FOR</p>
   </div>
 
-  <div class="results-count">
-    Showing {filteredThoughts.length} of {thoughts.length} thoughts
-  </div>
 
   {#if pinnedThought}
     <div class="pinned-section">
@@ -306,6 +263,12 @@
           {/if}
         </div>
       </article>
+    </div>
+
+    <div class="hamu-row">
+      {#each Array(8) as _, i}
+        <img src="/assets/thoughts/hamu.png" alt="" class="hamu" style="animation-delay: {i * 0.1}s" />
+      {/each}
     </div>
   {/if}
 
@@ -417,6 +380,55 @@
   .wall-header {
     text-align: center;
     margin-bottom: 2rem;
+  }
+
+  .title-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .gerbil-left,
+  .gerbil-right {
+    width: 48px;
+    height: auto;
+    animation: gerbilWiggle 0.4s ease-in-out infinite alternate;
+  }
+
+  .gerbil-right {
+    transform: scaleX(-1);
+    animation: gerbilWiggleFlipped 0.4s ease-in-out infinite alternate;
+  }
+
+  @keyframes gerbilWiggle {
+    0% { transform: rotate(-3deg); }
+    100% { transform: rotate(3deg); }
+  }
+
+  @keyframes gerbilWiggleFlipped {
+    0% { transform: scaleX(-1) rotate(-3deg); }
+    100% { transform: scaleX(-1) rotate(3deg); }
+  }
+
+  .hamu-row {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding-bottom: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .hamu {
+    width: 40px;
+    height: auto;
+    animation: hamuWiggle 0.3s ease-in-out infinite alternate;
+  }
+
+  @keyframes hamuWiggle {
+    0% { transform: rotate(-4deg); }
+    100% { transform: rotate(4deg); }
   }
 
   .wall-title {
@@ -684,7 +696,7 @@
   }
 
   .thought-text {
-    font-size: 1rem;
+    font-size: 1.125rem;
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.9);
     word-wrap: break-word;

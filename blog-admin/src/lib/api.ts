@@ -90,7 +90,7 @@ export async function login(
 ): Promise<{ user: User }> {
   return request<{ user: User }>('/auth/login', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ emailOrUsername: email, password }),
   });
 }
 
@@ -181,6 +181,9 @@ export async function uploadImage(
   const response = await fetch(url, {
     method: 'POST',
     credentials: 'include',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+    },
     body: formData,
   });
 

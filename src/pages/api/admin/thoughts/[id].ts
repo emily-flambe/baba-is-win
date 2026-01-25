@@ -87,8 +87,10 @@ export const PUT: APIRoute = async ({ locals, params, request }) => {
     if (body.images !== undefined) updates.images = body.images;
     if (body.tags !== undefined) updates.tags = body.tags;
     if (body.status !== undefined) updates.status = body.status;
-    if (body.publish_date !== undefined) updates.publishDate = body.publish_date;
-    if (body.publish_time !== undefined) updates.publishTime = body.publish_time;
+    if (body.publishDate !== undefined || body.publish_date !== undefined)
+      updates.publishDate = body.publishDate ?? body.publish_date;
+    if (body.publishTime !== undefined || body.publish_time !== undefined)
+      updates.publishTime = body.publishTime ?? body.publish_time;
 
     const thought = await updateThought(db, id, updates);
 

@@ -12,8 +12,26 @@ const permalink = Astro.site.href;
 // Get D1 database from runtime environment
 const db = Astro.locals.runtime.env.DB;
 
-// Fetch published thoughts from D1
-const allThoughts = await getThoughts(db, { status: 'published', limit: 200 });
+// Check if user is admin
+const user = Astro.locals.user;
+const isAdmin = user?.isAdmin === true;
+
+// Fetch thoughts - include drafts for admins
+let allThoughts;
+if (isAdmin) {
+  const published = await getThoughts(db, { status: 'published', limit: 200 });
+  const drafts = await getThoughts(db, { status: 'draft', limit: 200 });
+  // Combine and sort by date
+  const all = [...drafts, ...published];
+  all.sort((a, b) => {
+    const dateA = new Date(`${a.publishDate} ${a.publishTime}`);
+    const dateB = new Date(`${b.publishDate} ${b.publishTime}`);
+    return dateB.valueOf() - dateA.valueOf();
+  });
+  allThoughts = all;
+} else {
+  allThoughts = await getThoughts(db, { status: 'published', limit: 200 });
+}
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink}>

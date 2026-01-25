@@ -36,13 +36,13 @@
     {/if}
 
     <div class="field">
-      <label for="email">Email</label>
+      <label for="email">Email or Username</label>
       <input
-        type="email"
+        type="text"
         id="email"
         bind:value={email}
         required
-        autocomplete="email"
+        autocomplete="username"
         disabled={submitting}
       />
     </div>

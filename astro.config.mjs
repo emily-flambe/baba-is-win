@@ -9,6 +9,9 @@ import cloudflare from '@astrojs/cloudflare'
 // https://astro.build/config
 export default defineConfig({
   output: 'server',
+  security: {
+    checkOrigin: false
+  },
   image: {
     service: { entrypoint: 'astro/assets/services/sharp' },
     domains: ['github.com'],

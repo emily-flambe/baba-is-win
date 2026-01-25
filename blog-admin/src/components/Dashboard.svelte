@@ -19,7 +19,7 @@
   type Tab = 'posts' | 'thoughts';
   type StatusFilter = 'all' | 'draft' | 'published' | 'archived';
 
-  let activeTab = $state<Tab>('posts');
+  let activeTab = $state<Tab>('thoughts');
   let statusFilter = $state<StatusFilter>('all');
   let posts = $state<Post[]>([]);
   let thoughts = $state<Thought[]>([]);
@@ -66,15 +66,6 @@
     statusFilter = 'all';
   }
 
-  function formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  }
-
   function getStatusClass(status: string): string {
     switch (status) {
       case 'published':
@@ -100,17 +91,17 @@
   <nav class="tabs">
     <button
       class="tab"
-      class:active={activeTab === 'posts'}
-      onclick={() => handleTabChange('posts')}
-    >
-      Posts
-    </button>
-    <button
-      class="tab"
       class:active={activeTab === 'thoughts'}
       onclick={() => handleTabChange('thoughts')}
     >
       Thoughts
+    </button>
+    <button
+      class="tab"
+      class:active={activeTab === 'posts'}
+      onclick={() => handleTabChange('posts')}
+    >
+      Posts
     </button>
   </nav>
 
@@ -160,7 +151,7 @@
               <span class="status {getStatusClass(post.status)}">
                 {post.status}
               </span>
-              <span class="date">{formatDate(post.updatedAt)}</span>
+              <span class="date">{post.publishDate || 'No date'}</span>
             </div>
           </button>
         {/each}
@@ -187,7 +178,7 @@
               <span class="status {getStatusClass(thought.status)}">
                 {thought.status}
               </span>
-              <span class="date">{formatDate(thought.updatedAt)}</span>
+              <span class="date">{thought.publishDate || 'No date'}{thought.publishTime ? ` ${thought.publishTime}` : ''}</span>
             </div>
           </button>
         {/each}
