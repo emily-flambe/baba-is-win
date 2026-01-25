@@ -463,7 +463,7 @@
     justify-content: center;
     gap: 0.5rem;
     margin-top: 1.5rem;
-    margin-bottom: 2rem;
+    padding-bottom: 3rem;
     flex-wrap: wrap;
   }
 
