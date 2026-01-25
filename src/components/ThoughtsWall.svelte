@@ -180,54 +180,6 @@
     <p class="wall-subtitle">GET OFF MY LAWN</p>
   </div>
 
-  <div class="controls">
-    <div class="filter-bar">
-      <button
-        class="filter-btn {selectedTag === null ? 'active' : ''}"
-        on:click={() => selectTag(null)}
-      >
-        All
-      </button>
-      <details class="tags-collapsible">
-        <summary class="tags-toggle">
-          {#if selectedTag}
-            #{selectedTag}
-          {:else}
-            Tags ({allTags.length})
-          {/if}
-        </summary>
-        <div class="tags-list">
-          {#each allTags as tag}
-            <button
-              class="filter-btn {selectedTag === tag ? 'active' : ''}"
-              on:click={() => selectTag(tag)}
-            >
-              #{tag}
-            </button>
-          {/each}
-        </div>
-      </details>
-    </div>
-
-    <div class="sort-bar">
-      <button
-        class="sort-btn {sortOrder === 'newest' ? 'active' : ''}"
-        on:click={() => setSortOrder('newest')}
-      >
-        Newest
-      </button>
-      <button
-        class="sort-btn {sortOrder === 'oldest' ? 'active' : ''}"
-        on:click={() => setSortOrder('oldest')}
-      >
-        Oldest
-      </button>
-    </div>
-  </div>
-
-  <div class="results-count">
-    Showing {filteredThoughts.length} of {thoughts.length} thoughts
-  </div>
 
   {#if pinnedThought}
     <div class="pinned-section">
