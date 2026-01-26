@@ -1,10 +1,7 @@
 ---
 import PremiumContentIndicator from './PremiumContentIndicator.astro';
-import { processContentForDisplay } from '../utils/contentProcessing';
 import { remark } from 'remark';
 import remarkHtml from 'remark-html';
-import type { User } from '../lib/auth/types';
-import type { ContentFrontmatter } from '../types/env';
 
 interface Props {
   content: string;
@@ -12,14 +9,14 @@ interface Props {
   isAuthenticated: boolean;
   contentType?: 'blog' | 'thought';
   customTruncateLimit?: number;
-  frontmatter?: ContentFrontmatter;
+  frontmatter?: { premium?: boolean; publishDate?: string };
   ContentComponent?: any;
   showIndicator?: boolean;
 }
 
-const { 
-  content, 
-  isPremium, 
+const {
+  content,
+  isPremium,
   isAuthenticated,
   contentType = 'blog',
   customTruncateLimit,
@@ -28,16 +25,24 @@ const {
   showIndicator = true
 } = Astro.props;
 
-// Create a mock user object based on authentication status
-const user: User | null = isAuthenticated ? { id: 'authenticated', email: '', username: 'user', createdAt: new Date() } : null;
+// Inline content processing logic
+function truncateContent(text: string, wordLimit: number): string {
+  if (!text) return '';
+  const words = text.trim().split(/\s+/);
+  if (words.length <= wordLimit) return text;
+  return words.slice(0, wordLimit).join(' ') + '...';
+}
 
-// Process content using the utilities from contentProcessing.ts
-const contentData = processContentForDisplay(
-  content, 
-  frontmatter, 
-  user, 
-  contentType
-);
+const showFullContent = !isPremium || isAuthenticated;
+const wordLimit = contentType === 'blog' ? 250 : 10;
+const originalWordCount = content.trim().split(/\s+/).length;
+
+const contentData = {
+  content: showFullContent ? content : truncateContent(content, wordLimit),
+  isPremium,
+  isTruncated: !showFullContent && originalWordCount > wordLimit,
+  requiresAuth: isPremium && !isAuthenticated
+};
 
 // Apply custom truncate limit if provided
 let finalContent = contentData.content;

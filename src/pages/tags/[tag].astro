@@ -1,23 +1,17 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import BlogPost from '../../components/BlogPost.astro';
+import { getBlogPosts } from '../../lib/db/content';
+
+export const prerender = false;
 
 const { tag } = Astro.params;
+const db = Astro.locals.runtime.env.DB;
 
-// Load all posts
-const postModules = import.meta.glob('../../data/blog-posts/published/*.md', { eager: true });
-const allPosts = Object.entries(postModules).map(([path, module]) => ({
-  ...module,
-  file: path
-}));
-
-// Filter posts by tag
-const posts = allPosts.filter(
-  post => Array.isArray(post.frontmatter.tags) && post.frontmatter.tags.includes(tag)
-);
-
-// Sort posts by date in descending order
-posts.sort((a, b) => new Date(b.frontmatter.publishDate) - new Date(a.frontmatter.publishDate));
+// Load all published posts and filter by tag
+const allPosts = await getBlogPosts(db, { status: 'published', limit: 100 });
+const posts = allPosts
+  .filter(post => Array.isArray(post.tags) && post.tags.includes(tag))
+  .sort((a, b) => new Date(b.publishDate || 0).getTime() - new Date(a.publishDate || 0).getTime());
 ---
 
 <BaseLayout pageTitle={`Posts tagged "${tag}"`}>
@@ -26,16 +20,18 @@ posts.sort((a, b) => new Date(b.frontmatter.publishDate) - new Date(a.frontmatte
     <ul>
       {posts.map(post => (
         <li style="display: flex; align-items: center;">
-          <a href={`/blog/${post.file.split('/').pop().split('.').shift()}`} style="display: flex; align-items: center;">
-            <img 
-              src={post.frontmatter.thumbnail} 
-              alt={`${post.frontmatter.title} thumbnail`} 
-              style="width: 200px; margin-right: 10px;" 
-            />
+          <a href={`/blog/${post.slug}`} style="display: flex; align-items: center;">
+            {post.thumbnail && (
+              <img
+                src={post.thumbnail}
+                alt={`${post.title} thumbnail`}
+                style="width: 200px; margin-right: 10px;"
+              />
+            )}
             <div>
-              <h3 style="margin: 0;">{post.frontmatter.title}</h3>
-              <p style="margin: 0;">{new Date(post.frontmatter.publishDate).toLocaleDateString()}</p>
-              <p style="margin: 0;">{post.frontmatter.description}</p>
+              <h3 style="margin: 0;">{post.title}</h3>
+              <p style="margin: 0;">{post.publishDate ? new Date(post.publishDate).toLocaleDateString() : ''}</p>
+              <p style="margin: 0;">{post.description}</p>
             </div>
           </a>
         </li>

@@ -1,7 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-const allPosts = Object.values(import.meta.glob('../../data/blog-posts/published/*.md', { eager: true }));
-const tags = [...new Set(allPosts.map((post: any) => post.frontmatter.tags).flat())].filter(tag => tag);
+import { getBlogPosts } from '../../lib/db/content';
+
+const db = Astro.locals.runtime.env.DB;
+const allPosts = await getBlogPosts(db, { status: 'published', limit: 100 });
+const tags = [...new Set(allPosts.flatMap(post => post.tags || []))].filter(Boolean).sort();
 const pageTitle = "Tag Index";
 ---
 <BaseLayout pageTitle={pageTitle}>
