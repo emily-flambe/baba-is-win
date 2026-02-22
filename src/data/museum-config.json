@@ -109,6 +109,15 @@
       "hidden": true
     },
     {
+      "name": "bad-apple",
+      "displayName": "Bad Apple!!",
+      "customDescription": "Bad Apple!! might be an old meme, but I am even older. Respect your elders",
+      "language": "JavaScript",
+      "demoUrl": "https://bad-apple.emilycogsdill.com",
+      "screenshot": "/assets/museum/bad-apple.png",
+      "section": "Nonsense"
+    },
+    {
       "name": "boulder-quiz",
       "displayName": "Boulder Quiz",
       "customDescription": "Test your Boulder, Colorado knowledge! From CU history to local landmarks to quirky facts only true Boulderites know",
