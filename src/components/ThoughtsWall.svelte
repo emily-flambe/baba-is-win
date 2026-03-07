@@ -27,6 +27,7 @@
   let sortOrder: 'newest' | 'oldest' = 'newest';
   let filteredThoughts: Thought[] = [];
   let carouselIndexes: Record<string, number> = {};
+  let focusedThoughtId: string | null = null;
 
   // Responsive column count - 2 columns default for wider cards
   let numColumns = 2;
@@ -46,12 +47,20 @@
     return () => window.removeEventListener('resize', updateColumnCount);
   });
 
-  // Pin the most recent thought at the top
-  $: pinnedThought = filteredThoughts.length > 0 ? filteredThoughts[0] : null;
+  // Pin the focused thought, or fall back to most recent
+  $: pinnedThought = (() => {
+    if (filteredThoughts.length === 0) return null;
+    if (focusedThoughtId) {
+      const found = filteredThoughts.find(t => t.id === focusedThoughtId);
+      if (found) return found;
+    }
+    return filteredThoughts[0];
+  })();
 
   // Remaining thoughts (excluding pinned) distributed into columns
   $: thoughtColumns = (() => {
-    const remaining = filteredThoughts.slice(1);
+    const pinnedId = pinnedThought?.id;
+    const remaining = filteredThoughts.filter(t => t.id !== pinnedId);
     const columns: Thought[][] = Array.from({ length: numColumns }, () => []);
     remaining.forEach((thought, index) => {
       columns[index % numColumns].push(thought);
@@ -85,10 +94,19 @@
 
   function selectTag(tag: string | null) {
     selectedTag = tag;
+    focusedThoughtId = null;
   }
 
   function setSortOrder(order: 'newest' | 'oldest') {
     sortOrder = order;
+    focusedThoughtId = null;
+  }
+
+  function focusThought(id: string) {
+    focusedThoughtId = id;
+    requestAnimationFrame(() => {
+      document.querySelector('.pinned-section')?.scrollIntoView({ behavior: 'smooth' });
+    });
   }
 
   function processSimpleMarkdown(text: string): string {
@@ -277,9 +295,10 @@
       <div class="wall-column">
         {#each column as thought, rowIndex (thought.id)}
           <article
-            class="thought-card"
+            class="thought-card grid-card"
             style="background-color: {thought.color || 'var(--background-body)'};"
             use:scrollReveal
+            on:click={() => focusThought(thought.id)}
           >
         <div class="card-content">
           <div class="thought-text">
@@ -639,6 +658,10 @@
   .pinned-card {
     max-width: 700px;
     width: 100%;
+  }
+
+  .grid-card {
+    cursor: pointer;
   }
 
   .wall-grid {
