@@ -69,7 +69,7 @@ npm run museum:screenshots:force # Force refresh all
 1. **Local dev**: `make dev` starts wrangler with remote D1 on port 4321
 2. **Content**: Add `.md` files to `src/data/blog-posts/published/` or `src/data/thoughts/published/`
 3. **Database changes**: Create numbered migration in `migrations/`, apply with wrangler CLI
-4. **Deploy**: Push to main triggers Cloudflare auto-deploy; `deploy-and-notify.yml` sends emails for new content
+4. **Deploy**: Push to main triggers `deploy.yml` which runs `wrangler deploy`; `deploy-and-notify.yml` sends emails for new content after deploy completes
 
 ## Environment Variables
 
@@ -98,8 +98,9 @@ R2 binding: `IMAGES`
 ## CI/CD
 
 GitHub Actions workflows:
-- `deploy-and-notify.yml` - Waits for auto-deploy, triggers email notifications
+- `deploy.yml` - Builds and deploys to Cloudflare Workers via `wrangler deploy` on push to main
+- `deploy-and-notify.yml` - Triggers email notifications after successful deploy (for new content)
 - `sync-content.yml` - Content synchronization
-- `upload-to-r2.yml` - Image upload to R2
+- `upload-to-r2.yml` - Content upload to R2 for AutoRAG indexing
 
-Note: Cloudflare auto-deploys on push to main. Workflows don't run `wrangler deploy`.
+Required GitHub secrets for deploy: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
