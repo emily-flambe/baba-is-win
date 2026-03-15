@@ -1,27 +1,83 @@
-# Some sort of personal site
+# baba-is-win
 
-Emily's personal blog and portfolio website, kind of? Features a collection of blog posts, quick thoughts, and personal musings. Due to its sensitive nature, it is not recommended for anyone.
+Emily Cogsdill's personal website at [emilycogsdill.com](https://emilycogsdill.com) — a blog, micro-blog, project portfolio, and AI chat interface. Not recommended for anyone.
 
-## 🌟 What is this?
+Built with Astro on Cloudflare Workers, with heavy and unapologetic assistance from AI agents.
 
-An Astro site deployed on Cloudflare Workers, built with heavy and unapologetic assistance from AI agents, because I'm worth it.
+## What it does
 
-Features blog posts, thoughts, and a Baba Is You-inspired aesthetic.
+- **Home / Thoughts Wall** — Masonry layout of short-form micro-blog posts with tag filtering and image carousels
+- **Blog** — Long-form posts with MDX, tags, thumbnails, and optional premium gating
+- **Bio** — Biography with a difficulty selector (tutorial → maddening), each rendering a different version
+- **Museum** — Project gallery showcasing GitHub projects, grouped into Applications / Tools / Nonsense
+- **Chat** — AI chatbot backed by Cloudflare AutoRAG that answers questions about the site's content
+- **Auth** — Email/password and Google OAuth login, with per-user email notification preferences
 
-## 🛠️ Built With
+## Tech Stack
 
-- **[Astro](https://astro.build)** - Static site generator
-- **[Cloudflare Workers](https://workers.cloudflare.com)** - Serverless deployment with auto-deployment
-- **[Cloudflare D1](https://developers.cloudflare.com/d1/)** - SQLite database
+| Layer | Technology |
+|-------|-----------|
+| Framework | Astro 5 (SSR) |
+| UI components | Svelte 5 |
+| Content | MDX, remark-gfm |
+| Database | Cloudflare D1 (SQLite) |
+| File storage | Cloudflare R2 |
+| AI/RAG | Cloudflare AutoRAG |
+| Auth | JWT (`jose`), bcrypt, Google OAuth |
+| Email | Resend + Gmail API |
+| Deployment | Cloudflare Workers (`wrangler`) |
+| Admin CMS | Svelte 5 + Vite (builds to `public/admin/`) |
+| Testing | Vitest (unit), Playwright (E2E) |
 
-## 🧞 Commands
+## Local Development
+
+### Prerequisites
+
+- Node.js 22+
+- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/) (`npm install -g wrangler`)
+- A Cloudflare account with D1, R2, and Workers AI enabled (for full local dev)
+
+### Install
 
 ```bash
-npm run dev     # Start development server
-npm run build   # Build for production
-npm run deploy  # Deploy to Cloudflare
+npm install
+cd blog-admin && npm install && cd ..
 ```
 
-## 📖 Original Template
+### Run
+
+```bash
+# Full local dev with Cloudflare bindings (D1, R2, AI)
+npm run dev
+
+# Astro dev server only — no Cloudflare bindings, auth/DB won't work
+npm run dev:astro
+```
+
+The full dev server runs via `wrangler dev` on port 4321. You'll need `wrangler.json` configured with your Cloudflare account's D1 database ID and R2 bucket name.
+
+Apply migrations to initialize the local D1 database:
+
+```bash
+wrangler d1 migrations apply baba-is-win --local
+```
+
+### Build & Deploy
+
+```bash
+npm run build        # Build admin CMS + Astro
+npm run deploy       # Build and deploy to Cloudflare Workers
+```
+
+## Tests
+
+```bash
+npm test                  # Unit tests (Vitest)
+npm run test:coverage     # Unit tests with coverage
+npm run test:e2e:setup    # Initialize test D1 database (run once)
+npm run test:e2e          # End-to-end tests (Playwright)
+```
+
+## Original Template
 
 Started from the [Astro Framework Starter](https://github.com/cloudflare/templates/tree/main/packages/astro) template for Cloudflare Workers.
