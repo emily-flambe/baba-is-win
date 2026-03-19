@@ -11,6 +11,7 @@ export interface Props {
   current?: string;
 }
 const { title, description, permalink, current } = Astro.props;
+const user = Astro.locals.user;
 ---
 <html lang="en">
 <head>
@@ -32,6 +33,16 @@ const { title, description, permalink, current } = Astro.props;
 
     <Footer />
   </div>
+  {user && (
+    <script define:vars={{ userId: user.id, userEmail: user.email, username: user.username }}>
+      if (window.posthog) {
+        window.posthog.identify(userId, {
+          email: userEmail,
+          username: username,
+        });
+      }
+    </script>
+  )}
 </body>
 </html>
 
