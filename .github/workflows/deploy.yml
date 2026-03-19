@@ -31,13 +31,7 @@ jobs:
       - name: Verify required secrets are configured
         run: |
           REQUIRED_SECRETS="JWT_SECRET CRON_SECRET GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET RESEND_API_KEY"
-          CONFIGURED=$(npx wrangler secret list --json 2>/dev/null | node -e "
-            const input = require('fs').readFileSync('/dev/stdin','utf8');
-            const match = input.match(/\[[\s\S]*\]/);
-            if (!match) { console.error('No JSON array found in wrangler output'); process.exit(1); }
-            const data = JSON.parse(match[0]);
-            console.log(data.map(s => s.name).join(' '));
-          ")
+          CONFIGURED=$(npx wrangler secret list 2>/dev/null || true)
           MISSING=""
           for secret in $REQUIRED_SECRETS; do
             if ! echo "$CONFIGURED" | grep -qw "$secret"; then
