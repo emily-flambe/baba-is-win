@@ -78,6 +78,7 @@ Required in production (set via `wrangler secret put`):
 - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` - OAuth
 - `RESEND_API_KEY` - Email notifications
 - `CRON_SECRET` - Cron endpoint auth
+- `POSTHOG_API_KEY` - PostHog analytics
 
 D1 binding: `DB` (configured in wrangler.json)
 R2 binding: `IMAGES`
@@ -104,3 +105,13 @@ GitHub Actions workflows:
 - `upload-to-r2.yml` - Content upload to R2 for AutoRAG indexing
 
 Required GitHub secrets for deploy: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
+
+## Linear
+
+All Linear issues for this project should be created in the **emilycogsdill.com** project (team: Emily Cogsdill).
+
+## Knowledge Graph (Agent-MCP)
+
+After significant changes (new features, architecture decisions, schema changes), save context to Agent-MCP using `update_project_context`. Use the key prefix `baba-is-win/` (e.g., `baba-is-win/architecture`).
+
+Update existing entries when information changes. Create new keys for new topics. This ensures any agent in any session can retrieve project context via `ask_project_rag`.
